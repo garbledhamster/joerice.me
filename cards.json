@@ -1,0 +1,210 @@
+
+  {
+    "cards": [
+      {
+        "id": "who-i-am",
+        "title": "👤 Who I Am",
+        "content": [
+          "I am a systems engineer fueled by a passion for technology and a dedication to helping individuals and small businesses thrive with minimal effort. My background as a certified IT security specialist and a versatile generalist enables me to create simple, effective, and accessible solutions for everyone, regardless of tech expertise.",
+          "I believe technology should be an enabler, not a barrier. I strive to build user-friendly websites that ensure easy navigation. Each project is driven by collaboration and open communication; I'm eager to help if you share this vision.",
+          "At my core, I am a problem-solver, leveraging my skills to identify opportunities for improvement and create innovative web tools for everyday challenges. My experiences working with hundreds of businesses ensure I meet both technical requirements and unique needs.",
+          "Ultimately, technology can connect us, and I'm committed to using my skills to foster relationships and build thriving communities in our digital world."
+        ],
+        "style": {
+          "backgroundColor": "bg-white bg-opacity-80",
+          "textColor": "text-black",
+          "borderColor": "border-gray-600",
+          "shadowColor": "rgba(0,0,0,0.8)"
+        }
+      },
+      {
+        "id": "background-experience",
+        "title": "💼 My Background and Experience",
+        "content": [
+          "My tech journey began over a decade ago, driven by curiosity and problem-solving. As a systems engineer, I wear many hats, designing technology-based infrastructure that balances technical skills, strategic foresight, and teamwork.",
+          "I script packages for our internal AI chatbot, honing my coding skills and keeping up with the evolving landscape of AI. Writing PowerShell scripts has streamlined processes, enhancing efficiency for support teams.",
+          "My multidisciplinary background spans law firms, local governments, police departments, child protection services, manufacturing, and production. This experience fosters a growth mindset, helping me adapt to unique challenges from high-level infrastructures in AWS to localized technical issues.",
+          "My background extends beyond skills—it's about relationships with clients and colleagues and the stories they share. I pride myself on being a steadfast problem-solver, understanding technical requirements and the human element involved."
+        ],
+        "style": {
+          "backgroundColor": "bg-blue-100 bg-opacity-80",
+          "textColor": "text-blue-900",
+          "borderColor": "border-blue-600",
+          "shadowColor": "rgba(37,99,235,0.8)"
+        }
+      },
+      {
+        "id": "why-this-page",
+        "title": "🌐 Why I Made This Page",
+        "content": [
+          "This page is a cornerstone of my mission to democratize access to technology and empower individuals and small businesses through practical, innovative solutions. It's not just a showcase of my work; it’s a platform for creating connections, sharing knowledge, and driving meaningful change.",
+          "My vision is simple: technology should be a tool that uplifts people, not a barrier that limits them. By blending my technical expertise with a passion for fostering growth, I aim to bridge gaps and amplify voices—be it through user-friendly websites, efficient automation, or community-driven projects.",
+          "Every project I take on reflects my core values of simplicity, accessibility, and collaboration. This page is a testament to my commitment to using technology as a means to create lasting impact and foster thriving, connected communities."
+        ],
+        "style": {
+          "backgroundColor": "bg-red-100 bg-opacity-80",
+          "textColor": "text-red-900",
+          "borderColor": "border-red-600",
+          "shadowColor": "rgba(220,38,38,0.8)"
+        }
+      },
+      {
+        "id": "projects",
+        "title": "📂 Projects I've Worked On",
+        "content": [
+          {
+            "type": "section",
+            "subTitle": "Professional Projects",
+            "items": [
+              "Cloud Migrations: Transitioning businesses to cloud environments for improved accessibility and efficiency.",
+              "Network Migrations: Upgrading and transferring network infrastructures to enhance performance and security.",
+              "Infrastructure Migrations: Redesigning and moving critical systems to new platforms for better reliability.",
+              "Wireless Implementation/Upgrades: Installing and upgrading wireless technologies for seamless connectivity.",
+              "Hypervisor Migrations: Transitioning virtual environments to new hypervisor platforms for optimized resource management."
+            ]
+          },
+          {
+            "type": "section",
+            "subTitle": "Personal Projects",
+            "items": [
+              "Docker (Raspberry Pi): Setting up a lightweight server environment for experimenting with containerized applications.",
+              "Tinkering (PiBoy Advance): Developing a handheld gaming device utilizing Raspberry Pi for retro gaming enthusiasts."
+            ]
+          },
+          {
+            "type": "section",
+            "subTitle": "Online Profiles",
+            "items": [
+              "GitHub: <img src='https://simpleicons.org/icons/github.svg' alt='GitHub Icon' class='inline w-4 h-4'> <a href='https://github.com/garbledhamster' class='text-blue-500 hover:text-blue-700'>garbledhamster</a>",
+              "CodePen: <img src='https://simpleicons.org/icons/codepen.svg' alt='CodePen Icon' class='inline w-4 h-4'> <a href='https://codepen.io/GarbledHamster' class='text-blue-500 hover:text-blue-700'>GarbledHamster</a>",
+              "LinkedIn: <img src='https://simpleicons.org/icons/linkedin.svg' alt='LinkedIn Icon' class='inline w-4 h-4'> <a href='https://www.linkedin.com/in/garbledhamster/' class='text-blue-500 hover:text-blue-700'>garbledhamster</a>",
+              "Instagram: <img src='https://simpleicons.org/icons/instagram.svg' alt='Instagram Icon' class='inline w-4 h-4'> <a href='https://www.instagram.com/garbledhamster/' class='text-blue-500 hover:text-blue-700'>garbledhamster</a>",
+              "My Notes: <img class='inline w-4 h-4'> <a href='https://ourstuff.space' class='text-blue-500 hover:text-blue-700'>ourstuff.space</a>"
+            ]
+          }
+        ],
+        "style": {
+          "backgroundColor": "bg-yellow-100 bg-opacity-80",
+          "textColor": "text-yellow-900",
+          "borderColor": "border-yellow-600",
+          "shadowColor": "rgba(245,158,11,0.8)"
+        }
+      },
+      {
+        "id": "books",
+        "title": "📚 Books on My Bookshelf",
+        "content": [
+          "I think sharing what books impacted you the most is important to show people how you've been shaped up to this point and time.",
+          {
+            "type": "section",
+            "category": "Mind",
+            "books": [
+              "<em>How to Read a Book</em> by Mortimer J. Adler and Charles Van Doren",
+              "<em>Writing to Learn</em> by William Zinsser",
+              "<em>Antinet Zettelkasten</em> by Scott Scheper"
+            ]
+          },
+          {
+            "type": "section",
+            "category": "Body",
+            "books": [
+              "<em>Somatics</em> by Thomas Hanna",
+              "<em>The Montessori Baby</em> by Simone Davies and Junnifa Uzodike"
+            ]
+          },
+          {
+            "type": "section",
+            "category": "Spirit",
+            "books": [
+              "<em>Ultimate Journey</em> by Robert A. Monroe",
+              "<em>My Big TOE (Theory of Everything)</em> by Thomas Campbell",
+              "<em>Zen Mind, Beginner's Mind</em> by Shunryu Suzuki",
+              "<em>The Art of War</em> by Sun Tzu"
+            ]
+          },
+          {
+            "type": "section",
+            "category": "Life",
+            "books": [
+              "<em>The Bullet Journal Method</em> by Ryder Carroll",
+              "<em>The New Codependency</em> by Melody Beattie",
+              "<em>The Pragmatic Programmer</em> by Andrew Hunt and David Thomas",
+              "<em>The Lean Startup</em> by Eric Ries",
+              "<em>Cisco Certified Network Professional</em> materials",
+              "<em>Security+ CompTIA</em> materials",
+              "<em>Network+ CompTIA</em> materials"
+            ]
+          }
+        ],
+        "style": {
+          "backgroundColor": "bg-pink-100 bg-opacity-80",
+          "textColor": "text-pink-900",
+          "borderColor": "border-pink-600",
+          "shadowColor": "rgba(219,39,119,0.8)"
+        }
+      },
+      {
+        "id": "tools",
+        "title": "🛠 Tools I Use For Free Websites",
+        "content": [
+          "ChatGPT (Primary Developer and Assistant)",
+          "GitHub Pages (Production Hosting)",
+          "CodePen (Live Development Environment)",
+          "Cloudflare (DNS, Security)",
+          "MXroute (Email Hosting)",
+          "NameCheap (Domain Registrar)"
+        ],
+        "style": {
+          "backgroundColor": "bg-green-100 bg-opacity-80",
+          "textColor": "text-green-900",
+          "borderColor": "border-green-600",
+          "shadowColor": "rgba(22,163,74,0.8)"
+        }
+      },
+      {
+        "id": "support",
+        "title": "🤝 How Your Support Helps",
+        "content": [
+          "Your support is vital for maintaining and improving my services. Contributions through my <a href='https://www.buymeacoffee.com/garbledhamster' class='text-blue-500 hover:text-blue-700 font-bold'>Buy Me a Coffee</a> page directly cover essential <strong>hosting fees</strong>, allowing me to sustain and enhance the websites I manage.",
+          "With your generous support, I can:",
+          {
+            "type": "list",
+            "items": [
+              "<strong>Domain Fees:</strong> Ensure reliable and robust domain names for optimal web presence.",
+              "<strong>GitHub Pages Fees:</strong> Cover the costs associated with using GitHub Pages for production hosting.",
+              "<strong>Email Fees:</strong> Provide email hosting for seamless communication with every domain.",
+              "<strong>Email Security Fees:</strong> Implement and maintain security measures to protect email communications.",
+              "<strong>Cloudflare:</strong> Utilize services for DNS management and enhanced security.",
+              "<strong>Time/Materials:</strong> Dedicate resources to continue supporting the community with updates and new projects.",
+              "<strong>Family Support:</strong> Your support helps my wife and me achieve financial security as our community grows."
+            ]
+          },
+          "Every contribution matters, and reinforces my commitment to creating a more <strong>connected</strong> and supportive community. Thank you for being a crucial part of this journey!"
+        ],
+        "style": {
+          "backgroundColor": "bg-purple-100 bg-opacity-80",
+          "textColor": "text-purple-900",
+          "borderColor": "border-purple-600",
+          "shadowColor": "rgba(147,51,234,0.8)"
+        }
+      },
+      {
+        "id": "support-me",
+        "title": "☕ Support Me on Buy Me a Coffee! ✨",
+        "content": [
+          "If you need a website, updates, or see something in my posts that you like, let me know by messaging me on <a href='https://www.buymeacoffee.com/garbledhamster' class='text-blue-500 hover:text-blue-700 font-bold'>Buy Me a Coffee</a>. Your support helps maintain essential services and grow our community. Thank you for being part of something bigger!",
+          "Recent Supporters:",
+          "Deb's Happy Hogs (Mountain Grove, MO)",
+          "Spinner's Pizza (Grovespring, MO)",
+          "Feel free to let me know if you need any more adjustments or additions!"
+        ],
+        "style": {
+          "backgroundColor": "bg-white bg-opacity-80",
+          "textColor": "text-black",
+          "borderColor": "border-gray-600",
+          "shadowColor": "rgba(0,0,0,0.8)"
+        }
+      }
+    ]
+  }
+  
