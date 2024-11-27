@@ -1,1 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
 
+<head>
+  <meta charset="UTF-8">
+  <title>Joe Rice</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap');
+
+    .parallax-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-image: url('assets/images/backgrounds/background1.jpg');
+      background-size: cover;
+      background-position: center;
+      background-repeat: no-repeat;
+      background-attachment: fixed;
+      z-index: -1;
+      transition: background-image 0.5s ease-in-out;
+    }
+
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #000;
+      color: #fff;
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    .fade-in {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: all 0.6s ease-in-out;
+    }
+
+    .fade-in.visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
+
+    .glow {
+      box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      transition: box-shadow 0.5s ease-in-out;
+    }
+
+    .glow-black {
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.7);
+      text-shadow: 0 0 3px rgba(0, 0, 0, 0.7);
+    }
+
+    .glow-blue-900 {
+      box-shadow: 0 0 20px rgba(29, 78, 216, 0.7);
+      text-shadow: 0 0 3px rgba(29, 78, 216, 0.7);
+    }
+
+    .glow-red-900 {
+      box-shadow: 0 0 20px rgba(127, 29, 29, 0.7);
+      text-shadow: 0 0 3px rgba(127, 29, 29, 0.7);
+    }
+
+    .glow-yellow-900 {
+      box-shadow: 0 0 20px rgba(217, 119, 6, 0.7);
+      text-shadow: 0 0 3px rgba(217, 119, 6, 0.7);
+    }
+
+    .glow-pink-900 {
+      box-shadow: 0 0 20px rgba(190, 24, 93, 0.7);
+      text-shadow: 0 0 3px rgba(190, 24, 93, 0.7);
+    }
+
+    .glow-green-900 {
+      box-shadow: 0 0 20px rgba(4, 120, 87, 0.7);
+      text-shadow: 0 0 3px rgba(4, 120, 87, 0.7);
+    }
+
+    .card .text-lg,
+    .card .text-3xl,
+    .card .text-5xl,
+    .card p,
+    .card h1,
+    .card h2 {
+      transition: text-shadow 0.5s ease-in-out;
+    }
+
+    .card:hover {
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.8);
+    }
+
+    .black-glow {
+      color: black;
+      text-shadow: 0 0 5px rgba(255, 255, 255, 0.7);
+    }
+
+    @keyframes glow-animation {
+      0% {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+
+      50% {
+        box-shadow: 0 0 20px rgba(255, 255, 255, 0.7);
+      }
+
+      100% {
+        box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+      }
+    }
+
+    .glow {
+      animation: glow-animation 2s infinite;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="parallax-bg" id="parallax-bg"></div>
+  <header class="text-center py-12 relative z-10">
+    <h1 class="text-5xl font-bold">Joe Rice</h1>
+    <p class="text-xl mt-4 max-w-2xl mx-auto">Welcome to my professional and personal portfolio, tracking my accomplishments and sharing what I bring to the world.</p>
+  </header>
+  <main class="max-w-4xl mx-auto px-4 relative z-10">
+    <section class="card bg-white bg-opacity-80 text-black border-l-8 border-gray-600 p-6 mb-8 fade-in glow glow-black">
+      <h2 class="text-3xl font-bold mb-4">👤 Who I Am</h2>
+      <p class="text-lg">I am a systems engineer fueled by a passion for technology and a dedication to helping individuals and small businesses thrive with minimal effort. My background as a certified IT security specialist and a versatile generalist enables me to create simple, effective, and accessible solutions for everyone, regardless of tech expertise.</p>
+      <p class="text-lg mt-4">I believe technology should be an enabler, not a barrier. I strive to build user-friendly websites that ensure easy navigation. Each project is driven by collaboration and open communication; I'm eager to help if you share this vision.</p>
+      <p class="text-lg mt-4">At my core, I am a problem-solver, leveraging my skills to identify opportunities for improvement and create innovative web tools for everyday challenges. My experiences working with hundreds of businesses ensure I meet both technical requirements and unique needs.</p>
+      <p class="text-lg mt-4">Ultimately, technology can connect us, and I'm committed to using my skills to foster relationships and build thriving communities in our digital world.</p>
+    </section>
+    <section class="card bg-blue-100 bg-opacity-80 text-blue-900 border-l-8 border-blue-600 p-6 mb-8 fade-in glow glow-blue-900">
+      <h2 class="text-3xl font-bold mb-4">💼 My Background and Experience</h2>
+      <p class="text-lg">My tech journey began over a decade ago, driven by curiosity and problem-solving. As a systems engineer, I wear many hats, designing technology-based infrastructure that balances technical skills, strategic foresight, and teamwork.</p>
+      <p class="text-lg mt-4">I script packages for our internal AI chatbot, honing my coding skills and keeping up with the evolving landscape of AI. Writing PowerShell scripts has streamlined processes, enhancing efficiency for support teams.</p>
+      <p class="text-lg mt-4">My multidisciplinary background spans law firms, local governments, police departments, child protection services, manufacturing, and production. This experience fosters a growth mindset, helping me adapt to unique challenges from high-level infrastructures in AWS to localized technical issues.</p>
+      <p class="text-lg mt-4">My background extends beyond skills—it's about relationships with clients and colleagues and the stories they share. I pride myself on being a steadfast problem-solver, understanding technical requirements and the human element involved.</p>
+    </section>
+    <section class="card bg-red-100 bg-opacity-80 text-red-900 border-l-8 border-red-600 p-6 mb-8 fade-in glow glow-red-900">
+      <h2 class="text-3xl font-bold mb-4">🌐 Why I Made This Page</h2>
+      <p class="text-lg">This page emerged from my journey as a systems engineer, bridging my technical skills to uplift others. It became clear that the intersections of my personal and professional life could drive meaningful change.</p>
+      <p class="text-lg mt-4">This project blends vocation and avocation—it's not just about websites; it's about crafting digital spaces for stories and connections. Every site reflects my values: simplicity, accessibility, and utility, aimed at empowering small businesses and individuals.</p>
+      <p class="text-lg mt-4">When we democratize access to technology, we create ripples of influence beyond our screens. This page is a testament to my commitment to fostering a connected community, emphasizing that collective efforts start with small acts of kindness.</p>
+    </section>
+    <section class="card bg-yellow-100 bg-opacity-80 text-yellow-900 border-l-8 border-yellow-600 p-6 mb-8 fade-in glow glow-yellow-900">
+      <h2 class="text-3xl font-bold mb-4">📂 Projects I've Worked On</h2>
+      <p class="text-lg"><strong>Professional Projects:</strong></p>
+      <ul class="list-disc pl-6 text-lg mt-2">
+        <li><strong>Cloud Migrations:</strong> Transitioning businesses to cloud environments for improved accessibility and efficiency.</li>
+        <li><strong>Network Migrations:</strong> Upgrading and transferring network infrastructures to enhance performance and security.</li>
+        <li><strong>Infrastructure Migrations:</strong> Redesigning and moving critical systems to new platforms for better reliability.</li>
+        <li><strong>Wireless Implementation/Upgrades:</strong> Installing and upgrading wireless technologies for seamless connectivity.</li>
+        <li><strong>Hypervisor Migrations:</strong> Transitioning virtual environments to new hypervisor platforms for optimized resource management.</li>
+      </ul>
+      <p class="text-lg mt-4"><strong>Personal Projects:</strong></p>
+      <ul class="list-disc pl-6 text-lg mt-2">
+        <li><strong>Docker (Raspberry Pi):</strong> Setting up a lightweight server environment for experimenting with containerized applications.</li>
+        <li><strong>Tinkering (PiBoy Advance):</strong> Developing a handheld gaming device utilizing Raspberry Pi for retro gaming enthusiasts.</li>
+      </ul>
+      <p class="text-lg mt-4"><strong>Online Profiles:</strong></p>
+      <ul class="list-disc pl-6 text-lg mt-2">
+        <li><strong>GitHub:</strong> <img src="https://simpleicons.org/icons/github.svg" alt="GitHub Icon" class="inline w-4 h-4"> <a href="https://github.com/garbledhamster" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
+        <li><strong>CodePen:</strong> <img src="https://simpleicons.org/icons/codepen.svg" alt="CodePen Icon" class="inline w-4 h-4"> <a href="https://codepen.io/GarbledHamster" class="text-blue-500 hover:text-blue-700">GarbledHamster</a></li>
+        <li><strong>LinkedIn:</strong> <img src="https://simpleicons.org/icons/linkedin.svg" alt="LinkedIn Icon" class="inline w-4 h-4"> <a href="https://www.linkedin.com/in/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
+        <li><strong>Instagram:</strong> <img src="https://simpleicons.org/icons/instagram.svg" alt="Instagram Icon" class="inline w-4 h-4"> <a href="https://www.instagram.com/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
+        <li><strong>My Notes:</strong> <img class="inline w-4 h-4"> <a href="https://ourstuff.space" class="text-blue-500 hover:text-blue-700">ourstuff.space</a></li>
+      </ul>
+    </section>
+    <section class="card bg-pink-100 bg-opacity-80 text-pink-900 border-l-8 border-pink-600 p-6 mb-8 fade-in glow glow-pink-900">
+      <h2 class="text-3xl font-bold mb-4">📚 Books That Shaped Me</h2>
+      <p class="text-lg">I think it's important to know where I'm coming from before you commit to anything.</p>
+      <ul class="list-disc pl-6 text-lg mt-4">
+        <li><strong>Mind</strong>
+          <ul class="list-disc pl-6 mt-2">
+            <li><em>How to Read a Book</em> by Mortimer J. Adler and Charles Van Doren</li>
+            <li><em>Writing to Learn</em> by William Zinsser</li>
+            <li><em>Antinet Zettelkasten</em> by Scott Scheper</li>
+          </ul>
+        </li>
+        <li class="mt-4"><strong>Body</strong>
+          <ul class="list-disc pl-6 mt-2">
+            <li><em>Somatics</em> by Thomas Hanna</li>
+            <li><em>The Montessori Baby</em> by Simone Davies and Junnifa Uzodike</li>
+          </ul>
+        </li>
+        <li class="mt-4"><strong>Spirit</strong>
+          <ul class="list-disc pl-6 mt-2">
+            <li><em>Ultimate Journey</em> by Robert A. Monroe</li>
+            <li><em>My Big TOE (Theory of Everything)</em> by Thomas Campbell</li>
+            <li><em>Zen Mind, Beginner's Mind</em> by Shunryu Suzuki</li>
+            <li><em>The Art of War</em> by Sun Tzu</li>
+          </ul>
+        </li>
+        <li class="mt-4"><strong>Life</strong>
+          <ul class="list-disc pl-6 mt-2">
+            <li><em>The Bullet Journal Method</em> by Ryder Carroll</li>
+            <li><em>The New Codependency</em> by Melody Beattie</li>
+            <li><em>The Pragmatic Programmer</em> by Andrew Hunt and David Thomas</li>
+            <li><em>The Lean Startup</em> by Eric Ries</li>
+            <li><em>Cisco Certified Network Professional</em> materials</li>
+            <li><em>Security+ CompTIA</em> materials</li>
+            <li><em>Network+ CompTIA</em> materials</li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+    <section class="card bg-green-100 bg-opacity-80 text-green-900 border-l-8 border-green-600 p-6 mb-8 fade-in glow glow-green-900">
+      <h2 class="text-3xl font-bold mb-4">🛠 Tools I Use For Free Websites</h2>
+      <ul class="list-disc pl-6 text-lg">
+        <li>ChatGPT (Primary Developer and Assistant)</li>
+        <li>GitHub Pages (Production Hosting)</li>
+        <li>CodePen (Live Development Environment)</li>
+        <li>Cloudflare (DNS, Security)</li>
+        <li>MXroute (Email Hosting)</li>
+        <li>NameCheap (Domain Registrar)</li>
+      </ul>
+    </section>
+    <section class="card bg-purple-100 bg-opacity-80 text-purple-900 border-l-8 border-purple-600 p-6 mb-8 fade-in glow glow-purple-900">
+      <h2 class="text-3xl font-bold mb-4">🤝 How Your Support Helps</h2>
+      <p class="text-lg">Your support is vital for maintaining and improving my services. Contributions through my <a href="https://www.buymeacoffee.com/garbledhamster" class="text-blue-500 hover:text-blue-700 font-bold glow">Buy Me a Coffee</a> page directly cover essential <strong>hosting fees</strong>, allowing me to sustain and enhance the websites I manage.</p>
+      <p class="text-lg mt-4">With your generous support, I can:</p>
+      <ul class="list-disc pl-6 text-lg mt-2">
+        <li><strong>Domain Fees:</strong> Ensure reliable and robust domain names for optimal web presence.</li>
+        <li><strong>GitHub Pages Fees:</strong> Cover the costs associated with using GitHub Pages for production hosting.</li>
+        <li><strong>Email Fees:</strong> Provide email hosting for seamless communication with every domain.</li>
+        <li><strong>Email Security Fees:</strong> Implement and maintain security measures to protect email communications.</li>
+        <li><strong>Cloudflare:</strong> Utilize services for DNS management and enhanced security.</li>
+        <li><strong>Time/Materials:</strong> Dedicate resources to continue supporting the community with updates and new projects.</li>
+        <li><strong>Family Support:</strong> Your support helps my wife and me achieve financial security as our community grows.</li>
+      </ul>
+      <p class="text-lg mt-4">Every contribution matters, and reinforces my commitment to creating a more <strong>connected</strong> and supportive community. Thank you for being a crucial part of this journey!</p>
+    </section>
+    <section class="card bg-white bg-opacity-80 text-black border-l-8 border-gray-600 p-6 mb-8 fade-in glow glow-black">
+      <h2 class="text-3xl font-bold mb-4">☕ Support Me on Buy Me a Coffee! ✨</h2>
+      <p class="text-lg black-glow">If you need a website, updates, or see something in my posts that you like, let me know by messaging me on <a href="https://www.buymeacoffee.com/garbledhamster" class="text-blue-500 hover:text-blue-700 font-bold glow">Buy Me a Coffee</a>. Your support helps maintain essential services and grow our community. Thank you for being part of something bigger!</p>
+      <p class="text-lg mt-4"><strong>Recent Supporters:</strong></p>
+      <ul class="list-disc pl-6 text-lg mt-2">
+        <li>Deb's Happy Hogs (Mountain Grove, MO)</li>
+        <li>Spinner's Pizza (Grovespring, MO)</li>
+      </ul>
+      <p class="text-lg mt-4">Feel free to let me know if you need any more adjustments or additions!</p>
+    </section>
+  </main>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const cards = document.querySelectorAll('.card');
+      if ('IntersectionObserver' in window) {
+        const observer = new IntersectionObserver((entries) => {
+          entries.forEach(entry => {
+            if (entry.isIntersecting) {
+              entry.target.classList.add('visible');
+            }
+          });
+        });
+        cards.forEach(card => {
+          observer.observe(card);
+        });
+      } else {
+        cards.forEach(card => {
+          card.classList.add('visible');
+        });
+      }
+    });
+    window.onload = function() {
+      const parallaxBg = document.getElementById('parallax-bg');
+      const img = new Image();
+      img.src = 'assets/images/backgrounds/background1.jpg';
+      img.onerror = function() {
+        parallaxBg.style.backgroundImage = "url('https://images.unsplash.com/photo-1462331940025-496dfbfc7564?q=80&w=911&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA==')";
+      };
+    };
+  </script>
+</body>
+
+</html>
