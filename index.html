@@ -2,344 +2,535 @@
 <html lang="en">
 
 <head>
-    <!-- Meta Tags and Title -->
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
-    <title>Joe Rice</title>
-    <link rel="icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true">
+  <!-- Meta Tags and Title -->
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
+  <title>Joe Rice</title>
+  <link rel="icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true">
 
-    <!-- Open Graph Meta Tags -->
-    <meta property="og:title" content="Joe Rice - Systems Engineer and Technologist">
-    <meta property="og:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
-    <meta property="og:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
-    <meta property="og:url" content="https://joerice.me">
-    <meta property="og:type" content="website">
-    <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="Joe Rice - Systems Engineer and Technologist">
-    <meta name="twitter:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
-    <meta name="twitter:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
-    <meta name="apple-mobile-web-app-title" content="Joe Rice">
-    <link rel="apple-touch-icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
-    <meta property="og:site_name" content="Joe Rice">
-    <meta property="og:locale" content="en_US">
-    <meta name="og:image:width" content="1200">
-    <meta name="og:image:height" content="630">
-    <link rel="icon" type="image/png" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true" sizes="192x192">
-    <meta name="description" content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology.">
-    <meta name="keywords" content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi">
-    <meta name="author" content="Joe Rice">
+  <!-- Open Graph Meta Tags -->
+  <meta property="og:title" content="Joe Rice - Systems Engineer and Technologist">
+  <meta property="og:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
+  <meta property="og:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
+  <meta property="og:url" content="https://joerice.me">
+  <meta property="og:type" content="website">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Joe Rice - Systems Engineer and Technologist">
+  <meta name="twitter:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
+  <meta name="twitter:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
+  <meta name="apple-mobile-web-app-title" content="Joe Rice">
+  <link rel="apple-touch-icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
+  <meta property="og:site_name" content="Joe Rice">
+  <meta property="og:locale" content="en_US">
+  <meta name="og:image:width" content="1200">
+  <meta name="og:image:height" content="630">
+  <link rel="icon" type="image/png" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true" sizes="192x192">
+  <meta name="description" content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology.">
+  <meta name="keywords" content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi">
+  <meta name="author" content="Joe Rice">
 
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Google Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
 
-    <!-- Custom Styles -->
-    <style>
-        /* Global Box Sizing */
-        *,
-        *::before,
-        *::after {
-            box-sizing: border-box;
-        }
+  <!-- Custom Styles -->
+  <style>
+    /* Global Box Sizing */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
 
-        .bg-fullscreen {
-            background-image: url('https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true');
-        }
+    .bg-fullscreen {
+      background-image: url('https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true');
+    }
 
-        .animate-fade-in {
-            opacity: 0;
-            transform: translateX(50px);
-            transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
-        }
+    .animate-fade-in {
+      opacity: 0;
+      transform: translateX(50px);
+      transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+    }
 
-        .visible {
-            opacity: 1;
-            transform: translateX(0);
-        }
+    .visible {
+      opacity: 1;
+      transform: translateX(0);
+    }
 
-        /* Improved color contrast */
-        .bg-yellow-100 {
-            background-color: #fdf6b2;
-        }
+    /* Improved color contrast */
+    .bg-yellow-100 {
+      background-color: #fdf6b2;
+    }
 
-        .text-yellow-900 {
-            color: #705a00;
-        }
+    .text-yellow-900 {
+      color: #705a00;
+    }
 
-        /* Enable smooth scrolling */
-        html {
-            scroll-behavior: smooth;
-        }
+    .bg-pink-100 {
+      background-color: #ffe4e6;
+    }
 
-        /* Success Message Styling */
-        #form-success {
-            display: none;
-        }
-    </style>
+    .text-pink-900 {
+      color: #9d174d;
+    }
+
+    /* Enable smooth scrolling */
+    html {
+      scroll-behavior: smooth;
+    }
+
+    /* Success Message Styling */
+    #form-success {
+      display: none;
+    }
+
+    /* Portfolio Gallery Styles */
+    #project-frame {
+      width: 100%;
+      height: 90vh;
+    }
+
+    /* Glow Effects */
+    .glow-white {
+      box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+    }
+
+    .glow-blue {
+      box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
+      /* Tailwind blue-500 */
+    }
+
+    .glow-red {
+      box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
+      /* Tailwind red-500 */
+    }
+
+    .glow-yellow {
+      box-shadow: 0 0 30px rgba(234, 179, 8, 0.5);
+      /* Tailwind yellow-500 */
+    }
+
+    .glow-pink {
+      box-shadow: 0 0 30px rgba(236, 72, 153, 0.5);
+      /* Tailwind pink-500 */
+    }
+
+    .glow-green {
+      box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
+      /* Tailwind green-500 */
+    }
+
+    .glow-purple {
+      box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
+      /* Tailwind purple-500 */
+    }
+
+    /* Ensure headings wrap text */
+    h2 {
+      word-wrap: break-word;
+      max-width: 100%;
+    }
+
+    /* Adjust navigation links */
+    nav ul li a {
+      white-space: nowrap;
+    }
+
+    /* Responsive font sizes for headings */
+    @media (max-width: 768px) {
+      h2 {
+        font-size: 2xl;
+      }
+
+      nav ul li a {
+        font-size: base;
+      }
+    }
+  </style>
 </head>
 
-<body class="font-sans bg-black text-white overflow-x-hidden relative min-h-screen" style="font-family: 'Montserrat', sans-serif;">
-    <!-- Sticky Navigation Bar -->
-    <header class="fixed top-0 left-0 w-full bg-black bg-opacity-80 text-white shadow-md z-20">
-        <nav class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-            <div>
-                <h1 class="text-xl font-bold"><a href="#">Joe Rice</a></h1>
-            </div>
-            <ul class="hidden md:flex space-x-6 text-lg">
-                <li><a href="#about" class="hover:text-gray-400">About</a></li>
-                <li><a href="#background" class="hover:text-gray-400">Background</a></li>
-                <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
-                <li><a href="#bookshelf" class="hover:text-gray-400">Bookshelf</a></li>
-                <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
-                <li><a href="#support-contact" class="hover:text-gray-400">Support & Contact</a></li>
-            </ul>
-            <!-- Mobile Menu Button -->
-            <div class="md:hidden">
-                <button id="menu-button" class="text-gray-400 hover:text-white focus:outline-none">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                            d="M4 6h16M4 12h16M4 18h16" />
-                    </svg>
-                </button>
-            </div>
-        </nav>
-        <!-- Mobile Menu -->
-        <div id="mobile-menu" class="hidden md:hidden bg-black bg-opacity-80">
-            <ul class="flex flex-col space-y-4 px-4 py-4">
-                <li><a href="#about" class="hover:text-gray-400">About</a></li>
-                <li><a href="#background" class="hover:text-gray-400">Background</a></li>
-                <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
-                <li><a href="#bookshelf" class="hover:text-gray-400">Bookshelf</a></li>
-                <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
-                <li><a href="#support-contact" class="hover:text-gray-400">Support & Contact</a></li>
-            </ul>
+<body class="font-sans bg-gray-800 text-gray-100 overflow-x-hidden relative min-h-screen" style="font-family: 'Montserrat', sans-serif;">
+  <!-- Sticky Navigation Bar -->
+  <header class="fixed top-0 left-0 w-full bg-black bg-opacity-80 text-white shadow-md z-20">
+    <nav class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+      <div>
+        <h1 class="text-xl font-bold"><a href="#">Joe Rice</a></h1>
+      </div>
+      <ul class="hidden md:flex flex-wrap space-x-4 text-lg">
+        <li><a href="#about" class="hover:text-gray-400">About</a></li>
+        <li><a href="#background" class="hover:text-gray-400">Experience</a></li>
+        <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
+        <li><a href="#portfolio" class="hover:text-gray-400">Portfolio</a></li>
+        <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
+        <li><a href="#support" class="hover:text-gray-400">Support</a></li>
+        <li><a href="#contact" class="hover:text-gray-400">Contact</a></li>
+      </ul>
+      <!-- Mobile Menu Button -->
+      <div class="md:hidden">
+        <button id="menu-button" class="text-gray-400 hover:text-white focus:outline-none">
+          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </nav>
+    <!-- Mobile Menu -->
+    <div id="mobile-menu" class="hidden md:hidden bg-black bg-opacity-80">
+      <ul class="flex flex-col space-y-2 px-4 py-4 text-base">
+        <li><a href="#about" class="hover:text-gray-400">About</a></li>
+        <li><a href="#background" class="hover:text-gray-400">Experience</a></li>
+        <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
+        <li><a href="#portfolio" class="hover:text-gray-400">Portfolio</a></li>
+        <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
+        <li><a href="#support" class="hover:text-gray-400">Support</a></li>
+        <li><a href="#contact" class="hover:text-gray-400">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <!-- Background Image -->
+  <div class="fixed inset-0 bg-cover bg-center bg-no-repeat z-[-1] bg-fullscreen"></div>
+
+  <!-- Main Content -->
+  <main class="max-w-6xl mx-auto px-8 relative z-10 pt-24">
+    <!-- Card: White Top -->
+    <section id="about" class="scroll-mt-20 bg-white bg-opacity-100 text-black border-l-8 border-r-8 border-gray-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-white rounded-lg">
+      <div class="flex items-center justify-center relative">
+        <span class="absolute left-0 text-3xl">👤</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-center">About Me</h2>
+      </div>
+      <!-- Horizontal Bar -->
+      <div class="h-2 w-full bg-gray-600 my-4 rounded"></div>
+      <p class="text-lg">Hey there! I'm Joe, a systems engineer who loves diving into technology and making it work for people and small businesses. With a background in IT security and a knack for various tech areas, I aim to create simple, effective, and easy-to-use solutions for everyone, no matter their tech know-how.</p>
+      <p class="text-lg mt-4">I see technology as a tool to make life easier, not something to complicate it. That's why I focus on building user-friendly websites that are easy to navigate. I believe in working together and keeping communication open—if you feel the same, I'm here to help!</p>
+      <p class="text-lg mt-4">At heart, I'm a problem-solver. I enjoy finding ways to improve things and developing innovative web tools to tackle everyday challenges. Having worked with hundreds of businesses, I understand how to meet both technical needs and unique requirements.</p>
+      <p class="text-lg mt-4">For me, technology is all about connecting people. I'm dedicated to using my skills to build strong relationships and create vibrant communities in our digital world.</p>
+      <!-- Bookshelf -->
+      <div class="mt-6">
+        <h3 class="text-2xl font-semibold mb-2">📚 My Favorite Reads</h3>
+        <div class="space-y-2">
+          <div class="flex items-center">
+            <span class="mr-2">🧠</span>
+            <span><em>How to Read a Book</em> by Mortimer J. Adler and Charles Van Doren</span>
+          </div>
+          <div class="flex items-center">
+            <span class="mr-2">✍️</span>
+            <span><em>Writing to Learn</em> by William Zinsser</span>
+          </div>
+          <div class="flex items-center">
+            <span class="mr-2">📓</span>
+            <span><em>Antinet Zettelkasten</em> by Scott Scheper</span>
+          </div>
+          <div class="flex items-center">
+            <span class="mr-2">💪</span>
+            <span><em>Somatics</em> by Thomas Hanna</span>
+          </div>
+          <div class="flex items-center">
+            <span class="mr-2">👶</span>
+            <span><em>The Montessori Baby</em> by Simone Davies and Junnifa Uzodike</span>
+          </div>
+          <div class="flex items-center">
+            <span class="mr-2">🌟</span>
+            <span><em>Ultimate Journey</em> by Robert A. Monroe</span>
+          </div>
+          <div class="flex items-center">
+            <span class="mr-2">🧘‍♂️</span>
+            <span><em>Zen Mind, Beginner's Mind</em> by Shunryu Suzuki</span>
+          </div>
+          <div class="flex items-center">
+            <span class="mr-2">⚔️</span>
+            <span><em>The Art of War</em> by Sun Tzu</span>
+          </div>
+          <div class="flex items-center">
+            <span class="mr-2">📓</span>
+            <span><em>The Bullet Journal Method</em> by Ryder Carroll</span>
+          </div>
+          <div class="flex items-center">
+            <span class="mr-2">🔧</span>
+            <span><em>The Pragmatic Programmer</em> by Andrew Hunt and David Thomas</span>
+          </div>
         </div>
-    </header>
+      </div>
+      <!-- Spotify Playlist -->
+    </section>
 
-    <!-- Background Image -->
-    <div class="fixed inset-0 bg-cover bg-center bg-no-repeat z-[-1] bg-fullscreen"></div>
+    <!-- Card: Blue -->
+    <section id="background" class="scroll-mt-20 bg-blue-100 bg-opacity-80 text-blue-900 border-l-8 border-r-8 border-blue-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-blue rounded-lg">
+      <div class="flex items-center justify-center relative">
+        <span class="absolute left-0 text-3xl">💼</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-center">Experience</h2>
+      </div>
+      <!-- Horizontal Bar -->
+      <div class="h-2 w-full bg-blue-600 my-4 rounded"></div>
+      <p class="text-lg">My journey in tech kicked off over ten years ago, fueled by endless curiosity and a love for solving problems. As a systems engineer, I wear many hats, juggling everything from designing tech infrastructures to collaborating with awesome teams.</p>
+      <p class="text-lg mt-4">I spend a lot of time scripting for our internal AI chatbot, which not only sharpens my coding skills but also keeps me on my toes with the latest in AI. PowerShell scripts? Yep, I've written plenty to make processes smoother and help our support teams work more efficiently.</p>
+      <p class="text-lg mt-4">I've had the chance to work across various industries—law firms, local governments, police departments, child protection services, manufacturing, and production. This diverse experience has taught me to stay adaptable and tackle everything from large-scale AWS infrastructures to specific technical hiccups.</p>
+      <p class="text-lg mt-4">But it's not just about the technical skills. Building strong relationships with clients and colleagues, and listening to their stories, is what I value most. I'm proud to be a reliable problem-solver who understands not just the technical needs but also the human side of every project.</p>
+    </section>
 
-    <!-- Main Content -->
-    <main class="max-w-6xl mx-auto px-4 relative z-10 pt-24">
-        <!-- About Section -->
-        <section id="about" class="scroll-mt-20 bg-white bg-opacity-80 text-black border-l-8 border-gray-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
-            <h2 class="text-3xl font-bold mb-4">👤 Who I Am</h2>
-            <p class="text-lg">I am a systems engineer fueled by a passion for technology and a dedication to helping individuals and small businesses thrive with minimal effort. My background as a certified IT security specialist and a versatile generalist enables me to create simple, effective, and accessible solutions for everyone, regardless of tech expertise.</p>
-            <p class="text-lg mt-4">I believe technology should be an enabler, not a barrier. I strive to build user-friendly websites that ensure easy navigation. Each project is driven by collaboration and open communication; I'm eager to help if you share this vision.</p>
-            <p class="text-lg mt-4">At my core, I am a problem-solver, leveraging my skills to identify opportunities for improvement and create innovative web tools for everyday challenges. My experiences working with hundreds of businesses ensure I meet both technical requirements and unique needs.</p>
-            <p class="text-lg mt-4">Ultimately, technology can connect us, and I'm committed to using my skills to foster relationships and build thriving communities in our digital world.</p>
-        </section>
+    <!-- Card: Red -->
+    <section id="why" class="scroll-mt-20 bg-red-100 bg-opacity-80 text-red-900 border-l-8 border-r-8 border-red-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-red rounded-lg">
+      <div class="flex items-center justify-center relative">
+        <span class="absolute left-0 text-3xl">🌐</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-center">Purpose</h2>
+      </div>
+      <!-- Horizontal Bar -->
+      <div class="h-2 w-full bg-red-600 my-4 rounded"></div>
+      <p class="text-lg">I created this page to share my passion for technology and to make it easier for individuals and small businesses to access the tools they need. It’s more than just a portfolio—it's a space where I can connect, share ideas, and collaborate on projects that matter.</p>
+      <p class="text-lg mt-4">I believe technology should be straightforward and accessible to everyone. Whether it's building a user-friendly website, automating tasks, or working on community-driven projects, my goal is to bridge the gap and make tech work for you.</p>
+      <p class="text-lg mt-4">Each project featured here reflects my commitment to simplicity, ease of use, and teamwork. This page is a reflection of my dedication to using technology to make a positive and lasting impact, helping to build stronger, more connected communities.</p>
+    </section>
 
-        <!-- Background Section -->
-        <section id="background" class="scroll-mt-20 bg-blue-100 bg-opacity-80 text-blue-900 border-l-8 border-blue-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
-            <h2 class="text-3xl font-bold mb-4">💼 My Background and Experience</h2>
-            <p class="text-lg">My tech journey began over a decade ago, driven by curiosity and problem-solving. As a systems engineer, I wear many hats, designing technology-based infrastructure that balances technical skills, strategic foresight, and teamwork.</p>
-            <p class="text-lg mt-4">I script packages for our internal AI chatbot, honing my coding skills and keeping up with the evolving landscape of AI. Writing PowerShell scripts has streamlined processes, enhancing efficiency for support teams.</p>
-            <p class="text-lg mt-4">My multidisciplinary background spans law firms, local governments, police departments, child protection services, manufacturing, and production. This experience fosters a growth mindset, helping me adapt to unique challenges from high-level infrastructures in AWS to localized technical issues.</p>
-            <p class="text-lg mt-4">My background extends beyond skills—it's about relationships with clients and colleagues and the stories they share. I pride myself on being a steadfast problem-solver, understanding technical requirements and the human element involved.</p>
-        </section>
+    <!-- Card: Yellow -->
+    <section id="projects" class="scroll-mt-20 bg-yellow-100 bg-opacity-80 text-yellow-900 border-l-8 border-r-8 border-yellow-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-yellow rounded-lg">
+      <div class="flex items-center justify-center relative">
+        <span class="absolute left-0 text-3xl">📂</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-center">Projects</h2>
+      </div>
+      <!-- Horizontal Bar -->
+      <div class="h-2 w-full bg-yellow-600 my-4 rounded"></div>
+      <p class="text-lg"><strong>Professional Projects:</strong></p>
+      <ul class="list-disc pl-6 text-lg mt-2">
+        <li><strong>Cloud Migrations:</strong> Transitioning businesses to cloud environments for improved accessibility and efficiency.</li>
+        <li><strong>Network Migrations:</strong> Upgrading and transferring network infrastructures to enhance performance and security.</li>
+        <li><strong>Infrastructure Migrations:</strong> Redesigning and moving critical systems to new platforms for better reliability.</li>
+        <li><strong>Wireless Implementation/Upgrades:</strong> Installing and upgrading wireless technologies for seamless connectivity.</li>
+        <li><strong>Hypervisor Migrations:</strong> Transitioning virtual environments to new hypervisor platforms for optimized resource management.</li>
+      </ul>
+      <p class="text-lg mt-4"><strong>Personal Projects:</strong></p>
+      <ul class="list-disc pl-6 text-lg mt-2">
+        <li><strong>Docker (Raspberry Pi):</strong> Setting up a lightweight server environment for experimenting with containerized applications.</li>
+        <li><strong>Tinkering (PiBoy Advance):</strong> Developing a handheld gaming device utilizing Raspberry Pi for retro gaming enthusiasts.</li>
+      </ul>
+      <p class="text-lg mt-4"><strong>Online Profiles:</strong></p>
+      <ul class="list-disc pl-6 text-lg mt-2">
+        <li><strong>GitHub:</strong> <img src="https://simpleicons.org/icons/github.svg" alt="GitHub Icon" class="inline w-4 h-4 max-w-full"> <a href="https://github.com/garbledhamster" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
+        <li><strong>CodePen:</strong> <img src="https://simpleicons.org/icons/codepen.svg" alt="CodePen Icon" class="inline w-4 h-4 max-w-full"> <a href="https://codepen.io/GarbledHamster" class="text-blue-500 hover:text-blue-700">GarbledHamster</a></li>
+        <li><strong>LinkedIn:</strong> <img src="https://simpleicons.org/icons/linkedin.svg" alt="LinkedIn Icon" class="inline w-4 h-4 max-w-full"> <a href="https://www.linkedin.com/in/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
+        <li><strong>Instagram:</strong> <img src="https://simpleicons.org/icons/instagram.svg" alt="Instagram Icon" class="inline w-4 h-4 max-w-full"> <a href="https://www.instagram.com/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
+        <li><strong>My Notes:</strong> <img src="https://simpleicons.org/icons/markdown.svg" alt="Markdown Icon" class="inline w-4 h-4 max-w-full"> <a href="https://ourstuff.space" class="text-blue-500 hover:text-blue-700">ourstuff.space</a></li>
+        <li><strong>Spotify:</strong> <img src="https://simpleicons.org/icons/spotify.svg" alt="Spotify Icon" class="inline w-4 h-4 max-w-full"> <a href="https://open.spotify.com/playlist/5wMEY9u0l0SAiJn8IfpEw6?si=6f920bad2f314a6a" class="text-blue-500 hover:text-blue-700">My Playlist</a></li>
+      </ul>
+    </section>
 
-        <!-- Why I Made This Page Section -->
-        <section id="why" class="scroll-mt-20 bg-red-100 bg-opacity-80 text-red-900 border-l-8 border-red-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
-            <h2 class="text-3xl font-bold mb-4">🌐 Why I Made This Page</h2>
-            <p class="text-lg">This page is a cornerstone of my mission to democratize access to technology and empower individuals and small businesses through practical, innovative solutions. It's not just a showcase of my work; it’s a platform for creating connections, sharing knowledge, and driving meaningful change.</p>
-            <p class="text-lg mt-4">My vision is simple: technology should be a tool that uplifts people, not a barrier that limits them. By blending my technical expertise with a passion for fostering growth, I aim to bridge gaps and amplify voices—be it through user-friendly websites, efficient automation, or community-driven projects.</p>
-            <p class="text-lg mt-4">Every project I take on reflects my core values of simplicity, accessibility, and collaboration. This page is a testament to my commitment to using technology as a means to create lasting impact and foster thriving, connected communities.</p>
-        </section>
+    <!-- Card: Pink -->
+    <section id="tools" class="scroll-mt-20 bg-pink-100 bg-opacity-80 text-pink-900 border-l-8 border-r-8 border-pink-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-pink rounded-lg">
+      <div class="flex items-center justify-center relative">
+        <span class="absolute left-0 text-3xl">🛠</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-center">Tools</h2>
+      </div>
+      <!-- Horizontal Bar -->
+      <div class="h-2 w-full bg-pink-600 my-4 rounded"></div>
+      <ul class="list-disc pl-6 text-lg">
+        <li>ChatGPT (Primary Developer and Assistant)</li>
+        <li>GitHub Pages (Production Hosting)</li>
+        <li>CodePen (Live Development Environment)</li>
+        <li>Cloudflare (DNS, Security)</li>
+        <li>MXroute (Email Hosting)</li>
+        <li>NameCheap (Domain Registrar)</li>
+      </ul>
+    </section>
 
-        <!-- Projects Section -->
-        <section id="projects" class="scroll-mt-20 bg-yellow-100 bg-opacity-80 text-yellow-900 border-l-8 border-yellow-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
-            <h2 class="text-3xl font-bold mb-4">📂 Projects I've Worked On</h2>
-            <p class="text-lg"><strong>Professional Projects:</strong></p>
-            <ul class="list-disc pl-6 text-lg mt-2">
-                <li><strong>Cloud Migrations:</strong> Transitioning businesses to cloud environments for improved accessibility and efficiency.</li>
-                <li><strong>Network Migrations:</strong> Upgrading and transferring network infrastructures to enhance performance and security.</li>
-                <li><strong>Infrastructure Migrations:</strong> Redesigning and moving critical systems to new platforms for better reliability.</li>
-                <li><strong>Wireless Implementation/Upgrades:</strong> Installing and upgrading wireless technologies for seamless connectivity.</li>
-                <li><strong>Hypervisor Migrations:</strong> Transitioning virtual environments to new hypervisor platforms for optimized resource management.</li>
-            </ul>
-            <p class="text-lg mt-4"><strong>Personal Projects:</strong></p>
-            <ul class="list-disc pl-6 text-lg mt-2">
-                <li><strong>Docker (Raspberry Pi):</strong> Setting up a lightweight server environment for experimenting with containerized applications.</li>
-                <li><strong>Tinkering (PiBoy Advance):</strong> Developing a handheld gaming device utilizing Raspberry Pi for retro gaming enthusiasts.</li>
-            </ul>
-            <p class="text-lg mt-4"><strong>Online Profiles:</strong></p>
-            <ul class="list-disc pl-6 text-lg mt-2">
-                <li><strong>GitHub:</strong> <img src="https://simpleicons.org/icons/github.svg" alt="GitHub Icon" class="inline w-4 h-4 max-w-full"> <a href="https://github.com/garbledhamster" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
-                <li><strong>CodePen:</strong> <img src="https://simpleicons.org/icons/codepen.svg" alt="CodePen Icon" class="inline w-4 h-4 max-w-full"> <a href="https://codepen.io/GarbledHamster" class="text-blue-500 hover:text-blue-700">GarbledHamster</a></li>
-                <li><strong>LinkedIn:</strong> <img src="https://simpleicons.org/icons/linkedin.svg" alt="LinkedIn Icon" class="inline w-4 h-4 max-w-full"> <a href="https://www.linkedin.com/in/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
-                <li><strong>Instagram:</strong> <img src="https://simpleicons.org/icons/instagram.svg" alt="Instagram Icon" class="inline w-4 h-4 max-w-full"> <a href="https://www.instagram.com/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
-                <li><strong>My Notes:</strong> <img src="https://simpleicons.org/icons/markdown.svg" alt="Markdown Icon" class="inline w-4 h-4 max-w-full"> <a href="https://ourstuff.space" class="text-blue-500 hover:text-blue-700">ourstuff.space</a></li>
-            </ul>
-        </section>
+    <!-- Card: Green -->
+    <section id="portfolio" class="scroll-mt-20 bg-green-100 bg-opacity-80 text-green-900 border-l-8 border-r-8 border-green-600 pl-6 pr-6 py-6 mb-8 mx-auto max-w-6xl animate-fade-in transition-opacity duration-600 glow-green rounded-lg">
+      <div class="flex items-center justify-center relative">
+        <span class="absolute left-0 text-3xl">📂</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-center">Portfolio</h2>
+      </div>
+      <!-- Horizontal Bar -->
+      <div class="h-2 w-full bg-green-600 my-4 rounded"></div>
+      <div class="flex items-center justify-center">
+        <div class="w-full max-w-screen-lg relative">
+          <button id="prev-btn" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 focus:outline-none">
+            &larr;
+          </button>
+          <iframe id="project-frame" src="https://naefurgerson.me" class="w-full h-[90vh]"></iframe>
+          <button id="next-btn" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 focus:outline-none">
+            &rarr;
+          </button>
+        </div>
+      </div>
+    </section>
 
-        <!-- Bookshelf Section -->
-        <section id="bookshelf" class="scroll-mt-20 bg-pink-100 bg-opacity-80 text-pink-900 border-l-8 border-pink-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
-            <h2 class="text-3xl font-bold mb-4">📚 Books on My Bookshelf</h2>
-            <p class="text-lg">I think sharing what books impacted you the most is important to show people how you've been shaped up to this point and time.</p>
-            <ul class="list-disc pl-6 text-lg mt-4">
-                <li><strong>Mind</strong>
-                    <ul class="list-disc pl-6 mt-2">
-                        <li><em>How to Read a Book</em> by Mortimer J. Adler and Charles Van Doren</li>
-                        <li><em>Writing to Learn</em> by William Zinsser</li>
-                        <li><em>Antinet Zettelkasten</em> by Scott Scheper</li>
-                    </ul>
-                </li>
-                <li class="mt-4"><strong>Body</strong>
-                    <ul class="list-disc pl-6 mt-2">
-                        <li><em>Somatics</em> by Thomas Hanna</li>
-                        <li><em>The Montessori Baby</em> by Simone Davies and Junnifa Uzodike</li>
-                    </ul>
-                </li>
-                <li class="mt-4"><strong>Spirit</strong>
-                    <ul class="list-disc pl-6 mt-2">
-                        <li><em>Ultimate Journey</em> by Robert A. Monroe</li>
-                        <li><em>My Big TOE (Theory of Everything)</em> by Thomas Campbell</li>
-                        <li><em>Zen Mind, Beginner's Mind</em> by Shunryu Suzuki</li>
-                        <li><em>The Art of War</em> by Sun Tzu</li>
-                    </ul>
-                </li>
-                <li class="mt-4"><strong>Life</strong>
-                    <ul class="list-disc pl-6 mt-2">
-                        <li><em>The Bullet Journal Method</em> by Ryder Carroll</li>
-                        <li><em>The New Codependency</em> by Melody Beattie</li>
-                        <li><em>The Pragmatic Programmer</em> by Andrew Hunt and David Thomas</li>
-                        <li><em>The Lean Startup</em> by Eric Ries</li>
-                        <li><em>Cisco Certified Network Professional</em> materials</li>
-                        <li><em>Security+ CompTIA</em> materials</li>
-                        <li><em>Network+ CompTIA</em> materials</li>
-                    </ul>
-                </li>
-            </ul>
-        </section>
+    <!-- Card: Purple -->
+    <section id="support" class="scroll-mt-20 bg-purple-100 bg-opacity-80 text-purple-900 border-l-8 border-r-8 border-purple-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-purple rounded-lg">
+      <div class="flex items-center justify-center relative">
+        <span class="absolute left-0 text-3xl">🤝</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-center">Support</h2>
+      </div>
+      <!-- Horizontal Bar -->
+      <div class="h-2 w-full bg-purple-600 my-4 rounded"></div>
+      <p class="text-lg">Your support is vital for maintaining and improving my services. Contributions through my <a href="https://www.buymeacoffee.com/garbledhamster" class="text-blue-500 hover:text-blue-700 font-bold">Buy Me a Coffee</a> page directly cover essential <strong>hosting fees</strong>, allowing me to sustain and enhance the websites I manage.</p>
+      <p class="text-lg mt-4">With your generous support, I can:</p>
+      <ul class="list-disc pl-6 text-lg mt-2">
+        <li><strong>Domain Fees:</strong> Ensure reliable and robust domain names for optimal web presence.</li>
+        <li><strong>GitHub Pages Fees:</strong> Cover the costs associated with using GitHub Pages for production hosting.</li>
+        <li><strong>Email Fees:</strong> Provide email hosting for seamless communication with every domain.</li>
+        <li><strong>Email Security Fees:</strong> Implement and maintain security measures to protect email communications.</li>
+        <li><strong>Cloudflare:</strong> Utilize services for DNS management and enhanced security.</li>
+        <li><strong>Time/Materials:</strong> Dedicate resources to continue supporting the community with updates and new projects.</li>
+        <li><strong>Family Support:</strong> Your support helps my wife and me achieve financial security as our community grows.</li>
+      </ul>
+      <p class="text-lg mt-4">Every contribution matters, and reinforces my commitment to creating a more <strong>connected</strong> and supportive community. Thank you for being a crucial part of this journey!</p>
+    </section>
 
-        <!-- Tools Section -->
-        <section id="tools" class="scroll-mt-20 bg-green-100 bg-opacity-80 text-green-900 border-l-8 border-green-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
-            <h2 class="text-3xl font-bold mb-4">🛠 Tools I Use For Free Websites</h2>
-            <ul class="list-disc pl-6 text-lg">
-                <li>ChatGPT (Primary Developer and Assistant)</li>
-                <li>GitHub Pages (Production Hosting)</li>
-                <li>CodePen (Live Development Environment)</li>
-                <li>Cloudflare (DNS, Security)</li>
-                <li>MXroute (Email Hosting)</li>
-                <li>NameCheap (Domain Registrar)</li>
-            </ul>
-        </section>
+    <!-- Card: White Bottom -->
+    <section id="contact" class="scroll-mt-20 bg-white bg-opacity-100 text-black border-l-8 border-r-8 border-gray-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-white rounded-lg">
+      <div class="flex items-center justify-center relative">
+        <span class="absolute left-0 text-3xl">📩</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-center">Contact Me</h2>
+      </div>
+      <!-- Horizontal Bar -->
+      <div class="h-2 w-full bg-gray-600 my-4 rounded"></div>
+      <form id="contact-form" action="https://formspree.io/f/xovqpvdv" method="POST" class="space-y-4">
+        <div>
+          <label for="name" class="block text-lg font-semibold">Name</label>
+          <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-gray-400 rounded">
+        </div>
+        <div>
+          <label for="email" class="block text-lg font-semibold">Email</label>
+          <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-gray-400 rounded">
+        </div>
+        <div>
+          <label for="message" class="block text-lg font-semibold">Message</label>
+          <textarea id="message" name="message" rows="4" required class="w-full px-4 py-2 border border-gray-400 rounded"></textarea>
+        </div>
+        <!-- Success Message -->
+        <div id="form-success" class="text-green-600 font-semibold">
+          Your message has been sent successfully!
+        </div>
+        <button type="submit" class="px-6 py-2 bg-green-600 text-white font-bold rounded hover:bg-green-700">Send Message</button>
+      </form>
+    </section>
+  </main>
 
-        <!-- Support & Contact Section -->
-        <section id="support-contact" class="scroll-mt-20 bg-white bg-opacity-80 text-black border-l-8 border-gray-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
-            <h2 class="text-3xl font-bold mb-4">🤝 Support & Contact</h2>
-            <p class="text-lg">Your support is vital for maintaining and improving my services. Contributions through my <a href="https://www.buymeacoffee.com/garbledhamster" class="text-blue-500 hover:text-blue-700 font-bold">Buy Me a Coffee</a> page directly cover essential <strong>hosting fees</strong>, allowing me to sustain and enhance the websites I manage.</p>
-            <p class="text-lg mt-4">With your generous support, I can:</p>
-            <ul class="list-disc pl-6 text-lg mt-2">
-                <li><strong>Domain Fees:</strong> Ensure reliable and robust domain names for optimal web presence.</li>
-                <li><strong>GitHub Pages Fees:</strong> Cover the costs associated with using GitHub Pages for production hosting.</li>
-                <li><strong>Email Fees:</strong> Provide email hosting for seamless communication with every domain.</li>
-                <li><strong>Email Security Fees:</strong> Implement and maintain security measures to protect email communications.</li>
-                <li><strong>Cloudflare:</strong> Utilize services for DNS management and enhanced security.</li>
-                <li><strong>Time/Materials:</strong> Dedicate resources to continue supporting the community with updates and new projects.</li>
-                <li><strong>Family Support:</strong> Your support helps my wife and me achieve financial security as our community grows.</li>
-            </ul>
-            <p class="text-lg mt-4">Every contribution matters, and reinforces my commitment to creating a more <strong>connected</strong> and supportive community. Thank you for being a crucial part of this journey!</p>
+  <!-- Footer -->
+  <footer class="bg-black text-white py-6 text-center">
+    <p class="text-sm">&copy; 2024 Joe Rice. All Rights Reserved.</p>
+    <ul class="flex flex-wrap justify-center space-x-4 mt-4 text-sm">
+      <li><a href="#about" class="hover:text-gray-400">About</a></li>
+      <li><a href="#background" class="hover:text-gray-400">Experience</a></li>
+      <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
+      <li><a href="#portfolio" class="hover:text-gray-400">Portfolio</a></li>
+      <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
+      <li><a href="#support" class="hover:text-gray-400">Support</a></li>
+      <li><a href="#contact" class="hover:text-gray-400">Contact</a></li>
+    </ul>
+  </footer>
 
-            <!-- Contact Me Form -->
-            <h2 class="text-3xl font-bold mt-8 mb-4">📩 Contact Me</h2>
-            <form id="contact-form" action="https://formspree.io/f/xovqpvdv" method="POST" class="space-y-4">
-                <div>
-                    <label for="name" class="block text-lg font-semibold">Name</label>
-                    <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-gray-400 rounded">
-                </div>
-                <div>
-                    <label for="email" class="block text-lg font-semibold">Email</label>
-                    <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-gray-400 rounded">
-                </div>
-                <div>
-                    <label for="message" class="block text-lg font-semibold">Message</label>
-                    <textarea id="message" name="message" rows="4" required class="w-full px-4 py-2 border border-gray-400 rounded"></textarea>
-                </div>
-                <!-- Success Message -->
-                <div id="form-success" class="text-green-600 font-semibold">
-                    Your message has been sent successfully!
-                </div>
-                <button type="submit" class="px-6 py-2 bg-green-600 text-white font-bold rounded hover:bg-green-700">Send Message</button>
-            </form>
-        </section>
-    </main>
+  <!-- Scripts -->
+  <script>
+    // Mobile Menu Toggle
+    document.getElementById('menu-button').addEventListener('click', function () {
+      const mobileMenu = document.getElementById('mobile-menu');
+      mobileMenu.classList.toggle('hidden');
+    });
 
-    <!-- Footer -->
-    <footer class="bg-black text-white py-6 text-center">
-        <p class="text-sm">&copy; 2024 Joe Rice. All Rights Reserved.</p>
-        <ul class="flex justify-center space-x-6 mt-4">
-            <li><a href="#about" class="hover:text-gray-400">About</a></li>
-            <li><a href="#background" class="hover:text-gray-400">Background</a></li>
-            <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
-            <li><a href="#bookshelf" class="hover:text-gray-400">Bookshelf</a></li>
-            <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
-            <li><a href="#support-contact" class="hover:text-gray-400">Support & Contact</a></li>
-        </ul>
-    </footer>
-
-    <!-- Scripts -->
-    <script>
-        // Mobile Menu Toggle
-        document.getElementById('menu-button').addEventListener('click', function () {
-            const mobileMenu = document.getElementById('mobile-menu');
-            mobileMenu.classList.toggle('hidden');
+    // Handle Form Submission
+    document.getElementById('contact-form').addEventListener('submit', async function (event) {
+      event.preventDefault();
+      const form = event.target;
+      const formData = new FormData(form);
+      const data = {
+        name: formData.get('name'),
+        email: formData.get('email'),
+        message: formData.get('message')
+      };
+      try {
+        const response = await fetch(form.action, {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json'
+          },
+          body: formData
         });
+        if (response.ok) {
+          document.getElementById('form-success').style.display = 'block';
+          form.reset();
+          setTimeout(() => {
+            document.getElementById('form-success').style.display = 'none';
+          }, 5000);
+        } else {
+          alert('There was an error sending your message. Please try again.');
+        }
+      } catch (error) {
+        console.error('Error:', error);
+        alert('There was an error sending your message. Please try again.');
+      }
+    });
 
-        // Fade-in Animation on Scroll
-        document.addEventListener('DOMContentLoaded', function () {
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
-                });
-            }, { threshold: 0.1 });
+    // DOMContentLoaded Event Listener
+    document.addEventListener('DOMContentLoaded', function () {
+      // Fade-in Animation on Scroll
+      const observer = new IntersectionObserver((entries) => {
+        entries.forEach(entry => {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, {
+        threshold: 0.1
+      });
+      const cards = document.querySelectorAll('.animate-fade-in');
+      cards.forEach(card => {
+        observer.observe(card);
+      });
 
-            const cards = document.querySelectorAll('.animate-fade-in');
-            cards.forEach(card => {
-                observer.observe(card);
+      // Portfolio Gallery Functionality
+      const projectLinks = [
+        "https://naefurgerson.me",
+        "https://brutaltrimmer.xyz",
+        "https://garbled.link",
+        "https://spinners.pizza",
+        "https://jdhogfarm.com"
+      ];
+      let currentProjectIndex = 0;
+      const projectFrame = document.getElementById('project-frame');
+      const prevBtn = document.getElementById('prev-btn');
+      const nextBtn = document.getElementById('next-btn');
+
+      function updateProjectFrame() {
+        projectFrame.src = projectLinks[currentProjectIndex];
+      }
+      prevBtn.addEventListener('click', function () {
+        currentProjectIndex = (currentProjectIndex - 1 + projectLinks.length) % projectLinks.length;
+        updateProjectFrame();
+      });
+      nextBtn.addEventListener('click', function () {
+        currentProjectIndex = (currentProjectIndex + 1) % projectLinks.length;
+        updateProjectFrame();
+      });
+
+      // Adjust Scroll Behavior for Mobile Menu Links
+      const mobileMenuLinks = document.querySelectorAll('#mobile-menu a');
+      mobileMenuLinks.forEach(link => {
+        link.addEventListener('click', function (event) {
+          event.preventDefault();
+
+          // Get the target element ID from the href attribute
+          const targetId = this.getAttribute('href').substring(1);
+          const targetElement = document.getElementById(targetId);
+
+          if (targetElement) {
+            // Calculate the total height of the header (including the mobile menu)
+            const header = document.querySelector('header');
+            const totalOffset = header.offsetHeight;
+
+            // Calculate the position to scroll to, offset by the total height
+            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - totalOffset;
+
+            // Scroll to the target position smoothly
+            window.scrollTo({
+              top: targetPosition,
+              behavior: 'smooth'
             });
+          }
         });
-
-        // Handle Form Submission
-        document.getElementById('contact-form').addEventListener('submit', async function (event) {
-            event.preventDefault();
-
-            const form = event.target;
-            const formData = new FormData(form);
-            const data = {
-                name: formData.get('name'),
-                email: formData.get('email'),
-                message: formData.get('message')
-            };
-
-            try {
-                const response = await fetch(form.action, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify(data)
-                });
-
-                if (response.ok) {
-                    document.getElementById('form-success').style.display = 'block';
-                    form.reset();
-                    setTimeout(() => {
-                        document.getElementById('form-success').style.display = 'none';
-                    }, 5000);
-                } else {
-                    alert('There was an error sending your message. Please try again.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('There was an error sending your message. Please try again.');
-            }
-        });
-    </script>
+      });
+    });
+  </script>
 </body>
 
 </html>
+
