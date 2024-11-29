@@ -2,14 +2,17 @@
 <html lang="en">
 
 <head>
+    <!-- Meta Tags and Title -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
     <title>Joe Rice</title>
     <link rel="icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true">
+
+    <!-- Open Graph Meta Tags -->
     <meta property="og:title" content="Joe Rice - Systems Engineer and Technologist">
     <meta property="og:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
     <meta property="og:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
-    <meta property="og:url" content="https:/joerice.me">
+    <meta property="og:url" content="https://joerice.me">
     <meta property="og:type" content="website">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="Joe Rice - Systems Engineer and Technologist">
@@ -23,41 +26,110 @@
     <meta name="og:image:height" content="630">
     <link rel="icon" type="image/png" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true" sizes="192x192">
     <meta name="description" content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology.">
-    <meta name="keywords" content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions">
+    <meta name="keywords" content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi">
     <meta name="author" content="Joe Rice">
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
+
+    <!-- Custom Styles -->
     <style>
+        /* Global Box Sizing */
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
         .bg-fullscreen {
             background-image: url('https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true');
         }
+
         .animate-fade-in {
             opacity: 0;
             transform: translateX(50px);
             transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
         }
+
         .visible {
             opacity: 1;
             transform: translateX(0);
+        }
+
+        /* Improved color contrast */
+        .bg-yellow-100 {
+            background-color: #fdf6b2;
+        }
+
+        .text-yellow-900 {
+            color: #705a00;
+        }
+
+        /* Enable smooth scrolling */
+        html {
+            scroll-behavior: smooth;
         }
     </style>
 </head>
 
 <body class="font-sans bg-black text-white overflow-x-hidden relative min-h-screen" style="font-family: 'Montserrat', sans-serif;">
-    <div class="fixed inset-0 bg-cover bg-center bg-no-repeat z-[-1] bg-fullscreen"></div>
-    <header class="text-center py-12 relative z-10">
-        <h1 class="text-5xl font-bold">Joe Rice</h1>
-        <p class="text-xl mt-4 max-w-2xl mx-auto">Welcome to my professional and personal portfolio, tracking my accomplishments and sharing what I bring to the world.</p>
+    <!-- Sticky Navigation Bar -->
+    <header class="fixed top-0 left-0 w-full bg-black bg-opacity-80 text-white shadow-md z-20">
+        <nav class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold"><a href="#">Joe Rice</a></h1>
+            </div>
+            <ul class="hidden md:flex space-x-6 text-lg">
+                <li><a href="#about" class="hover:text-gray-400">About</a></li>
+                <li><a href="#background" class="hover:text-gray-400">Background</a></li>
+                <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
+                <li><a href="#bookshelf" class="hover:text-gray-400">Bookshelf</a></li>
+                <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
+                <li><a href="#support" class="hover:text-gray-400">Support</a></li>
+                <li><a href="#contact" class="hover:text-gray-400">Contact</a></li>
+            </ul>
+            <!-- Mobile Menu Button -->
+            <div class="md:hidden">
+                <button id="menu-button" class="text-gray-400 hover:text-white focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M4 6h16M4 12h16M4 18h16" />
+                    </svg>
+                </button>
+            </div>
+        </nav>
+        <!-- Mobile Menu -->
+        <div id="mobile-menu" class="hidden md:hidden bg-black bg-opacity-80">
+            <ul class="flex flex-col space-y-4 px-4 py-4">
+                <li><a href="#about" class="hover:text-gray-400">About</a></li>
+                <li><a href="#background" class="hover:text-gray-400">Background</a></li>
+                <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
+                <li><a href="#bookshelf" class="hover:text-gray-400">Bookshelf</a></li>
+                <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
+                <li><a href="#support" class="hover:text-gray-400">Support</a></li>
+                <li><a href="#contact" class="hover:text-gray-400">Contact</a></li>
+            </ul>
+        </div>
     </header>
-    <main class="max-w-4xl mx-auto px-4 relative z-10">
-        <section class="bg-white bg-opacity-80 text-black border-l-8 border-gray-600 p-6 mb-8 animate-fade-in transition-opacity duration-600" data-glow="black">
+
+    <!-- Background Image -->
+    <div class="fixed inset-0 bg-cover bg-center bg-no-repeat z-[-1] bg-fullscreen"></div>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 relative z-10 pt-24">
+        <!-- About Section -->
+        <section id="about" class="scroll-mt-20 bg-white bg-opacity-80 text-black border-l-8 border-gray-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
             <h2 class="text-3xl font-bold mb-4">👤 Who I Am</h2>
             <p class="text-lg">I am a systems engineer fueled by a passion for technology and a dedication to helping individuals and small businesses thrive with minimal effort. My background as a certified IT security specialist and a versatile generalist enables me to create simple, effective, and accessible solutions for everyone, regardless of tech expertise.</p>
             <p class="text-lg mt-4">I believe technology should be an enabler, not a barrier. I strive to build user-friendly websites that ensure easy navigation. Each project is driven by collaboration and open communication; I'm eager to help if you share this vision.</p>
             <p class="text-lg mt-4">At my core, I am a problem-solver, leveraging my skills to identify opportunities for improvement and create innovative web tools for everyday challenges. My experiences working with hundreds of businesses ensure I meet both technical requirements and unique needs.</p>
             <p class="text-lg mt-4">Ultimately, technology can connect us, and I'm committed to using my skills to foster relationships and build thriving communities in our digital world.</p>
         </section>
-        <section class="bg-blue-100 bg-opacity-80 text-blue-900 border-l-8 border-blue-600 p-6 mb-8 animate-fade-in transition-opacity duration-600" data-glow="blue">
+
+        <!-- Background Section -->
+        <section id="background" class="scroll-mt-20 bg-blue-100 bg-opacity-80 text-blue-900 border-l-8 border-blue-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
             <h2 class="text-3xl font-bold mb-4">💼 My Background and Experience</h2>
             <p class="text-lg">My tech journey began over a decade ago, driven by curiosity and problem-solving. As a systems engineer, I wear many hats, designing technology-based infrastructure that balances technical skills, strategic foresight, and teamwork.</p>
             <p class="text-lg mt-4">I script packages for our internal AI chatbot, honing my coding skills and keeping up with the evolving landscape of AI. Writing PowerShell scripts has streamlined processes, enhancing efficiency for support teams.</p>
@@ -65,14 +137,16 @@
             <p class="text-lg mt-4">My background extends beyond skills—it's about relationships with clients and colleagues and the stories they share. I pride myself on being a steadfast problem-solver, understanding technical requirements and the human element involved.</p>
         </section>
 
-        <section class="bg-red-100 bg-opacity-80 text-red-900 border-l-8 border-red-600 p-6 mb-8 animate-fade-in transition-opacity duration-600" data-glow="red">
+        <!-- Why I Made This Page Section -->
+        <section id="why" class="scroll-mt-20 bg-red-100 bg-opacity-80 text-red-900 border-l-8 border-red-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
             <h2 class="text-3xl font-bold mb-4">🌐 Why I Made This Page</h2>
             <p class="text-lg">This page is a cornerstone of my mission to democratize access to technology and empower individuals and small businesses through practical, innovative solutions. It's not just a showcase of my work; it’s a platform for creating connections, sharing knowledge, and driving meaningful change.</p>
             <p class="text-lg mt-4">My vision is simple: technology should be a tool that uplifts people, not a barrier that limits them. By blending my technical expertise with a passion for fostering growth, I aim to bridge gaps and amplify voices—be it through user-friendly websites, efficient automation, or community-driven projects.</p>
             <p class="text-lg mt-4">Every project I take on reflects my core values of simplicity, accessibility, and collaboration. This page is a testament to my commitment to using technology as a means to create lasting impact and foster thriving, connected communities.</p>
         </section>
 
-        <section class="bg-yellow-100 bg-opacity-80 text-yellow-900 border-l-8 border-yellow-600 p-6 mb-8 animate-fade-in transition-opacity duration-600" data-glow="yellow">
+        <!-- Projects Section -->
+        <section id="projects" class="scroll-mt-20 bg-yellow-100 bg-opacity-80 text-yellow-900 border-l-8 border-yellow-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
             <h2 class="text-3xl font-bold mb-4">📂 Projects I've Worked On</h2>
             <p class="text-lg"><strong>Professional Projects:</strong></p>
             <ul class="list-disc pl-6 text-lg mt-2">
@@ -89,14 +163,16 @@
             </ul>
             <p class="text-lg mt-4"><strong>Online Profiles:</strong></p>
             <ul class="list-disc pl-6 text-lg mt-2">
-                <li><strong>GitHub:</strong> <img src="https://simpleicons.org/icons/github.svg" alt="GitHub Icon" class="inline w-4 h-4"> <a href="https://github.com/garbledhamster" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
-                <li><strong>CodePen:</strong> <img src="https://simpleicons.org/icons/codepen.svg" alt="CodePen Icon" class="inline w-4 h-4"> <a href="https://codepen.io/GarbledHamster" class="text-blue-500 hover:text-blue-700">GarbledHamster</a></li>
-                <li><strong>LinkedIn:</strong> <img src="https://simpleicons.org/icons/linkedin.svg" alt="LinkedIn Icon" class="inline w-4 h-4"> <a href="https://www.linkedin.com/in/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
-                <li><strong>Instagram:</strong> <img src="https://simpleicons.org/icons/instagram.svg" alt="Instagram Icon" class="inline w-4 h-4"> <a href="https://www.instagram.com/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
-                <li><strong>My Notes:</strong> <img class="inline w-4 h-4"> <a href="https://ourstuff.space" class="text-blue-500 hover:text-blue-700">ourstuff.space</a></li>
+                <li><strong>GitHub:</strong> <img src="https://simpleicons.org/icons/github.svg" alt="GitHub Icon" class="inline w-4 h-4 max-w-full"> <a href="https://github.com/garbledhamster" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
+                <li><strong>CodePen:</strong> <img src="https://simpleicons.org/icons/codepen.svg" alt="CodePen Icon" class="inline w-4 h-4 max-w-full"> <a href="https://codepen.io/GarbledHamster" class="text-blue-500 hover:text-blue-700">GarbledHamster</a></li>
+                <li><strong>LinkedIn:</strong> <img src="https://simpleicons.org/icons/linkedin.svg" alt="LinkedIn Icon" class="inline w-4 h-4 max-w-full"> <a href="https://www.linkedin.com/in/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
+                <li><strong>Instagram:</strong> <img src="https://simpleicons.org/icons/instagram.svg" alt="Instagram Icon" class="inline w-4 h-4 max-w-full"> <a href="https://www.instagram.com/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
+                <li><strong>My Notes:</strong> <img src="https://simpleicons.org/icons/markdown.svg" alt="Markdown Icon" class="inline w-4 h-4 max-w-full"> <a href="https://ourstuff.space" class="text-blue-500 hover:text-blue-700">ourstuff.space</a></li>
             </ul>
         </section>
-        <section class="bg-pink-100 bg-opacity-80 text-pink-900 border-l-8 border-pink-600 p-6 mb-8 animate-fade-in transition-opacity duration-600" data-glow="pink">
+
+        <!-- Bookshelf Section -->
+        <section id="bookshelf" class="scroll-mt-20 bg-pink-100 bg-opacity-80 text-pink-900 border-l-8 border-pink-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
             <h2 class="text-3xl font-bold mb-4">📚 Books on My Bookshelf</h2>
             <p class="text-lg">I think sharing what books impacted you the most is important to show people how you've been shaped up to this point and time.</p>
             <ul class="list-disc pl-6 text-lg mt-4">
@@ -134,7 +210,9 @@
                 </li>
             </ul>
         </section>
-        <section class="bg-green-100 bg-opacity-80 text-green-900 border-l-8 border-green-600 p-6 mb-8 animate-fade-in transition-opacity duration-600" data-glow="green">
+
+        <!-- Tools Section -->
+        <section id="tools" class="scroll-mt-20 bg-green-100 bg-opacity-80 text-green-900 border-l-8 border-green-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
             <h2 class="text-3xl font-bold mb-4">🛠 Tools I Use For Free Websites</h2>
             <ul class="list-disc pl-6 text-lg">
                 <li>ChatGPT (Primary Developer and Assistant)</li>
@@ -145,7 +223,9 @@
                 <li>NameCheap (Domain Registrar)</li>
             </ul>
         </section>
-        <section class="bg-purple-100 bg-opacity-80 text-purple-900 border-l-8 border-purple-600 p-6 mb-8 animate-fade-in transition-opacity duration-600" data-glow="purple">
+
+        <!-- Support Section -->
+        <section id="support" class="scroll-mt-20 bg-purple-100 bg-opacity-80 text-purple-900 border-l-8 border-purple-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
             <h2 class="text-3xl font-bold mb-4">🤝 How Your Support Helps</h2>
             <p class="text-lg">Your support is vital for maintaining and improving my services. Contributions through my <a href="https://www.buymeacoffee.com/garbledhamster" class="text-blue-500 hover:text-blue-700 font-bold">Buy Me a Coffee</a> page directly cover essential <strong>hosting fees</strong>, allowing me to sustain and enhance the websites I manage.</p>
             <p class="text-lg mt-4">With your generous support, I can:</p>
@@ -160,7 +240,9 @@
             </ul>
             <p class="text-lg mt-4">Every contribution matters, and reinforces my commitment to creating a more <strong>connected</strong> and supportive community. Thank you for being a crucial part of this journey!</p>
         </section>
-        <section class="bg-white bg-opacity-80 text-black border-l-8 border-gray-600 p-6 mb-8 animate-fade-in transition-opacity duration-600" data-glow="black">
+
+        <!-- Support Me Section -->
+        <section id="support-me" class="scroll-mt-20 bg-white bg-opacity-80 text-black border-l-8 border-gray-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
             <h2 class="text-3xl font-bold mb-4">☕ Support Me on Buy Me a Coffee! ✨</h2>
             <p class="text-lg">If you need a website, updates, or see something in my posts that you like, let me know by messaging me on <a href="https://www.buymeacoffee.com/garbledhamster" class="text-blue-500 hover:text-blue-700 font-bold">Buy Me a Coffee</a>. Your support helps maintain essential services and grow our community. Thank you for being part of something bigger!</p>
             <p class="text-lg mt-4"><strong>Recent Supporters:</strong></p>
@@ -170,9 +252,52 @@
             </ul>
             <p class="text-lg mt-4">Feel free to let me know if you need any more adjustments or additions!</p>
         </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="scroll-mt-20 bg-green-100 bg-opacity-80 text-green-900 border-l-8 border-green-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600">
+            <h2 class="text-3xl font-bold mb-4">📩 Contact Me</h2>
+            <form action="https://formspree.io/f/xovqpvdv" method="POST" class="space-y-4">
+                <div>
+                    <label for="name" class="block text-lg font-semibold">Name</label>
+                    <input type="text" id="name" name="name" required class="w-full px-4 py-2 border border-gray-400 rounded">
+                </div>
+                <div>
+                    <label for="email" class="block text-lg font-semibold">Email</label>
+                    <input type="email" id="email" name="email" required class="w-full px-4 py-2 border border-gray-400 rounded">
+                </div>
+                <div>
+                    <label for="message" class="block text-lg font-semibold">Message</label>
+                    <textarea id="message" name="message" rows="4" required class="w-full px-4 py-2 border border-gray-400 rounded"></textarea>
+                </div>
+                <button type="submit" class="px-6 py-2 bg-green-600 text-white font-bold rounded hover:bg-green-700">Send Message</button>
+            </form>
+        </section>
     </main>
+
+    <!-- Footer -->
+    <footer class="bg-black text-white py-6 text-center">
+        <p class="text-sm">&copy; 2024 Joe Rice. All Rights Reserved.</p>
+        <ul class="flex justify-center space-x-6 mt-4">
+            <li><a href="#about" class="hover:text-gray-400">About</a></li>
+            <li><a href="#background" class="hover:text-gray-400">Background</a></li>
+            <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
+            <li><a href="#bookshelf" class="hover:text-gray-400">Bookshelf</a></li>
+            <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
+            <li><a href="#support" class="hover:text-gray-400">Support</a></li>
+            <li><a href="#contact" class="hover:text-gray-400">Contact</a></li>
+        </ul>
+    </footer>
+
+    <!-- Scripts -->
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        // Mobile Menu Toggle
+        document.getElementById('menu-button').addEventListener('click', function () {
+            const mobileMenu = document.getElementById('mobile-menu');
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Fade-in Animation on Scroll
+        document.addEventListener('DOMContentLoaded', function () {
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
@@ -180,6 +305,7 @@
                     }
                 });
             }, { threshold: 0.1 });
+
             const cards = document.querySelectorAll('.animate-fade-in');
             cards.forEach(card => {
                 observer.observe(card);
