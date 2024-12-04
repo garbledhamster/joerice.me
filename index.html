@@ -60,31 +60,25 @@
     /* Ensure body and html take full height and prevent default scrolling */
     html,
     body {
-      margin: 0;
       height: 100%;
     }
 
-    body {
-      margin-top: 60px;
 
-    }
 
     /* Header Styles */
     header {
       height: 60px;
-      margin-bottom: 60px;
       /* Define explicit height for the header */
     }
 
     /* Mobile Menu Styles */
     #mobile-menu {
-      top: 60px;
       /* Position below the header */
     }
 
     /* Scroll Container Styles */
     #scroll-container {
-      height: 100%;
+      height: calc(100% - 60px);
       margin-top: 60px;
       overflow-y: scroll;
       scroll-behavior: smooth;
@@ -134,6 +128,7 @@
       overflow-x: hidden;
       position: relative;
       min-height: 100%;
+      overflow: hidden;
     }
 
     /* Background Image */
@@ -376,14 +371,14 @@
     </section>
 
     <!-- Projects Section -->
-    <section id="support" class="card bg-purple-100 bg-opacity-80 text-purple-900 border-l-8 border-r-8 border-purple-600 pl-10 pr-6 py-6 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-purple">
+    <section id="projects" class="card bg-yellow-100 bg-opacity-80 text-yellow-900 border-l-8 border-r-8 border-yellow-600 pl-10 pr-6 py-6 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-yellow">
 
       <div class="flex items-center justify-center relative">
         <span class="absolute left-0 text-3xl">📂</span>
         <h2 class="text-3xl md:text-4xl font-bold text-center">Projects</h2>
       </div>
       <!-- Horizontal Bar -->
-      <div class="h-2 w-full bg-purple-600 my-4 rounded"></div>
+      <div class="h-2 w-full bg-yellow-600 my-4 rounded"></div>
       <p class="text-lg"><strong>Professional Projects:</strong></p>
       <ul class="list-disc pl-6 text-lg mt-2">
         <li><strong>Cloud Migrations:</strong> Transitioning businesses to cloud environments for improved accessibility and efficiency.</li>
@@ -434,7 +429,6 @@
           </iframe>
         </div>
 
-      </div>
     </section>
 
     <!-- Support Section -->
