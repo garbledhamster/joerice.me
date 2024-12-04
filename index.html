@@ -309,7 +309,6 @@
         <li><strong>CodePen:</strong> <img src="https://simpleicons.org/icons/codepen.svg" alt="CodePen Icon" class="inline w-4 h-4 max-w-full"> <a href="https://codepen.io/GarbledHamster" class="text-blue-500 hover:text-blue-700">GarbledHamster</a></li>
         <li><strong>LinkedIn:</strong> <img src="https://simpleicons.org/icons/linkedin.svg" alt="LinkedIn Icon" class="inline w-4 h-4 max-w-full"> <a href="https://www.linkedin.com/in/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
         <li><strong>Instagram:</strong> <img src="https://simpleicons.org/icons/instagram.svg" alt="Instagram Icon" class="inline w-4 h-4 max-w-full"> <a href="https://www.instagram.com/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
-        <li><strong>My Notes:</strong> <img src="https://simpleicons.org/icons/markdown.svg" alt="Markdown Icon" class="inline w-4 h-4 max-w-full"> <a href="https://ourstuff.space" class="text-blue-500 hover:text-blue-700">ourstuff.space</a></li>
         <li><strong>Spotify:</strong> <img src="https://simpleicons.org/icons/spotify.svg" alt="Spotify Icon" class="inline w-4 h-4 max-w-full"> <a href="https://open.spotify.com/playlist/5wMEY9u0l0SAiJn8IfpEw6?si=6f920bad2f314a6a" class="text-blue-500 hover:text-blue-700">My Playlist</a></li>
       </ul>
     </section>
@@ -332,26 +331,19 @@
       </ul>
     </section>
 
-    <!-- Card: Green -->
-    <section id="portfolio" class="scroll-mt-20 bg-green-100 bg-opacity-80 text-green-900 border-l-8 border-r-8 border-green-600 pl-6 pr-6 py-6 mb-8 mx-auto max-w-6xl animate-fade-in transition-opacity duration-600 glow-green rounded-lg">
-      <div class="flex items-center justify-center relative">
-        <span class="absolute left-0 text-3xl">📂</span>
-        <h2 class="text-3xl md:text-4xl font-bold text-center">Portfolio</h2>
-      </div>
-      <!-- Horizontal Bar -->
-      <div class="h-2 w-full bg-green-600 my-4 rounded"></div>
-      <div class="flex items-center justify-center">
-        <div class="w-full max-w-screen-lg relative">
-          <button id="prev-btn" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 focus:outline-none">
-            &larr;
-          </button>
-          <iframe id="project-frame" src="https://naefurgerson.me" class="w-full h-[90vh]"></iframe>
-          <button id="next-btn" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 focus:outline-none">
-            &rarr;
-          </button>
-        </div>
-      </div>
-    </section>
+<!-- Card: Green -->
+<section id="portfolio" class="scroll-mt-20 bg-green-100 bg-opacity-80 text-green-900 border-l-8 border-r-8 border-green-600 pl-6 pr-6 py-6 mb-8 mx-auto max-w-6xl animate-fade-in transition-opacity duration-600 glow-green rounded-lg">
+  <div class="flex items-center justify-center relative">
+    <span class="absolute left-0 text-3xl">📂</span>
+    <h2 class="text-3xl md:text-4xl font-bold text-center">Portfolio</h2>
+  </div>
+  <!-- Horizontal Bar -->
+  <div class="h-2 w-full bg-green-600 my-4 rounded"></div>
+  <div class="text-center">
+    <p class="text-lg">Check out my portfolio by clicking the link below:</p>
+    <a href="https://garbled.link" target="_blank" class="inline-block px-6 py-2 mt-4 bg-green-600 text-white font-bold rounded hover:bg-green-700 transition">Visit My Portfolio</a>
+  </div>
+</section>
 
     <!-- Card: Purple -->
     <section id="support" class="scroll-mt-20 bg-purple-100 bg-opacity-80 text-purple-900 border-l-8 border-r-8 border-purple-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-purple rounded-lg">
@@ -491,7 +483,7 @@
       const nextBtn = document.getElementById('next-btn');
 
       function updateProjectFrame() {
-        projectFrame.src = projectLinks[currentProjectIndex];
+        #projectFrame.src = projectLinks[currentProjectIndex];
       }
       prevBtn.addEventListener('click', function () {
         currentProjectIndex = (currentProjectIndex - 1 + projectLinks.length) % projectLinks.length;
