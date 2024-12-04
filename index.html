@@ -6,7 +6,11 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
   <title>Joe Rice</title>
+
+  <!-- Favicon and Icons -->
   <link rel="icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true">
+  <link rel="apple-touch-icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true">
+  <link rel="manifest" href="/manifest.json">
 
   <!-- Open Graph Meta Tags -->
   <meta property="og:title" content="Joe Rice - Systems Engineer and Technologist">
@@ -14,23 +18,28 @@
   <meta property="og:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
   <meta property="og:url" content="https://joerice.me">
   <meta property="og:type" content="website">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Joe Rice - Systems Engineer and Technologist">
-  <meta name="twitter:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
-  <meta name="twitter:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
-  <meta name="apple-mobile-web-app-title" content="Joe Rice">
-  <link rel="apple-touch-icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
   <meta property="og:site_name" content="Joe Rice">
   <meta property="og:locale" content="en_US">
   <meta name="og:image:width" content="1200">
   <meta name="og:image:height" content="630">
-  <link rel="icon" type="image/png" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true" sizes="192x192">
+
+  <!-- Twitter Meta Tags -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Joe Rice - Systems Engineer and Technologist">
+  <meta name="twitter:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
+  <meta name="twitter:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
+
+  <!-- Description and Keywords -->
   <meta name="description" content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology.">
   <meta name="keywords" content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi">
   <meta name="author" content="Joe Rice">
 
+  <!-- Theme Color for PWA -->
+  <meta name="theme-color" content="#000000">
+
   <!-- Tailwind CSS -->
   <script src="https://cdn.tailwindcss.com"></script>
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
 
@@ -43,10 +52,88 @@
       box-sizing: border-box;
     }
 
-    .bg-fullscreen {
-      background-image: url('https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true');
+    /* Ensure body and html take full height and prevent default scrolling */
+    html,
+    body {
+      margin: 0;
+      height: 100%;
     }
 
+    body {
+      margin-top: 60px;
+    }
+
+    /* Header Styles */
+    header {
+      height: 60px;
+      /* Define explicit height for the header */
+    }
+
+    /* Mobile Menu Styles */
+    #mobile-menu {
+      top: 60px;
+      /* Position below the header */
+    }
+
+    /* Scroll Container Styles */
+    #scroll-container {
+      height: 100%;
+      overflow-y: scroll;
+      scroll-behavior: smooth;
+    }
+
+    /* Card Styles */
+    .card {
+      overflow-x: hidden;
+      padding-top: 2rem;
+      padding-bottom: 2rem;
+      /* Optional: Add some spacing between cards */
+    }
+
+    .card:hover {
+      transform: scale(1.00);
+    }
+
+    /* Custom Scrollbar Styles for Cards */
+    .card::-webkit-scrollbar {
+      width: 12px;
+    }
+
+    .card::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      /* Match your border color */
+    }
+
+    .card::-webkit-scrollbar-thumb {
+      background-color: #888;
+      /* Match your horizontal row color */
+      border-radius: 6px;
+      border: 3px solid #f1f1f1;
+      /* Adjust as needed */
+    }
+
+    .card::-webkit-scrollbar-thumb:hover {
+      background-color: #555;
+    }
+
+    /* Body Styles */
+    body {
+      font-family: 'Montserrat', sans-serif;
+      background-color: #1f2937;
+      /* bg-gray-800 */
+      color: #f3f4f6;
+      /* text-gray-100 */
+      overflow-x: hidden;
+      position: relative;
+      min-height: 100%;
+    }
+
+    /* Background Image */
+    .bg-fullscreen {
+      background-image: url('assets/images/backgrounds/background1.jpg');
+    }
+
+    /* Fade-in Animation */
     .animate-fade-in {
       opacity: 0;
       transform: translateX(50px);
@@ -75,66 +162,65 @@
       color: #9d174d;
     }
 
-    /* Enable smooth scrolling */
-    html {
-      scroll-behavior: smooth;
+    .bg-blue-100 {
+      background-color: #bfdbfe;
     }
 
-    /* Success Message Styling */
-    #form-success {
-      display: none;
+    .text-blue-900 {
+      color: #1e3a8a;
     }
 
-    /* Portfolio Gallery Styles */
-    #project-frame {
-      width: 100%;
-      height: 90vh;
+    .bg-red-100 {
+      background-color: #fee2e2;
     }
 
-    /* Glow Effects */
-    .glow-white {
-      box-shadow: 0 0 30px rgba(255, 255, 255, 0.5);
+    .text-red-900 {
+      color: #7f1d1d;
     }
 
-    .glow-blue {
-      box-shadow: 0 0 30px rgba(59, 130, 246, 0.5);
-      /* Tailwind blue-500 */
+    .bg-green-100 {
+      background-color: #d1fae5;
     }
 
-    .glow-red {
-      box-shadow: 0 0 30px rgba(239, 68, 68, 0.5);
-      /* Tailwind red-500 */
+    .text-green-900 {
+      color: #065f46;
     }
 
-    .glow-yellow {
-      box-shadow: 0 0 30px rgba(234, 179, 8, 0.5);
-      /* Tailwind yellow-500 */
+    .bg-purple-100 {
+      background-color: #e0e7ff;
     }
 
-    .glow-pink {
-      box-shadow: 0 0 30px rgba(236, 72, 153, 0.5);
-      /* Tailwind pink-500 */
+    .text-purple-900 {
+      color: #4c1d95;
     }
 
-    .glow-green {
-      box-shadow: 0 0 30px rgba(16, 185, 129, 0.5);
-      /* Tailwind green-500 */
+    /* Theme Colors for Scrollbar Matching */
+    .bg-gray-600 {
+      background-color: #4b5563;
     }
 
-    .glow-purple {
-      box-shadow: 0 0 30px rgba(168, 85, 247, 0.5);
-      /* Tailwind purple-500 */
+    .bg-blue-600 {
+      background-color: #2563eb;
     }
 
-    /* Ensure headings wrap text */
-    h2 {
-      word-wrap: break-word;
-      max-width: 100%;
+    .bg-red-600 {
+      background-color: #dc2626;
     }
 
-    /* Adjust navigation links */
-    nav ul li a {
-      white-space: nowrap;
+    .bg-yellow-600 {
+      background-color: #d97706;
+    }
+
+    .bg-pink-600 {
+      background-color: #db2777;
+    }
+
+    .bg-green-600 {
+      background-color: #059669;
+    }
+
+    .bg-purple-600 {
+      background-color: #9333ea;
     }
 
     /* Responsive font sizes for headings */
@@ -150,52 +236,51 @@
   </style>
 </head>
 
-<body class="font-sans bg-gray-800 text-gray-100 overflow-x-hidden relative min-h-screen" style="font-family: 'Montserrat', sans-serif;">
+<body>
   <!-- Sticky Navigation Bar -->
-  <header class="fixed top-0 left-0 w-full bg-black bg-opacity-80 text-white shadow-md z-20">
-    <nav class="max-w-6xl mx-auto px-4 py-3 flex justify-between items-center">
-      <div>
-        <h1 class="text-xl font-bold"><a href="#">Joe Rice</a></h1>
-      </div>
-      <ul class="hidden md:flex flex-wrap space-x-4 text-lg">
-        <li><a href="#about" class="hover:text-gray-400">About</a></li>
-        <li><a href="#background" class="hover:text-gray-400">Experience</a></li>
-        <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
-        <li><a href="#portfolio" class="hover:text-gray-400">Portfolio</a></li>
-        <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
-        <li><a href="#support" class="hover:text-gray-400">Support</a></li>
-        <li><a href="#contact" class="hover:text-gray-400">Contact</a></li>
-      </ul>
-      <!-- Mobile Menu Button -->
-      <div class="md:hidden">
-        <button id="menu-button" class="text-gray-400 hover:text-white focus:outline-none">
-          <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
-          </svg>
-        </button>
-      </div>
-    </nav>
-    <!-- Mobile Menu -->
-    <div id="mobile-menu" class="hidden md:hidden bg-black bg-opacity-80">
-      <ul class="flex flex-col space-y-2 px-4 py-4 text-base">
-        <li><a href="#about" class="hover:text-gray-400">About</a></li>
-        <li><a href="#background" class="hover:text-gray-400">Experience</a></li>
-        <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
-        <li><a href="#portfolio" class="hover:text-gray-400">Portfolio</a></li>
-        <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
-        <li><a href="#support" class="hover:text-gray-400">Support</a></li>
-        <li><a href="#contact" class="hover:text-gray-400">Contact</a></li>
-      </ul>
+  <header class="fixed top-0 left-0 w-full bg-black bg-opacity-80 text-white shadow-md z-20 flex items-center justify-between px-4">
+    <div class="flex items-center h-full">
+      <h1 class="text-xl font-bold"><a href="#">Joe Rice</a></h1>
+    </div>
+    <ul class="hidden md:flex flex-wrap space-x-4 text-lg">
+      <li><a href="#about" class="hover:text-gray-400">About</a></li>
+      <li><a href="#background" class="hover:text-gray-400">Experience</a></li>
+      <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
+      <li><a href="#portfolio" class="hover:text-gray-400">Portfolio</a></li>
+      <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
+      <li><a href="#support" class="hover:text-gray-400">Support</a></li>
+      <li><a href="#contact" class="hover:text-gray-400">Contact</a></li>
+    </ul>
+    <!-- Mobile Menu Button -->
+    <div class="md:hidden">
+      <button id="menu-button" class="text-gray-400 hover:text-white focus:outline-none">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+        </svg>
+      </button>
     </div>
   </header>
+
+  <!-- Mobile Menu -->
+  <div id="mobile-menu" class="hidden md:hidden bg-black bg-opacity-80 absolute top-60 left-0 z-20 w-full">
+    <ul class="flex flex-col space-y-2 px-4 py-4 text-base">
+      <li><a href="#about" class="hover:text-gray-400">About</a></li>
+      <li><a href="#background" class="hover:text-gray-400">Experience</a></li>
+      <li><a href="#projects" class="hover:text-gray-400">Projects</a></li>
+      <li><a href="#portfolio" class="hover:text-gray-400">Portfolio</a></li>
+      <li><a href="#tools" class="hover:text-gray-400">Tools</a></li>
+      <li><a href="#support" class="hover:text-gray-400">Support</a></li>
+      <li><a href="#contact" class="hover:text-gray-400">Contact</a></li>
+    </ul>
+  </div>
 
   <!-- Background Image -->
   <div class="fixed inset-0 bg-cover bg-center bg-no-repeat z-[-1] bg-fullscreen"></div>
 
-  <!-- Main Content -->
-  <main class="max-w-6xl mx-auto px-8 relative z-10 pt-24">
-    <!-- Card: White Top -->
-    <section id="about" class="scroll-mt-20 bg-white bg-opacity-100 text-black border-l-8 border-r-8 border-gray-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-white rounded-lg">
+  <!-- Scroll Container -->
+  <div id="scroll-container" class="relative z-10">
+    <!-- About Section -->
+    <section id="about" class="card bg-white bg-opacity-100 text-black border-l-8 border-r-8 border-gray-600 pl-10 pr-6 py-6 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-white">
       <div class="flex items-center justify-center relative">
         <span class="absolute left-0 text-3xl">👤</span>
         <h2 class="text-3xl md:text-4xl font-bold text-center">About Me</h2>
@@ -252,11 +337,11 @@
           </div>
         </div>
       </div>
-      <!-- Spotify Playlist -->
+      <!-- Spotify Playlist (Optional: Add if needed) -->
     </section>
 
-    <!-- Card: Blue -->
-    <section id="background" class="scroll-mt-20 bg-blue-100 bg-opacity-80 text-blue-900 border-l-8 border-r-8 border-blue-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-blue rounded-lg">
+    <!-- Experience Section -->
+    <section id="background" class="card bg-blue-100 bg-opacity-80 text-blue-900 border-l-8 border-r-8 border-blue-600 pl-10 pr-6 py-6 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-blue">
       <div class="flex items-center justify-center relative">
         <span class="absolute left-0 text-3xl">💼</span>
         <h2 class="text-3xl md:text-4xl font-bold text-center">Experience</h2>
@@ -269,8 +354,8 @@
       <p class="text-lg mt-4">But it's not just about the technical skills. Building strong relationships with clients and colleagues, and listening to their stories, is what I value most. I'm proud to be a reliable problem-solver who understands not just the technical needs but also the human side of every project.</p>
     </section>
 
-    <!-- Card: Red -->
-    <section id="why" class="scroll-mt-20 bg-red-100 bg-opacity-80 text-red-900 border-l-8 border-r-8 border-red-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-red rounded-lg">
+    <!-- Purpose Section -->
+    <section id="why" class="card bg-red-100 bg-opacity-80 text-red-900 border-l-8 border-r-8 border-red-600 pl-10 pr-6 py-6 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-red">
       <div class="flex items-center justify-center relative">
         <span class="absolute left-0 text-3xl">🌐</span>
         <h2 class="text-3xl md:text-4xl font-bold text-center">Purpose</h2>
@@ -282,14 +367,15 @@
       <p class="text-lg mt-4">Each project featured here reflects my commitment to simplicity, ease of use, and teamwork. This page is a reflection of my dedication to using technology to make a positive and lasting impact, helping to build stronger, more connected communities.</p>
     </section>
 
-    <!-- Card: Yellow -->
-    <section id="projects" class="scroll-mt-20 bg-yellow-100 bg-opacity-80 text-yellow-900 border-l-8 border-r-8 border-yellow-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-yellow rounded-lg">
+    <!-- Projects Section -->
+    <section id="support" class="card bg-purple-100 bg-opacity-80 text-purple-900 border-l-8 border-r-8 border-purple-600 pl-10 pr-6 py-6 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-purple">
+
       <div class="flex items-center justify-center relative">
         <span class="absolute left-0 text-3xl">📂</span>
         <h2 class="text-3xl md:text-4xl font-bold text-center">Projects</h2>
       </div>
       <!-- Horizontal Bar -->
-      <div class="h-2 w-full bg-yellow-600 my-4 rounded"></div>
+      <div class="h-2 w-full bg-purple-600 my-4 rounded"></div>
       <p class="text-lg"><strong>Professional Projects:</strong></p>
       <ul class="list-disc pl-6 text-lg mt-2">
         <li><strong>Cloud Migrations:</strong> Transitioning businesses to cloud environments for improved accessibility and efficiency.</li>
@@ -303,19 +389,10 @@
         <li><strong>Docker (Raspberry Pi):</strong> Setting up a lightweight server environment for experimenting with containerized applications.</li>
         <li><strong>Tinkering (PiBoy Advance):</strong> Developing a handheld gaming device utilizing Raspberry Pi for retro gaming enthusiasts.</li>
       </ul>
-      <p class="text-lg mt-4"><strong>Online Profiles:</strong></p>
-      <ul class="list-disc pl-6 text-lg mt-2">
-        <li><strong>GitHub:</strong> <img src="https://simpleicons.org/icons/github.svg" alt="GitHub Icon" class="inline w-4 h-4 max-w-full"> <a href="https://github.com/garbledhamster" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
-        <li><strong>CodePen:</strong> <img src="https://simpleicons.org/icons/codepen.svg" alt="CodePen Icon" class="inline w-4 h-4 max-w-full"> <a href="https://codepen.io/GarbledHamster" class="text-blue-500 hover:text-blue-700">GarbledHamster</a></li>
-        <li><strong>LinkedIn:</strong> <img src="https://simpleicons.org/icons/linkedin.svg" alt="LinkedIn Icon" class="inline w-4 h-4 max-w-full"> <a href="https://www.linkedin.com/in/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
-        <li><strong>Instagram:</strong> <img src="https://simpleicons.org/icons/instagram.svg" alt="Instagram Icon" class="inline w-4 h-4 max-w-full"> <a href="https://www.instagram.com/garbledhamster/" class="text-blue-500 hover:text-blue-700">garbledhamster</a></li>
-        <li><strong>My Notes:</strong> <img src="https://simpleicons.org/icons/markdown.svg" alt="Markdown Icon" class="inline w-4 h-4 max-w-full"> <a href="https://ourstuff.space" class="text-blue-500 hover:text-blue-700">ourstuff.space</a></li>
-        <li><strong>Spotify:</strong> <img src="https://simpleicons.org/icons/spotify.svg" alt="Spotify Icon" class="inline w-4 h-4 max-w-full"> <a href="https://open.spotify.com/playlist/5wMEY9u0l0SAiJn8IfpEw6?si=6f920bad2f314a6a" class="text-blue-500 hover:text-blue-700">My Playlist</a></li>
-      </ul>
     </section>
 
-    <!-- Card: Pink -->
-    <section id="tools" class="scroll-mt-20 bg-pink-100 bg-opacity-80 text-pink-900 border-l-8 border-r-8 border-pink-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-pink rounded-lg">
+    <!-- Tools Section -->
+    <section id="tools" class="card bg-pink-100 bg-opacity-80 text-pink-900 border-l-8 border-r-8 border-pink-600 pl-10 pr-6 py-6 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-pink">
       <div class="flex items-center justify-center relative">
         <span class="absolute left-0 text-3xl">🛠</span>
         <h2 class="text-3xl md:text-4xl font-bold text-center">Tools</h2>
@@ -332,29 +409,28 @@
       </ul>
     </section>
 
-    <!-- Card: Green -->
-    <section id="portfolio" class="scroll-mt-20 bg-green-100 bg-opacity-80 text-green-900 border-l-8 border-r-8 border-green-600 pl-6 pr-6 py-6 mb-8 mx-auto max-w-6xl animate-fade-in transition-opacity duration-600 glow-green rounded-lg">
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="card bg-green-100 bg-opacity-80 text-green-900 border-l-8 border-r-8 border-green-600 pl-6 pr-6 py-6 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-green" style="height: 100vh;">
       <div class="flex items-center justify-center relative">
         <span class="absolute left-0 text-3xl">📂</span>
         <h2 class="text-3xl md:text-4xl font-bold text-center">Portfolio</h2>
       </div>
       <!-- Horizontal Bar -->
       <div class="h-2 w-full bg-green-600 my-4 rounded"></div>
-      <div class="flex items-center justify-center">
-        <div class="w-full max-w-screen-lg relative">
-          <button id="prev-btn" class="absolute left-0 top-1/2 transform -translate-y-1/2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 focus:outline-none">
-            &larr;
-          </button>
-          <iframe id="project-frame" src="https://naefurgerson.me" class="w-full h-[90vh]"></iframe>
-          <button id="next-btn" class="absolute right-0 top-1/2 transform -translate-y-1/2 bg-green-600 text-white px-4 py-2 rounded-full hover:bg-green-700 focus:outline-none">
-            &rarr;
-          </button>
+      <div class="text-center" style="height: calc(100% - 80px);">
+        <!-- Adjust for content -->
+        <p class="text-lg mb-4">Explore my portfolio directly below:</p>
+        <!-- Embed Portfolio using iframe -->
+        <div class="w-full h-full border-2 border-green-600 rounded mb-6 p-2">
+          <iframe src="https://garbled.link" class="w-full h-full rounded" frameborder="0" allowfullscreen>
+          </iframe>
         </div>
+
       </div>
     </section>
 
-    <!-- Card: Purple -->
-    <section id="support" class="scroll-mt-20 bg-purple-100 bg-opacity-80 text-purple-900 border-l-8 border-r-8 border-purple-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-purple rounded-lg">
+    <!-- Support Section -->
+    <section id="support" class="card bg-purple-100 bg-opacity-80 text-purple-900 border-l-8 border-r-8 border-purple-600 pl-10 pr-6 py-6 mx-auto h-1920px max-w-3xl animate-fade-in transition-opacity duration-600 glow-purple">
       <div class="flex items-center justify-center relative">
         <span class="absolute left-0 text-3xl">🤝</span>
         <h2 class="text-3xl md:text-4xl font-bold text-center">Support</h2>
@@ -375,8 +451,8 @@
       <p class="text-lg mt-4">Every contribution matters, and reinforces my commitment to creating a more <strong>connected</strong> and supportive community. Thank you for being a crucial part of this journey!</p>
     </section>
 
-    <!-- Card: White Bottom -->
-    <section id="contact" class="scroll-mt-20 bg-white bg-opacity-100 text-black border-l-8 border-r-8 border-gray-600 pl-10 pr-6 py-6 mb-8 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-white rounded-lg">
+    <!-- Contact Section -->
+    <section id="contact" class="card bg-white bg-opacity-100 text-black border-l-8 border-r-8 border-gray-600 pl-10 pr-6 py-6 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-white">
       <div class="flex items-center justify-center relative">
         <span class="absolute left-0 text-3xl">📩</span>
         <h2 class="text-3xl md:text-4xl font-bold text-center">Contact Me</h2>
@@ -397,13 +473,13 @@
           <textarea id="message" name="message" rows="4" required class="w-full px-4 py-2 border border-gray-400 rounded"></textarea>
         </div>
         <!-- Success Message -->
-        <div id="form-success" class="text-green-600 font-semibold">
+        <div id="form-success" class="text-green-600 font-semibold hidden">
           Your message has been sent successfully!
         </div>
         <button type="submit" class="px-6 py-2 bg-green-600 text-white font-bold rounded hover:bg-green-700">Send Message</button>
       </form>
     </section>
-  </main>
+  </div>
 
   <!-- Footer -->
   <footer class="bg-black text-white py-6 text-center">
@@ -422,21 +498,15 @@
   <!-- Scripts -->
   <script>
     // Mobile Menu Toggle
-    document.getElementById('menu-button').addEventListener('click', function () {
+    document.getElementById('menu-button').addEventListener('click', function() {
       const mobileMenu = document.getElementById('mobile-menu');
       mobileMenu.classList.toggle('hidden');
     });
-
     // Handle Form Submission
-    document.getElementById('contact-form').addEventListener('submit', async function (event) {
+    document.getElementById('contact-form').addEventListener('submit', async function(event) {
       event.preventDefault();
       const form = event.target;
       const formData = new FormData(form);
-      const data = {
-        name: formData.get('name'),
-        email: formData.get('email'),
-        message: formData.get('message')
-      };
       try {
         const response = await fetch(form.action, {
           method: 'POST',
@@ -446,10 +516,10 @@
           body: formData
         });
         if (response.ok) {
-          document.getElementById('form-success').style.display = 'block';
+          document.getElementById('form-success').classList.remove('hidden');
           form.reset();
           setTimeout(() => {
-            document.getElementById('form-success').style.display = 'none';
+            document.getElementById('form-success').classList.add('hidden');
           }, 5000);
         } else {
           alert('There was an error sending your message. Please try again.');
@@ -459,9 +529,8 @@
         alert('There was an error sending your message. Please try again.');
       }
     });
-
     // DOMContentLoaded Event Listener
-    document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function() {
       // Fade-in Animation on Scroll
       const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
@@ -472,65 +541,26 @@
       }, {
         threshold: 0.1
       });
-      const cards = document.querySelectorAll('.animate-fade-in');
+      const cards = document.querySelectorAll('.card');
       cards.forEach(card => {
         observer.observe(card);
       });
-
-      // Portfolio Gallery Functionality
-      const projectLinks = [
-        "https://naefurgerson.me",
-        "https://brutaltrimmer.xyz",
-        "https://garbled.link",
-        "https://spinners.pizza",
-        "https://jdhogfarm.com"
-      ];
-      let currentProjectIndex = 0;
-      const projectFrame = document.getElementById('project-frame');
-      const prevBtn = document.getElementById('prev-btn');
-      const nextBtn = document.getElementById('next-btn');
-
-      function updateProjectFrame() {
-        projectFrame.src = projectLinks[currentProjectIndex];
-      }
-      prevBtn.addEventListener('click', function () {
-        currentProjectIndex = (currentProjectIndex - 1 + projectLinks.length) % projectLinks.length;
-        updateProjectFrame();
-      });
-      nextBtn.addEventListener('click', function () {
-        currentProjectIndex = (currentProjectIndex + 1) % projectLinks.length;
-        updateProjectFrame();
-      });
-
       // Adjust Scroll Behavior for Mobile Menu Links
-      const mobileMenuLinks = document.querySelectorAll('#mobile-menu a');
-      mobileMenuLinks.forEach(link => {
-        link.addEventListener('click', function (event) {
-          event.preventDefault();
+      // Hover-to-Snap Script
+    });
+  </script>
 
-          // Get the target element ID from the href attribute
-          const targetId = this.getAttribute('href').substring(1);
-          const targetElement = document.getElementById(targetId);
-
-          if (targetElement) {
-            // Calculate the total height of the header (including the mobile menu)
-            const header = document.querySelector('header');
-            const totalOffset = header.offsetHeight;
-
-            // Calculate the position to scroll to, offset by the total height
-            const targetPosition = targetElement.getBoundingClientRect().top + window.pageYOffset - totalOffset;
-
-            // Scroll to the target position smoothly
-            window.scrollTo({
-              top: targetPosition,
-              behavior: 'smooth'
-            });
-          }
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', function() {
+        navigator.serviceWorker.register('/service-worker.js').then(function(registration) {
+          console.log('ServiceWorker registration successful with scope: ', registration.scope);
+        }, function(err) {
+          console.log('ServiceWorker registration failed: ', err);
         });
       });
-    });
+    }
   </script>
 </body>
 
 </html>
-
