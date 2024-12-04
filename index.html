@@ -52,6 +52,11 @@
       box-sizing: border-box;
     }
 
+    * {
+      overflow: hidden;
+
+    }
+
     /* Ensure body and html take full height and prevent default scrolling */
     html,
     body {
@@ -61,11 +66,13 @@
 
     body {
       margin-top: 60px;
+
     }
 
     /* Header Styles */
     header {
       height: 60px;
+      margin-bottom: 60px;
       /* Define explicit height for the header */
     }
 
@@ -78,6 +85,7 @@
     /* Scroll Container Styles */
     #scroll-container {
       height: 100%;
+      margin-top: 60px;
       overflow-y: scroll;
       scroll-behavior: smooth;
     }
