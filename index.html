@@ -54,7 +54,6 @@
 
     * {
       overflow: hidden;
-
     }
 
     /* Ensure body and html take full height and prevent default scrolling */
@@ -62,8 +61,6 @@
     body {
       height: 100%;
     }
-
-
 
     /* Header Styles */
     header {
@@ -73,7 +70,7 @@
 
     /* Mobile Menu Styles */
     #mobile-menu {
-      /* Position below the header */
+      /* Positioned directly below the header */
     }
 
     /* Scroll Container Styles */
@@ -89,7 +86,6 @@
       overflow-x: hidden;
       padding-top: 2rem;
       padding-bottom: 2rem;
-      /* Optional: Add some spacing between cards */
     }
 
     .card:hover {
@@ -103,15 +99,12 @@
 
     .card::-webkit-scrollbar-track {
       background: #f1f1f1;
-      /* Match your border color */
     }
 
     .card::-webkit-scrollbar-thumb {
       background-color: #888;
-      /* Match your horizontal row color */
       border-radius: 6px;
       border: 3px solid #f1f1f1;
-      /* Adjust as needed */
     }
 
     .card::-webkit-scrollbar-thumb:hover {
@@ -265,7 +258,7 @@
   </header>
 
   <!-- Mobile Menu -->
-  <div id="mobile-menu" class="hidden md:hidden bg-black bg-opacity-80 absolute top-60 left-0 z-20 w-full">
+  <div id="mobile-menu" class="hidden md:hidden bg-black bg-opacity-80 absolute top-[60px] left-0 z-20 w-full">
     <ul class="flex flex-col space-y-2 px-4 py-4 text-base">
       <li><a href="#about" class="hover:text-gray-400">About</a></li>
       <li><a href="#background" class="hover:text-gray-400">Experience</a></li>
@@ -340,7 +333,6 @@
           </div>
         </div>
       </div>
-      <!-- Spotify Playlist (Optional: Add if needed) -->
     </section>
 
     <!-- Experience Section -->
@@ -372,7 +364,6 @@
 
     <!-- Projects Section -->
     <section id="projects" class="card bg-yellow-100 bg-opacity-80 text-yellow-900 border-l-8 border-r-8 border-yellow-600 pl-10 pr-6 py-6 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-yellow">
-
       <div class="flex items-center justify-center relative">
         <span class="absolute left-0 text-3xl">📂</span>
         <h2 class="text-3xl md:text-4xl font-bold text-center">Projects</h2>
@@ -412,24 +403,21 @@
       </ul>
     </section>
 
-<!-- Portfolio Section -->
-<section id="portfolio" class="card bg-green-100 bg-opacity-80 text-green-900 border-l-8 border-r-8 border-green-600 pl-6 pr-6 py-6 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-green">
-  <div class="flex items-center justify-center relative">
-    <span class="absolute left-0 text-3xl">📂</span>
-    <h2 class="text-3xl md:text-4xl font-bold text-center">Portfolio</h2>
-  </div>
-  <!-- Horizontal Bar -->
-  <div class="h-2 w-full bg-green-600 my-4 rounded"></div>
-  <div class="text-center" style="height: 650px;">
-    <!-- Adjust for content -->
-    <p class="text-lg mb-4">Explore my portfolio directly below:</p>
-    <!-- Embed Portfolio using iframe -->
-    <div style="height: calc(100% - 40px); width: 100%; display: flex;">
-      <iframe src="https://garbled.link" style="height: 100%; width: 100%; border: none;" title="Portfolio Iframe">
-      </iframe>
-    </div>
-  </div>
-</section>
+    <!-- Portfolio Section -->
+    <section id="portfolio" class="card bg-green-100 bg-opacity-80 text-green-900 border-l-8 border-r-8 border-green-600 pl-6 pr-6 py-6 mx-auto max-w-3xl animate-fade-in transition-opacity duration-600 glow-green">
+      <div class="flex items-center justify-center relative">
+        <span class="absolute left-0 text-3xl">📂</span>
+        <h2 class="text-3xl md:text-4xl font-bold text-center">Portfolio</h2>
+      </div>
+      <!-- Horizontal Bar -->
+      <div class="h-2 w-full bg-green-600 my-4 rounded"></div>
+      <div class="text-center" style="height: 650px;">
+        <p class="text-lg mb-4">Explore my portfolio directly below:</p>
+        <div style="height: calc(100% - 40px); width: 100%; display: flex;">
+          <iframe src="https://garbled.link" style="height: 100%; width: 100%; border: none;" title="Portfolio Iframe"></iframe>
+        </div>
+      </div>
+    </section>
 
     <!-- Support Section -->
     <section id="support" class="card bg-purple-100 bg-opacity-80 text-purple-900 border-l-8 border-r-8 border-purple-600 pl-10 pr-6 py-6 mx-auto h-1920px max-w-3xl animate-fade-in transition-opacity duration-600 glow-purple">
@@ -504,6 +492,7 @@
       const mobileMenu = document.getElementById('mobile-menu');
       mobileMenu.classList.toggle('hidden');
     });
+
     // Handle Form Submission
     document.getElementById('contact-form').addEventListener('submit', async function(event) {
       event.preventDefault();
@@ -531,6 +520,7 @@
         alert('There was an error sending your message. Please try again.');
       }
     });
+
     // DOMContentLoaded Event Listener
     document.addEventListener('DOMContentLoaded', function() {
       // Fade-in Animation on Scroll
@@ -547,8 +537,6 @@
       cards.forEach(card => {
         observer.observe(card);
       });
-      // Adjust Scroll Behavior for Mobile Menu Links
-      // Hover-to-Snap Script
     });
   </script>
 
