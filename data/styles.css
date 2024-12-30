@@ -1,0 +1,406 @@
+/* Global Box Sizing */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+/* This was originally in the style block to prevent accidental scrolling.
+   If you want normal scrolling for the body, remove or modify 'overflow: hidden;' */
+* {
+  overflow: hidden;
+}
+
+/* Ensure body and html take full height and prevent default scrolling */
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: 'Montserrat', sans-serif;
+  background-color: #1f2937; /* bg-gray-800 */
+  color: #f3f4f6;           /* text-gray-100 */
+  position: relative;
+  min-height: 100%;
+}
+
+/* Header has a fixed height of 60px in the code */
+header {
+  height: 60px;
+}
+
+/* #mobile-menu should be positioned directly below header (top: 60px) */
+#mobile-menu {
+  top: 60px;
+}
+
+/* Scroll Container for everything below the header */
+#scroll-container {
+  height: calc(100% - 60px);
+  margin-top: 60px;
+  overflow-y: scroll;
+  scroll-behavior: smooth;
+}
+
+/* Card Styles */
+.card {
+  overflow-x: hidden;
+  padding-top: 2rem;
+  padding-bottom: 2rem;
+  /* fade-in animation classes are defined below */
+}
+
+/* Hover effect (slight scale) -- can be customized if desired */
+.card:hover {
+  transform: scale(1.00);
+}
+
+/* Custom scrollbar for .card elements */
+.card::-webkit-scrollbar {
+  width: 12px;
+}
+.card::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+.card::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 6px;
+  border: 3px solid #f1f1f1;
+}
+.card::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
+/* Background image on .bg-fullscreen */
+.bg-fullscreen {
+  background-image: url('assets/images/backgrounds/background1.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+}
+
+/* Fade-in Animation */
+.animate-fade-in {
+  opacity: 0;
+  transform: translateX(50px);
+  transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
+}
+.animate-fade-in.visible {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+/* High-level color classes (replicating Tailwind-ish) */
+.bg-black {
+  background-color: #000;
+}
+.text-white {
+  color: #fff;
+}
+.text-black {
+  color: #000;
+}
+.text-gray-400 {
+  color: #9ca3af;
+}
+.text-gray-100 {
+  color: #f3f4f6;
+}
+.text-green-600 {
+  color: #059669;
+}
+.text-center {
+  text-align: center;
+}
+.text-sm {
+  font-size: 0.875rem;
+}
+.text-lg {
+  font-size: 1.125rem;
+}
+.text-xl {
+  font-size: 1.25rem;
+}
+.text-2xl {
+  font-size: 1.5rem;
+}
+.text-3xl {
+  font-size: 1.875rem;
+}
+.font-bold {
+  font-weight: 700;
+}
+.font-semibold {
+  font-weight: 600;
+}
+
+/* Opacity Utility */
+.bg-opacity-80 {
+  /* We'll handle actual RGBA colors in combined selectors below (e.g., .bg-blue-100.bg-opacity-80) */
+}
+.bg-opacity-100 {
+  /* Similarly handled in combined classes or you can override with RGBA as needed */
+}
+
+/* Hover Utility */
+.hover\:text-gray-400:hover {
+  color: #9ca3af;
+}
+.hover\:text-white:hover {
+  color: #fff;
+}
+.hover\:text-blue-700:hover {
+  color: #1d4ed8;
+}
+.hover\:bg-green-700:hover {
+  background-color: #047857;
+}
+
+/* Border, margin, padding, sizing, positioning, flex, etc. */
+/* Sizing & spacing */
+.w-full {
+  width: 100%;
+}
+.h-2 {
+  height: 0.5rem;
+}
+.mx-auto {
+  margin-left: auto;
+  margin-right: auto;
+}
+.mt-2 {
+  margin-top: 0.5rem;
+}
+.mt-4 {
+  margin-top: 1rem;
+}
+.mt-6 {
+  margin-top: 1.5rem;
+}
+.mb-4 {
+  margin-bottom: 1rem;
+}
+.my-4 {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+}
+.py-6 {
+  padding-top: 1.5rem;
+  padding-bottom: 1.5rem;
+}
+.px-4 {
+  padding-left: 1rem;
+  padding-right: 1rem;
+}
+.pl-10 {
+  padding-left: 2.5rem;
+}
+.pr-6 {
+  padding-right: 1.5rem;
+}
+
+/* Overflow, display, position, z-index */
+.fixed {
+  position: fixed;
+}
+.absolute {
+  position: absolute;
+}
+.relative {
+  position: relative;
+}
+.inset-0 {
+  top: 0; right: 0; bottom: 0; left: 0;
+}
+.z-\[-1\] {
+  z-index: -1;
+}
+.z-10 {
+  z-index: 10;
+}
+.z-20 {
+  z-index: 20;
+}
+.shadow-md {
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+}
+
+/* Flex utilities */
+.flex {
+  display: flex;
+}
+.flex-wrap {
+  flex-wrap: wrap;
+}
+.items-center {
+  align-items: center;
+}
+.justify-between {
+  justify-content: space-between;
+}
+.justify-center {
+  justify-content: center;
+}
+.flex-col {
+  flex-direction: column;
+}
+
+/* Space-X / Space-Y utilities */
+.space-x-4 > * + * {
+  margin-left: 1rem;
+}
+.space-y-2 > * + * {
+  margin-top: 0.5rem;
+}
+
+/* Hidden & Show at breakpoints */
+.hidden {
+  display: none !important;
+}
+.md\:hidden {
+  display: none !important;
+}
+@media (min-width: 768px) {
+  .md\:flex {
+    display: flex !important;
+  }
+  .md\:hidden {
+    display: none !important;
+  }
+  .md\:text-4xl {
+    font-size: 2.25rem;
+  }
+}
+
+/* Rounded corners & borders */
+.rounded {
+  border-radius: 0.25rem;
+}
+.border {
+  border: 1px solid #e5e7eb;
+}
+.border-gray-400 {
+  border-color: #9ca3af;
+}
+.border-l-8 {
+  border-left-width: 8px;
+}
+.border-r-8 {
+  border-right-width: 8px;
+}
+.border-gray-600 {
+  border-color: #4b5563;
+}
+
+/* Specific color combos (background + 80% opacity) */
+.bg-blue-100.bg-opacity-80 {
+  background-color: rgba(191, 219, 254, 0.8);
+}
+.bg-red-100.bg-opacity-80 {
+  background-color: rgba(254, 226, 226, 0.8);
+}
+.bg-yellow-100.bg-opacity-80 {
+  background-color: rgba(253, 246, 178, 0.8);
+}
+.bg-pink-100.bg-opacity-80 {
+  background-color: rgba(255, 228, 230, 0.8);
+}
+.bg-purple-100.bg-opacity-80 {
+  background-color: rgba(224, 231, 255, 0.8);
+}
+.bg-green-100.bg-opacity-80 {
+  background-color: rgba(209, 250, 229, 0.8);
+}
+.bg-white.bg-opacity-100 {
+  background-color: rgba(255,255,255,1);
+}
+
+/* Text colors for sections */
+.text-blue-900 {
+  color: #1e3a8a;
+}
+.text-red-900 {
+  color: #7f1d1d;
+}
+.text-yellow-900 {
+  color: #705a00;
+}
+.text-pink-900 {
+  color: #9d174d;
+}
+.text-purple-900 {
+  color: #4c1d95;
+}
+.text-green-900 {
+  color: #065f46;
+}
+
+/* Border colors for sections */
+.border-blue-600 {
+  border-color: #2563eb;
+}
+.border-red-600 {
+  border-color: #dc2626;
+}
+.border-yellow-600 {
+  border-color: #d97706;
+}
+.border-pink-600 {
+  border-color: #db2777;
+}
+.border-purple-600 {
+  border-color: #9333ea;
+}
+.border-green-600 {
+  border-color: #059669;
+}
+
+/* Background colors for "horizontal bars" or highlights */
+.bg-gray-600 {
+  background-color: #4b5563;
+}
+.bg-blue-600 {
+  background-color: #2563eb;
+}
+.bg-red-600 {
+  background-color: #dc2626;
+}
+.bg-yellow-600 {
+  background-color: #d97706;
+}
+.bg-pink-600 {
+  background-color: #db2777;
+}
+.bg-purple-600 {
+  background-color: #9333ea;
+}
+.bg-green-600 {
+  background-color: #059669;
+}
+
+/* Height utilities (custom) */
+.h-1920px {
+  height: 1920px;
+}
+
+/* Glow classes (empty placeholders, since they were in the original HTML) */
+.glow-white {}
+.glow-blue {}
+.glow-red {}
+.glow-yellow {}
+.glow-pink {}
+.glow-green {}
+.glow-purple {}
+
+/* Lists */
+.list-disc {
+  list-style-type: disc;
+}
+.pl-6 {
+  padding-left: 1.5rem;
+}
+
+/* Extra nav spacing in mobile menu */
+.space-y-2 > li + li {
+  margin-top: 0.5rem;
+}
