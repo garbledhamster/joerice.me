@@ -1,27 +1,27 @@
-// Mobile Menu Toggle
-document.getElementById('menu-button').addEventListener('click', function() {
-  const mobileMenu = document.getElementById('mobile-menu');
-  mobileMenu.classList.toggle('hidden');
+// Toggle Mobile Menu
+const mobileButton = document.getElementById('mobile-button');
+const mobileMenu   = document.getElementById('mobile-menu');
+mobileButton.addEventListener('click', () => {
+  mobileMenu.classList.toggle('open');
 });
 
 // Handle Form Submission
-document.getElementById('contact-form').addEventListener('submit', async function(event) {
+const contactForm  = document.getElementById('contact-form');
+const formSuccess  = document.getElementById('form-success');
+contactForm.addEventListener('submit', async (event) => {
   event.preventDefault();
-  const form = event.target;
-  const formData = new FormData(form);
+  const formData = new FormData(contactForm);
   try {
-    const response = await fetch(form.action, {
+    const response = await fetch(contactForm.action, {
       method: 'POST',
-      headers: {
-        'Accept': 'application/json'
-      },
+      headers: { 'Accept': 'application/json' },
       body: formData
     });
     if (response.ok) {
-      document.getElementById('form-success').classList.remove('hidden');
-      form.reset();
+      formSuccess.style.display = 'block';
+      contactForm.reset();
       setTimeout(() => {
-        document.getElementById('form-success').classList.add('hidden');
+        formSuccess.style.display = 'none';
       }, 5000);
     } else {
       alert('There was an error sending your message. Please try again.');
@@ -32,31 +32,30 @@ document.getElementById('contact-form').addEventListener('submit', async functio
   }
 });
 
-// DOMContentLoaded Event Listener
+// Intersection Observer for fade-in effect
 document.addEventListener('DOMContentLoaded', function() {
-  // Fade-in Animation on Scroll
   const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
+    entries.forEach((entry) => {
       if (entry.isIntersecting) {
         entry.target.classList.add('visible');
       }
     });
-  }, {
-    threshold: 0.1
-  });
-  const cards = document.querySelectorAll('.card');
-  cards.forEach(card => {
-    observer.observe(card);
+  }, { threshold: 0.1 });
+
+  const sections = document.querySelectorAll('.fade-in');
+  sections.forEach((section) => {
+    observer.observe(section);
   });
 });
 
 // Service Worker Registration
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', function() {
+  window.addEventListener('load', () => {
     navigator.serviceWorker.register('/service-worker.js')
-      .then(function(registration) {
+      .then((registration) => {
         console.log('ServiceWorker registration successful with scope: ', registration.scope);
-      }, function(err) {
+      })
+      .catch((err) => {
         console.log('ServiceWorker registration failed: ', err);
       });
   });

@@ -39,356 +39,8 @@
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
 
-  <!-- Minimal CSS -->
-  <style>
-    /* RESET & BASE */
-    * {
-      margin: 0; 
-      padding: 0; 
-      box-sizing: border-box;
-    }
-    html, body {
-      height: 100%;
-      font-family: 'Montserrat', sans-serif;
-      background-color: #1f2937; /* Dark background */
-      color: #f3f4f6;           /* Light text */
-      overflow-x: hidden;
-    }
-    a {
-      text-decoration: none;
-      color: inherit;
-    }
-    ul {
-      list-style: none;
-    }
-
-    /* HEADER */
-    #header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 60px;
-      background-color: rgba(0,0,0,0.8);
-      color: #fff;
-      box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1),
-                  0 2px 4px -1px rgba(0,0,0,0.06);
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 0 1rem;
-      z-index: 20;
-    }
-    #header h1 {
-      font-size: 1.25rem;
-      font-weight: 700;
-    }
-    #header nav {
-      display: none;
-    }
-    #header nav ul {
-      display: flex;
-      gap: 1rem;
-    }
-    #header nav a:hover {
-      color: #9ca3af;
-    }
-
-    /* Show nav on larger screens */
-    @media (min-width: 768px) {
-      #header nav {
-        display: block;
-      }
-      #mobile-button {
-        display: none;
-      }
-    }
-
-    /* MOBILE MENU */
-    #mobile-button {
-      background: none;
-      border: none;
-      cursor: pointer;
-    }
-    #mobile-menu {
-      position: absolute;
-      top: 60px;
-      left: 0;
-      width: 100%;
-      background-color: rgba(0,0,0,0.8);
-      display: none;
-      z-index: 20;
-    }
-    #mobile-menu ul {
-      display: flex;
-      flex-direction: column;
-      padding: 1rem;
-      gap: 0.5rem;
-    }
-    #mobile-menu a:hover {
-      color: #9ca3af;
-    }
-    /* Toggle open/close via JS */
-    #mobile-menu.open {
-      display: block;
-    }
-
-    /* BACKGROUND IMAGE */
-    #background-image {
-      position: fixed;
-      top: 0; 
-      left: 0;
-      width: 100%; 
-      height: 100%;
-      background: url('assets/images/backgrounds/background1.jpg') center center no-repeat;
-      background-size: cover;
-      z-index: -1;
-    }
-
-    /* SCROLL CONTAINER */
-    #scroll-container {
-      height: calc(100% - 60px);
-      margin-top: 60px;
-      overflow-y: auto;
-      scroll-behavior: smooth;
-      position: relative;
-      z-index: 10;
-    }
-
-    /* SECTION STYLES (replacing all tailwind-like classes with minimal ID-based) */
-    section {
-      max-width: 48rem; /* ~ 3xl container */
-      margin: 0 auto;
-      padding: 2rem 1.5rem;
-      overflow-x: hidden;
-      transition: transform 0.1s; /* a subtle hover effect if needed */
-    }
-    section:hover {
-      transform: scale(1.00);
-    }
-    section .divider {
-      height: 0.5rem;
-      border-radius: 0.25rem;
-      margin: 1rem 0;
-    }
-    h2 {
-      text-align: center;
-      margin-bottom: 1rem;
-      font-weight: 700;
-      font-size: 1.875rem; /* ~ text-3xl */
-    }
-    /* Larger font for h2 on bigger screens */
-    @media (min-width: 768px) {
-      h2 {
-        font-size: 2.25rem; /* 36px */
-      }
-    }
-    p {
-      margin-bottom: 1rem;
-      font-size: 1.125rem; /* text-lg */
-      line-height: 1.75rem;
-      color: #000; /* many sections have text black, we'll override as needed */
-    }
-    /* Minimal margin for subsequent paragraphs */
-    p + p {
-      margin-top: 1rem;
-    }
-
-    /* ICON + TITLE WRAPPER */
-    .icon-title {
-      position: relative;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 1rem;
-    }
-    .icon-title span {
-      position: absolute;
-      left: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      font-size: 1.875rem; /* ~ text-3xl (30px) */
-    }
-    .icon-title h2 {
-      padding-left: 2.5rem; /* space for the icon */
-      margin: 0;
-    }
-
-    /* Fade-in animation for sections */
-    .fade-in {
-      opacity: 0;
-      transform: translateX(50px);
-      transition: opacity 0.6s ease-in-out, transform 0.6s ease-in-out;
-    }
-    .visible {
-      opacity: 1;
-      transform: translateX(0);
-    }
-
-    /* ABOUT */
-    #about {
-      background-color: #fff;
-      color: #000;
-      border-left: 8px solid #4b5563; /* gray-600 */
-      border-right: 8px solid #4b5563;
-    }
-    #about .divider {
-      background-color: #4b5563;
-    }
-
-    /* EXPERIENCE */
-    #background {
-      background-color: #bfdbfe;
-      color: #1e3a8a;
-      border-left: 8px solid #2563eb;
-      border-right: 8px solid #2563eb;
-    }
-    #background .divider {
-      background-color: #2563eb;
-    }
-
-    /* PURPOSE */
-    #why {
-      background-color: #fee2e2;
-      color: #7f1d1d;
-      border-left: 8px solid #dc2626;
-      border-right: 8px solid #dc2626;
-    }
-    #why .divider {
-      background-color: #dc2626;
-    }
-
-    /* PROJECTS */
-    #projects {
-      background-color: #fdf6b2;
-      color: #705a00;
-      border-left: 8px solid #d97706;
-      border-right: 8px solid #d97706;
-    }
-    #projects .divider {
-      background-color: #d97706;
-    }
-
-    /* TOOLS */
-    #tools {
-      background-color: #ffe4e6;
-      color: #9d174d;
-      border-left: 8px solid #db2777;
-      border-right: 8px solid #db2777;
-    }
-    #tools .divider {
-      background-color: #db2777;
-    }
-
-    /* PORTFOLIO */
-    #portfolio {
-      background-color: #d1fae5;
-      color: #065f46;
-      border-left: 8px solid #059669;
-      border-right: 8px solid #059669;
-    }
-    #portfolio .divider {
-      background-color: #059669;
-    }
-    #portfolio .portfolio-frame {
-      text-align: center;
-      height: 650px;
-    }
-    #portfolio .portfolio-frame p {
-      margin-bottom: 0.5rem; 
-      color: #000; 
-    }
-    #portfolio iframe {
-      width: 100%;
-      height: calc(100% - 40px);
-      border: none;
-      display: flex;
-    }
-
-    /* SUPPORT */
-    #support {
-      background-color: #e0e7ff;
-      color: #4c1d95;
-      border-left: 8px solid #9333ea;
-      border-right: 8px solid #9333ea;
-    }
-    #support .divider {
-      background-color: #9333ea;
-    }
-
-    /* CONTACT */
-    #contact {
-      background-color: #fff;
-      color: #000;
-      border-left: 8px solid #4b5563;
-      border-right: 8px solid #4b5563;
-    }
-    #contact .divider {
-      background-color: #4b5563;
-    }
-    /* CONTACT FORM */
-    form {
-      display: flex;
-      flex-direction: column;
-      gap: 1rem;
-    }
-    form label {
-      font-size: 1.125rem;
-      font-weight: 600;
-      margin-bottom: 0.5rem;
-      color: #000;
-    }
-    form input[type="text"],
-    form input[type="email"],
-    form textarea {
-      width: 100%;
-      padding: 0.5rem 0.75rem;
-      border: 1px solid #ccc;
-      border-radius: 0.25rem;
-      font-size: 1rem;
-    }
-    form button {
-      width: fit-content;
-      padding: 0.5rem 1rem;
-      background-color: #059669;
-      color: #fff;
-      border: none;
-      border-radius: 0.25rem;
-      font-weight: 700;
-      cursor: pointer;
-    }
-    form button:hover {
-      background-color: #047857; /* slightly darker green */
-    }
-    #form-success {
-      color: #059669;
-      font-weight: 600;
-      display: none;
-    }
-
-    /* FOOTER */
-    footer {
-      background-color: #000;
-      color: #fff;
-      text-align: center;
-      padding: 1.5rem 0;
-      margin-top: 1rem;
-    }
-    footer p {
-      font-size: 0.875rem;
-      margin-bottom: 0.5rem;
-    }
-    footer ul {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1rem;
-      font-size: 0.875rem;
-    }
-    footer a:hover {
-      color: #9ca3af;
-    }
-  </style>
+  <!-- External CSS -->
+  <link rel="stylesheet" href="data/styles.css">
 </head>
 
 <body>
@@ -409,8 +61,8 @@
         <li><a href="#contact">Contact</a></li>
       </ul>
     </nav>
-    <button id="mobile-button">
-      <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+    <button id="mobile-button" aria-label="Toggle navigation menu">
+      <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
         <path
           stroke-linecap="round"
           stroke-linejoin="round"
@@ -450,47 +102,47 @@
       <p>For me, technology is all about connecting people. I'm dedicated to using my skills to build strong relationships and create vibrant communities in our digital world.</p>
 
       <!-- Bookshelf -->
-      <div style="margin-top: 1.5rem;">
-        <h3 style="font-size:1.5rem; font-weight:600; margin-bottom: 0.5rem;">📚 My Favorite Reads</h3>
-        <div>
-          <div style="display:flex; align-items:center; margin:0.5rem 0;">
-            <span style="margin-right:0.5rem;">🧠</span>
+      <div class="bookshelf">
+        <h3>📚 My Favorite Reads</h3>
+        <div class="books-list">
+          <div class="book-item">
+            <span>🧠</span>
             <em>How to Read a Book</em> by Mortimer J. Adler and Charles Van Doren
           </div>
-          <div style="display:flex; align-items:center; margin:0.5rem 0;">
-            <span style="margin-right:0.5rem;">✍️</span>
+          <div class="book-item">
+            <span>✍️</span>
             <em>Writing to Learn</em> by William Zinsser
           </div>
-          <div style="display:flex; align-items:center; margin:0.5rem 0;">
-            <span style="margin-right:0.5rem;">📓</span>
+          <div class="book-item">
+            <span>📓</span>
             <em>Antinet Zettelkasten</em> by Scott Scheper
           </div>
-          <div style="display:flex; align-items:center; margin:0.5rem 0;">
-            <span style="margin-right:0.5rem;">💪</span>
+          <div class="book-item">
+            <span>💪</span>
             <em>Somatics</em> by Thomas Hanna
           </div>
-          <div style="display:flex; align-items:center; margin:0.5rem 0;">
-            <span style="margin-right:0.5rem;">👶</span>
+          <div class="book-item">
+            <span>👶</span>
             <em>The Montessori Baby</em> by Simone Davies and Junnifa Uzodike
           </div>
-          <div style="display:flex; align-items:center; margin:0.5rem 0;">
-            <span style="margin-right:0.5rem;">🌟</span>
+          <div class="book-item">
+            <span>🌟</span>
             <em>Ultimate Journey</em> by Robert A. Monroe
           </div>
-          <div style="display:flex; align-items:center; margin:0.5rem 0;">
-            <span style="margin-right:0.5rem;">🧘‍♂️</span>
+          <div class="book-item">
+            <span>🧘‍♂️</span>
             <em>Zen Mind, Beginner's Mind</em> by Shunryu Suzuki
           </div>
-          <div style="display:flex; align-items:center; margin:0.5rem 0;">
-            <span style="margin-right:0.5rem;">⚔️</span>
+          <div class="book-item">
+            <span>⚔️</span>
             <em>The Art of War</em> by Sun Tzu
           </div>
-          <div style="display:flex; align-items:center; margin:0.5rem 0;">
-            <span style="margin-right:0.5rem;">📓</span>
+          <div class="book-item">
+            <span>📓</span>
             <em>The Bullet Journal Method</em> by Ryder Carroll
           </div>
-          <div style="display:flex; align-items:center; margin:0.5rem 0;">
-            <span style="margin-right:0.5rem;">🔧</span>
+          <div class="book-item">
+            <span>🔧</span>
             <em>The Pragmatic Programmer</em> by Andrew Hunt and David Thomas
           </div>
         </div>
@@ -533,7 +185,7 @@
       <div class="divider"></div>
 
       <p><strong>Professional Projects:</strong></p>
-      <ul style="list-style: disc; margin: 0 0 1rem 1.5rem;">
+      <ul class="projects-list">
         <li><strong>Cloud Migrations:</strong> Transitioning businesses to cloud environments for improved accessibility and efficiency.</li>
         <li><strong>Network Migrations:</strong> Upgrading and transferring network infrastructures to enhance performance and security.</li>
         <li><strong>Infrastructure Migrations:</strong> Redesigning and moving critical systems to new platforms for better reliability.</li>
@@ -542,7 +194,7 @@
       </ul>
 
       <p><strong>Personal Projects:</strong></p>
-      <ul style="list-style: disc; margin: 0 0 1rem 1.5rem;">
+      <ul class="projects-list">
         <li><strong>Docker (Raspberry Pi):</strong> Setting up a lightweight server environment for experimenting with containerized applications.</li>
         <li><strong>Tinkering (PiBoy Advance):</strong> Developing a handheld gaming device utilizing Raspberry Pi for retro gaming enthusiasts.</li>
       </ul>
@@ -556,7 +208,7 @@
       </div>
       <div class="divider"></div>
 
-      <ul style="list-style: disc; margin: 0 0 1rem 1.5rem;">
+      <ul class="tools-list">
         <li>ChatGPT (Primary Developer and Assistant)</li>
         <li>GitHub Pages (Production Hosting)</li>
         <li>CodePen (Live Development Environment)</li>
@@ -589,11 +241,11 @@
       <div class="divider"></div>
 
       <p>Your support is vital for maintaining and improving my services. Contributions through my 
-        <a href="https://www.buymeacoffee.com/garbledhamster" style="color: #3b82f6; font-weight:700;">Buy Me a Coffee</a> 
+        <a href="https://www.buymeacoffee.com/garbledhamster" class="support-link" target="_blank" rel="noopener noreferrer">Buy Me a Coffee</a> 
         page directly cover essential <strong>hosting fees</strong>, allowing me to sustain and enhance the websites I manage.
       </p>
       <p>With your generous support, I can:</p>
-      <ul style="list-style: disc; margin: 0 0 1rem 1.5rem;">
+      <ul class="support-list">
         <li><strong>Domain Fees:</strong> Ensure reliable and robust domain names for optimal web presence.</li>
         <li><strong>GitHub Pages Fees:</strong> Cover the costs associated with using GitHub Pages for production hosting.</li>
         <li><strong>Email Fees:</strong> Provide email hosting for seamless communication with every domain.</li>
@@ -613,21 +265,21 @@
       </div>
       <div class="divider"></div>
 
-      <form id="contact-form" action="https://formspree.io/f/xovqpvdv" method="POST">
-        <div>
+      <form id="contact-form" action="https://formspree.io/f/xovqpvdv" method="POST" novalidate>
+        <div class="form-group">
           <label for="name">Name</label>
-          <input type="text" id="name" name="name" required>
+          <input type="text" id="name" name="name" required aria-required="true">
         </div>
-        <div>
+        <div class="form-group">
           <label for="email">Email</label>
-          <input type="email" id="email" name="email" required>
+          <input type="email" id="email" name="email" required aria-required="true">
         </div>
-        <div>
+        <div class="form-group">
           <label for="message">Message</label>
-          <textarea id="message" name="message" rows="4" required></textarea>
+          <textarea id="message" name="message" rows="4" required aria-required="true"></textarea>
         </div>
         <!-- Success Message -->
-        <div id="form-success">Your message has been sent successfully!</div>
+        <div id="form-success" role="status">Your message has been sent successfully!</div>
         <button type="submit">Send Message</button>
       </form>
     </section>
@@ -647,70 +299,7 @@
     </ul>
   </footer>
 
-  <!-- Scripts -->
-  <script>
-    // Toggle Mobile Menu
-    const mobileButton = document.getElementById('mobile-button');
-    const mobileMenu   = document.getElementById('mobile-menu');
-    mobileButton.addEventListener('click', () => {
-      mobileMenu.classList.toggle('open');
-    });
-
-    // Handle Form Submission
-    const contactForm  = document.getElementById('contact-form');
-    const formSuccess  = document.getElementById('form-success');
-    contactForm.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      const formData = new FormData(contactForm);
-      try {
-        const response = await fetch(contactForm.action, {
-          method: 'POST',
-          headers: { 'Accept': 'application/json' },
-          body: formData
-        });
-        if (response.ok) {
-          formSuccess.style.display = 'block';
-          contactForm.reset();
-          setTimeout(() => {
-            formSuccess.style.display = 'none';
-          }, 5000);
-        } else {
-          alert('There was an error sending your message. Please try again.');
-        }
-      } catch (error) {
-        console.error('Error:', error);
-        alert('There was an error sending your message. Please try again.');
-      }
-    });
-
-    // Intersection Observer for fade-in effect
-    document.addEventListener('DOMContentLoaded', function() {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            entry.target.classList.add('visible');
-          }
-        });
-      }, { threshold: 0.1 });
-
-      const sections = document.querySelectorAll('.fade-in');
-      sections.forEach((section) => {
-        observer.observe(section);
-      });
-    });
-
-    // Service Worker Registration
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/service-worker.js')
-          .then((registration) => {
-            console.log('ServiceWorker registration successful with scope: ', registration.scope);
-          })
-          .catch((err) => {
-            console.log('ServiceWorker registration failed: ', err);
-          });
-      });
-    }
-  </script>
+  <!-- External JavaScript -->
+  <script src="data/script.js"></script>
 </body>
 </html>
