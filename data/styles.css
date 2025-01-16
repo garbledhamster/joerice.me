@@ -1,25 +1,26 @@
-/* RESET & BASE */
 * {
-  margin: 0; 
-  padding: 0; 
+  margin: 0;
+  padding: 0;
   box-sizing: border-box;
 }
 html, body {
   height: 100%;
   font-family: 'Montserrat', sans-serif;
-  background-color: #1f2937; /* Dark background */
-  color: #f3f4f6;           /* Light text */
+  background-color: #1f2937;
+  color: #f3f4f6;
   overflow-x: hidden;
 }
+
 a {
   text-decoration: none;
   color: inherit;
 }
-ul {
-  list-style: none;
+ul, li {
+  margin-left: 15px;
 }
-
-/* HEADER */
+li {
+  margin-bottom: 10px;
+}
 #header {
   position: fixed;
   top: 0;
@@ -28,8 +29,7 @@ ul {
   height: 60px;
   background-color: rgba(0,0,0,0.8);
   color: #fff;
-  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1),
-              0 2px 4px -1px rgba(0,0,0,0.06);
+  box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -1px rgba(0,0,0,0.06);
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -37,8 +37,9 @@ ul {
   z-index: 20;
 }
 #header h1 {
-  font-size: 1.25rem;
+  font-size: 1.5rem;
   font-weight: 700;
+  margin-bottom: 10px;
 }
 #header nav {
   display: none;
@@ -50,8 +51,6 @@ ul {
 #header nav a:hover {
   color: #9ca3af;
 }
-
-/* Show nav on larger screens */
 @media (min-width: 768px) {
   #header nav {
     display: block;
@@ -60,8 +59,6 @@ ul {
     display: none;
   }
 }
-
-/* MOBILE MENU */
 #mobile-button {
   background: none;
   border: none;
@@ -85,24 +82,19 @@ ul {
 #mobile-menu a:hover {
   color: #9ca3af;
 }
-/* Toggle open/close via JS */
 #mobile-menu.open {
   display: block;
 }
-
-/* BACKGROUND IMAGE */
 #background-image {
   position: fixed;
-  top: 0; 
+  top: 0;
   left: 0;
-  width: 100%; 
+  width: 100%;
   height: 100%;
   background: url('assets/images/backgrounds/background1.jpg') center center no-repeat;
   background-size: cover;
   z-index: -1;
 }
-
-/* SCROLL CONTAINER */
 #scroll-container {
   height: calc(100% - 60px);
   margin-top: 60px;
@@ -111,20 +103,18 @@ ul {
   position: relative;
   z-index: 10;
 }
-
-/* SECTION STYLES (replacing all tailwind-like classes with minimal ID-based) */
 section {
-  max-width: 48rem; /* ~ 3xl container */
+  max-width: 48rem;
   margin: 0 auto;
-  padding: 2rem 1.5rem;
+  padding: 3rem 1.5rem;
   overflow-x: hidden;
-  transition: transform 0.1s; /* a subtle hover effect if needed */
+  transition: transform 0.1s;
 }
 section:hover {
   transform: scale(1.00);
 }
 section .divider {
-  height: 0.5rem;
+  height: 0.4rem;
   border-radius: 0.25rem;
   margin: 1rem 0;
 }
@@ -132,26 +122,20 @@ h2 {
   text-align: center;
   margin-bottom: 1rem;
   font-weight: 700;
-  font-size: 1.875rem; /* ~ text-3xl */
+  font-size: 2rem;
+  line-height: 1.2;
 }
-/* Larger font for h2 on bigger screens */
 @media (min-width: 768px) {
   h2 {
-    font-size: 2.25rem; /* 36px */
+    font-size: 2.5rem;
   }
 }
 p {
   margin-bottom: 1rem;
-  font-size: 1.125rem; /* text-lg */
+  font-size: 1.125rem;
   line-height: 1.75rem;
-  color: #000; /* many sections have text black, we'll override as needed */
+  color: #1f2937;
 }
-/* Minimal margin for subsequent paragraphs */
-p + p {
-  margin-top: 1rem;
-}
-
-/* ICON + TITLE WRAPPER */
 .icon-title {
   position: relative;
   display: flex;
@@ -164,14 +148,13 @@ p + p {
   left: 0;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 1.875rem; /* ~ text-3xl (30px) */
+  font-size: 2rem;
 }
 .icon-title h2 {
-  padding-left: 2.5rem; /* space for the icon */
+  padding-left: 2.5rem;
   margin: 0;
 }
 
-/* Fade-in animation for sections */
 .fade-in {
   opacity: 0;
   transform: translateX(50px);
@@ -181,19 +164,15 @@ p + p {
   opacity: 1;
   transform: translateX(0);
 }
-
-/* ABOUT */
 #about {
   background-color: #fff;
   color: #000;
-  border-left: 8px solid #4b5563; /* gray-600 */
+  border-left: 8px solid #4b5563;
   border-right: 8px solid #4b5563;
 }
 #about .divider {
   background-color: #4b5563;
 }
-
-/* EXPERIENCE */
 #background {
   background-color: #bfdbfe;
   color: #1e3a8a;
@@ -203,8 +182,6 @@ p + p {
 #background .divider {
   background-color: #2563eb;
 }
-
-/* PURPOSE */
 #why {
   background-color: #fee2e2;
   color: #7f1d1d;
@@ -214,8 +191,6 @@ p + p {
 #why .divider {
   background-color: #dc2626;
 }
-
-/* PROJECTS */
 #projects {
   background-color: #fdf6b2;
   color: #705a00;
@@ -225,8 +200,6 @@ p + p {
 #projects .divider {
   background-color: #d97706;
 }
-
-/* TOOLS */
 #tools {
   background-color: #ffe4e6;
   color: #9d174d;
@@ -236,8 +209,6 @@ p + p {
 #tools .divider {
   background-color: #db2777;
 }
-
-/* PORTFOLIO */
 #portfolio {
   background-color: #d1fae5;
   color: #065f46;
@@ -249,11 +220,13 @@ p + p {
 }
 #portfolio .portfolio-frame {
   text-align: center;
-  height: 650px;
+  height: 1200px;
+  zoom: 50%;
+
 }
 #portfolio .portfolio-frame p {
-  margin-bottom: 0.5rem; 
-  color: #000; 
+  margin-bottom: 0.5rem;
+  color: #000;
 }
 #portfolio iframe {
   width: 100%;
@@ -261,8 +234,6 @@ p + p {
   border: none;
   display: flex;
 }
-
-/* SUPPORT */
 #support {
   background-color: #e0e7ff;
   color: #4c1d95;
@@ -272,8 +243,6 @@ p + p {
 #support .divider {
   background-color: #9333ea;
 }
-
-/* CONTACT */
 #contact {
   background-color: #fff;
   color: #000;
@@ -283,14 +252,13 @@ p + p {
 #contact .divider {
   background-color: #4b5563;
 }
-/* CONTACT FORM */
 form {
   display: flex;
   flex-direction: column;
   gap: 1rem;
 }
 form label {
-  font-size: 1.125rem;
+  font-size: 1rem;
   font-weight: 600;
   margin-bottom: 0.5rem;
   color: #000;
@@ -299,7 +267,7 @@ form input[type="text"],
 form input[type="email"],
 form textarea {
   width: 100%;
-  padding: 0.5rem 0.75rem;
+  padding: 0.75rem;
   border: 1px solid #ccc;
   border-radius: 0.25rem;
   font-size: 1rem;
@@ -315,15 +283,13 @@ form button {
   cursor: pointer;
 }
 form button:hover {
-  background-color: #047857; /* slightly darker green */
+  background-color: #047857;
 }
 #form-success {
   color: #059669;
   font-weight: 600;
   display: none;
 }
-
-/* FOOTER */
 footer {
   background-color: #000;
   color: #fff;
