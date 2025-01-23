@@ -34,163 +34,6 @@
   <meta name="theme-color" content="#000000">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="data/styles.css">
-  <style>
-    h1 {
-      font-size: 1.5rem;
-      text-align: center;
-    }
-
-    h2 {
-      font-size: 1.3rem;
-      text-align: center;
-    }
-
-    h3 {
-      font-size: 1.15rem;
-      text-align: center;
-    }
-
-    h4 {
-      font-size: 1.15rem;
-      text-align: left;
-      margin-bottom: 20px;
-    }
-
-    h1,
-    h2,
-    h3,
-    h4,
-    p,
-    body {
-      line-height: 1.4em;
-    }
-
-    .bookshelf {
-      margin-bottom: 10px;
-    }
-    body {
-      font-size: 1rem;
-      font-family: "Montserrat", sans-serif;
-    }
-
-    .projects-list {
-      list-style-type: none;
-      margin: 0;
-      padding: 0;
-      font-size: 0.9rem;
-    }
-
-    .projects-list li {
-      margin-bottom: 1em;
-    }
-
-    .projects-list details {
-      background: transparent;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      padding: 1em;
-    }
-
-    .projects-list summary {
-      cursor: pointer;
-      font-weight: bold;
-      position: relative;
-      padding-left: 1.5em;
-      margin-bottom: 0.5em;
-    }
-
-    .projects-list summary::marker {
-      content: '';
-    }
-
-    .projects-list summary::before {
-      content: '▶';
-      position: absolute;
-      left: 0;
-      top: 2px;
-      transition: transform 0.2s;
-    }
-
-    .projects-list details[open] summary::before {
-      transform: rotate(90deg);
-    }
-
-    .projects-list details>ul {
-      margin: 0.5em 0 0.5em 1.5em;
-      padding: 0;
-    }
-
-    .projects-list details>ul li {
-      list-style: disc;
-      margin-bottom: 0.4em;
-    }
-
-    .projects-list hr {
-      margin-top: 1em;
-      margin-bottom: 1em;
-      border: none;
-      border-top: 1px solid #ccc;
-    }
-
-    .intro-text {
-      margin-top: 1em;
-      line-height: 1.5;
-    }
-
-    .profile-photo {
-      display: flex;
-      margin-bottom: 20px;
-      animation: rotate-logo 4s linear infinite;
-      transform-style: preserve-3d;
-      display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-bottom: 20px;
-
-    }
-
-    .profile-photo {
-
-    }
-.profile-photo img {
-    width: 150px;
-    height: 150px;
-    border-radius: 50%;
-    object-fit: cover;
-
-}
-
-.animated-profile-photo {
-    animation: 
-      moveLeftRightThenCoin 10s forwards,
-      infiniteCoinSpin 3s linear infinite;
-    animation-delay: 0s, 10s;
-}
-
-
-@keyframes moveLeftRightThenCoin {
-    0% {
-        transform: translateX(-100%);
-    }
-    50% {
-        transform: translateX(100%);
-    }
-    70% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(0) rotateY(180deg);
-    }
-}
-@keyframes infiniteCoinSpin {
-    0% {
-        transform: rotateY(180deg);
-    }
-    100% {
-        transform: rotateY(540deg);
-    }
-}
-  </style>
 </head>
 
 <body>
@@ -236,54 +79,56 @@
         <img src="profile.webp" alt="Joe Rice Profile Photo" class="animated-profile-photo">
       </div>
       <p>Oh hi there! I'm Joe, my favorite books are:</p>
+ 
       <div class="bookshelf">
         <div class="books-list">
           <div class="book-item">
             <span>🧠</span>
-            <em>How to Read a Book</em> by Mortimer J. Adler and Charles Van Doren
+            <a href="https://en.wikipedia.org/wiki/How_to_Read_a_Book"><em>How to Read a Book</em></a> by Mortimer J. Adler and Charles Van Doren
           </div>
           <div class="book-item">
             <span>📈</span>
-            <em>How to Learn</em> by Fiona McPherson
+            <a href="https://www.amazon.com/How-Learn-principles-effective-revision/dp/1927166144"><em>How to Learn</em></a> by Fiona McPherson
           </div>
           <div class="book-item">
             <span>✍️</span>
-            <em>Motivational Interviewing</em> by William R. Miller, PhD and Stephen Rollnick, PhD
+            <a href="https://en.wikipedia.org/wiki/Motivational_interviewing"><em>Motivational Interviewing</em></a> by William R. Miller, PhD, and Stephen Rollnick, PhD
           </div>
           <div class="book-item">
             <span>💪</span>
-            <em>Somatics</em> by Thomas Hanna
+            <a href="https://en.wikipedia.org/wiki/Thomas_Louis_Hanna"><em>Somatics</em></a> by Thomas Hanna
           </div>
           <div class="book-item">
             <span>👶</span>
-            <em>The Montessori Baby</em> by Simone Davies and Junnifa Uzodike
+            <a href="https://www.amazon.com/Montessori-Baby-Parents-Nurturing-Understanding/dp/1523512407"><em>The Montessori Baby</em></a> by Simone Davies and Junnifa Uzodike
           </div>
           <div class="book-item">
             <span>🌟</span>
-            <em>Ultimate Journey</em> by Robert A. Monroe
+            <a href="https://en.wikipedia.org/wiki/Robert_Monroe"><em>Ultimate Journey</em></a> by Robert A. Monroe
           </div>
           <div class="book-item">
             <span>🧘‍♂️</span>
-            <em>Zen Mind, Beginner's Mind</em> by Shunryu Suzuki
+            <a href="https://en.wikipedia.org/wiki/Shunry%C5%AB_Suzuki"><em>Zen Mind, Beginner's Mind</em></a> by Shunryu Suzuki
           </div>
           <div class="book-item">
             <span>⚔️</span>
-            <em>The Art of War</em> by Sun Tzu
+            <a href="https://classics.mit.edu/Tzu/artwar.html"><em>The Art of War</em></a> by Sun Tzu
           </div>
           <div class="book-item">
             <span>🪙</span>
-            <em>Meditations</em> by Marcus Aurelius
+            <a href="https://classics.mit.edu/Antoninus/meditations.html"><em>Meditations</em></a> by Marcus Aurelius
           </div>
           <div class="book-item">
             <span>📓</span>
-            <em>The Bullet Journal Method</em> by Ryder Carroll
+            <a href="https://bulletjournal.com/pages/book"><em>The Bullet Journal Method</em></a> by Ryder Carroll
           </div>
           <div class="book-item">
             <span>🔧</span>
-            <em>The Pragmatic Programmer</em> by Andrew Hunt and David Thomas
+            <a href="https://en.wikipedia.org/wiki/The_Pragmatic_Programmer"><em>The Pragmatic Programmer</em></a> by Andrew Hunt and David Thomas
           </div>
         </div>
       </div>
+      
       <p>As you can guess, I'm a parent, and I like to read books. I'm particularly interested in books that raise my vibrations as a human being and elevate those around me. I'm a self-learner and a self-starter. I am an internalizer, as described by Lindsay C. Gibson in her book <em>Adult Children of Emotionally Immature Parents</em>: "Internalizers are highly perceptive and sensitive, with strong instincts to engage and connect with other people. They tend to feel apologetic for needing help, do most of the emotional work in relationships, and think about what other people want first."</p>
       <p>I’ll be the first to admit I’m not perfect, but I believe we are all perfectly imperfect in our own little ways.</p>
 
@@ -294,37 +139,24 @@
         <h1>Experience</h1>
       </div>
       <div class="divider"></div>
-      <p>My journey in tech kicked off over ten years ago, fueled by endless curiosity and a love for solving problems.
-        As a systems engineer, I wear many hats, juggling everything from designing tech infrastructures to
-        collaborating with awesome teams.</p>
-      <p>I spend a lot of time scripting for our internal AI chatbot, which not only sharpens my coding skills but also
-        keeps me on my toes with the latest in AI. PowerShell scripts? Yep, I've written plenty to make processes
-        smoother and help our support teams work more efficiently.</p>
-      <p>I've had the chance to work across various industries—law firms, local governments, police departments, child
-        protection services, manufacturing, and production. This diverse experience has taught me to stay adaptable and
-        tackle everything from large-scale AWS infrastructures to specific technical hiccups.</p>
-      <p>But it's not just about the technical skills. Building strong relationships with clients and colleagues, and
-        listening to their stories, is what I value most. I'm proud to be a reliable problem-solver who understands not
-        just the technical needs but also the human side of every project.</p>
+      <p>I've played video games my whole life, especially growing up as the youngest of three with the closest sibling gap being five years. That meant I got tossed into the deep end of competitive stuff like 007 GoldenEye on the N64, or I'd be 100%-ing Zelda: Ocarina of Time and Majora’s Mask by racing to the local library to print out guides.</p>
+      <p>I got my first computer when I was 11, after my dad reconnected with a high school buddy who was finishing up at Gateway Technical College in Elkhorn, Wisconsin. That's when I dove into coding, built Counter-Strike maps, messed with keygens, and learned a ton about the Windows registry. Basically, I was a black hat wannabe at my core, just soaking in everything I could.</p>
+      <p>Fast forward to my sophomore year of high school in Odenville, Alabama, where the school literally employed me as a "techy." I’d get full credits each semester just for doing IT work. That felt like hitting the jackpot—real-world experience while still a teenager.</p>
+      <p>Then I ended up graduating high school in Wisconsin, and it was kind of surreal walking the same halls I’d started in as a freshman, only now feeling way older and seeing everyone I knew just a couple of years further along than they were before.</p>
+      <p>After high school, I ended up going to Gateway Technical College myself and got a degree as a Support Specialist, which was a natural next step after all those years tinkering with computers. And now I'm also a certified network and security specialist—it keeps me on my toes, constantly learning and staying ahead of the game.</p>
+      <p>I worked at the post office for about 2.5 years—originally, I was supposed to just be part-time, but the clerk running the office got sick with cancer, so I ended up managing that entire operation six days a week for two years. After that, I was “promoted” to the main office, which I loathed with a passion. Deep down, I knew that wasn’t my destiny. I was still going to school in the evenings, and that’s when a friend introduced me to this "MSP" world I’d never heard of. I decided to take a shot, and that’s where my journey into the capitalist tech realm kicked off.</p>
+      <p>I moved up quickly—residential role, then tier 1, then onto the projects team in a position my coworkers affectionately called "projects bitch." I got to work under two engineers with a combined 50 years of experience, and for around four of those years, I was directly shadowing one of the owners like a total sponge. His patience in teaching me everything shaped how I think today, pushing me to be pretty decent forward-thinker and problem-solver.</p>
+      <p>Now, I’m n lead engineer at that same MSP where. My day-to-day revolves around coding, design, planning, and execution of all kinds of systems. I’ve got a wide range of responsibilities because, honestly, what I do can’t be pinned down with a neat little label. It's become a place of steady growth for me, and that’s exactly how I like it.</p>
     </section>
+
     <section id="why" class="fade-in">
       <div class="icon-title">
         <span>🌐</span>
         <h1>Purpose</h1>
       </div>
       <div class="divider"></div>
-      <p>I created this page to share my passion for technology and to make it easier for individuals and small
-        businesses to access the tools they need. It’s more than just a portfolio—it's a space where I can connect,
-        share ideas, and collaborate on projects that matter.</p>
-      <p>I believe technology should be straightforward and accessible to everyone. Whether it's building a
-        user-friendly website, automating tasks, or working on community-driven projects, my goal is to bridge the gap
-        and make tech work for you.</p>
-      <p>Each project featured here reflects my commitment to simplicity, ease of use, and teamwork. This page is a
-        reflection of my dedication to using technology to make a positive and lasting impact, helping to build
-        stronger, more connected communities.</p>
+      <p>This website is my digital home base—a space where I can share who I am, showcase my work, and connect with anyone interested in my journey. It's not just some generic personal portfolio to try an stand out to potential employers. it's a continuously evolving record of my personal and professional progress. I’m big on authenticity, growth, and community, so I’ve brought together experiences, tools, and projects that matter to me. Whether you’re here for the tech details, curious about my reading list, or just want a glimpse into who Joe Rice is, I hope you find something genuine and relatable here.</p>
     </section>
-
-
     <section id="projects" class="fade-in">
       <div class="icon-title">
         <span>📂</span>
@@ -335,8 +167,7 @@
       <ul class="projects-list" style="user-select: none;">
         <li>
           <details open>
-            <summary>Cloud Migrations – Transitioning businesses to cloud environments for improved accessibility and
-              efficiency.</summary>
+            <summary>Cloud Migrations</summary>
             <ul>
               <li>2019+ – Migrated 300+ mailboxes between various mail servers and services from self-hosted to
                 third-party cloud hosted.</li>
@@ -348,8 +179,7 @@
         </li>
         <li>
           <details>
-            <summary>Virtual Infrastructure – Deploying hardware, networking, HA, FT, vSAN, SANs, SAS infrastructure,
-              and more.</summary>
+            <summary>Virtual Infrastructure</summary>
             <ul>
               <li>2019–2021 – Migrated Whitebox servers to both VMware vSAN and Azure on-prem.</li>
               <li>Implemented high-availability clusters and failover technologies to ensure maximum uptime.</li>
@@ -359,8 +189,7 @@
         </li>
         <li>
           <details>
-            <summary>Infrastructure Migrations – Redesigning and moving critical systems to new platforms for better
-              reliability.</summary>
+            <summary>Infrastructure Migrations</summary>
             <ul>
               <li>2022–2024 – Executed full domain migrations to Entra AD (Exchange, Intune, Security best practices,
                 etc.).</li>
@@ -373,8 +202,7 @@
         </li>
         <li>
           <details>
-            <summary>Wireless Infrastructure – Greenfield deployments, Ekahau planning, AP placement, and
-              environment-specific builds.</summary>
+            <summary>Wireless Infrastructure</summary>
             <ul>
               <li>Designed coverage maps and identified ideal AP placement, tailoring hardware for each environment.
               </li>
@@ -389,7 +217,7 @@
       <ul class="projects-list" style="user-select: none;">
         <li>
           <details>
-            <summary>Debian/CentOS Personal Servers for Web Hosting, Security, Docker</summary>
+            <summary>Home Security</summary>
             <ul>
               <li>2021 – Built a full domain infrastructure using TurnKey Linux deployments with email, LDAP, and file
                 sharing for my household.</li>
@@ -402,7 +230,7 @@
         </li>
         <li>
           <details>
-            <summary>Raspberry Pi Custom Builds</summary>
+            <summary>Self Hosting Websites</summary>
             <ul>
               <li>2020+ – Created a fully featured PiBoy Advance gaming system powered by a Raspberry Pi.</li>
               <li>2021+ – Leveraged a Raspberry Pi host running Docker to share media with family and to manage various
@@ -412,15 +240,24 @@
         </li>
         <li>
           <details>
-            <summary>Personal Website Projects</summary>
+            <summary>Links</summary>
             <ul>
-              <li>2024 – Developed a knowledge management system at zettelksaten.shop integrating journaling,
-                note-taking, and advanced referencing.</li>
-              <li>2024+ – Continuously refining site design and user experience through custom analytics and feedback
-                loops.</li>
+              <li>According to Oxford, a link is "a relationship between two things or situations, especially where one thing affects the other." For me, links are how I connect with the world—like Neo plugging into the Matrix.</li>
+              <li>Links are my way of sharing knowledge and experiences while providing a space for those who, by chance or fate, "find themselves exactly where they need to be."</li>
+              <li>The backbone of my links system is grounded in my engineering expertise and frequent use of ChatGPT. I’ve developed a streamlined method to quickly create and deploy websites with purpose.</li>
+              <li>My goal is to create a network of meaningful, time-sensitive resources—platforms where people can stumble across inspiration and be guided toward a higher perspective through my digital work.</li>
             </ul>
+            
           </details>
         </li>
+        <li>          <details>
+          <summary>My Zettelkasten</summary>
+          <ul>
+            <li>Being a <a href="https://dailystoic.com/life-is-school-school-is-for-life/">lifelong learner</a> has taught me that writing is essential to learning. Not only do I keep a bullet journal, but I also maintain an analog zettelkasten. It allows me to write down moments of "genius" that I can revisit later in life or throughout my journey. I tend to use it for everything related to Mind, Body, Spirit, Life.</li>
+            <li>I've even built a dedicated website for it: <a href="https://zettelkasten.shop">Zettelkasten.Shop</a>. This helps me share the system with more people and provides a starting point for those interested in learning about it.</li>
+            <li>My zettelkasten is literally my <a href="https://fortelabs.com/blog/basboverview/">Second brain</a> system that I can pass down to my children or use to write books someday, just as <a href="https://en.wikipedia.org/wiki/Niklas_Luhmann">Niklas Luhmann</a>, the creator of the zettelkasten method, did.</li>
+          </ul>
+        </details></li>
       </ul>
     </section>
 
