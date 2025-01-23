@@ -1,53 +1,200 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  <!-- Meta Tags and Title -->
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
   <title>Joe Rice</title>
-
-  <!-- Favicon and Icons -->
   <link rel="icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true">
-  <link rel="apple-touch-icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true">
+  <link rel="apple-touch-icon"
+    href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true">
   <link rel="manifest" href="/manifest.json">
-
-  <!-- Open Graph Meta Tags -->
   <meta property="og:title" content="Joe Rice - Systems Engineer and Technologist">
-  <meta property="og:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
-  <meta property="og:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
+  <meta property="og:description"
+    content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
+  <meta property="og:image"
+    content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
   <meta property="og:url" content="https://joerice.me">
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Joe Rice">
   <meta property="og:locale" content="en_US">
   <meta name="og:image:width" content="1200">
   <meta name="og:image:height" content="630">
-
-  <!-- Twitter Meta Tags -->
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Joe Rice - Systems Engineer and Technologist">
-  <meta name="twitter:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
-  <meta name="twitter:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
-
-  <!-- Description and Keywords -->
-  <meta name="description" content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology.">
-  <meta name="keywords" content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi">
+  <meta name="twitter:description"
+    content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
+  <meta name="twitter:image"
+    content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
+  <meta name="description"
+    content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology.">
+  <meta name="keywords"
+    content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi">
   <meta name="author" content="Joe Rice">
-
-  <!-- Theme Color for PWA -->
   <meta name="theme-color" content="#000000">
-
-  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-
-  <!-- External CSS -->
   <link rel="stylesheet" href="data/styles.css">
+  <style>
+    h1 {
+      font-size: 1.5rem;
+      text-align: center;
+    }
+
+    h2 {
+      font-size: 1.3rem;
+      text-align: center;
+    }
+
+    h3 {
+      font-size: 1.15rem;
+      text-align: center;
+    }
+
+    h4 {
+      font-size: 1.15rem;
+      text-align: left;
+      margin-bottom: 20px;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    p,
+    body {
+      line-height: 1.4em;
+    }
+
+    .bookshelf {
+      margin-bottom: 10px;
+    }
+    body {
+      font-size: 1rem;
+      font-family: "Montserrat", sans-serif;
+    }
+
+    .projects-list {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      font-size: 0.9rem;
+    }
+
+    .projects-list li {
+      margin-bottom: 1em;
+    }
+
+    .projects-list details {
+      background: transparent;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 1em;
+    }
+
+    .projects-list summary {
+      cursor: pointer;
+      font-weight: bold;
+      position: relative;
+      padding-left: 1.5em;
+      margin-bottom: 0.5em;
+    }
+
+    .projects-list summary::marker {
+      content: '';
+    }
+
+    .projects-list summary::before {
+      content: '▶';
+      position: absolute;
+      left: 0;
+      top: 2px;
+      transition: transform 0.2s;
+    }
+
+    .projects-list details[open] summary::before {
+      transform: rotate(90deg);
+    }
+
+    .projects-list details>ul {
+      margin: 0.5em 0 0.5em 1.5em;
+      padding: 0;
+    }
+
+    .projects-list details>ul li {
+      list-style: disc;
+      margin-bottom: 0.4em;
+    }
+
+    .projects-list hr {
+      margin-top: 1em;
+      margin-bottom: 1em;
+      border: none;
+      border-top: 1px solid #ccc;
+    }
+
+    .intro-text {
+      margin-top: 1em;
+      line-height: 1.5;
+    }
+
+    .profile-photo {
+      display: flex;
+      margin-bottom: 20px;
+      animation: rotate-logo 4s linear infinite;
+      transform-style: preserve-3d;
+      display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+
+    }
+
+    .profile-photo {
+
+    }
+.profile-photo img {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    object-fit: cover;
+
+}
+
+.animated-profile-photo {
+    animation: 
+      moveLeftRightThenCoin 10s forwards,
+      infiniteCoinSpin 3s linear infinite;
+    animation-delay: 0s, 10s;
+}
+
+
+@keyframes moveLeftRightThenCoin {
+    0% {
+        transform: translateX(-100%);
+    }
+    50% {
+        transform: translateX(100%);
+    }
+    70% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(0) rotateY(180deg);
+    }
+}
+@keyframes infiniteCoinSpin {
+    0% {
+        transform: rotateY(180deg);
+    }
+    100% {
+        transform: rotateY(540deg);
+    }
+}
+  </style>
 </head>
 
 <body>
-  <!-- Background Image -->
   <div id="background-image"></div>
-
-  <!-- Header -->
   <header id="header">
     <h1><a href="#">Joe Rice</a></h1>
     <nav>
@@ -63,17 +210,10 @@
     </nav>
     <button id="mobile-button" aria-label="Toggle navigation menu">
       <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path
-          stroke-linecap="round"
-          stroke-linejoin="round"
-          stroke-width="2"
-          d="M4 6h16M4 12h16M4 18h16"
-        />
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
       </svg>
     </button>
   </header>
-
-  <!-- Mobile Menu -->
   <div id="mobile-menu">
     <ul>
       <li><a href="#about">About</a></li>
@@ -85,37 +225,30 @@
       <li><a href="#contact">Contact</a></li>
     </ul>
   </div>
-
-  <!-- Scroll Container -->
   <div id="scroll-container">
-    <!-- About Section -->
     <section id="about" class="fade-in">
       <div class="icon-title">
         <span>👤</span>
-        <h2>About Me</h2>
+        <h1>About Me</h1>
       </div>
       <div class="divider"></div>
-
-      <p>Hey there! I'm Joe, a systems engineer who loves diving into technology and making it work for people and small businesses. With a background in IT security and a knack for various tech areas, I aim to create simple, effective, and easy-to-use solutions for everyone, no matter their tech know-how.</p>
-      <p>I see technology as a tool to make life easier, not something to complicate it. That's why I focus on building user-friendly websites that are easy to navigate. I believe in working together and keeping communication open—if you feel the same, I'm here to help!</p>
-      <p>At heart, I'm a problem-solver. I enjoy finding ways to improve things and developing innovative web tools to tackle everyday challenges. Having worked with hundreds of businesses, I understand how to meet both technical needs and unique requirements.</p>
-      <p>For me, technology is all about connecting people. I'm dedicated to using my skills to build strong relationships and create vibrant communities in our digital world.</p>
-
-      <!-- Bookshelf -->
+      <div class="profile-photo">
+        <img src="profile.webp" alt="Joe Rice Profile Photo" class="animated-profile-photo">
+      </div>
+      <p>Oh hi there! I'm Joe, my favorite books are:</p>
       <div class="bookshelf">
-        <h3>📚 My Favorite Reads</h3>
         <div class="books-list">
           <div class="book-item">
             <span>🧠</span>
             <em>How to Read a Book</em> by Mortimer J. Adler and Charles Van Doren
           </div>
           <div class="book-item">
-            <span>✍️</span>
-            <em>Writing to Learn</em> by William Zinsser
+            <span>📈</span>
+            <em>How to Learn</em> by Fiona McPherson
           </div>
           <div class="book-item">
-            <span>📓</span>
-            <em>Antinet Zettelkasten</em> by Scott Scheper
+            <span>✍️</span>
+            <em>Motivational Interviewing</em> by William R. Miller, PhD and Stephen Rollnick, PhD
           </div>
           <div class="book-item">
             <span>💪</span>
@@ -138,6 +271,10 @@
             <em>The Art of War</em> by Sun Tzu
           </div>
           <div class="book-item">
+            <span>🪙</span>
+            <em>Meditations</em> by Marcus Aurelius
+          </div>
+          <div class="book-item">
             <span>📓</span>
             <em>The Bullet Journal Method</em> by Ryder Carroll
           </div>
@@ -147,69 +284,161 @@
           </div>
         </div>
       </div>
-    </section>
+      <p>As you can guess, I'm a parent, and I like to read books. I'm particularly interested in books that raise my vibrations as a human being and elevate those around me. I'm a self-learner and a self-starter. I am an internalizer, as described by Lindsay C. Gibson in her book <em>Adult Children of Emotionally Immature Parents</em>: "Internalizers are highly perceptive and sensitive, with strong instincts to engage and connect with other people. They tend to feel apologetic for needing help, do most of the emotional work in relationships, and think about what other people want first."</p>
+      <p>I’ll be the first to admit I’m not perfect, but I believe we are all perfectly imperfect in our own little ways.</p>
 
-    <!-- Experience Section -->
+    </section>
     <section id="background" class="fade-in">
       <div class="icon-title">
         <span>💼</span>
-        <h2>Experience</h2>
+        <h1>Experience</h1>
       </div>
       <div class="divider"></div>
-
-      <p>My journey in tech kicked off over ten years ago, fueled by endless curiosity and a love for solving problems. As a systems engineer, I wear many hats, juggling everything from designing tech infrastructures to collaborating with awesome teams.</p>
-      <p>I spend a lot of time scripting for our internal AI chatbot, which not only sharpens my coding skills but also keeps me on my toes with the latest in AI. PowerShell scripts? Yep, I've written plenty to make processes smoother and help our support teams work more efficiently.</p>
-      <p>I've had the chance to work across various industries—law firms, local governments, police departments, child protection services, manufacturing, and production. This diverse experience has taught me to stay adaptable and tackle everything from large-scale AWS infrastructures to specific technical hiccups.</p>
-      <p>But it's not just about the technical skills. Building strong relationships with clients and colleagues, and listening to their stories, is what I value most. I'm proud to be a reliable problem-solver who understands not just the technical needs but also the human side of every project.</p>
+      <p>My journey in tech kicked off over ten years ago, fueled by endless curiosity and a love for solving problems.
+        As a systems engineer, I wear many hats, juggling everything from designing tech infrastructures to
+        collaborating with awesome teams.</p>
+      <p>I spend a lot of time scripting for our internal AI chatbot, which not only sharpens my coding skills but also
+        keeps me on my toes with the latest in AI. PowerShell scripts? Yep, I've written plenty to make processes
+        smoother and help our support teams work more efficiently.</p>
+      <p>I've had the chance to work across various industries—law firms, local governments, police departments, child
+        protection services, manufacturing, and production. This diverse experience has taught me to stay adaptable and
+        tackle everything from large-scale AWS infrastructures to specific technical hiccups.</p>
+      <p>But it's not just about the technical skills. Building strong relationships with clients and colleagues, and
+        listening to their stories, is what I value most. I'm proud to be a reliable problem-solver who understands not
+        just the technical needs but also the human side of every project.</p>
     </section>
-
-    <!-- Purpose Section -->
     <section id="why" class="fade-in">
       <div class="icon-title">
         <span>🌐</span>
-        <h2>Purpose</h2>
+        <h1>Purpose</h1>
       </div>
       <div class="divider"></div>
-
-      <p>I created this page to share my passion for technology and to make it easier for individuals and small businesses to access the tools they need. It’s more than just a portfolio—it's a space where I can connect, share ideas, and collaborate on projects that matter.</p>
-      <p>I believe technology should be straightforward and accessible to everyone. Whether it's building a user-friendly website, automating tasks, or working on community-driven projects, my goal is to bridge the gap and make tech work for you.</p>
-      <p>Each project featured here reflects my commitment to simplicity, ease of use, and teamwork. This page is a reflection of my dedication to using technology to make a positive and lasting impact, helping to build stronger, more connected communities.</p>
+      <p>I created this page to share my passion for technology and to make it easier for individuals and small
+        businesses to access the tools they need. It’s more than just a portfolio—it's a space where I can connect,
+        share ideas, and collaborate on projects that matter.</p>
+      <p>I believe technology should be straightforward and accessible to everyone. Whether it's building a
+        user-friendly website, automating tasks, or working on community-driven projects, my goal is to bridge the gap
+        and make tech work for you.</p>
+      <p>Each project featured here reflects my commitment to simplicity, ease of use, and teamwork. This page is a
+        reflection of my dedication to using technology to make a positive and lasting impact, helping to build
+        stronger, more connected communities.</p>
     </section>
 
-    <!-- Projects Section -->
+
     <section id="projects" class="fade-in">
       <div class="icon-title">
         <span>📂</span>
-        <h2>Projects</h2>
+        <h1>Projects</h1>
       </div>
       <div class="divider"></div>
-
-      <p><strong>Professional Projects:</strong></p>
-      <ul class="projects-list">
-        <li><strong>Cloud Migrations:</strong> Transitioning businesses to cloud environments for improved accessibility and efficiency.</li>
-        <li><strong>Network Migrations:</strong> Upgrading and transferring network infrastructures to enhance performance and security.</li>
-        <li><strong>Infrastructure Migrations:</strong> Redesigning and moving critical systems to new platforms for better reliability.</li>
-        <li><strong>Wireless Implementation/Upgrades:</strong> Installing and upgrading wireless technologies for seamless connectivity.</li>
-        <li><strong>Hypervisor Migrations:</strong> Transitioning virtual environments to new hypervisor platforms for optimized resource management.</li>
+      <h4>Professional</h4>
+      <ul class="projects-list" style="user-select: none;">
+        <li>
+          <details open>
+            <summary>Cloud Migrations – Transitioning businesses to cloud environments for improved accessibility and
+              efficiency.</summary>
+            <ul>
+              <li>2019+ – Migrated 300+ mailboxes between various mail servers and services from self-hosted to
+                third-party cloud hosted.</li>
+              <li>2020+ – Began moving on-premise services into AWS, Azure (now Entra), and M365 to modernize
+                infrastructures.</li>
+              <li>2020+ – Migrated 300+ mailboxes for MSP customers from on-prem Exchange to Exchange Online.</li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>Virtual Infrastructure – Deploying hardware, networking, HA, FT, vSAN, SANs, SAS infrastructure,
+              and more.</summary>
+            <ul>
+              <li>2019–2021 – Migrated Whitebox servers to both VMware vSAN and Azure on-prem.</li>
+              <li>Implemented high-availability clusters and failover technologies to ensure maximum uptime.</li>
+              <li>Deployed advanced SAN solutions to accommodate large-scale, mission-critical data storage.</li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>Infrastructure Migrations – Redesigning and moving critical systems to new platforms for better
+              reliability.</summary>
+            <ul>
+              <li>2022–2024 – Executed full domain migrations to Entra AD (Exchange, Intune, Security best practices,
+                etc.).</li>
+              <li>Consolidated fragmented infrastructures into a cohesive, scalable environment.</li>
+              <li>Modernized legacy server hardware, improving performance and disaster recovery.</li>
+              <li>Implemented layer 3 networking into every customers network using Cisco, HP, Netgear, Aruba, etc.</li>
+              <li>Full security review of TPC/IP stacks to find potential gaps and holes.</li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>Wireless Infrastructure – Greenfield deployments, Ekahau planning, AP placement, and
+              environment-specific builds.</summary>
+            <ul>
+              <li>Designed coverage maps and identified ideal AP placement, tailoring hardware for each environment.
+              </li>
+              <li>Integrated enterprise-level security protocols to protect against unauthorized access.</li>
+              <li>Ensured reliable connectivity for scanners in loading docks and warehouse bays through angled AP
+                setups.</li>
+            </ul>
+          </details>
+        </li>
       </ul>
-
-      <p><strong>Personal Projects:</strong></p>
-      <ul class="projects-list">
-        <li><strong>Docker (Raspberry Pi):</strong> Setting up a lightweight server environment for experimenting with containerized applications.</li>
-        <li><strong>Tinkering (PiBoy Advance):</strong> Developing a handheld gaming device utilizing Raspberry Pi for retro gaming enthusiasts.</li>
+      <h4>Personal</h4>
+      <ul class="projects-list" style="user-select: none;">
+        <li>
+          <details>
+            <summary>Debian/CentOS Personal Servers for Web Hosting, Security, Docker</summary>
+            <ul>
+              <li>2021 – Built a full domain infrastructure using TurnKey Linux deployments with email, LDAP, and file
+                sharing for my household.</li>
+              <li>2022 – Implemented and managed various email services for penetration testing within my personal home
+                network.</li>
+              <li>2023 – Deployed Docker containers for web proxy services, a self-hosted Bitwarden server, MyCloud for
+                file sharing, and more.</li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>Raspberry Pi Custom Builds</summary>
+            <ul>
+              <li>2020+ – Created a fully featured PiBoy Advance gaming system powered by a Raspberry Pi.</li>
+              <li>2021+ – Leveraged a Raspberry Pi host running Docker to share media with family and to manage various
+                containerized services.</li>
+            </ul>
+          </details>
+        </li>
+        <li>
+          <details>
+            <summary>Personal Website Projects</summary>
+            <ul>
+              <li>2024 – Developed a knowledge management system at zettelksaten.shop integrating journaling,
+                note-taking, and advanced referencing.</li>
+              <li>2024+ – Continuously refining site design and user experience through custom analytics and feedback
+                loops.</li>
+            </ul>
+          </details>
+        </li>
       </ul>
     </section>
 
-    <!-- Tools Section -->
+
+
+
     <section id="tools" class="fade-in">
       <div class="icon-title">
         <span>🛠</span>
-        <h2>Tools</h2>
+        <h1>Tools</h1>
       </div>
       <div class="divider"></div>
-
       <ul class="tools-list">
-        <li>ChatGPT (Primary Developer and Assistant)</li>
+        <li>ChatGPT (Primary Developer and Assistant)
+          <ul> <a href="https://chatgpt.com/g/g-VcTQBTwEv-minimal-grammar-cleanup" class="tools-link" target="_blank"
+              rel="noopener noreferrer">Minimal Grammar Cleanup</a>
+          </ul>
+        </li>
         <li>GitHub Pages (Production Hosting)</li>
         <li>CodePen (Live Development Environment)</li>
         <li>Cloudflare (DNS, Security)</li>
@@ -217,54 +446,51 @@
         <li>NameCheap (Domain Registrar)</li>
       </ul>
     </section>
-
-    <!-- Portfolio Section -->
     <section id="portfolio" class="fade-in">
       <div class="icon-title">
         <span>📂</span>
-        <h2>Portfolio</h2>
+        <h1>Links</h1>
       </div>
       <div class="divider"></div>
-
       <div class="portfolio-frame">
-        <p>Explore my portfolio directly below:</p>
         <iframe src="https://garbled.link" title="Portfolio Iframe"></iframe>
       </div>
     </section>
-
-    <!-- Support Section -->
     <section id="support" class="fade-in">
       <div class="icon-title">
         <span>🤝</span>
-        <h2>Support</h2>
+        <h1>Support</h1>
       </div>
       <div class="divider"></div>
-
       <p>Your support is vital for maintaining and improving my services. Contributions through my
-        <a href="https://www.buymeacoffee.com/garbledhamster" class="support-link" target="_blank" rel="noopener noreferrer">Buy Me a Coffee</a>
-        page directly cover essential <strong>hosting fees</strong>, allowing me to sustain and enhance the websites I manage.
+        <a href="https://www.buymeacoffee.com/garbledhamster" class="support-link" target="_blank"
+          rel="noopener noreferrer">Buy Me a Coffee</a>
+        page directly cover essential <strong>hosting fees</strong>, allowing me to sustain and enhance the websites I
+        manage.
       </p>
       <p>With your generous support, I can:</p>
       <ul class="support-list">
         <li><strong>Domain Fees:</strong> Ensure reliable and robust domain names for optimal web presence.</li>
-        <li><strong>GitHub Pages Fees:</strong> Cover the costs associated with using GitHub Pages for production hosting.</li>
+        <li><strong>GitHub Pages Fees:</strong> Cover the costs associated with using GitHub Pages for production
+          hosting.</li>
         <li><strong>Email Fees:</strong> Provide email hosting for seamless communication with every domain.</li>
-        <li><strong>Email Security Fees:</strong> Implement and maintain security measures to protect email communications.</li>
+        <li><strong>Email Security Fees:</strong> Implement and maintain security measures to protect email
+          communications.</li>
         <li><strong>Cloudflare:</strong> Utilize services for DNS management and enhanced security.</li>
-        <li><strong>Time/Materials:</strong> Dedicate resources to continue supporting the community with updates and new projects.</li>
-        <li><strong>Family Support:</strong> Your support helps my wife and me achieve financial security as our community grows.</li>
+        <li><strong>Time/Materials:</strong> Dedicate resources to continue supporting the community with updates and
+          new projects.</li>
+        <li><strong>Family Support:</strong> Your support helps my wife and me achieve financial security as our
+          community grows.</li>
       </ul>
-      <p>Every contribution matters, and reinforces my commitment to creating a more <strong>connected</strong> and supportive community. Thank you for being a crucial part of this journey!</p>
+      <p>Every contribution matters, and reinforces my commitment to creating a more <strong>connected</strong> and
+        supportive community. Thank you for being a crucial part of this journey!</p>
     </section>
-
-    <!-- Contact Section -->
     <section id="contact" class="fade-in">
       <div class="icon-title">
         <span>📩</span>
-        <h2>Contact Me</h2>
+        <h1>Contact Me</h1>
       </div>
       <div class="divider"></div>
-
       <form id="contact-form" action="https://formspree.io/f/xovqpvdv" method="POST" novalidate>
         <div class="form-group">
           <label for="name">Name</label>
@@ -278,28 +504,25 @@
           <label for="message">Message</label>
           <textarea id="message" name="message" rows="4" required aria-required="true"></textarea>
         </div>
-        <!-- Success Message -->
         <div id="form-success" role="status">Your message has been sent successfully!</div>
         <button type="submit">Send Message</button>
       </form>
     </section>
+    <footer>
+      <p>&copy; 2024 Joe Rice. All Rights Reserved.</p>
+      <ul>
+        <li><a href="#about">About</a></li>
+        <li><a href="#background">Experience</a></li>
+        <li><a href="#projects">Projects</a></li>
+        <li><a href="#portfolio">Portfolio</a></li>
+        <li><a href="#tools">Tools</a></li>
+        <li><a href="#support">Support</a></li>
+        <li><a href="#contact">Contact</a></li>
+      </ul>
+    </footer>
   </div>
 
-  <!-- Footer -->
-  <footer>
-    <p>&copy; 2024 Joe Rice. All Rights Reserved.</p>
-    <ul>
-      <li><a href="#about">About</a></li>
-      <li><a href="#background">Experience</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#portfolio">Portfolio</a></li>
-      <li><a href="#tools">Tools</a></li>
-      <li><a href="#support">Support</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </footer>
-
-  <!-- External JavaScript -->
   <script src="data/script.js"></script>
 </body>
+
 </html>
