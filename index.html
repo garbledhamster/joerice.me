@@ -1,365 +1,541 @@
 <!DOCTYPE html>
 <html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=yes, user-scalable=yes"
+		/>
+		<title>Joe Rice</title>
+		<link
+			rel="icon"
+			href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true"
+		/>
+		<link
+			rel="apple-touch-icon"
+			href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true"
+		/>
+		<link
+			rel="manifest"
+			href="/manifest.json"
+		/>
+		<meta
+			property="og:title"
+			content="Joe Rice - Systems Engineer and Technologist"
+		/>
+		<meta
+			property="og:description"
+			content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology."
+		/>
+		<meta
+			property="og:image"
+			content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true"
+		/>
+		<meta
+			property="og:url"
+			content="https://joerice.me"
+		/>
+		<meta
+			property="og:type"
+			content="website"
+		/>
+		<meta
+			property="og:site_name"
+			content="Joe Rice"
+		/>
+		<meta
+			property="og:locale"
+			content="en_US"
+		/>
+		<meta
+			name="og:image:width"
+			content="1200"
+		/>
+		<meta
+			name="og:image:height"
+			content="630"
+		/>
+		<meta
+			name="twitter:card"
+			content="summary_large_image"
+		/>
+		<meta
+			name="twitter:title"
+			content="Joe Rice - Systems Engineer and Technologist"
+		/>
+		<meta
+			name="twitter:description"
+			content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology."
+		/>
+		<meta
+			name="twitter:image"
+			content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true"
+		/>
+		<meta
+			name="description"
+			content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology."
+		/>
+		<meta
+			name="keywords"
+			content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi"
+		/>
+		<meta
+			name="author"
+			content="Joe Rice"
+		/>
+		<meta
+			name="theme-color"
+			content="#000000"
+		/>
+		<link
+			href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap"
+			rel="stylesheet"
+		/>
+		<link
+			rel="stylesheet"
+			href="data/styles.css"
+		/>
+	</head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
-  <title>Joe Rice</title>
-  <link rel="icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true">
-  <link rel="apple-touch-icon"
-    href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true">
-  <link rel="manifest" href="/manifest.json">
-  <meta property="og:title" content="Joe Rice - Systems Engineer and Technologist">
-  <meta property="og:description"
-    content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
-  <meta property="og:image"
-    content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
-  <meta property="og:url" content="https://joerice.me">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Joe Rice">
-  <meta property="og:locale" content="en_US">
-  <meta name="og:image:width" content="1200">
-  <meta name="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Joe Rice - Systems Engineer and Technologist">
-  <meta name="twitter:description"
-    content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
-  <meta name="twitter:image"
-    content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
-  <meta name="description"
-    content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology.">
-  <meta name="keywords"
-    content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi">
-  <meta name="author" content="Joe Rice">
-  <meta name="theme-color" content="#000000">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="data/styles.css">
-</head>
+	<body>
+		<div id="background-image"></div>
+		<header id="header">
+			<h1><a href="#">Joe Rice</a></h1>
+			<nav>
+				<ul>
+					<li><a href="#about">About</a></li>
+					<li><a href="#background">Experience</a></li>
+					<li><a href="#projects">Projects</a></li>
+					<li><a href="#portfolio">Portfolio</a></li>
+					<li><a href="#tools">Tools</a></li>
+					<li><a href="#support">Support</a></li>
+					<li><a href="#contact">Contact</a></li>
+				</ul>
+			</nav>
+			<button
+				id="mobile-button"
+				aria-label="Toggle navigation menu"
+			>
+				<svg
+					width="24"
+					height="24"
+					fill="none"
+					stroke="currentColor"
+					viewBox="0 0 24 24"
+					aria-hidden="true"
+				>
+					<path
+						stroke-linecap="round"
+						stroke-linejoin="round"
+						stroke-width="2"
+						d="M4 6h16M4 12h16M4 18h16"
+					></path>
+				</svg>
+			</button>
+		</header>
+		<div id="mobile-menu">
+			<ul>
+				<li><a href="#about">About</a></li>
+				<li><a href="#background">Experience</a></li>
+				<li><a href="#projects">Projects</a></li>
+				<li><a href="#portfolio">Portfolio</a></li>
+				<li><a href="#tools">Tools</a></li>
+				<li><a href="#support">Support</a></li>
+				<li><a href="#contact">Contact</a></li>
+			</ul>
+		</div>
+		<div id="scroll-container">
+			<section
+				id="about"
+				class="fade-in"
+			>
+				<div class="icon-title">
+					<span>👤</span>
+					<h1>About Me</h1>
+				</div>
+				<div class="divider"></div>
+				<div class="profile-photo">
+					<img
+						src="profile.webp"
+						alt="Joe Rice Profile Photo"
+						class="animated-profile-photo"
+					/>
+				</div>
+				<p>Hi there! I’m Joe. Imagine you're standing in front of my personal bookshelf right now—these are the books I've worn out, marked up, and loved to pieces:</p>
 
-<body>
-  <div id="background-image"></div>
-  <header id="header">
-    <h1><a href="#">Joe Rice</a></h1>
-    <nav>
-      <ul>
-        <li><a href="#about">About</a></li>
-        <li><a href="#background">Experience</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#portfolio">Portfolio</a></li>
-        <li><a href="#tools">Tools</a></li>
-        <li><a href="#support">Support</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-    <button id="mobile-button" aria-label="Toggle navigation menu">
-      <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-      </svg>
-    </button>
-  </header>
-  <div id="mobile-menu">
-    <ul>
-      <li><a href="#about">About</a></li>
-      <li><a href="#background">Experience</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#portfolio">Portfolio</a></li>
-      <li><a href="#tools">Tools</a></li>
-      <li><a href="#support">Support</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </div>
-  <div id="scroll-container">
-    <section id="about" class="fade-in">
-      <div class="icon-title">
-        <span>👤</span>
-        <h1>About Me</h1>
-      </div>
-      <div class="divider"></div>
-      <div class="profile-photo">
-        <img src="profile.webp" alt="Joe Rice Profile Photo" class="animated-profile-photo">
-      </div>
-      <p>Oh hi there! I'm Joe, my favorite books are:</p>
- 
-      <div class="bookshelf">
-        <div class="books-list">
-          <div class="book-item">
-            <span>🧠</span>
-            <a href="https://en.wikipedia.org/wiki/How_to_Read_a_Book"><em>How to Read a Book</em></a> by Mortimer J. Adler and Charles Van Doren
-          </div>
-          <div class="book-item">
-            <span>📈</span>
-            <a href="https://www.amazon.com/How-Learn-principles-effective-revision/dp/1927166144"><em>How to Learn</em></a> by Fiona McPherson
-          </div>
-          <div class="book-item">
-            <span>✍️</span>
-            <a href="https://en.wikipedia.org/wiki/Motivational_interviewing"><em>Motivational Interviewing</em></a> by William R. Miller, PhD, and Stephen Rollnick, PhD
-          </div>
-          <div class="book-item">
-            <span>💪</span>
-            <a href="https://en.wikipedia.org/wiki/Thomas_Louis_Hanna"><em>Somatics</em></a> by Thomas Hanna
-          </div>
-          <div class="book-item">
-            <span>👶</span>
-            <a href="https://www.amazon.com/Montessori-Baby-Parents-Nurturing-Understanding/dp/1523512407"><em>The Montessori Baby</em></a> by Simone Davies and Junnifa Uzodike
-          </div>
-          <div class="book-item">
-            <span>🌟</span>
-            <a href="https://en.wikipedia.org/wiki/Robert_Monroe"><em>Ultimate Journey</em></a> by Robert A. Monroe
-          </div>
-          <div class="book-item">
-            <span>🧘‍♂️</span>
-            <a href="https://en.wikipedia.org/wiki/Shunry%C5%AB_Suzuki"><em>Zen Mind, Beginner's Mind</em></a> by Shunryu Suzuki
-          </div>
-          <div class="book-item">
-            <span>⚔️</span>
-            <a href="https://classics.mit.edu/Tzu/artwar.html"><em>The Art of War</em></a> by Sun Tzu
-          </div>
-          <div class="book-item">
-            <span>🪙</span>
-            <a href="https://classics.mit.edu/Antoninus/meditations.html"><em>Meditations</em></a> by Marcus Aurelius
-          </div>
-          <div class="book-item">
-            <span>📓</span>
-            <a href="https://bulletjournal.com/pages/book"><em>The Bullet Journal Method</em></a> by Ryder Carroll
-          </div>
-          <div class="book-item">
-            <span>🔧</span>
-            <a href="https://en.wikipedia.org/wiki/The_Pragmatic_Programmer"><em>The Pragmatic Programmer</em></a> by Andrew Hunt and David Thomas
-          </div>
-        </div>
-      </div>
-      
-      <p>As you can guess, I'm a parent, and I like to read books. I'm particularly interested in books that raise my vibrations as a human being and elevate those around me. I'm a self-learner and a self-starter. I am an internalizer, as described by Lindsay C. Gibson in her book <em>Adult Children of Emotionally Immature Parents</em>: "Internalizers are highly perceptive and sensitive, with strong instincts to engage and connect with other people. They tend to feel apologetic for needing help, do most of the emotional work in relationships, and think about what other people want first."</p>
-      <p>I’ll be the first to admit I’m not perfect, but I believe we are all perfectly imperfect in our own little ways.</p>
+				<div class="bookshelf">
+					<div class="books-list">
+						<div class="book-item">
+							<span>🧠</span>
+							<a href="https://en.wikipedia.org/wiki/How_to_Read_a_Book"><em>How to Read a Book</em></a> by Mortimer J. Adler and Charles Van Doren
+						</div>
+						<div class="book-item">
+							<span>📈</span>
+							<a href="https://www.amazon.com/How-Learn-principles-effective-revision/dp/1927166144"><em>How to Learn</em></a> by Fiona McPherson
+						</div>
+						<div class="book-item">
+							<span>✍️</span>
+							<a href="https://en.wikipedia.org/wiki/Motivational_interviewing"><em>Motivational Interviewing</em></a> by William R. Miller, PhD, and Stephen Rollnick, PhD
+						</div>
+						<div class="book-item">
+							<span>💪</span>
+							<a href="https://en.wikipedia.org/wiki/Thomas_Louis_Hanna"><em>Somatics</em></a> by Thomas Hanna
+						</div>
+						<div class="book-item">
+							<span>👶</span>
+							<a href="https://www.amazon.com/Montessori-Baby-Parents-Nurturing-Understanding/dp/1523512407"><em>The Montessori Baby</em></a> by Simone Davies and Junnifa Uzodike
+						</div>
+						<div class="book-item">
+							<span>🌟</span>
+							<a href="https://en.wikipedia.org/wiki/Robert_Monroe"><em>Ultimate Journey</em></a> by Robert A. Monroe
+						</div>
+						<div class="book-item">
+							<span>🧘‍♂️</span>
+							<a href="https://en.wikipedia.org/wiki/Shunry%C5%AB_Suzuki"><em>Zen Mind, Beginner's Mind</em></a> by Shunryu Suzuki
+						</div>
+						<div class="book-item">
+							<span>⚔️</span>
+							<a href="https://classics.mit.edu/Tzu/artwar.html"><em>The Art of War</em></a> by Sun Tzu
+						</div>
+						<div class="book-item">
+							<span>🪙</span>
+							<a href="https://classics.mit.edu/Antoninus/meditations.html"><em>Meditations</em></a> by Marcus Aurelius
+						</div>
+						<div class="book-item">
+							<span>📓</span>
+							<a href="https://bulletjournal.com/pages/book"><em>The Bullet Journal Method</em></a> by Ryder Carroll
+						</div>
+						<div class="book-item">
+							<span>🔧</span>
+							<a href="https://en.wikipedia.org/wiki/The_Pragmatic_Programmer"><em>The Pragmatic Programmer</em></a> by Andrew Hunt and David Thomas
+						</div>
+					</div>
+				</div>
 
-    </section>
-    <section id="background" class="fade-in">
-      <div class="icon-title">
-        <span>💼</span>
-        <h1>Experience</h1>
-      </div>
-      <div class="divider"></div>
-      <p>I've played video games my whole life, especially growing up as the youngest of three with the closest sibling gap being five years. That meant I got tossed into the deep end of competitive stuff like 007 GoldenEye on the N64, or I'd be 100%-ing Zelda: Ocarina of Time and Majora’s Mask by racing to the local library to print out guides.</p>
-      <p>I got my first computer when I was 11, after my dad reconnected with a high school buddy who was finishing up at Gateway Technical College in Elkhorn, Wisconsin. That's when I dove into coding, built Counter-Strike maps, messed with keygens, and learned a ton about the Windows registry. Basically, I was a black hat wannabe at my core, just soaking in everything I could.</p>
-      <p>Fast forward to my sophomore year of high school in Odenville, Alabama, where the school literally employed me as a "techy." I’d get full credits each semester just for doing IT work. That felt like hitting the jackpot—real-world experience while still a teenager.</p>
-      <p>Then I ended up graduating high school in Wisconsin, and it was kind of surreal walking the same halls I’d started in as a freshman, only now feeling way older and seeing everyone I knew just a couple of years further along than they were before.</p>
-      <p>After high school, I ended up going to Gateway Technical College myself and got a degree as a Support Specialist, which was a natural next step after all those years tinkering with computers. And now I'm also a certified network and security specialist—it keeps me on my toes, constantly learning and staying ahead of the game.</p>
-      <p>I worked at the post office for about 2.5 years—originally, I was supposed to just be part-time, but the clerk running the office got sick with cancer, so I ended up managing that entire operation six days a week for two years. After that, I was “promoted” to the main office, which I loathed with a passion. Deep down, I knew that wasn’t my destiny. I was still going to school in the evenings, and that’s when a friend introduced me to this "MSP" world I’d never heard of. I decided to take a shot, and that’s where my journey into the capitalist tech realm kicked off.</p>
-      <p>I moved up quickly—residential role, then tier 1, then onto the projects team in a position my coworkers affectionately called "projects bitch." I got to work under two engineers with a combined 50 years of experience, and for around four of those years, I was directly shadowing one of the owners like a total sponge. His patience in teaching me everything shaped how I think today, pushing me to be pretty decent forward-thinker and problem-solver.</p>
-      <p>Now, I’m n lead engineer at that same MSP where. My day-to-day revolves around coding, design, planning, and execution of all kinds of systems. I’ve got a wide range of responsibilities because, honestly, what I do can’t be pinned down with a neat little label. It's become a place of steady growth for me, and that’s exactly how I like it.</p>
-    </section>
+				<p>
+					As you might have guessed, I’m a parent, a self-learner, and a problem-solving enthusiast. I’m also what the author Lindsay C. Gibson might call an “internalizer,” which is a fancy way of saying I tend to do a lot of the
+					emotional lifting in my relationships. Not gonna lie—it can be tiring, but it does help me see the best in people (most days).
+				</p>
+				<p>I’m far from perfect, but I like to think our imperfections are what make us interesting—and probably a little funnier, too.</p>
+			</section>
+			<section
+				id="background"
+				class="fade-in"
+			>
+				<div class="icon-title">
+					<span>💼</span>
+					<h1>Experience</h1>
+				</div>
+				<div class="divider"></div>
+				<p>
+					My love for tech started early, thanks to being the youngest of three and usually the guinea pig when it came to gaming. I cut my teeth on <em>007 GoldenEye</em> for N64 (yes, I got whooped
+					plenty). I’d also bike to the local library to print out game guides for <em>Zelda: Ocarina of Time</em> and <em>Majora’s Mask</em>—my idea of high adventure back then.
+				</p>
+				<p>
+					When I was 11, my dad’s friend from Gateway Technical College gave me my first computer, launching me straight into coding, Windows registry diving, and, well, random hacking experiments that
+					made me feel like I was in a secret spy movie. By high school, I was basically “the IT kid,” earning full credits while fixing the school’s computers.
+				</p>
+				<p>
+					I eventually finished high school back in Wisconsin—same place I started as a freshman, but it felt worlds apart. After that, I followed my dad’s buddy’s footsteps to Gateway Technical
+					College, snagged a Support Specialist degree, and later layered on network and security certifications. Yep, I’m the proud geek who found actual joy in learning about subnets and firewalls.
+				</p>
+				<p>
+					I briefly worked at the post office, which sounds cozy, but in reality, I ended up running the place six days a week for two years when a coworker fell ill. After a less-than-pleasant
+					transfer to the main office, I knew it was time to move on. A friend nudged me toward an MSP (Managed Service Provider), a world I never knew existed, and I jumped in headfirst.
+				</p>
+				<p>
+					I started at the bottom, moved to tier 1, joined the projects team, and then shadowed one of the owners for about four years. That’s when I really learned to problem-solve and think ahead.
+					Now, I’m a lead engineer at the same MSP, wearing many hats: coding, designing systems, planning out migrations, and orchestrating just about anything else that needs to happen. It’s a wild
+					ride, and I wouldn’t have it any other way.
+				</p>
+			</section>
 
-    <section id="why" class="fade-in">
-      <div class="icon-title">
-        <span>🌐</span>
-        <h1>Purpose</h1>
-      </div>
-      <div class="divider"></div>
-      <p>This website is my digital home base—a space where I can share who I am, showcase my work, and connect with anyone interested in my journey. It's not just some generic personal portfolio to try an stand out to potential employers. it's a continuously evolving record of my personal and professional progress. I’m big on authenticity, growth, and community, so I’ve brought together experiences, tools, and projects that matter to me. Whether you’re here for the tech details, curious about my reading list, or just want a glimpse into who Joe Rice is, I hope you find something genuine and relatable here.</p>
-    </section>
-    <section id="projects" class="fade-in">
-      <div class="icon-title">
-        <span>📂</span>
-        <h1>Projects</h1>
-      </div>
-      <div class="divider"></div>
-      <h4>Professional</h4>
-      <ul class="projects-list" style="user-select: none;">
-        <li>
-          <details open>
-            <summary>Cloud Migrations</summary>
-            <ul>
-              <li>2019+ – Migrated 300+ mailboxes between various mail servers and services from self-hosted to
-                third-party cloud hosted.</li>
-              <li>2020+ – Began moving on-premise services into AWS, Azure (now Entra), and M365 to modernize
-                infrastructures.</li>
-              <li>2020+ – Migrated 300+ mailboxes for MSP customers from on-prem Exchange to Exchange Online.</li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Virtual Infrastructure</summary>
-            <ul>
-              <li>2019–2021 – Migrated Whitebox servers to both VMware vSAN and Azure on-prem.</li>
-              <li>Implemented high-availability clusters and failover technologies to ensure maximum uptime.</li>
-              <li>Deployed advanced SAN solutions to accommodate large-scale, mission-critical data storage.</li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Infrastructure Migrations</summary>
-            <ul>
-              <li>2022–2024 – Executed full domain migrations to Entra AD (Exchange, Intune, Security best practices,
-                etc.).</li>
-              <li>Consolidated fragmented infrastructures into a cohesive, scalable environment.</li>
-              <li>Modernized legacy server hardware, improving performance and disaster recovery.</li>
-              <li>Implemented layer 3 networking into every customers network using Cisco, HP, Netgear, Aruba, etc.</li>
-              <li>Full security review of TPC/IP stacks to find potential gaps and holes.</li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Wireless Infrastructure</summary>
-            <ul>
-              <li>Designed coverage maps and identified ideal AP placement, tailoring hardware for each environment.
-              </li>
-              <li>Integrated enterprise-level security protocols to protect against unauthorized access.</li>
-              <li>Ensured reliable connectivity for scanners in loading docks and warehouse bays through angled AP
-                setups.</li>
-            </ul>
-          </details>
-        </li>
-      </ul>
-      <h4>Personal</h4>
-      <ul class="projects-list" style="user-select: none;">
-        <li>
-          <details>
-            <summary>Home Security</summary>
-            <ul>
-              <li>2021 – Built a full domain infrastructure using TurnKey Linux deployments with email, LDAP, and file
-                sharing for my household.</li>
-              <li>2022 – Implemented and managed various email services for penetration testing within my personal home
-                network.</li>
-              <li>2023 – Deployed Docker containers for web proxy services, a self-hosted Bitwarden server, MyCloud for
-                file sharing, and more.</li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Self Hosting Websites</summary>
-            <ul>
-              <li>2020+ – Created a fully featured PiBoy Advance gaming system powered by a Raspberry Pi.</li>
-              <li>2021+ – Leveraged a Raspberry Pi host running Docker to share media with family and to manage various
-                containerized services.</li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Links</summary>
-            <ul>
-              <li>According to Oxford, a link is "a relationship between two things or situations, especially where one thing affects the other." For me, links are how I connect with the world—like Neo plugging into the Matrix.</li>
-              <li>Links are my way of sharing knowledge and experiences while providing a space for those who, by chance or fate, "find themselves exactly where they need to be."</li>
-              <li>The backbone of my links system is grounded in my engineering expertise and frequent use of ChatGPT. I’ve developed a streamlined method to quickly create and deploy websites with purpose.</li>
-              <li>My goal is to create a network of meaningful, time-sensitive resources—platforms where people can stumble across inspiration and be guided toward a higher perspective through my digital work.</li>
-            </ul>
-            
-          </details>
-        </li>
-        <li>          <details>
-          <summary>My Zettelkasten</summary>
-          <ul>
-            <li>Being a <a href="https://dailystoic.com/life-is-school-school-is-for-life/">lifelong learner</a> has taught me that writing is essential to learning. Not only do I keep a bullet journal, but I also maintain an analog zettelkasten. It allows me to write down moments of "genius" that I can revisit later in life or throughout my journey. I tend to use it for everything related to Mind, Body, Spirit, Life.</li>
-            <li>I've even built a dedicated website for it: <a href="https://zettelkasten.shop">Zettelkasten.Shop</a>. This helps me share the system with more people and provides a starting point for those interested in learning about it.</li>
-            <li>My zettelkasten is literally my <a href="https://fortelabs.com/blog/basboverview/">Second brain</a> system that I can pass down to my children or use to write books someday, just as <a href="https://en.wikipedia.org/wiki/Niklas_Luhmann">Niklas Luhmann</a>, the creator of the zettelkasten method, did.</li>
-          </ul>
-        </details></li>
-      </ul>
-    </section>
+			<section
+				id="why"
+				class="fade-in"
+			>
+				<div class="icon-title">
+					<span>🌐</span>
+					<h1>Purpose</h1>
+				</div>
+				<div class="divider"></div>
+				<p>
+					This site is my corner of the internet—a place to share my projects, experiences, and hopefully a few laughs. It’s not just a portfolio for potential employers; it’s also a public scrapbook
+					of where I’ve been and where I’m headed. I value honesty, growth, and community, so you’ll find bits of all three sprinkled throughout. Whether you’re here to check out my tech work or to
+					spy on my reading list, I hope you find something that resonates.
+				</p>
+			</section>
 
+			<section
+				id="projects"
+				class="fade-in"
+			>
+				<div class="icon-title">
+					<span>📂</span>
+					<h1>Projects</h1>
+				</div>
+				<div class="divider"></div>
+				<h4>Professional</h4>
+				<ul
+					class="projects-list"
+					style="user-select: none"
+				>
+					<li>
+						<details open>
+							<summary>Cloud</summary>
+							<ul>
+								<li>
+									My first taste of Cloud Infrastructure was setting up a Sophos BGP with HA in AWS—<em>before</em> it was officially supported. The docs were basically coffee-stained notes from
+									Sophos engineers, but hey, it worked.
+								</li>
+								<li>
+									Next, I dove into Exchange Online migrations when Microsoft was still figuring out how to handle them gracefully. I had to build out processes that Microsoft eventually replaced
+									with its Exchange Hybrid Setup Utility.
+								</li>
+								<li>These days, a typical project involves moving on-prem domains into M365 so folks can ditch the bulky servers and embrace the cloud.</li>
+								<li><a href="#security">For security experience</a></li>
+							</ul>
+						</details>
+					</li>
+					<li>
+						<details>
+							<summary>Virtual</summary>
+							<ul>
+								<li>I learned virtual infrastructure on the fly once I joined the MSP world.</li>
+								<li>I started by troubleshooting virtual servers; next thing I knew, I was deploying them.</li>
+								<li>Then I moved on to configuring virtual switches, then virtual firewalls.</li>
+								<li>Eventually, I was setting up high availability across multiple sites in Green County (Monroe, WI).</li>
+								<li><a href="#security">For security experience</a></li>
+							</ul>
+						</details>
+					</li>
+					<li>
+						<details>
+							<summary>Security</summary>
+							<ul>
+								<li>
+									I’ve been fascinated with security ever since I was tunneling through proxies in high school. It’s demanding, sure, but it’s also the glue that keeps the digital world from
+									imploding.
+								</li>
+								<li>Nowadays, I help protect MSP clients by streamlining our security processes. It’s not all Hollywood hacking, but it’s still pretty fun.</li>
+								<li>I prefer working from the outside in: cloud first, then the network edge, then domain security, and finally user awareness.</li>
+								<li>
+									When choosing hardware or software, I try to find solutions that make life easier—for both admins and end users—without making security an afterthought.
+								</li>
+							</ul>
+						</details>
+					</li>
+					<li>
+						<details>
+							<summary>Wireless</summary>
+							<ul>
+								<li>I’ve done coverage maps for everything from small offices to giant warehouses, placing APs so nobody ends up stuck in a Wi-Fi dead zone.</li>
+								<li>Implemented enterprise security with RADIUS (a lot of acronyms, I know) to lock down network access properly.</li>
+								<li>Worked remotely with installers in multiple states, feeling a bit like a traffic controller with a giant coverage map.</li>
+								<li>Set up angled APs in warehouses so scanners in loading docks don’t go rogue on me.</li>
+								<li>Deployed a robust wireless network for a 100,000-square-foot warehouse (like playing Tetris but with signal coverage).</li>
+							</ul>
+						</details>
+					</li>
+				</ul>
 
+				<h4>Personal</h4>
+				<ul
+					class="projects-list"
+					style="user-select: none"
+				>
+					<li>
+						<details>
+							<summary>Home Security</summary>
+							<ul>
+								<li>
+									At home, I always keep at least two separate Wi-Fi networks—one for my IOT devices so they can’t make friends with my main network, and one for everyday use. I sleep better knowing
+									my smart toaster can’t snoop through my files.
+								</li>
+							</ul>
+						</details>
+					</li>
+					<li>
+						<details>
+							<summary>Links</summary>
+							<ul>
+								<li>
+									I think of “links” as virtual portals that help me share ideas. (Yes, kind of like how Neo jacks into the Matrix.) They connect me with the rest of the world and vice versa.
+								</li>
+								<li>I’ve gotten pretty good at spinning up quick websites that serve a unique purpose—like dropping breadcrumbs for anyone who stumbles upon them.</li>
+								<li>
+									It might sound a little over-the-top, but these links are how I leave digital footprints. They evolve as I do, and each one can be a stepping stone for the next curious traveler.
+								</li>
+							</ul>
+						</details>
+					</li>
+					<li>
+						<details>
+							<summary>My Zettelkasten</summary>
+							<ul>
+								<li>
+									I’m a lifelong learner, which means I write <em>a lot</em>. My bullet journal and analog Zettelkasten keep me from forgetting all those “aha!” moments (or at least most of them).
+								</li>
+								<li>
+									I built <a href="https://zettelkasten.shop">Zettelkasten.Shop</a> to share the system. It’s like a big file cabinet for my thoughts, minus the paper cuts.
+								</li>
+								<li>
+									My Zettelkasten is basically my own second brain—just in case the first one needs a nap. I can pass it on to my kids someday, or even publish something if I’m feeling bold.
+								</li>
+							</ul>
+						</details>
+					</li>
+				</ul>
+			</section>
 
+			<section
+				id="tools"
+				class="fade-in"
+			>
+				<div class="icon-title">
+					<span>🛠</span>
+					<h1>Tools</h1>
+				</div>
+				<div class="divider"></div>
+				<ul class="tools-list">
+					<li>
+						ChatGPT (Primary Developer and Assistant)
+						<ul>
+							<li>
+								<a
+									href="https://chatgpt.com/g/g-VcTQBTwEv-minimal-grammar-cleanup"
+									class="tools-link"
+									target="_blank"
+									rel="noopener noreferrer"
+									>Minimal Grammar Cleanup</a
+								>
+							</li>
+						</ul>
+					</li>
+					<li>GitHub Pages (Production Hosting)</li>
+					<li>CodePen (Live Development Environment)</li>
+					<li>Cloudflare (DNS, Security)</li>
+					<li>MXroute (Email Hosting)</li>
+					<li>NameCheap (Domain Registrar)</li>
+				</ul>
+			</section>
+			<section
+				id="portfolio"
+				class="fade-in"
+			>
+				<div class="icon-title">
+					<span>📂</span>
+					<h1>Links</h1>
+				</div>
+				<div class="divider"></div>
+				<div class="portfolio-frame">
+					<iframe
+						src="https://garbled.link"
+						title="Portfolio Iframe"
+					></iframe>
+				</div>
+			</section>
+			<section
+				id="support"
+				class="fade-in"
+			>
+				<div class="icon-title">
+					<span>🤝</span>
+					<h1>Support</h1>
+				</div>
+				<div class="divider"></div>
+				<p>
+					Your support helps me cover the bills for hosting, domains, and email services. In other words, it keeps these sites from crashing and burning at the worst possible time. You can chip in via
+					my
+					<a
+						href="https://www.buymeacoffee.com/garbledhamster"
+						class="support-link"
+						target="_blank"
+						rel="noopener noreferrer"
+						>Buy Me a Coffee</a
+					>
+					page—basically fueling my caffeine habit for the greater good.
+				</p>
+				<p>In practical terms, here’s what your contributions go toward:</p>
+				<ul class="support-list">
+					<li><strong>Domain Fees:</strong> So I can keep friendly URLs alive instead of relying on complicated IP addresses.</li>
+					<li><strong>GitHub Pages Fees:</strong> Hosting that’s stable (most of the time).</li>
+					<li><strong>Email Fees:</strong> Because reliable email is still more professional than carrier pigeons.</li>
+					<li><strong>Email Security Fees:</strong> Helping me lock down email so nobody gets spammed with “you won a million bucks!” messages.</li>
+					<li><strong>Cloudflare:</strong> For DNS management and some extra muscle on the security front.</li>
+					<li><strong>Time/Materials:</strong> Encourages me to keep building new stuff, instead of binge-watching TV shows all weekend (though that’s tempting).</li>
+					<li><strong>Family Support:</strong> My wife and I appreciate every bit of stability we can get—especially with kiddos around.</li>
+				</ul>
+				<p>Even a small gesture goes a long way. Thank you for being part of this ongoing adventure!</p>
+			</section>
+			<section
+				id="contact"
+				class="fade-in"
+			>
+				<div class="icon-title">
+					<span>📩</span>
+					<h1>Contact Me</h1>
+				</div>
+				<div class="divider"></div>
+				<form
+					id="contact-form"
+					action="https://formspree.io/f/xovqpvdv"
+					method="POST"
+					novalidate
+				>
+					<div class="form-group">
+						<label for="name">Name</label>
+						<input
+							type="text"
+							id="name"
+							name="name"
+							required
+							aria-required="true"
+						/>
+					</div>
+					<div class="form-group">
+						<label for="email">Email</label>
+						<input
+							type="email"
+							id="email"
+							name="email"
+							required
+							aria-required="true"
+						/>
+					</div>
+					<div class="form-group">
+						<label for="message">Message</label>
+						<textarea
+							id="message"
+							name="message"
+							rows="4"
+							required
+							aria-required="true"
+						></textarea>
+					</div>
+					<div
+						id="form-success"
+						role="status"
+					>
+						Your message has been sent successfully!
+					</div>
+					<button type="submit">Send Message</button>
+				</form>
+			</section>
+			<footer>
+				<p>&copy; 2024 Joe Rice. All Rights Reserved.</p>
+				<ul>
+					<li><a href="#about">About</a></li>
+					<li><a href="#background">Experience</a></li>
+					<li><a href="#projects">Projects</a></li>
+					<li><a href="#portfolio">Portfolio</a></li>
+					<li><a href="#tools">Tools</a></li>
+					<li><a href="#support">Support</a></li>
+					<li><a href="#contact">Contact</a></li>
+				</ul>
+			</footer>
+		</div>
 
-    <section id="tools" class="fade-in">
-      <div class="icon-title">
-        <span>🛠</span>
-        <h1>Tools</h1>
-      </div>
-      <div class="divider"></div>
-      <ul class="tools-list">
-        <li>ChatGPT (Primary Developer and Assistant)
-          <ul> <a href="https://chatgpt.com/g/g-VcTQBTwEv-minimal-grammar-cleanup" class="tools-link" target="_blank"
-              rel="noopener noreferrer">Minimal Grammar Cleanup</a>
-          </ul>
-        </li>
-        <li>GitHub Pages (Production Hosting)</li>
-        <li>CodePen (Live Development Environment)</li>
-        <li>Cloudflare (DNS, Security)</li>
-        <li>MXroute (Email Hosting)</li>
-        <li>NameCheap (Domain Registrar)</li>
-      </ul>
-    </section>
-    <section id="portfolio" class="fade-in">
-      <div class="icon-title">
-        <span>📂</span>
-        <h1>Links</h1>
-      </div>
-      <div class="divider"></div>
-      <div class="portfolio-frame">
-        <iframe src="https://garbled.link" title="Portfolio Iframe"></iframe>
-      </div>
-    </section>
-    <section id="support" class="fade-in">
-      <div class="icon-title">
-        <span>🤝</span>
-        <h1>Support</h1>
-      </div>
-      <div class="divider"></div>
-      <p>Your support is vital for maintaining and improving my services. Contributions through my
-        <a href="https://www.buymeacoffee.com/garbledhamster" class="support-link" target="_blank"
-          rel="noopener noreferrer">Buy Me a Coffee</a>
-        page directly cover essential <strong>hosting fees</strong>, allowing me to sustain and enhance the websites I
-        manage.
-      </p>
-      <p>With your generous support, I can:</p>
-      <ul class="support-list">
-        <li><strong>Domain Fees:</strong> Ensure reliable and robust domain names for optimal web presence.</li>
-        <li><strong>GitHub Pages Fees:</strong> Cover the costs associated with using GitHub Pages for production
-          hosting.</li>
-        <li><strong>Email Fees:</strong> Provide email hosting for seamless communication with every domain.</li>
-        <li><strong>Email Security Fees:</strong> Implement and maintain security measures to protect email
-          communications.</li>
-        <li><strong>Cloudflare:</strong> Utilize services for DNS management and enhanced security.</li>
-        <li><strong>Time/Materials:</strong> Dedicate resources to continue supporting the community with updates and
-          new projects.</li>
-        <li><strong>Family Support:</strong> Your support helps my wife and me achieve financial security as our
-          community grows.</li>
-      </ul>
-      <p>Every contribution matters, and reinforces my commitment to creating a more <strong>connected</strong> and
-        supportive community. Thank you for being a crucial part of this journey!</p>
-    </section>
-    <section id="contact" class="fade-in">
-      <div class="icon-title">
-        <span>📩</span>
-        <h1>Contact Me</h1>
-      </div>
-      <div class="divider"></div>
-      <form id="contact-form" action="https://formspree.io/f/xovqpvdv" method="POST" novalidate>
-        <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" required aria-required="true">
-        </div>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required aria-required="true">
-        </div>
-        <div class="form-group">
-          <label for="message">Message</label>
-          <textarea id="message" name="message" rows="4" required aria-required="true"></textarea>
-        </div>
-        <div id="form-success" role="status">Your message has been sent successfully!</div>
-        <button type="submit">Send Message</button>
-      </form>
-    </section>
-    <footer>
-      <p>&copy; 2024 Joe Rice. All Rights Reserved.</p>
-      <ul>
-        <li><a href="#about">About</a></li>
-        <li><a href="#background">Experience</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#portfolio">Portfolio</a></li>
-        <li><a href="#tools">Tools</a></li>
-        <li><a href="#support">Support</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </footer>
-  </div>
-
-  <script src="data/script.js"></script>
-</body>
-
+		<script src="data/script.js"></script>
+	</body>
 </html>
