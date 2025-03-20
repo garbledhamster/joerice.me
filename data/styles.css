@@ -3,6 +3,7 @@
   padding: 0;
   box-sizing: border-box;
 }
+
 html, body {
   height: 100%;
   font-family: 'Montserrat', sans-serif;
@@ -12,14 +13,13 @@ html, body {
 }
 
 a {
-  text-decoration: none;
-  color: grey;
+  color: lightcoral;
 }
 ul, li {
   margin-left: 15px;
 }
 li {
-  margin-bottom: 10px;
+  margin-top: 10px;
 }
 #header {
   position: fixed;
@@ -39,7 +39,6 @@ li {
 #header h1 {
   font-size: 1.5rem;
   font-weight: 700;
-  margin-bottom: 10px;
 }
 #header nav {
   display: none;
@@ -49,7 +48,7 @@ li {
   gap: 1rem;
 }
 #header nav a:hover {
-  color: #9ca3af;
+  color: #fff;
 }
 @media (min-width: 768px) {
   #header nav {
@@ -60,7 +59,7 @@ li {
   }
 }
 #mobile-button {
-  background: none;
+  background: lightcoral;
   border: none;
   cursor: pointer;
 }
@@ -135,6 +134,7 @@ p {
   font-size: 1.125rem;
   line-height: 1.75rem;
   color: #1f2937;
+  margin-top: 1rem;
 }
 .icon-title {
   position: relative;
@@ -170,8 +170,12 @@ p {
   border-left: 8px solid #4b5563;
   border-right: 8px solid #4b5563;
 }
+
 #about .divider {
   background-color: #4b5563;
+}
+#about a {
+  color: #4b5563
 }
 #background {
   background-color: #bfdbfe;
@@ -182,6 +186,9 @@ p {
 #background .divider {
   background-color: #2563eb;
 }
+#background a {
+  color: #2563eb
+}
 #why {
   background-color: #fee2e2;
   color: #7f1d1d;
@@ -191,14 +198,23 @@ p {
 #why .divider {
   background-color: #dc2626;
 }
+#why a {
+  color: #dc2626
+}
 #projects {
   background-color: #fdf6b2;
   color: #705a00;
   border-left: 8px solid #d97706;
   border-right: 8px solid #d97706;
 }
+#projects a {
+  color: #d97706
+}
 #projects .divider {
   background-color: #d97706;
+}
+#tools a {
+  color: #db2777;
 }
 #tools {
   background-color: #ffe4e6;
@@ -242,6 +258,9 @@ p {
 }
 #support .divider {
   background-color: #9333ea;
+}
+#support a {
+  color: #9333ea;
 }
 #contact {
   background-color: #fff;
