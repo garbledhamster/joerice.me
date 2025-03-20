@@ -1,402 +1,287 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=yes">
-  <title>Joe Rice</title>
-  <link rel="icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true">
-  <link rel="apple-touch-icon"
-    href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true">
-  <link rel="manifest" href="/manifest.json">
-  <meta property="og:title" content="Joe Rice - Systems Engineer and Technologist">
-  <meta property="og:description"
-    content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
-  <meta property="og:image"
-    content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
-  <meta property="og:url" content="https://joerice.me">
-  <meta property="og:type" content="website">
-  <meta property="og:site_name" content="Joe Rice">
-  <meta property="og:locale" content="en_US">
-  <meta name="og:image:width" content="1200">
-  <meta name="og:image:height" content="630">
-  <meta name="twitter:card" content="summary_large_image">
-  <meta name="twitter:title" content="Joe Rice - Systems Engineer and Technologist">
-  <meta name="twitter:description"
-    content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology.">
-  <meta name="twitter:image"
-    content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true">
-  <meta name="description"
-    content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology.">
-  <meta name="keywords"
-    content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi">
-  <meta name="author" content="Joe Rice">
-  <meta name="theme-color" content="#000000">
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="data/styles.css">
+  <meta charset="UTF-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <!--
+    Reusing your old metadata tags for SEO and social sharing
+    Update URLs or descriptions as needed
+  -->
+  <title>Loading...</title>
+  <meta property="og:title" content="Joe Rice - Systems Engineer and Technologist" />
+  <meta
+    property="og:description"
+    content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology."
+  />
+  <meta
+    property="og:image"
+    content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true"
+  />
+  <meta property="og:url" content="https://joerice.me" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Joe Rice" />
+  <meta property="og:locale" content="en_US" />
+  <meta name="og:image:width" content="1200" />
+  <meta name="og:image:height" content="630" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Joe Rice - Systems Engineer and Technologist" />
+  <meta
+    name="twitter:description"
+    content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology."
+  />
+  <meta
+    name="twitter:image"
+    content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true"
+  />
+
+  <meta
+    name="description"
+    content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology."
+  />
+  <meta
+    name="keywords"
+    content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi"
+  />
+  <meta name="author" content="Joe Rice" />
+  <meta name="theme-color" content="#000000" />
+
+  <link
+    rel="icon"
+    href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true"
+  />
+  <link
+    rel="apple-touch-icon"
+    href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true"
+  />
+  <link rel="manifest" href="/manifest.json" />
+
+  <!-- Montserrat font (same as old site) -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap"
+    rel="stylesheet"
+  />
+
+  <!-- Minimal styling with your 7-color header and centered nav -->
+  <style>
+    :root {
+      --header-height: 100px;
+      --bg-color: #151515;
+      --text-color: #f0f0f0;
+      --accent-color: #00adb5;
+      --divider-color: #333;
+      --transition-speed: 0.3s;
+      --font-family: 'Montserrat', sans-serif;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg-color);
+      color: var(--text-color);
+      font-family: var(--font-family);
+      line-height: 1.6;
+    }
+
+    /* 7-color gradient for header */
+    header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: var(--header-height);
+      background: linear-gradient(
+        to right,
+		#100,
+        #000,
+		#100
+      );
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      text-align: center;
+      padding: 0.5rem;
+    }
+
+    #site-title {
+      margin: 0.5rem 0;
+      font-size: 1.4rem;
+    }
+    #site-title a {
+      text-decoration: none;
+      color: var(--text-color);
+      transition: color var(--transition-speed);
+    }
+    #site-title a:hover {
+      color: var(--accent-color);
+    }
+
+    nav {
+      display: flex;
+      gap: 1rem;
+      justify-content: center;
+    }
+    nav a {
+      color: var(--text-color);
+      text-decoration: none;
+      transition: color var(--transition-speed);
+    }
+    nav a:hover {
+      color: var(--accent-color);
+    }
+
+    main {
+      margin-top: var(--header-height);
+      padding: 2rem;
+      max-width: 800px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .section {
+      margin-bottom: 2rem;
+    }
+
+    .icon-title {
+      display: flex;
+      align-items: center;
+      margin-bottom: 0.5rem;
+    }
+    .icon-title span {
+      font-size: 1.5rem;
+      margin-right: 0.5rem;
+    }
+
+    h1, h2, h3, h4 {
+      margin: 0.5rem 0;
+      color: var(--accent-color);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--divider-color);
+      margin: 1rem 0;
+      border: none;
+    }
+
+    footer {
+      text-align: center;
+      padding: 1rem 0;
+      color: #888;
+      border-top: 1px solid var(--divider-color);
+    }
+
+    a {
+      color: var(--accent-color);
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    ul {
+      list-style: none;
+      padding-left: 1rem;
+    }
+    ul li {
+      margin-bottom: 0.3rem;
+    }
+  </style>
+
+  <!-- Dependencies for loading YAML & parsing Markdown -->
+  <script src="https://cdn.jsdelivr.net/npm/js-yaml/dist/js-yaml.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
-
 <body>
-  <div id="background-image"></div>
-  <header id="header">
-    <h1><a href="#">Joe Rice</a></h1>
-    <nav>
-      <ul>
-        <li><a href="#about">About</a></li>
-        <li><a href="#background">Experience</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#portfolio">Portfolio</a></li>
-        <li><a href="#tools">Tools</a></li>
-        <li><a href="#support">Support</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </nav>
-    <button id="mobile-button" aria-label="Toggle navigation menu">
-      <svg width="24" height="24" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
-      </svg>
-    </button>
+  <header>
+    <h1 id="site-title"><a href="/">Loading...</a></h1>
+    <nav id="main-nav"></nav>
   </header>
-  <div id="mobile-menu">
-    <ul>
-      <li><a href="#about">About</a></li>
-      <li><a href="#background">Experience</a></li>
-      <li><a href="#projects">Projects</a></li>
-      <li><a href="#portfolio">Portfolio</a></li>
-      <li><a href="#tools">Tools</a></li>
-      <li><a href="#support">Support</a></li>
-      <li><a href="#contact">Contact</a></li>
-    </ul>
-  </div>
-  <div id="scroll-container">
-    <section id="about" class="fade-in">
-      <div class="icon-title">
-        <span>👤</span>
-        <h1>About Me</h1>
-      </div>
-      <div class="divider"></div>
-      <div class="profile-photo">
-        <img src="profile.webp" alt="Joe Rice Profile Photo" class="animated-profile-photo">
-      </div>
-      <p>Oh hi there! I'm Joe, my favorite books are:</p>
- 
-      <div class="bookshelf">
-        <div class="books-list">
-          <div class="book-item">
-            <span>🧠</span>
-            <a href="https://en.wikipedia.org/wiki/How_to_Read_a_Book"><em>How to Read a Book</em></a> by Mortimer J. Adler and Charles Van Doren
-          </div>
-          <div class="book-item">
-            <span>📈</span>
-            <a href="https://www.amazon.com/How-Learn-principles-effective-revision/dp/1927166144"><em>How to Learn</em></a> by Fiona McPherson
-          </div>
-          <div class="book-item">
-            <span>✍️</span>
-            <a href="https://en.wikipedia.org/wiki/Motivational_interviewing"><em>Motivational Interviewing</em></a> by William R. Miller, PhD, and Stephen Rollnick, PhD
-          </div>
-          <div class="book-item">
-            <span>💪</span>
-            <a href="https://en.wikipedia.org/wiki/Thomas_Louis_Hanna"><em>Somatics</em></a> by Thomas Hanna
-          </div>
-          <div class="book-item">
-            <span>👶</span>
-            <a href="https://www.amazon.com/Montessori-Baby-Parents-Nurturing-Understanding/dp/1523512407"><em>The Montessori Baby</em></a> by Simone Davies and Junnifa Uzodike
-          </div>
-          <div class="book-item">
-            <span>🌟</span>
-            <a href="https://en.wikipedia.org/wiki/Robert_Monroe"><em>Ultimate Journey</em></a> by Robert A. Monroe
-          </div>
-          <div class="book-item">
-            <span>🧘‍♂️</span>
-            <a href="https://en.wikipedia.org/wiki/Shunry%C5%AB_Suzuki"><em>Zen Mind, Beginner's Mind</em></a> by Shunryu Suzuki
-          </div>
-          <div class="book-item">
-            <span>⚔️</span>
-            <a href="https://classics.mit.edu/Tzu/artwar.html"><em>The Art of War</em></a> by Sun Tzu
-          </div>
-          <div class="book-item">
-            <span>🪙</span>
-            <a href="https://classics.mit.edu/Antoninus/meditations.html"><em>Meditations</em></a> by Marcus Aurelius
-          </div>
-          <div class="book-item">
-            <span>📓</span>
-            <a href="https://bulletjournal.com/pages/book"><em>The Bullet Journal Method</em></a> by Ryder Carroll
-          </div>
-          <div class="book-item">
-            <span>🔧</span>
-            <a href="https://en.wikipedia.org/wiki/The_Pragmatic_Programmer"><em>The Pragmatic Programmer</em></a> by Andrew Hunt and David Thomas
-          </div>
-        </div>
-      </div>
-      
-      <p>As you can guess, I'm a parent, and I like to read books. I'm particularly interested in books that raise my vibrations as a human being and elevate those around me. I'm a self-learner and a self-starter. I am an internalizer, as described by Lindsay C. Gibson in her book <em>Adult Children of Emotionally Immature Parents</em>: "Internalizers are highly perceptive and sensitive, with strong instincts to engage and connect with other people. They tend to feel apologetic for needing help, do most of the emotional work in relationships, and think about what other people want first."</p>
-      <p>I’ll be the first to admit I’m not perfect, but I believe we are all perfectly imperfect in our own little ways.</p>
 
-    </section>
-    <section id="background" class="fade-in">
-      <div class="icon-title">
-        <span>💼</span>
-        <h1>Experience</h1>
-      </div>
-      <div class="divider"></div>
-      <p>I've played video games my whole life, especially growing up as the youngest of three with the closest sibling gap being five years. That meant I got tossed into the deep end of competitive stuff like 007 GoldenEye on the N64, or I'd be 100%-ing Zelda: Ocarina of Time and Majora’s Mask by racing to the local library to print out guides.</p>
-      <p>I got my first computer when I was 11, after my dad reconnected with a high school buddy who was finishing up at Gateway Technical College in Elkhorn, Wisconsin. That's when I dove into coding, built Counter-Strike maps, messed with keygens, and learned a ton about the Windows registry. Basically, I was a black hat wannabe at my core, just soaking in everything I could.</p>
-      <p>Fast forward to my sophomore year of high school in Odenville, Alabama, where the school literally employed me as a "techy." I’d get full credits each semester just for doing IT work. That felt like hitting the jackpot—real-world experience while still a teenager.</p>
-      <p>Then I ended up graduating high school in Wisconsin, and it was kind of surreal walking the same halls I’d started in as a freshman, only now feeling way older and seeing everyone I knew just a couple of years further along than they were before.</p>
-      <p>After high school, I ended up going to Gateway Technical College myself and got a degree as a Support Specialist, which was a natural next step after all those years tinkering with computers. And now I'm also a certified network and security specialist—it keeps me on my toes, constantly learning and staying ahead of the game.</p>
-      <p>I worked at the post office for about 2.5 years—originally, I was supposed to just be part-time, but the clerk running the office got sick with cancer, so I ended up managing that entire operation six days a week for two years. After that, I was “promoted” to the main office, which I loathed with a passion. Deep down, I knew that wasn’t my destiny. I was still going to school in the evenings, and that’s when a friend introduced me to this "MSP" world I’d never heard of. I decided to take a shot, and that’s where my journey into the capitalist tech realm kicked off.</p>
-      <p>I moved up quickly—residential role, then tier 1, then onto the projects team in a position my coworkers affectionately called "projects bitch." I got to work under two engineers with a combined 50 years of experience, and for around four of those years, I was directly shadowing one of the owners like a total sponge. His patience in teaching me everything shaped how I think today, pushing me to be pretty decent forward-thinker and problem-solver.</p>
-      <p>Now, I’m n lead engineer at that same MSP where. My day-to-day revolves around coding, design, planning, and execution of all kinds of systems. I’ve got a wide range of responsibilities because, honestly, what I do can’t be pinned down with a neat little label. It's become a place of steady growth for me, and that’s exactly how I like it.</p>
-    </section>
+  <main id="content"></main>
 
-    <section id="why" class="fade-in">
-      <div class="icon-title">
-        <span>🌐</span>
-        <h1>Purpose</h1>
-      </div>
-      <div class="divider"></div>
-      <p>This website is my digital home base—a space where I can share who I am, showcase my work, and connect with anyone interested in my journey. It's not just some generic personal portfolio to try an stand out to potential employers. it's a continuously evolving record of my personal and professional progress. I’m big on authenticity, growth, and community, so I’ve brought together experiences, tools, and projects that matter to me. Whether you’re here for the tech details, curious about my reading list, or just want a glimpse into who Joe Rice is, I hope you find something genuine and relatable here.</p>
-    </section>
+  <footer id="footer">
+    &copy; <span id="footer-year"></span> Joe Rice. All Rights Reserved.
+  </footer>
 
+  <script>
+    async function loadSiteContent() {
+      try {
+        // Fetch content.yaml
+        const response = await fetch('content.yaml');
+        const yamlText = await response.text();
+        const siteData = jsyaml.load(yamlText);
 
-    <section id="projects" class="fade-in">
-      <div class="icon-title">
-        <span>📂</span>
-        <h1>Work</h1>
-      </div>
-      <div class="divider"></div>
-      <h4>Professional</h4>
-      <ul class="projects-list" style="user-select: none;">
-        <li>
-          <details open>
-            <summary>Project Management</summary>
-            <ul>
-              <li>I follow a mix of traditional project managment and agile project managment styles.</li>
-              <li>When managing a team I always ensurer we have a unified communications system.</li>
-              <li>I'm incredibly methodical in my planning and follow a 7 phase approach.</li>
+        // Update <title> and site title from YAML
+        document.title = siteData.site?.title || 'Joe Rice';
+        const siteTitleEl = document.getElementById('site-title');
+        siteTitleEl.innerHTML = `
+          <a href="${siteData.site?.url || '#'}">${siteData.site?.title || 'Joe Rice'}</a>
+        `;
 
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Cloud Infrastructure Engineering</summary>
-            <ul>
-              <li>2019–2021 – Migrated Whitebox servers to both VMware vSAN and Azure on-prem.</li>
-              <li>Implemented high-availability clusters and failover technologies to ensure maximum uptime.</li>
-              <li>Deployed advanced SAN solutions to accommodate large-scale, mission-critical data storage.</li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Virtual Infrastructure Engineering</summary>
-            <ul>
-              <li>2022–2024 – Executed full domain migrations to Entra AD (Exchange, Intune, Security best practices,
-                etc.).</li>
-              <li>Consolidated fragmented infrastructures into a cohesive, scalable environment.</li>
-              <li>Modernized legacy server hardware, improving performance and disaster recovery.</li>
-              <li>Implemented layer 3 networking into every customers network using Cisco, HP, Netgear, Aruba, etc.</li>
-              <li>Full security review of TPC/IP stacks to find potential gaps and holes.</li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Wireless Infrastructure Engineering</summary>
-            <ul>
-              <li>Designed coverage maps and identified ideal AP placement, tailoring hardware for each environment.
-              </li>
-              <li>Integrated enterprise-level security protocols to protect against unauthorized access.</li>
-              <li>Ensured reliable connectivity for scanners in loading docks and warehouse bays through angled AP
-                setups.</li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Support Specialist</summary>
-            <ul>
-              <li>Designed coverage maps and identified ideal AP placement, tailoring hardware for each environment.
-              </li>
-              <li>Integrated enterprise-level security protocols to protect against unauthorized access.</li>
-              <li>Ensured reliable connectivity for scanners in loading docks and warehouse bays through angled AP
-                setups.</li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Security Specialist</summary>
-            <ul>
-              <li>Designed coverage maps and identified ideal AP placement, tailoring hardware for each environment.
-              </li>
-              <li>Integrated enterprise-level security protocols to protect against unauthorized access.</li>
-              <li>Ensured reliable connectivity for scanners in loading docks and warehouse bays through angled AP
-                setups.</li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Network Specialist</summary>
-            <ul>
-              <li>Designed coverage maps and identified ideal AP placement, tailoring hardware for each environment.
-              </li>
-              <li>Integrated enterprise-level security protocols to protect against unauthorized access.</li>
-              <li>Ensured reliable connectivity for scanners in loading docks and warehouse bays through angled AP
-                setups.</li>
-            </ul>
-          </details>
-        </li>
-      </ul>
-      <h4>Personal</h4>
-      <ul class="projects-list" style="user-select: none;">
-        <li>
-          <details>
-            <summary>Home Security</summary>
-            <ul>
-              <li>2021 – Built a full domain infrastructure using TurnKey Linux deployments with email, LDAP, and file
-                sharing for my household.</li>
-              <li>2022 – Implemented and managed various email services for penetration testing within my personal home
-                network.</li>
-              <li>2023 – Deployed Docker containers for web proxy services, a self-hosted Bitwarden server, MyCloud for
-                file sharing, and more.</li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Development Lifecycle</summary>
-            <ul>
-              <li>2020+ – Created a fully featured PiBoy Advance gaming system powered by a Raspberry Pi.</li>
-              <li>2021+ – Leveraged a Raspberry Pi host running Docker to share media with family and to manage various
-                containerized services.</li>
-            </ul>
-          </details>
-        </li>
-        <li>
-          <details>
-            <summary>Links</summary>
-            <ul>
-              <li>According to Oxford, a link is "a relationship between two things or situations, especially where one thing affects the other." For me, links are how I connect with the world—like Neo plugging into the Matrix.</li>
-              <li>Links are my way of sharing knowledge and experiences while providing a space for those who, by chance or fate, "find themselves exactly where they need to be."</li>
-              <li>The backbone of my links system is grounded in my engineering expertise and frequent use of ChatGPT. I’ve developed a streamlined method to quickly create and deploy websites with purpose.</li>
-              <li>My goal is to create a network of meaningful, time-sensitive resources—platforms where people can stumble across inspiration and be guided toward a higher perspective through my digital work.</li>
-            </ul>
-            
-          </details>
-        </li>
-        <li>          <details>
-          <summary>My Zettelkasten</summary>
-          <ul>
-            <li>Being a <a href="https://dailystoic.com/life-is-school-school-is-for-life/">lifelong learner</a> has taught me that writing is essential to learning. Not only do I keep a bullet journal, but I also maintain an analog zettelkasten. It allows me to write down moments of "genius" that I can revisit later in life or throughout my journey. I tend to use it for everything related to Mind, Body, Spirit, Life.</li>
-            <li>I've even built a dedicated website for it: <a href="https://zettelkasten.shop">Zettelkasten.Shop</a>. This helps me share the system with more people and provides a starting point for those interested in learning about it.</li>
-            <li>My zettelkasten is literally my <a href="https://fortelabs.com/blog/basboverview/">Second brain</a> system that I can pass down to my children or use to write books someday, just as <a href="https://en.wikipedia.org/wiki/Niklas_Luhmann">Niklas Luhmann</a>, the creator of the zettelkasten method, did.</li>
-          </ul>
-        </details></li>
-      </ul>
-    </section>
+        // Build the nav
+        const navEl = document.getElementById('main-nav');
+        navEl.innerHTML = siteData.sections
+          .map(section => `<a href="#${section.id}">${section.title}</a>`)
+          .join('');
 
+        // Build the main content sections
+        const contentEl = document.getElementById('content');
+        let output = '';
 
+        siteData.sections.forEach(section => {
+          if (Array.isArray(section.subsections)) {
+            // If there are subsections
+            let subHtml = section.subsections
+              .map(sub => `
+                <h4>${sub.subtitle}</h4>
+                <div>${marked.parse(sub.content || '')}</div>
+              `).join('');
 
+            output += `
+              <section class="section" id="${section.id}">
+                <div class="icon-title">
+                  <span>${section.icon || ''}</span>
+                  <h2>${section.title}</h2>
+                </div>
+                <hr class="divider" />
+                ${subHtml}
+              </section>
+            `;
+          } else {
+            // No subsections
+            output += `
+              <section class="section" id="${section.id}">
+                <div class="icon-title">
+                  <span>${section.icon || ''}</span>
+                  <h2>${section.title}</h2>
+                </div>
+                <hr class="divider" />
+                <div>${marked.parse(section.content || '')}</div>
+              </section>
+            `;
+          }
+        });
 
-    <section id="tools" class="fade-in">
-      <div class="icon-title">
-        <span>🛠</span>
-        <h1>Tools</h1>
-      </div>
-      <div class="divider"></div>
-      <ul class="tools-list">
-        <li>ChatGPT (Primary Developer and Assistant)
-          <ul> <a href="https://chatgpt.com/g/g-VcTQBTwEv-minimal-grammar-cleanup" class="tools-link" target="_blank"
-              rel="noopener noreferrer">Minimal Grammar Cleanup</a>
-          </ul>
-        </li>
-        <li>GitHub Pages (Production Hosting)</li>
-        <li>CodePen (Live Development Environment)</li>
-        <li>Cloudflare (DNS, Security)</li>
-        <li>MXroute (Email Hosting)</li>
-        <li>NameCheap (Domain Registrar)</li>
-      </ul>
-    </section>
-    <section id="portfolio" class="fade-in">
-      <div class="icon-title">
-        <span>📂</span>
-        <h1>Links</h1>
-      </div>
-      <div class="divider"></div>
-      <div class="portfolio-frame">
-        <iframe src="https://garbled.link" title="Portfolio Iframe"></iframe>
-      </div>
-    </section>
-    <section id="support" class="fade-in">
-      <div class="icon-title">
-        <span>🤝</span>
-        <h1>Support</h1>
-      </div>
-      <div class="divider"></div>
-      <p>Your support is vital for maintaining and improving my services. Contributions through my
-        <a href="https://www.buymeacoffee.com/garbledhamster" class="support-link" target="_blank"
-          rel="noopener noreferrer">Buy Me a Coffee</a>
-        page directly cover essential <strong>hosting fees</strong>, allowing me to sustain and enhance the websites I
-        manage.
-      </p>
-      <p>With your generous support, I can:</p>
-      <ul class="support-list">
-        <li><strong>Domain Fees:</strong> Ensure reliable and robust domain names for optimal web presence.</li>
-        <li><strong>GitHub Pages Fees:</strong> Cover the costs associated with using GitHub Pages for production
-          hosting.</li>
-        <li><strong>Email Fees:</strong> Provide email hosting for seamless communication with every domain.</li>
-        <li><strong>Email Security Fees:</strong> Implement and maintain security measures to protect email
-          communications.</li>
-        <li><strong>Cloudflare:</strong> Utilize services for DNS management and enhanced security.</li>
-        <li><strong>Time/Materials:</strong> Dedicate resources to continue supporting the community with updates and
-          new projects.</li>
-        <li><strong>Family Support:</strong> Your support helps my wife and me achieve financial security as our
-          community grows.</li>
-      </ul>
-      <p>Every contribution matters, and reinforces my commitment to creating a more <strong>connected</strong> and
-        supportive community. Thank you for being a crucial part of this journey!</p>
-    </section>
-    <section id="contact" class="fade-in">
-      <div class="icon-title">
-        <span>📩</span>
-        <h1>Contact Me</h1>
-      </div>
-      <div class="divider"></div>
-      <form id="contact-form" action="https://formspree.io/f/xovqpvdv" method="POST" novalidate>
-        <div class="form-group">
-          <label for="name">Name</label>
-          <input type="text" id="name" name="name" required aria-required="true">
-        </div>
-        <div class="form-group">
-          <label for="email">Email</label>
-          <input type="email" id="email" name="email" required aria-required="true">
-        </div>
-        <div class="form-group">
-          <label for="message">Message</label>
-          <textarea id="message" name="message" rows="4" required aria-required="true"></textarea>
-        </div>
-        <div id="form-success" role="status">Your message has been sent successfully!</div>
-        <button type="submit">Send Message</button>
-      </form>
-    </section>
-    <footer>
-      <p>&copy; 2024 Joe Rice. All Rights Reserved.</p>
-      <ul>
-        <li><a href="#about">About</a></li>
-        <li><a href="#background">Experience</a></li>
-        <li><a href="#projects">Projects</a></li>
-        <li><a href="#portfolio">Portfolio</a></li>
-        <li><a href="#tools">Tools</a></li>
-        <li><a href="#support">Support</a></li>
-        <li><a href="#contact">Contact</a></li>
-      </ul>
-    </footer>
-  </div>
+        contentEl.innerHTML = output;
 
-  <script src="data/script.js"></script>
+        // Update footer year
+        document.getElementById('footer-year').textContent = new Date().getFullYear();
+
+      } catch (err) {
+        console.error('Error loading site content:', err);
+        document.getElementById('content').innerHTML =
+          '<p>Failed to load content. Check console for details.</p>';
+      }
+    }
+
+    loadSiteContent();
+  </script>
 </body>
-
 </html>
