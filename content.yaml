@@ -1,0 +1,107 @@
+site:
+  title: "Joe Rice"
+  description: "Welcome to my professional portfolio showcasing my dedication to empowering others through technology, entrepreneurship, and personal growth."
+  url: "https://joerice.me"
+  favicon: "assets/images/icons/logo1.png"
+  social_image: "assets/images/backgrounds/background1.jpg"
+
+sections:
+  - id: about
+    icon: "👤"
+    title: "About Me"
+    content: |-
+      Hi, I'm **Joe Rice**. I'm a Systems Engineer by profession, a pragmatic generalist by nature, and a lifelong learner at heart.
+
+      If you stepped into my workspace, you'd quickly sense my reality: toddler scribbles, DIY monitor stands, books scattered thoughtfully, and a Zettelkasten filled with insights. It's messy but authentic—a reflection of my drive for practical wisdom, clarity, and continuous growth.
+
+      Books that continually shape my growth:
+
+      - 📚 *How to Read a Book* by Mortimer Adler & Charles Van Doren  
+      - 🪙 *Meditations* by Marcus Aurelius  
+      - 📓 *The Bullet Journal Method* by Ryder Carroll  
+      - 🔧 *The Pragmatic Programmer* by Hunt & Thomas  
+      - 🧘‍♂️ *Zen Mind, Beginner’s Mind* by Shunryu Suzuki  
+      - 🌟 *Ultimate Journey* by Robert Monroe
+
+  - id: professional-work
+    icon: "💼"
+    title: "Professional Work"
+    content: |-
+      With over nine years in IT Systems Engineering, I specialize in reliable, scalable systems, clear documentation, and practical solutions. My professional strengths include:
+
+      - **Systems Engineering:** Infrastructure, Cloud, Virtualization
+      - **Project Management:** Clear processes and effective communication
+      - **Security & Networking:** Robust solutions prioritizing practicality and usability
+
+      Certified: **Security+**, **Network+**
+
+  - id: entrepreneurship
+    icon: "🚀"
+    title: "Entrepreneurship"
+    content: |-
+      My entrepreneurial philosophy focuses on simplicity, scalability, and meaningful innovation. I develop products and services designed to help others achieve clarity, autonomy, and growth:
+
+      - **Rapid Web Development:** Simple, practical websites deployed efficiently.
+      - **Knowledge Resources:** [Zettelkasten.Shop](https://zettelkasten.shop) and related learning tools.
+      - **Scalable Systems:** Digital products, affiliate marketing, and automated models for passive income.
+
+      Inspired by: **Tim Ferriss, Cal Newport, Alex Hormozi, Steven Pressfield**
+
+  - id: personal-direction
+    icon: "🌱"
+    title: "Personal Direction"
+    content: |-
+      My personal path is guided by intentional self-reflection, authenticity, and integration of philosophy into everyday living. Core areas include:
+
+      - **Mindfulness & Consciousness:** Meditation and self-awareness.
+      - **Life Integration:** Balancing career, family, and personal evolution.
+      - **Philosophical Foundations:** Stoicism, Buddhism, Nonviolent Communication, Jungian individuation.
+
+      Ultimately, my goal is intentional growth, authentic communication, and meaningful contribution to my family and community.
+
+  - id: projects
+    icon: "📂"
+    title: "Projects"
+    subsections:
+      - subtitle: "Professional"
+        content: |-
+          - **Cloud:** AWS, Azure, M365 migrations and management.
+          - **Virtualization:** VMware, Hyper-V, Virtual Networking.
+          - **Security:** Enterprise network & domain security.
+          - **Wireless Infrastructure:** Enterprise Wi-Fi deployment, AP optimization.
+
+      - subtitle: "Personal"
+        content: |-
+          - **Home Infrastructure:** Self-hosted services, Docker containers, Raspberry Pi projects.
+          - **Home Security:** Personal security, dedicated IoT networks.
+          - **My Zettelkasten:** Personal second brain, documented via [Zettelkasten.Shop](https://zettelkasten.shop).
+
+  - id: tools
+    icon: "🛠️"
+    title: "Tools & Resources"
+    content: |-
+      I rely on various tools to streamline my workflows:
+
+      - **Development:** GitHub Pages, CodePen
+      - **AI & Writing:** ChatGPT, [Ghost Editor](https://chatgpt.com/g/g-67957f3a472081919b1ab8b96ca24e32-ghost-editor)
+      - **Infrastructure:** Cloudflare, MXroute, NameCheap
+      - **Communication:** Unified communication and knowledge management platforms.
+
+  - id: mission
+    icon: "🎯"
+    title: "My Mission"
+    content: |-
+      I strive to share what I've learned openly and authentically, helping others through my experiences in life, work, and learning.
+
+      Here's what you'll always find:
+
+      - 📚 **Lifelong Learning:** Exploring ideas broadly, from technology to self-development.
+      - 🌱 **Personal Growth:** Sharing genuine stories, challenges, and successes.
+      - 💡 **Practical Insights:** Clear, actionable resources you can immediately use.
+      - 👨‍👩‍👧‍👦 **Family & Balance:** Navigating the real-life blend of parenting, career, and personal growth.
+
+      Let’s learn, grow, and build something meaningful together.
+
+contact:
+  form_endpoint: "https://formspree.io/f/xovqpvdv"
+  success_message: "Your message has been sent successfully!"
