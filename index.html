@@ -1,286 +1,266 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  />
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <!--
-    Reusing your old metadata tags for SEO and social sharing
-    Update URLs or descriptions as needed
-  -->
-  <title>Loading...</title>
-  <meta property="og:title" content="Joe Rice - Systems Engineer and Technologist" />
-  <meta
-    property="og:description"
-    content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology."
-  />
-  <meta
-    property="og:image"
-    content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true"
-  />
+  <title>Joe Rice – Systems Engineer & Technologist</title>
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="Joe Rice – Systems Engineer and Technologist" />
+  <meta property="og:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology." />
+  <meta property="og:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true" />
   <meta property="og:url" content="https://joerice.me" />
   <meta property="og:type" content="website" />
   <meta property="og:site_name" content="Joe Rice" />
   <meta property="og:locale" content="en_US" />
-  <meta name="og:image:width" content="1200" />
-  <meta name="og:image:height" content="630" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
 
+  <!-- Twitter -->
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Joe Rice - Systems Engineer and Technologist" />
-  <meta
-    name="twitter:description"
-    content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology."
-  />
-  <meta
-    name="twitter:image"
-    content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true"
-  />
+  <meta name="twitter:title" content="Joe Rice – Systems Engineer and Technologist" />
+  <meta name="twitter:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology." />
+  <meta name="twitter:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true" />
 
-  <meta
-    name="description"
-    content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology."
-  />
-  <meta
-    name="keywords"
-    content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi"
-  />
+  <!-- General SEO -->
+  <meta name="description" content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology." />
+  <meta name="keywords" content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi" />
   <meta name="author" content="Joe Rice" />
-  <meta name="theme-color" content="#000000" />
+  <meta name="theme-color" content="#00adb5" />
 
-  <link
-    rel="icon"
-    href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true"
-  />
-  <link
-    rel="apple-touch-icon"
-    href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true"
-  />
+  <link rel="icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true" />
+  <link rel="apple-touch-icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true" />
   <link rel="manifest" href="/manifest.json" />
 
-  <!-- Montserrat font (same as old site) -->
-  <link
-    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap"
-    rel="stylesheet"
-  />
+  <!-- Montserrat font -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet" />
 
-  <!-- Minimal styling with your 7-color header and centered nav -->
   <style>
-    :root {
-      --header-height: 100px;
-      --bg-color: #151515;
-      --text-color: #f0f0f0;
-      --accent-color: #00adb5;
-      --divider-color: #333;
-      --transition-speed: 0.3s;
-      --font-family: 'Montserrat', sans-serif;
+    :root{
+      --header-height:100px;
+      --bg-color:#151515;
+      --text-color:#f0f0f0;
+      --accent-color:#00adb5;
+      --divider-color:#333;
+      --transition-speed:.25s;
+      --font-family:'Montserrat',sans-serif;
     }
 
-    body {
-      margin: 0;
-      padding: 0;
-      background: var(--bg-color);
-      color: var(--text-color);
-      font-family: var(--font-family);
-      line-height: 1.6;
+    *,*:before,*:after{box-sizing:border-box}
+    html{scroll-behavior:smooth}
+    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+    body{
+      margin:0;
+      background:var(--bg-color);
+      color:var(--text-color);
+      font-family:var(--font-family);
+      line-height:1.6;
+      -webkit-font-smoothing:antialiased;
     }
 
-    /* 7-color gradient for header */
-    header {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: var(--header-height);
-      background: linear-gradient(
-        to right,
-		#100,
-        #000,
-		#100
-      );
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      z-index: 999;
-      text-align: center;
-      padding: 0.5rem;
+    /* Header */
+    header{
+      position:fixed;
+      inset:0 0 auto 0;
+      height:var(--header-height);
+      background:linear-gradient(90deg,#003d46,#00646c,#008c93,#00adb5,#00c1c9,#00d5dd,#00e9f1);
+      display:flex;
+      flex-direction:column;
+      align-items:center;
+      justify-content:center;
+      z-index:999;
+      padding:.5rem;
+      text-align:center;
     }
 
-    #site-title {
-      margin: 0.5rem 0;
-      font-size: 1.4rem;
+    #site-title{
+      margin:.3rem 0;
+      font-size:1.5rem;
+      letter-spacing:.03em;
     }
-    #site-title a {
-      text-decoration: none;
-      color: var(--text-color);
-      transition: color var(--transition-speed);
+    #site-title a{
+      color:var(--text-color);
+      text-decoration:none;
+      transition:color var(--transition-speed);
     }
-    #site-title a:hover {
-      color: var(--accent-color);
+    #site-title a:hover,
+    #site-title a:focus{color:var(--accent-color);outline:none}
+
+    /* Nav */
+    #nav-toggle{
+      display:none;
+      background:none;
+      border:2px solid var(--text-color);
+      color:var(--text-color);
+      font-size:1.2rem;
+      padding:.25rem .5rem;
+      border-radius:4px;
+      cursor:pointer;
+      transition:background var(--transition-speed),color var(--transition-speed);
+    }
+    #nav-toggle:hover,
+    #nav-toggle:focus{background:var(--text-color);color:var(--bg-color);outline:none}
+
+    nav{
+      display:flex;
+      gap:1.5rem;
+      justify-content:center;
+      align-items:center;
+      transition:max-height var(--transition-speed) ease-in-out;
+    }
+    nav a{
+      color:var(--text-color);
+      text-decoration:none;
+      font-size:1rem;
+      position:relative;
+    }
+    nav a:hover,
+    nav a:focus{color:var(--accent-color);outline:none}
+    nav a::after{
+      content:'';
+      position:absolute;
+      inset:auto 0 -4px 0;
+      height:2px;
+      background:var(--accent-color);
+      transform:scaleX(0);
+      transition:transform var(--transition-speed);
+      transform-origin:center;
+    }
+    nav a:hover::after,
+    nav a:focus::after{transform:scaleX(1)}
+
+    /* Mobile */
+    @media(max-width:600px){
+      #nav-toggle{display:block;margin-top:.3rem}
+      nav{
+        flex-direction:column;
+        max-height:0;
+        overflow:hidden;
+      }
+      nav.open{max-height:200px}
     }
 
-    nav {
-      display: flex;
-      gap: 1rem;
-      justify-content: center;
+    /* Main */
+    main{
+      margin-top:var(--header-height);
+      padding:2rem 1rem;
+      max-width:800px;
+      margin-inline:auto;
     }
-    nav a {
-      color: var(--text-color);
-      text-decoration: none;
-      transition: color var(--transition-speed);
+    .section{
+      margin-bottom:2.5rem;
+      scroll-margin-top:calc(var(--header-height)+12px);
     }
-    nav a:hover {
-      color: var(--accent-color);
+    .icon-title{
+      display:flex;
+      align-items:center;
+      gap:.5rem;
     }
-
-    main {
-      margin-top: var(--header-height);
-      padding: 2rem;
-      max-width: 800px;
-      margin-left: auto;
-      margin-right: auto;
-    }
-
-    .section {
-      margin-bottom: 2rem;
+    h1,h2,h3,h4{margin:.4rem 0;color:var(--accent-color)}
+    .divider{
+      border:none;
+      height:1px;
+      background:var(--divider-color);
+      margin:1rem 0;
     }
 
-    .icon-title {
-      display: flex;
-      align-items: center;
-      margin-bottom: 0.5rem;
-    }
-    .icon-title span {
-      font-size: 1.5rem;
-      margin-right: 0.5rem;
-    }
-
-    h1, h2, h3, h4 {
-      margin: 0.5rem 0;
-      color: var(--accent-color);
+    /* Footer */
+    footer{
+      text-align:center;
+      border-top:1px solid var(--divider-color);
+      color:#888;
+      padding:1rem 0;
+      font-size:.9rem;
     }
 
-    .divider {
-      height: 1px;
-      background: var(--divider-color);
-      margin: 1rem 0;
-      border: none;
-    }
+    /* Links in content */
+    a{color:var(--accent-color);text-decoration:none}
+    a:hover,a:focus{text-decoration:underline;outline:none}
 
-    footer {
-      text-align: center;
-      padding: 1rem 0;
-      color: #888;
-      border-top: 1px solid var(--divider-color);
-    }
-
-    a {
-      color: var(--accent-color);
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
-
-    ul {
-      list-style: none;
-      padding-left: 1rem;
-    }
-    ul li {
-      margin-bottom: 0.3rem;
-    }
+    ul{list-style:none;padding-left:1rem}
+    ul li{margin-bottom:.3rem}
   </style>
 
-  <!-- Dependencies for loading YAML & parsing Markdown -->
-  <script src="https://cdn.jsdelivr.net/npm/js-yaml/dist/js-yaml.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <!-- YAML & Markdown libraries -->
+  <script defer src="https://cdn.jsdelivr.net/npm/js-yaml/dist/js-yaml.min.js"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
   <header>
-    <h1 id="site-title"><a href="/">Loading...</a></h1>
-    <nav id="main-nav"></nav>
+    <h1 id="site-title"><a href="/">Joe Rice</a></h1>
+    <button id="nav-toggle" aria-label="Toggle navigation">☰</button>
+    <nav id="main-nav" aria-label="Primary"></nav>
   </header>
 
   <main id="content"></main>
 
-  <footer id="footer">
-    &copy; <span id="footer-year"></span> Joe Rice. All Rights Reserved.
+  <footer>
+    &copy; <span id="footer-year"></span> Joe Rice. All Rights Reserved.
   </footer>
 
+  <noscript style="display:block;text-align:center;padding:1rem;color:#ff6b6b;">
+    This site relies on JavaScript to load content. Please enable it for the full experience.
+  </noscript>
+
   <script>
-    async function loadSiteContent() {
-      try {
-        // Fetch content.yaml
-        const response = await fetch('content.yaml');
-        const yamlText = await response.text();
-        const siteData = jsyaml.load(yamlText);
+    // Mobile nav toggle
+    document.getElementById('nav-toggle').addEventListener('click', () =>
+      document.getElementById('main-nav').classList.toggle('open')
+    );
 
-        // Update <title> and site title from YAML
-        document.title = siteData.site?.title || 'Joe Rice';
-        const siteTitleEl = document.getElementById('site-title');
-        siteTitleEl.innerHTML = `
-          <a href="${siteData.site?.url || '#'}">${siteData.site?.title || 'Joe Rice'}</a>
-        `;
+    async function loadSiteContent(){
+      try{
+        const res = await fetch('content.yaml');
+        if(!res.ok) throw new Error('Network response was not ok');
+        const yamlText = await res.text();
+        const site = jsyaml.load(yamlText);
 
-        // Build the nav
-        const navEl = document.getElementById('main-nav');
-        navEl.innerHTML = siteData.sections
-          .map(section => `<a href="#${section.id}">${section.title}</a>`)
-          .join('');
+        // Title & header
+        document.title = site.site?.title || 'Joe Rice';
+        document.getElementById('site-title').innerHTML =
+          `<a href="${site.site?.url || '#'}">${site.site?.title || 'Joe Rice'}</a>`;
 
-        // Build the main content sections
-        const contentEl = document.getElementById('content');
-        let output = '';
+        // Nav
+        const navLinks = site.sections.map(s =>
+          `<a href="#${s.id}" aria-label="Go to ${s.title} section">${s.title}</a>`
+        ).join('');
+        document.getElementById('main-nav').innerHTML = navLinks;
 
-        siteData.sections.forEach(section => {
-          if (Array.isArray(section.subsections)) {
-            // If there are subsections
-            let subHtml = section.subsections
-              .map(sub => `
-                <h4>${sub.subtitle}</h4>
-                <div>${marked.parse(sub.content || '')}</div>
-              `).join('');
-
-            output += `
-              <section class="section" id="${section.id}">
-                <div class="icon-title">
-                  <span>${section.icon || ''}</span>
-                  <h2>${section.title}</h2>
-                </div>
+        // Content
+        const sectionsHTML = site.sections.map(sec => {
+          if(Array.isArray(sec.subsections)){
+            const subs = sec.subsections.map(sub =>
+              `<h4>${sub.subtitle}</h4><div>${marked.parse(sub.content || '')}</div>`
+            ).join('');
+            return `
+              <section class="section" id="${sec.id}">
+                <div class="icon-title"><span>${sec.icon || ''}</span><h2>${sec.title}</h2></div>
                 <hr class="divider" />
-                ${subHtml}
-              </section>
-            `;
-          } else {
-            // No subsections
-            output += `
-              <section class="section" id="${section.id}">
-                <div class="icon-title">
-                  <span>${section.icon || ''}</span>
-                  <h2>${section.title}</h2>
-                </div>
-                <hr class="divider" />
-                <div>${marked.parse(section.content || '')}</div>
-              </section>
-            `;
+                ${subs}
+              </section>`;
           }
-        });
+          return `
+            <section class="section" id="${sec.id}">
+              <div class="icon-title"><span>${sec.icon || ''}</span><h2>${sec.title}</h2></div>
+              <hr class="divider" />
+              <div>${marked.parse(sec.content || '')}</div>
+            </section>`;
+        }).join('');
+        document.getElementById('content').innerHTML = sectionsHTML;
 
-        contentEl.innerHTML = output;
-
-        // Update footer year
+        // Footer year
         document.getElementById('footer-year').textContent = new Date().getFullYear();
 
-      } catch (err) {
-        console.error('Error loading site content:', err);
+      }catch(err){
+        console.error('Error loading site content:',err);
         document.getElementById('content').innerHTML =
-          '<p>Failed to load content. Check console for details.</p>';
+          '<p style="color:#ff6b6b;">Failed to load content. Please try again later.</p>';
       }
     }
-
     loadSiteContent();
   </script>
 </body>
