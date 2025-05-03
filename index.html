@@ -4,43 +4,56 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Joe Rice · Portfolio</title>
+
+<!-- fonts: neo-brutalist grotesque + bold headline -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Merriweather:wght@700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
+
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js" as="script">
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" as="script">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-:root{--bg:#fff;--fg:#111;--border:#000;--space:clamp(8px,2vw,18px);--font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--fontSerif:"Merriweather",Georgia,serif;--blue:#0066ff;--red:#ff0059;--yellow:#ffd60a;--rose:#ff80a4;--green:#28c76f;--purple:#a259ff;}
+:root{
+ --bg:#fff;--fg:#111;--border:#000;--space:clamp(8px,2vw,18px);
+ --font:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+ --fontHead:"Bebas Neue","Impact",sans-serif;
+ --blue:#0066ff;--red:#ff0033;--yellow:#ffd60a;--rose:#ff80a4;--green:#28c76f;--purple:#a259ff;
+}
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.6;font-size:1rem;}
-h1,h2,h3{font-family:var(--fontSerif);font-weight:700;}
-h1{font-size:clamp(1.75rem,4vw,2.25rem);}
-h2{font-size:clamp(1.4rem,3.2vw,1.75rem);}
-h3{font-size:clamp(1.2rem,2.4vw,1.5rem);}
+html,body{background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.55;font-size:1rem;}
+
+h1,h2,h3{font-family:var(--fontHead);letter-spacing:.5px;}
+h1{font-size:clamp(1.9rem,4.5vw,2.6rem);}
+h2{font-size:clamp(1.45rem,3.5vw,2rem);}
+h3{font-size:clamp(1.2rem,3vw,1.5rem);}
+
 a{color:inherit;text-decoration:none;}
 ul,ol{list-style:none;padding-left:0;}
 .max{max-width:880px;margin-inline:auto;padding-inline:clamp(12px,4vw,32px);}
-header{background:var(--yellow);border-bottom:1px solid var(--border);text-align:center;font-weight:600;padding:6px 0;font-family:var(--fontSerif);font-size:clamp(1.1rem,2.6vw,1.4rem);}
+
+/* header / hero */
+header{background:var(--yellow);border-bottom:1px solid var(--border);text-align:center;padding:8px 0;font-family:var(--fontHead);font-size:clamp(1.2rem,3vw,1.6rem);}
 .hero{display:flex;flex-direction:column;align-items:center;gap:var(--space);padding-block:clamp(20px,8vw,60px);}
 .pic{width:140px;height:140px;border:1px solid var(--border);object-fit:cover;background:var(--rose);}
 .intro{text-align:center;}
 .intro p{font-size:clamp(1.05rem,2.4vw,1.3rem);max-width:40ch;margin-inline:auto;}
+
+/* social */
 .social{display:flex;gap:18px;margin-top:.4rem;flex-wrap:wrap;justify-content:center;}
-.social a{position:relative;font-size:1.45rem;color:inherit;transition:transform .2s;}
-.social a:hover{transform:scale(1.2);}
-.tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%) translateY(4px);opacity:0;background:var(--fg);color:var(--bg);padding:4px 8px;border-radius:3px;font-size:.75rem;white-space:nowrap;pointer-events:none;transition:opacity .2s ease,transform .2s ease;}
+.social a{position:relative;font-size:1.55rem;transition:transform .2s;}
+.social a:hover{transform:scale(1.25);}
+.tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%) translateY(4px);opacity:0;background:var(--fg);color:var(--bg);padding:4px 8px;border-radius:3px;font-size:.75rem;white-space:nowrap;pointer-events:none;transition:opacity .2s,transform .2s;}
 .social a.showTip .tooltip{opacity:1;transform:translateX(-50%) translateY(0);}
-body:not(.loaded) .hero .pic{opacity:0;transform:translateX(-40px);}
-body:not(.loaded) .hero .intro{opacity:0;transform:translateX(40px);}
-body.loaded .hero .pic,
-body.loaded .hero .intro{opacity:1;transform:none;transition:opacity .7s ease,transform .7s ease;}
+
+/* search */
 .search{margin-block:var(--space);}
 #q{width:100%;padding:.8rem 1rem;border:1px solid var(--border);background:var(--blue);color:#fff;font-size:1rem;}
 #q::placeholder{color:#e5e5e5;}
+
+/* portfolio list */
 .portfolio{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--green);color:#fff;}
-.portfolio h2{text-align:center;margin-bottom:var(--space);}
-.subhead{font-size:1rem;margin:.6rem 0 .4rem;text-decoration:underline;font-family:var(--fontSerif);}
+.subhead{font-family:var(--fontHead);margin:.6rem 0 .4rem;font-size:1rem;text-decoration:underline;}
 .grid{display:grid;gap:var(--space);}
 .entry{border:1px solid var(--border);padding:1rem;background:var(--bg);color:var(--fg);cursor:pointer;transition:background .2s;font-size:1rem;}
 .entry:hover{background:#f5f5f5;}
@@ -48,74 +61,88 @@ body.loaded .hero .intro{opacity:1;transform:none;transition:opacity .7s ease,tr
 .pageBtn{cursor:pointer;padding:.4rem .8rem;border:1px solid var(--border);background:var(--bg);}
 .pageBtn[disabled]{opacity:.4;cursor:not-allowed;}
 #postView{display:none;margin-top:var(--space);background:var(--bg);color:var(--fg);border:1px solid var(--border);padding:1.5rem;position:relative;}
-#closePost{position:absolute;top:8px;right:12px;border:1px solid var(--border);background:var(--red);color:#fff;padding:.25rem .55rem;font-size:.85rem;cursor:pointer;font-family:var(--fontSerif);}
+#closePost{position:absolute;top:8px;right:12px;border:1px solid var(--border);background:var(--red);color:#fff;padding:.3rem .6rem;font-size:.8rem;cursor:pointer;font-family:var(--fontHead);}
 #closePost:hover{background:#fff;color:var(--red);}
-#postContent h1,#postContent h2,#postContent h3,#postContent p,#postContent ul,#postContent ol,#postContent blockquote,#postContent table{text-align:left;}
 #postContent h1,#postContent h2,#postContent h3{margin:1.2rem 0 .6rem;}
-#postContent p,#postContent ul,#postContent ol,#postContent blockquote{margin:.6rem 0;font-size:1rem;}
+#postContent p,#postContent ul,#postContent ol,#postContent blockquote{margin:.6rem 0;}
 #postContent blockquote{border-left:4px solid var(--blue);padding-left:.8rem;font-style:italic;}
 #postContent ul{list-style:disc;margin-left:1.2rem;}
 #postContent ol{list-style:decimal;margin-left:1.2rem;}
-#postContent code{background:#f3f3f3;border:1px solid #ddd;padding:0 .2rem;font-family:monospace;font-size:.95rem;}
+#postContent code{background:#f3f3f3;border:1px solid #ddd;padding:0 .2rem;font-family:monospace;font-size:.9rem;}
 #postContent pre{background:#f3f3f3;border:1px solid #ddd;padding:1rem;overflow:auto;}
 #postContent table{width:100%;border-collapse:collapse;margin:1rem 0;}
-#postContent th,#postContent td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;font-size:.95rem;}
-#postContent th{background:var(--blue);color:#fff;font-family:var(--fontSerif);}
+#postContent th,#postContent td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;font-size:.9rem;}
+#postContent th{background:var(--blue);color:#fff;font-family:var(--fontHead);}
 #postContent tr:nth-child(even){background:#fafafa;}
 #postContent img{max-width:100%;height:auto;display:block;margin:.8rem 0;border:1px solid var(--border);}
+
+/* gallery */
 .gallery{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--rose);color:#fff;}
-.gallery h2{text-align:center;margin-bottom:var(--space);}
 .galleryGrid{display:grid;gap:var(--space);grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
 .galleryGrid a{display:block;overflow:hidden;border:1px solid var(--border);aspect-ratio:1/1;}
 .galleryGrid img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .3s ease;}
-.galleryGrid img:hover{transform:scale(1.08);}
+.galleryGrid img:hover{transform:scale(1.1);}
+.galleryGrid img.tapped{transform:scale(1.1);}
+
+/* quotes */
 .quotes{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--purple);color:#fff;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.15) inset;user-select:none;cursor:default;}
-.quotes *{user-select:none;cursor:default;}
-.quotes h2{text-align:center;margin-bottom:var(--space);}
+.quotes h2{margin-bottom:var(--space);}
 .quoteBox{min-height:120px;display:flex;flex-direction:column;justify-content:center;align-items:center;opacity:0;transition:opacity .6s;}
 .quoteBox.active{opacity:1;}
 .quoteBox blockquote{font-size:clamp(1rem,2.2vw,1.25rem);max-width:55ch;font-style:italic;margin-bottom:.6rem;}
-.quoteBox cite{font-size:.9rem;font-weight:600;font-family:var(--fontSerif);}
-.progressWrap{width:100%;height:4px;margin-top:var(--space);display:flex;justify-content:center;}
+.progressWrap{width:100%;height:4px;margin-top:var(--space);}
 .progressBar{width:100%;height:4px;background:#fff;transition:width linear 6.4s;box-shadow:0 0 3px rgba(0,0,0,.25);}
+
+/* contact */
 .contact{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--blue);color:#fff;}
 .contact h2{text-align:center;margin-bottom:var(--space);}
 .contact label{display:block;font-weight:600;margin-top:.6rem;}
 .contact input,.contact select,.contact textarea{width:100%;padding:.6rem;border:1px solid var(--border);margin-top:.3rem;background:var(--bg);color:var(--fg);font-size:.95rem;}
 .contact textarea{resize:vertical;min-height:120px;}
-.contact button{margin-top:1rem;background:var(--red);color:#fff;border:1px solid var(--border);padding:.6rem 1.2rem;cursor:pointer;font-family:var(--fontSerif);}
+.contact button{margin-top:1rem;background:var(--red);color:#fff;border:1px solid var(--border);padding:.6rem 1.2rem;cursor:pointer;font-family:var(--fontHead);}
 .contact button:hover{background:#fff;color:var(--red);}
 .contact button[disabled]{opacity:.6;cursor:not-allowed;}
+
+/* modal */
+.modal{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);z-index:50;opacity:0;pointer-events:none;transition:opacity .25s;}
+.modal.show{opacity:1;pointer-events:auto;}
+.modalContent{background:var(--bg);border:2px solid var(--border);padding:2rem;max-width:320px;text-align:center;font-size:1rem;}
+
+/* useful links */
 .links{border:1px solid var(--border);padding:calc(var(--space)*1.2);background:#d40032;color:#fff;margin-bottom:clamp(40px,8vw,80px);}
 .links h2{text-align:center;margin-bottom:var(--space);}
 .links ol{display:grid;grid-template-columns:repeat(2,1fr);gap:.3rem .8rem;font-size:.95rem;}
-.links ol li{margin:0;}
 .links a{border-bottom:1px solid #fff;}
 .links a:hover{background:#fff;color:#d40032;}
-footer{text-align:center;font-size:.8rem;padding:24px 0 60px;color:#666;border-top:1px solid var(--border);font-family:var(--fontSerif);}
+
+footer{text-align:center;font-size:.8rem;padding:24px 0 60px;color:#666;border-top:1px solid var(--border);font-family:var(--fontHead);}
+
 @media(max-width:600px){.intro p{max-width:30ch;}}
 </style>
 </head>
 <body>
 <header class="max">joerice.me</header>
 <main class="max">
+
 <section class="hero">
-<img class="pic" src="assets/images/pictures/profile.jpg" alt="Joe Rice">
-<div class="intro">
-<p>Hello — I’m <strong>Joe Rice</strong>. Husband, father, knowledge worker, entrepreneur. This site is a <strong>living portfolio</strong> of projects, writing, and experiments.</p>
-<div class="social">
-<a href="https://pin.it/7ikA1HZ4o" target="_blank" aria-label="Pinterest" data-tip="See my inspiration boards"><i class="fab fa-pinterest"></i></a>
-<a href="https://www.instagram.com/garbledhamster/" target="_blank" aria-label="Instagram" data-tip="Follow my snapshots"><i class="fab fa-instagram"></i></a>
-<a href="https://www.facebook.com/garbledhamster/" target="_blank" aria-label="Facebook" data-tip="Connect on Facebook"><i class="fab fa-facebook"></i></a>
-<a href="https://buymeacoffee.com/garbledhamster" target="_blank" aria-label="Buy Me A Coffee" data-tip="Tip me a coffee ☕"><i class="fas fa-mug-hot"></i></a>
-<a href="https://github.com/garbledhamster" target="_blank" aria-label="GitHub" data-tip="Check out my code"><i class="fab fa-github"></i></a>
-<a href="https://www.upwork.com/freelancers/~016021fb4f5ed4ff13?mp_source=share" target="_blank" aria-label="Upwork" data-tip="Hire me on Upwork"><i class="fab fa-upwork"></i></a>
-<a href="https://fiverr.com/" target="_blank" aria-label="Fiverr" data-tip="Quick gigs on Fiverr"><i class="fab fa-fiverr"></i></a>
-<a href="https://www.etsy.com/shop/zettelkastenshop" target="_blank" aria-label="Etsy" data-tip="Buy my resources"><i class="fab fa-etsy"></i></a>
-</div>
-</div>
+ <img class="pic" src="assets/images/pictures/profile.jpg" alt="Joe Rice">
+ <div class="intro">
+  <p>Hello — I’m <strong>Joe Rice</strong>. Husband, father, knowledge worker, entrepreneur. This site is a <strong>living portfolio</strong> of projects, writing, and experiments.</p>
+  <div class="social">
+   <a href="https://pin.it/7ikA1HZ4o" target="_blank" aria-label="Pinterest" data-tip="See my inspiration boards"><i class="fab fa-pinterest"></i></a>
+   <a href="https://www.instagram.com/garbledhamster/" target="_blank" aria-label="Instagram" data-tip="Follow my snapshots"><i class="fab fa-instagram"></i></a>
+   <a href="https://www.facebook.com/garbledhamster/" target="_blank" aria-label="Facebook" data-tip="Connect on Facebook"><i class="fab fa-facebook"></i></a>
+   <a href="https://buymeacoffee.com/garbledhamster" target="_blank" aria-label="Buy Me A Coffee" data-tip="Tip me a coffee ☕"><i class="fas fa-mug-hot"></i></a>
+   <a href="https://github.com/garbledhamster" target="_blank" aria-label="GitHub" data-tip="Check out my code"><i class="fab fa-github"></i></a>
+   <a href="https://www.upwork.com/freelancers/~016021fb4f5ed4ff13?mp_source=share" target="_blank" aria-label="Upwork" data-tip="Hire me on Upwork"><i class="fab fa-upwork"></i></a>
+   <a href="https://fiverr.com/" target="_blank" aria-label="Fiverr" data-tip="Quick gigs on Fiverr"><i class="fab fa-fiverr"></i></a>
+   <a href="https://www.etsy.com/shop/zettelkastenshop" target="_blank" aria-label="Etsy" data-tip="Buy my resources"><i class="fab fa-etsy"></i></a>
+  </div>
+ </div>
 </section>
+
 <div class="search"><input id="q" type="search" placeholder="Search posts and notes..."></div>
+
 <section class="portfolio">
 <h2>Portfolio</h2>
 <div class="subhead">Pinned</div><div class="grid" id="pinnedGrid"></div>
@@ -123,20 +150,35 @@ footer{text-align:center;font-size:.8rem;padding:24px 0 60px;color:#666;border-t
 <div class="pageControls"><button id="prevBtn" class="pageBtn">Prev</button><button id="nextBtn" class="pageBtn">Next</button></div>
 <div id="postView"><button id="closePost">close</button><div id="postContent"></div></div>
 </section>
+
 <section class="gallery"><h2>Gallery</h2><div class="galleryGrid">
-<a href="https://picsum.photos/seed/family/1200/1200" target="_blank"><img src="https://picsum.photos/seed/family/300/300" alt="gallery image"></a>
-<a href="https://picsum.photos/seed/market/1200/1200" target="_blank"><img src="https://picsum.photos/seed/market/300/300" alt="gallery image"></a>
-<a href="https://picsum.photos/seed/coding/1200/1200" target="_blank"><img src="https://picsum.photos/seed/coding/300/300" alt="gallery image"></a>
-<a href="https://picsum.photos/seed/stoic/1200/1200" target="_blank"><img src="https://picsum.photos/seed/stoic/300/300" alt="gallery image"></a>
-<a href="https://picsum.photos/seed/city/1200/1200" target="_blank"><img src="https://picsum.photos/seed/city/300/300" alt="gallery image"></a>
-<a href="https://picsum.photos/seed/sunrise/1200/1200" target="_blank"><img src="https://picsum.photos/seed/sunrise/300/300" alt="gallery image"></a>
+ <a href="https://picsum.photos/seed/family/1200/1200" target="_blank"><img src="https://picsum.photos/seed/family/300/300" alt=""></a>
+ <a href="https://picsum.photos/seed/market/1200/1200" target="_blank"><img src="https://picsum.photos/seed/market/300/300" alt=""></a>
+ <a href="https://picsum.photos/seed/coding/1200/1200" target="_blank"><img src="https://picsum.photos/seed/coding/300/300" alt=""></a>
+ <a href="https://picsum.photos/seed/stoic/1200/1200" target="_blank"><img src="https://picsum.photos/seed/stoic/300/300" alt=""></a>
+ <a href="https://picsum.photos/seed/city/1200/1200" target="_blank"><img src="https://picsum.photos/seed/city/300/300" alt=""></a>
+ <a href="https://picsum.photos/seed/sunrise/1200/1200" target="_blank"><img src="https://picsum.photos/seed/sunrise/300/300" alt=""></a>
 </div></section>
+
 <section class="quotes">
 <h2>Quotes</h2>
 <div class="quoteBox" id="quoteBox"><blockquote id="quoteText"></blockquote><cite id="quoteCite"></cite></div>
 <div class="progressWrap"><div class="progressBar" id="quoteProgress"></div></div>
 </section>
-<section class="contact"><h2>Contact</h2><form action="https://formspree.io/f/xovqpvdv" method="POST"><label>Name<input type="text" name="name" required></label><label>Email<input type="email" name="email" required></label><label>Project Type<select name="project" required><option value="">Select an option...</option><option>Website Build</option><option>SEO Audit</option><option>Local SEO / Google Profile</option><option>Consulting Call</option><option>Training / Workshop</option><option>Other</option></select></label><label>Message<textarea name="message" required></textarea></label><button type="submit">Send</button></form></section>
+
+<section class="contact">
+ <h2>Contact</h2>
+ <form id="contactForm">
+  <label>Name<input type="text" name="name" required></label>
+  <label>Email<input type="email" name="email" required></label>
+  <label>Project Type<select name="project" required>
+    <option value="">Select an option...</option><option>Website Build</option><option>SEO Audit</option><option>Local SEO / Google Profile</option><option>Consulting Call</option><option>Training / Workshop</option><option>Other</option>
+  </select></label>
+  <label>Message<textarea name="message" required></textarea></label>
+  <button type="submit">Send</button>
+ </form>
+</section>
+
 <section class="links"><h2>Useful Links</h2><ol>
 <li><a href="https://news.ycombinator.com" target="_blank">Hacker News</a></li>
 <li><a href="https://zettelkasten.de" target="_blank">Zettelkasten Method</a></li>
@@ -157,46 +199,78 @@ footer{text-align:center;font-size:.8rem;padding:24px 0 60px;color:#666;border-t
 </ol></section>
 </main>
 <footer>&copy; <span id="year"></span> Joe Rice. All rights reserved.</footer>
+
+<!-- modal -->
+<div class="modal" id="modal"><div class="modalContent"><p>Thank you! Your message has been sent.</p><button id="closeModal" style="margin-top:1rem;border:1px solid var(--border);padding:.5rem 1rem;background:var(--yellow);font-family:var(--fontHead);cursor:pointer;">close</button></div></div>
+
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
-const pinned=[];const notes=[];const pageSize=10;let page=0;
-const pinnedGrid=document.getElementById('pinnedGrid');const entryGrid=document.getElementById('entryGrid');
-const prevBtn=document.getElementById('prevBtn');const nextBtn=document.getElementById('nextBtn');
-const postView=document.getElementById('postView');const postContent=document.getElementById('postContent');function renderPinned(){pinnedGrid.innerHTML=pinned.map(p=>`<a class="entry" data-url="${p.url}">${p.title}</a>`).join('');attachClickHandlers();}
-function renderPage(){const start=page*pageSize;const slice=notes.slice(start,start+pageSize);entryGrid.innerHTML=slice.map(n=>`<a class="entry" data-url="${n.url}">${n.title}</a>`).join('');prevBtn.disabled=page===0;nextBtn.disabled=start+pageSize>=notes.length;attachClickHandlers();}
-prevBtn.onclick=()=>{if(page>0){page--;renderPage();}};
-nextBtn.onclick=()=>{if((page+1)*pageSize<notes.length){page++;renderPage();}};
-function attachClickHandlers(){document.querySelectorAll('.entry').forEach(el=>{el.onclick=e=>openPost(e.currentTarget.dataset.url);});}
-async function openPost(url){try{const raw=await fetch(url).then(r=>r.text());const data=jsyaml.load(raw);postContent.innerHTML=marked.parse(data.content??'');postView.style.display='block';window.scrollTo({top:postView.offsetTop-20,behavior:'smooth'});}catch(err){postContent.innerHTML='<p>Unable to load this post.</p>';postView.style.display='block';console.error(err);}}
-document.getElementById('closePost').onclick=()=>{postView.style.display='none';};
-(async()=>{try{const loaderText=await fetch('posts/loader.yml').then(r=>r.text());const loaderData=jsyaml.load(loaderText);for(const p of loaderData.posts){const url=`posts/${p.file}`;const raw=await fetch(url).then(r=>r.text());const data=jsyaml.load(raw);const entry={title:data.title,date:data.date,url,pinned:data.pinned};(entry.pinned?pinned:notes).push(entry);}notes.sort((a,b)=>new Date(b.date)-new Date(a.date));renderPinned();renderPage();}catch(err){console.error('Loader failed',err);}})();
+
+/* loader for posts (unchanged) */
+const pinned=[],notes=[],pageSize=10;let page=0;
+const pinnedGrid=document.getElementById('pinnedGrid'),entryGrid=document.getElementById('entryGrid');
+const prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn');
+const postView=document.getElementById('postView'),postContent=document.getElementById('postContent');
+function renderPinned(){pinnedGrid.innerHTML=pinned.map(p=>`<a class="entry" data-url="${p.url}">${p.title}</a>`).join('');attachClickHandlers();}
+function renderPage(){const start=page*pageSize,slice=notes.slice(start,start+pageSize);entryGrid.innerHTML=slice.map(n=>`<a class="entry" data-url="${n.url}">${n.title}</a>`).join('');prevBtn.disabled=page===0;nextBtn.disabled=start+pageSize>=notes.length;attachClickHandlers();}
+prevBtn.onclick=()=>{if(page>0){page--;renderPage();}};nextBtn.onclick=()=>{if((page+1)*pageSize<notes.length){page++;renderPage();}};
+function attachClickHandlers(){document.querySelectorAll('.entry').forEach(el=>el.onclick=e=>openPost(e.currentTarget.dataset.url));}
+async function openPost(url){try{const raw=await fetch(url).then(r=>r.text());const data=jsyaml.load(raw);postContent.innerHTML=marked.parse(data.content??'');postView.style.display='block';window.scrollTo({top:postView.offsetTop-20,behavior:'smooth'});}catch(err){postContent.innerHTML='<p>Unable to load this post.</p>';postView.style.display='block';}}
+document.getElementById('closePost').onclick=()=>postView.style.display='none';
+(async()=>{try{const loaderText=await fetch('posts/loader.yml').then(r=>r.text());const loaderData=jsyaml.load(loaderText);for(const p of loaderData.posts){const url=`posts/${p.file}`;const raw=await fetch(url).then(r=>r.text());const data=jsyaml.load(raw);const entry={title:data.title,date:data.date,url,pinned:data.pinned};(entry.pinned?pinned:notes).push(entry);}notes.sort((a,b)=>new Date(b.date)-new Date(a.date));renderPinned();renderPage();}catch(e){console.error(e);}})();
+
+/* search filter */
 document.getElementById('q').addEventListener('input',e=>{const v=e.target.value.toLowerCase();document.querySelectorAll('.entry').forEach(el=>{el.style.display=el.textContent.toLowerCase().includes(v)?'':'none';});});
-const quoteBox=document.getElementById('quoteBox');const quoteText=document.getElementById('quoteText');const quoteCite=document.getElementById('quoteCite');const progBar=document.getElementById('quoteProgress');let quotes=[],idx=0,slideMs=7000;
+
+/* quotes rotate */
+const quoteBox=document.getElementById('quoteBox'),quoteText=document.getElementById('quoteText'),quoteCite=document.getElementById('quoteCite'),progBar=document.getElementById('quoteProgress');
+let quotes=[],idx=0,slideMs=7000;
 function resetBar(){progBar.style.transition='none';progBar.style.width='100%';void progBar.offsetWidth;progBar.style.transition='width linear 6.4s';progBar.style.width='0%';}
 function showQuote(i){const q=quotes[i];quoteText.textContent=`“${q.text}”`;quoteCite.textContent=`— ${q.author??'Unknown'}`;quoteBox.classList.add('active');resetBar();}
-(async()=>{try{const qYaml=await fetch('quotes/quotes.yaml').then(r=>r.text());quotes=jsyaml.load(qYaml).quotes||[];if(!quotes.length)return;showQuote(0);setInterval(()=>{quoteBox.classList.remove('active');setTimeout(()=>{idx=(idx+1)%quotes.length;showQuote(idx);},600);},slideMs);}catch(err){console.error('Quotes failed',err);}})();
+(async()=>{try{const qYaml=await fetch('quotes/quotes.yaml').then(r=>r.text());quotes=jsyaml.load(qYaml).quotes||[];if(!quotes.length)return;showQuote(0);setInterval(()=>{quoteBox.classList.remove('active');setTimeout(()=>{idx=(idx+1)%quotes.length;showQuote(idx);},600);},slideMs);}catch(e){console.error(e);}})();
+
+/* reveal animation on load */
 window.addEventListener('DOMContentLoaded',()=>{requestAnimationFrame(()=>document.body.classList.add('loaded'));});
-const contactForm=document.querySelector('.contact form');const sendBtn=contactForm.querySelector('button[type="submit"]');
-contactForm.addEventListener('submit',()=>{sendBtn.disabled=true;setTimeout(()=>{contactForm.reset();sendBtn.disabled=false;},1000);});
+
+/* contact modal */
+const modal=document.getElementById('modal'),closeModal=document.getElementById('closeModal');
+function openModal(){modal.classList.add('show');}
+function hideModal(){modal.classList.remove('show');}
+closeModal.onclick=hideModal;
+modal.addEventListener('click',e=>{if(e.target===modal)hideModal();});
+document.getElementById('contactForm').addEventListener('submit',async e=>{
+ e.preventDefault();
+ const fd=new FormData(e.target);
+ try{await fetch('https://formspree.io/f/xovqpvdv',{method:'POST',body:fd,headers:{'Accept':'application/json'}});}catch{}
+ e.target.reset();openModal();
+});
+
+/* touch-friendly gallery tap-to-zoom */
+const mobile=!matchMedia('(hover: hover)').matches;
+if(mobile){
+ const imgs=[...document.querySelectorAll('.galleryGrid img')];
+ imgs.forEach(img=>{
+  img.parentElement.addEventListener('click',e=>{
+   if(!img.classList.contains('tapped')){
+    e.preventDefault();
+    imgs.forEach(i=>i.classList.remove('tapped'));
+    img.classList.add('tapped');
+   } // second tap follows link normally
+  });
+ });
+}
+
+/* social tooltips + random colors */
 const colors=['var(--blue)','var(--red)','var(--yellow)','var(--rose)','var(--green)','var(--purple)'];
-const links=document.querySelectorAll('.social a');
-links.forEach(a=>{
+document.querySelectorAll('.social a').forEach(a=>{
  const tip=document.createElement('span');tip.className='tooltip';tip.textContent=a.dataset.tip;a.appendChild(tip);
- const show=()=>{a.classList.add('showTip');const c=colors[Math.floor(Math.random()*colors.length)];a.style.color=c;tip.style.background=c;};
+ const show=()=>{a.classList.add('showTip');const c=colors[Math.random()*colors.length|0];a.style.color=c;tip.style.background=c;};
  const hide=()=>{a.classList.remove('showTip');a.style.color='inherit';tip.style.background='var(--fg)';};
- if(matchMedia('(hover: hover)').matches){
-  a.addEventListener('mouseenter',show);
-  a.addEventListener('mouseleave',hide);
- }
+ if(!mobile){a.addEventListener('mouseenter',show);a.addEventListener('mouseleave',hide);}
  a.addEventListener('click',e=>{
-  if(!matchMedia('(hover: hover)').matches){
-   if(!a.classList.contains('showTip')){
-    e.preventDefault();links.forEach(l=>{l.classList.remove('showTip');l.style.color='inherit';});
-    show();
-   }
-  }
+  if(mobile&&!a.classList.contains('showTip')){e.preventDefault();document.querySelectorAll('.social a').forEach(l=>{l.classList.remove('showTip');l.style.color='inherit';});show();}
  });
 });
 </script>
