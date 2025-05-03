@@ -4,87 +4,117 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Joe Rice · Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Merriweather:wght@700&display=swap" rel="stylesheet">
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js" as="script">
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" as="script">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-:root{--bg:#fff;--fg:#111;--border:#000;--space:clamp(8px,2vw,18px);--font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--blue:#0066ff;--red:#ff0059;--yellow:#ffd60a;--rose:#ff80a4;--green:#28c76f;--purple:#a259ff;}
+:root{--bg:#fff;--fg:#111;--border:#000;--space:clamp(8px,2vw,18px);--font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--fontSerif:"Merriweather",Georgia,serif;--blue:#0066ff;--red:#ff0059;--yellow:#ffd60a;--rose:#ff80a4;--green:#28c76f;--purple:#a259ff;}
 *{box-sizing:border-box;margin:0;padding:0;}
-html,body{background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.6;}
+html,body{background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.6;font-size:1rem;}
+h1,h2,h3{font-family:var(--fontSerif);font-weight:700;}
+h1{font-size:clamp(1.75rem,4vw,2.25rem);}
+h2{font-size:clamp(1.4rem,3.2vw,1.75rem);}
+h3{font-size:clamp(1.2rem,2.4vw,1.5rem);}
 a{color:inherit;text-decoration:none;}
 ul,ol{list-style:none;padding-left:0;}
 .max{max-width:880px;margin-inline:auto;padding-inline:clamp(12px,4vw,32px);}
-header{background:var(--yellow);border-bottom:1px solid var(--border);text-align:center;font-weight:600;padding:6px 0;}
-.hero{display:grid;grid-template-columns:140px 1fr;gap:var(--space);padding-block:clamp(20px,8vw,60px);align-items:start;}
+header{background:var(--yellow);border-bottom:1px solid var(--border);text-align:center;font-weight:600;padding:6px 0;font-family:var(--fontSerif);font-size:clamp(1.1rem,2.6vw,1.4rem);}
+.hero{display:flex;flex-direction:column;align-items:center;gap:var(--space);padding-block:clamp(20px,8vw,60px);}
 .pic{width:140px;height:140px;border:1px solid var(--border);object-fit:cover;background:var(--rose);}
-.intro p{font-size:clamp(1rem,2.2vw,1.25rem);max-width:40ch;}
-/* ── hero meet-in animation ─────────────────────────────────── */
+.intro{text-align:center;}
+.intro p{font-size:clamp(1.05rem,2.4vw,1.3rem);max-width:40ch;margin-inline:auto;}
+.social{display:flex;gap:18px;margin-top:.4rem;flex-wrap:wrap;justify-content:center;}
+.social a{position:relative;font-size:1.45rem;color:inherit;transition:transform .2s;}
+.social a:hover{transform:scale(1.2);}
+.tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%) translateY(4px);opacity:0;background:var(--fg);color:var(--bg);padding:4px 8px;border-radius:3px;font-size:.75rem;white-space:nowrap;pointer-events:none;transition:opacity .2s ease,transform .2s ease;}
+.social a.showTip .tooltip{opacity:1;transform:translateX(-50%) translateY(0);}
 body:not(.loaded) .hero .pic{opacity:0;transform:translateX(-40px);}
 body:not(.loaded) .hero .intro{opacity:0;transform:translateX(40px);}
 body.loaded .hero .pic,
 body.loaded .hero .intro{opacity:1;transform:none;transition:opacity .7s ease,transform .7s ease;}
-/* ───────────────────────────────────────────────────────────── */
 .search{margin-block:var(--space);}
-#q{width:100%;padding:.8rem 1rem;border:1px solid var(--border);background:var(--blue);color:#fff;}
+#q{width:100%;padding:.8rem 1rem;border:1px solid var(--border);background:var(--blue);color:#fff;font-size:1rem;}
 #q::placeholder{color:#e5e5e5;}
 .portfolio{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--green);color:#fff;}
-.portfolio h2{text-align:center;font-size:1.1rem;font-weight:700;margin-bottom:var(--space);}
-.subhead{font-size:.95rem;margin:.6rem 0 .4rem;text-decoration:underline;}
+.portfolio h2{text-align:center;margin-bottom:var(--space);}
+.subhead{font-size:1rem;margin:.6rem 0 .4rem;text-decoration:underline;font-family:var(--fontSerif);}
 .grid{display:grid;gap:var(--space);}
-.entry{border:1px solid var(--border);padding:1rem;background:var(--bg);color:var(--fg);cursor:pointer;transition:background .2s;}
+.entry{border:1px solid var(--border);padding:1rem;background:var(--bg);color:var(--fg);cursor:pointer;transition:background .2s;font-size:1rem;}
 .entry:hover{background:#f5f5f5;}
 .pageControls{display:flex;justify-content:center;gap:1rem;margin-top:var(--space);}
 .pageBtn{cursor:pointer;padding:.4rem .8rem;border:1px solid var(--border);background:var(--bg);}
 .pageBtn[disabled]{opacity:.4;cursor:not-allowed;}
 #postView{display:none;margin-top:var(--space);background:var(--bg);color:var(--fg);border:1px solid var(--border);padding:1.5rem;position:relative;}
-#closePost{position:absolute;top:8px;right:12px;border:1px solid var(--border);background:var(--red);color:#fff;padding:.25rem .55rem;font-size:.8rem;cursor:pointer;}
+#closePost{position:absolute;top:8px;right:12px;border:1px solid var(--border);background:var(--red);color:#fff;padding:.25rem .55rem;font-size:.85rem;cursor:pointer;font-family:var(--fontSerif);}
 #closePost:hover{background:#fff;color:var(--red);}
 #postContent h1,#postContent h2,#postContent h3,#postContent p,#postContent ul,#postContent ol,#postContent blockquote,#postContent table{text-align:left;}
-#postContent h1,#postContent h2,#postContent h3{margin:1.2rem 0 .6rem;font-weight:700;}
-#postContent p,#postContent ul,#postContent ol,#postContent blockquote{margin:.6rem 0;}
+#postContent h1,#postContent h2,#postContent h3{margin:1.2rem 0 .6rem;}
+#postContent p,#postContent ul,#postContent ol,#postContent blockquote{margin:.6rem 0;font-size:1rem;}
 #postContent blockquote{border-left:4px solid var(--blue);padding-left:.8rem;font-style:italic;}
 #postContent ul{list-style:disc;margin-left:1.2rem;}
 #postContent ol{list-style:decimal;margin-left:1.2rem;}
-#postContent code{background:#f3f3f3;border:1px solid #ddd;padding:0 .2rem;font-family:monospace;}
+#postContent code{background:#f3f3f3;border:1px solid #ddd;padding:0 .2rem;font-family:monospace;font-size:.95rem;}
 #postContent pre{background:#f3f3f3;border:1px solid #ddd;padding:1rem;overflow:auto;}
 #postContent table{width:100%;border-collapse:collapse;margin:1rem 0;}
-#postContent th,#postContent td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;}
-#postContent th{background:var(--blue);color:#fff;}
+#postContent th,#postContent td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;font-size:.95rem;}
+#postContent th{background:var(--blue);color:#fff;font-family:var(--fontSerif);}
 #postContent tr:nth-child(even){background:#fafafa;}
 #postContent img{max-width:100%;height:auto;display:block;margin:.8rem 0;border:1px solid var(--border);}
 .gallery{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--rose);color:#fff;}
-.gallery h2{text-align:center;font-size:1.1rem;font-weight:700;margin-bottom:var(--space);}
+.gallery h2{text-align:center;margin-bottom:var(--space);}
 .galleryGrid{display:grid;gap:var(--space);grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
 .galleryGrid a{display:block;overflow:hidden;border:1px solid var(--border);aspect-ratio:1/1;}
 .galleryGrid img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .3s ease;}
 .galleryGrid img:hover{transform:scale(1.08);}
-.quotes{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--purple);color:#fff;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.15) inset;}
-.quotes h2{font-size:1.1rem;font-weight:700;margin-bottom:var(--space);}
+.quotes{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--purple);color:#fff;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.15) inset;user-select:none;cursor:default;}
+.quotes *{user-select:none;cursor:default;}
+.quotes h2{text-align:center;margin-bottom:var(--space);}
 .quoteBox{min-height:120px;display:flex;flex-direction:column;justify-content:center;align-items:center;opacity:0;transition:opacity .6s;}
 .quoteBox.active{opacity:1;}
 .quoteBox blockquote{font-size:clamp(1rem,2.2vw,1.25rem);max-width:55ch;font-style:italic;margin-bottom:.6rem;}
-.quoteBox cite{font-size:.9rem;font-weight:600;}
+.quoteBox cite{font-size:.9rem;font-weight:600;font-family:var(--fontSerif);}
 .progressWrap{width:100%;height:4px;margin-top:var(--space);display:flex;justify-content:center;}
 .progressBar{width:100%;height:4px;background:#fff;transition:width linear 6.4s;box-shadow:0 0 3px rgba(0,0,0,.25);}
 .contact{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--blue);color:#fff;}
-.contact h2{text-align:center;font-size:1.1rem;font-weight:700;margin-bottom:var(--space);}
+.contact h2{text-align:center;margin-bottom:var(--space);}
 .contact label{display:block;font-weight:600;margin-top:.6rem;}
-.contact input,.contact select,.contact textarea{width:100%;padding:.6rem;border:1px solid var(--border);margin-top:.3rem;background:var(--bg);color:var(--fg);}
+.contact input,.contact select,.contact textarea{width:100%;padding:.6rem;border:1px solid var(--border);margin-top:.3rem;background:var(--bg);color:var(--fg);font-size:.95rem;}
 .contact textarea{resize:vertical;min-height:120px;}
-.contact button{margin-top:1rem;background:var(--red);color:#fff;border:1px solid var(--border);padding:.6rem 1.2rem;cursor:pointer;}
+.contact button{margin-top:1rem;background:var(--red);color:#fff;border:1px solid var(--border);padding:.6rem 1.2rem;cursor:pointer;font-family:var(--fontSerif);}
 .contact button:hover{background:#fff;color:var(--red);}
-.links{border:1px solid var(--border);padding:calc(var(--space)*1.2);background:var(--red);color:#fff;margin-bottom:clamp(40px,8vw,80px);}
-.links h2{text-align:center;font-size:1.1rem;font-weight:700;margin-bottom:var(--space);}
-.links ol li{margin:.3rem 0;}
+.contact button[disabled]{opacity:.6;cursor:not-allowed;}
+.links{border:1px solid var(--border);padding:calc(var(--space)*1.2);background:#d40032;color:#fff;margin-bottom:clamp(40px,8vw,80px);}
+.links h2{text-align:center;margin-bottom:var(--space);}
+.links ol{display:grid;grid-template-columns:repeat(2,1fr);gap:.3rem .8rem;font-size:.95rem;}
+.links ol li{margin:0;}
 .links a{border-bottom:1px solid #fff;}
-.links a:hover{background:#fff;color:var(--red);}
-footer{text-align:center;font-size:.75rem;padding:24px 0 60px;color:#666;border-top:1px solid var(--border);}
-@media(max-width:600px){.hero{grid-template-columns:1fr;}.pic{justify-self:center;}}
+.links a:hover{background:#fff;color:#d40032;}
+footer{text-align:center;font-size:.8rem;padding:24px 0 60px;color:#666;border-top:1px solid var(--border);font-family:var(--fontSerif);}
+@media(max-width:600px){.intro p{max-width:30ch;}}
 </style>
 </head>
 <body>
 <header class="max">joerice.me</header>
 <main class="max">
-<section class="hero"><img class="pic" src="assets/images/pictures/profile.jpg" alt="Joe Rice"><div class="intro"><p>Hello — I’m <strong>Joe Rice</strong>. Husband, father, knowledge worker, entrepreneur. This site is a <strong>living portfolio</strong> of projects, writing, and experiments.</p></div></section>
+<section class="hero">
+<img class="pic" src="assets/images/pictures/profile.jpg" alt="Joe Rice">
+<div class="intro">
+<p>Hello — I’m <strong>Joe Rice</strong>. Husband, father, knowledge worker, entrepreneur. This site is a <strong>living portfolio</strong> of projects, writing, and experiments.</p>
+<div class="social">
+<a href="https://pin.it/7ikA1HZ4o" target="_blank" aria-label="Pinterest" data-tip="See my inspiration boards"><i class="fab fa-pinterest"></i></a>
+<a href="https://www.instagram.com/garbledhamster/" target="_blank" aria-label="Instagram" data-tip="Follow my snapshots"><i class="fab fa-instagram"></i></a>
+<a href="https://www.facebook.com/garbledhamster/" target="_blank" aria-label="Facebook" data-tip="Connect on Facebook"><i class="fab fa-facebook"></i></a>
+<a href="https://buymeacoffee.com/garbledhamster" target="_blank" aria-label="Buy Me A Coffee" data-tip="Tip me a coffee ☕"><i class="fas fa-mug-hot"></i></a>
+<a href="https://github.com/garbledhamster" target="_blank" aria-label="GitHub" data-tip="Check out my code"><i class="fab fa-github"></i></a>
+<a href="https://www.upwork.com/freelancers/~016021fb4f5ed4ff13?mp_source=share" target="_blank" aria-label="Upwork" data-tip="Hire me on Upwork"><i class="fab fa-upwork"></i></a>
+<a href="https://fiverr.com/" target="_blank" aria-label="Fiverr" data-tip="Quick gigs on Fiverr"><i class="fab fa-fiverr"></i></a>
+<a href="https://www.etsy.com/shop/zettelkastenshop" target="_blank" aria-label="Etsy" data-tip="Buy my resources"><i class="fab fa-etsy"></i></a>
+</div>
+</div>
+</section>
 <div class="search"><input id="q" type="search" placeholder="Search posts and notes..."></div>
 <section class="portfolio">
 <h2>Portfolio</h2>
@@ -107,7 +137,24 @@ footer{text-align:center;font-size:.75rem;padding:24px 0 60px;color:#666;border-
 <div class="progressWrap"><div class="progressBar" id="quoteProgress"></div></div>
 </section>
 <section class="contact"><h2>Contact</h2><form action="https://formspree.io/f/xovqpvdv" method="POST"><label>Name<input type="text" name="name" required></label><label>Email<input type="email" name="email" required></label><label>Project Type<select name="project" required><option value="">Select an option...</option><option>Website Build</option><option>SEO Audit</option><option>Local SEO / Google Profile</option><option>Consulting Call</option><option>Training / Workshop</option><option>Other</option></select></label><label>Message<textarea name="message" required></textarea></label><button type="submit">Send</button></form></section>
-<section class="links"><h2>Useful Links</h2><ol><li><a href="https://news.ycombinator.com" target="_blank">Hacker News</a></li><li><a href="https://zettelkasten.de" target="_blank">Zettelkasten Method</a></li><li><a href="https://replit.com" target="_blank">Replit</a></li><li><a href="https://www.notion.so" target="_blank">Notion</a></li><li><a href="https://www.reddit.com/r/personalfinance/wiki/index" target="_blank">r/PersonalFinance Wiki</a></li><li><a href="https://www.khanacademy.org/college-careers-more/personal-finance" target="_blank">Khan Academy – Personal Finance</a></li><li><a href="https://www.nerdwallet.com" target="_blank">NerdWallet</a></li><li><a href="https://www.daveramsey.com/baby-steps" target="_blank">Dave Ramsey Baby Steps</a></li><li><a href="https://www.ycombinator.com/library" target="_blank">YC Startup Library</a></li><li><a href="https://www.indiehackers.com" target="_blank">Indie Hackers</a></li></ol></section>
+<section class="links"><h2>Useful Links</h2><ol>
+<li><a href="https://news.ycombinator.com" target="_blank">Hacker News</a></li>
+<li><a href="https://zettelkasten.de" target="_blank">Zettelkasten Method</a></li>
+<li><a href="https://replit.com" target="_blank">Replit</a></li>
+<li><a href="https://www.notion.so" target="_blank">Notion</a></li>
+<li><a href="https://www.reddit.com/r/personalfinance/wiki/index" target="_blank">r/PersonalFinance Wiki</a></li>
+<li><a href="https://www.khanacademy.org/college-careers-more/personal-finance" target="_blank">Khan Academy – Personal Finance</a></li>
+<li><a href="https://www.nerdwallet.com" target="_blank">NerdWallet</a></li>
+<li><a href="https://www.daveramsey.com/baby-steps" target="_blank">Dave Ramsey Baby Steps</a></li>
+<li><a href="https://www.ycombinator.com/library" target="_blank">YC Startup Library</a></li>
+<li><a href="https://www.indiehackers.com" target="_blank">Indie Hackers</a></li>
+<li><a href="https://dailystoic.com" target="_blank">Daily Stoic</a></li>
+<li><a href="https://www.producthunt.com" target="_blank">Product Hunt</a></li>
+<li><a href="https://developer.mozilla.org" target="_blank">MDN Web Docs</a></li>
+<li><a href="https://github.com/openai/openai-cookbook" target="_blank">OpenAI Cookbook</a></li>
+<li><a href="https://obsidian.md" target="_blank">Obsidian</a></li>
+<li><a href="https://github.com" target="_blank">GitHub</a></li>
+</ol></section>
 </main>
 <footer>&copy; <span id="year"></span> Joe Rice. All rights reserved.</footer>
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
@@ -117,8 +164,7 @@ document.getElementById('year').textContent=new Date().getFullYear();
 const pinned=[];const notes=[];const pageSize=10;let page=0;
 const pinnedGrid=document.getElementById('pinnedGrid');const entryGrid=document.getElementById('entryGrid');
 const prevBtn=document.getElementById('prevBtn');const nextBtn=document.getElementById('nextBtn');
-const postView=document.getElementById('postView');const postContent=document.getElementById('postContent');
-function renderPinned(){pinnedGrid.innerHTML=pinned.map(p=>`<a class="entry" data-url="${p.url}">${p.title}</a>`).join('');attachClickHandlers();}
+const postView=document.getElementById('postView');const postContent=document.getElementById('postContent');function renderPinned(){pinnedGrid.innerHTML=pinned.map(p=>`<a class="entry" data-url="${p.url}">${p.title}</a>`).join('');attachClickHandlers();}
 function renderPage(){const start=page*pageSize;const slice=notes.slice(start,start+pageSize);entryGrid.innerHTML=slice.map(n=>`<a class="entry" data-url="${n.url}">${n.title}</a>`).join('');prevBtn.disabled=page===0;nextBtn.disabled=start+pageSize>=notes.length;attachClickHandlers();}
 prevBtn.onclick=()=>{if(page>0){page--;renderPage();}};
 nextBtn.onclick=()=>{if((page+1)*pageSize<notes.length){page++;renderPage();}};
@@ -131,8 +177,28 @@ const quoteBox=document.getElementById('quoteBox');const quoteText=document.getE
 function resetBar(){progBar.style.transition='none';progBar.style.width='100%';void progBar.offsetWidth;progBar.style.transition='width linear 6.4s';progBar.style.width='0%';}
 function showQuote(i){const q=quotes[i];quoteText.textContent=`“${q.text}”`;quoteCite.textContent=`— ${q.author??'Unknown'}`;quoteBox.classList.add('active');resetBar();}
 (async()=>{try{const qYaml=await fetch('quotes/quotes.yaml').then(r=>r.text());quotes=jsyaml.load(qYaml).quotes||[];if(!quotes.length)return;showQuote(0);setInterval(()=>{quoteBox.classList.remove('active');setTimeout(()=>{idx=(idx+1)%quotes.length;showQuote(idx);},600);},slideMs);}catch(err){console.error('Quotes failed',err);}})();
-/* ── add .loaded for hero animation ──────────────────────────── */
 window.addEventListener('DOMContentLoaded',()=>{requestAnimationFrame(()=>document.body.classList.add('loaded'));});
+const contactForm=document.querySelector('.contact form');const sendBtn=contactForm.querySelector('button[type="submit"]');
+contactForm.addEventListener('submit',()=>{sendBtn.disabled=true;setTimeout(()=>{contactForm.reset();sendBtn.disabled=false;},1000);});
+const colors=['var(--blue)','var(--red)','var(--yellow)','var(--rose)','var(--green)','var(--purple)'];
+const links=document.querySelectorAll('.social a');
+links.forEach(a=>{
+ const tip=document.createElement('span');tip.className='tooltip';tip.textContent=a.dataset.tip;a.appendChild(tip);
+ const show=()=>{a.classList.add('showTip');const c=colors[Math.floor(Math.random()*colors.length)];a.style.color=c;tip.style.background=c;};
+ const hide=()=>{a.classList.remove('showTip');a.style.color='inherit';tip.style.background='var(--fg)';};
+ if(matchMedia('(hover: hover)').matches){
+  a.addEventListener('mouseenter',show);
+  a.addEventListener('mouseleave',hide);
+ }
+ a.addEventListener('click',e=>{
+  if(!matchMedia('(hover: hover)').matches){
+   if(!a.classList.contains('showTip')){
+    e.preventDefault();links.forEach(l=>{l.classList.remove('showTip');l.style.color='inherit';});
+    show();
+   }
+  }
+ });
+});
 </script>
 </body>
 </html>

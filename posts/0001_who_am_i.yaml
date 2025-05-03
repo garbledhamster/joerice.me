@@ -5,34 +5,133 @@ pinned: true
 tags: []
 content: |
   # Who Am I?  
-  *A quick intro to Joe Rice and this living portfolio*
+  *A quick intro to Joe Rice and this living portfolio*  
   
-  ---
+  ---  
   
-  Hi — I’m **Joe Rice**: husband, father, lifelong learner, and recovering sys-admin-turned-knowledge-architect.
+  ## The Short Version  
   
-  For ten years I kept servers happy, wrangled GPOs, and automated everything that wasn’t bolted down. A recent lay-off nudged me into full-time freelancing, turning those skills into real-world leverage for local vendors, creators, and—let’s be honest—my own family’s future.
+  I’m **Joe Rice**—husband, dad, recovering sys-admin turned knowledge architect, and an unabashed generalist on a mission to turn hard-won expertise into simple tools that help everyday people thrive. If you only remember one thing, remember this: **I build systems—technical, intellectual, and human—that create breathing room for growth.** Everything you’ll find in this portfolio is in service of that single, stubborn conviction.  
   
-  &nbsp;
+  ---  
   
-  ## Core hats I wear
+  ## Why I’m Writing This  
   
-  | Role | What it means today |
-  |------|--------------------|
-  | **IT Engineer** | Zero-downtime AD repairs, M365 tenant builds, conditional-access lockdowns |
-  | **Knowledge Manager** | Zettelkasten addict, SOP writer, automation tinkerer |
-  | **Entrepreneur** | Building micro-products (cheat sheets, courses, Shopify mini-sites) |
-  | **Dad & Partner** | Montessori-inspired play, stoic reflection at 5 a.m., baking sourdough with the toddler |
+  The internet is loud, messy, and full of half-finished “About Me” pages that read like LinkedIn résumés glued to Instagram captions. I want something different—​a **living origin story** that explains not just *what* I do, but *why* it matters and *how* it might serve *you*. Think of this post as a continuously updated handshake:  
+  1. **Context** – where I came from and what shaped my worldview.  
+  2. **Craft** – the skills and frameworks I sharpened in the trenches.  
+  3. **Contribution** – the concrete ways I aim to leave things better than I found them.  
   
-  &nbsp;
+  If any part resonates, reach out. This portfolio isn’t a museum; it’s a workshop with the garage door open.  
   
-  ## Why this site exists
-  1. **Transparency** — I learn in public; you see mistakes *and* momentum.  
-  2. **Proof** — Every portfolio entry links to a real deliverable or lesson learned.  
-  3. **Opportunity** — If something here helps, hire me or copy the idea—either way somebody wins.
+  ---  
   
-  > “Waste no more time arguing what a good man should be. **Be one.**” — Marcus Aurelius
+  ## From Server Rooms to Story Rooms  
   
-  ---
+  For a decade I lived in freezing server closets and fluorescent-lit cubicles, keeping Active Directory sane, patching zero-day exploits at 3 a.m., and scripting away every repetitive task I could spot. I was the guy who memorized subnet masks the way hobby chefs memorize spice ratios—​equal parts obsession and survival.  
   
-  *Last updated · 2025-05-03*
+  Then, two things happened:  
+  1. **Family Reality Check** – My wife and I welcomed a toddler (with a newborn on the way), and suddenly uptime at home felt more urgent than uptime at work.  
+  2. **Philosophical Collision** – I rediscovered Stoicism, Zazen, and Montessori parenting, realizing that *resilience* and *clarity* are just as technical as any firewall rule.  
+  
+  A layoff became the unexpected catalyst. Instead of job-hunting for another windowless NOC, I pivoted toward **knowledge architecture**—packaging know-how so others can deploy it faster than I ever could alone.  
+  
+  ---  
+  
+  ## Core Hats I Wear  
+  
+  | Hat | What That Means Today |  
+  | --- | --- |  
+  | **IT Engineer** | Zero-downtime AD repairs, Microsoft 365 tenant builds, endpoint hardening, conditional-access lockdowns. |  
+  | **Knowledge Manager** | Zettelkasten addict, SOP writer, automation tinkerer, relentless documenter. |  
+  | **Entrepreneur** | Building micro-products: cheat sheets, courses, one-day websites, and automation bundles. |  
+  | **Teacher-Builder** | Translating technical gnarl into visual guides, flow charts, and step-by-step roadmaps. |  
+  
+  Each hat feeds the others. Engineering keeps me honest, knowledge-ops keeps me organized, entrepreneurship keeps me hungry, and teaching keeps me humble.  
+  
+  ---  
+  
+  ## What I’m Putting Into the World  
+  
+  After a brutal self-audit (and three strong coffees), I distilled my focus to **four flagship offerings**—the things I believe create the highest leverage for the widest audience:  
+  
+  ### 1. Skill-Building Workbooks & Cheat Sheets  
+  *Audience:* Lifelong learners, makers, and “I-never-finish-the-book” readers.  
+  *Why it Matters:* Most self-help skips the *practice* layer. My workbooks walk you up a six-level **Learning Ladder**—Exposure, Organization, Retrieval, Application, Analysis, Creation—with measurable checkpoints so you always know when you’re ready to advance.  
+  *What You’ll Get:* Flow charts, shape metaphors, arrow hierarchies, and a clear metric for mastery. Oh, and every resource links back to [Zettelkasten.Shop](https://www.etsy.com/shop/zettelkastenshop) so you can dive deeper whenever you want.  
+  
+  ### 2. Launch-in-a-Day Flat-File Websites  
+  *Audience:* Creators and freelancers who need a professional landing page yesterday.  
+  *Why it Matters:* WordPress bloat and SaaS lock-in slow people down. I deliver **secure, performant, single-page sites**—no database, no update anxiety—using GitHub Pages or a similar flat-file host.  
+  *What You’ll Get:* Domain setup, SSL, a responsive design, and copy prompts powered by ChatGPT to help you ship good words fast.  
+  
+  ### 3. Fractional IT Engineering & Security Hardening  
+  *Audience:* Small businesses (<50 seats) who can’t afford a full-time sys-admin but still need enterprise-grade defenses.  
+  *Why it Matters:* Cyber-threats don’t scale down just because your headcount does. I bring a decade of MSP battle scars and a library of automation scripts that reduce billable hours and protect your sleep.  
+  *What You’ll Get:* A tight M365 tenant, robust backups, conditional access, and a plain-English handoff document so you’re never held hostage by your own tech.  
+  
+  ### 4. Knowledge-Ops Kits & Automation Bundles  
+  *Audience:* Start-ups drowning in tribal knowledge and solo operators juggling too many tools.  
+  *Why it Matters:* Information should flow like clean water, not spill like a busted fire hydrant. My kits combine Zettelkasten templates, API glue code, and scheduled backups so your ideas are searchable, secure, and shareable.  
+  *What You’ll Get:* A plug-and-play vault for notes, SOPs, and project docs, plus scripts to keep everything synchronized across the apps you already love.  
+  
+  ---  
+  
+  ## Guiding Principles  
+  
+  1. **Automation With Empathy** – I never script away a human touch that *matters*. Technology should amplify relationships, not replace them.  
+  2. **Security Should Feel Boring** – If your stack keeps you up at night, it’s not secure; true safety is quiet confidence.  
+  3. **Learning Is a Ladder, Not a Lottery** – Mastery isn’t luck; it’s ordered steps with clear “ready-to-advance” signals.  
+  4. **Build for the Neighborhood** – Whether that neighborhood is your family, your team, or your city, solutions should serve the people closest to you first.  
+  5. **Leave Breadcrumbs** – Future-you (and anyone following your path) deserves documentation—​even if it’s a napkin sketch captured in your note vault.  
+  
+  ---  
+  
+  ## How This Portfolio Works  
+  
+  Think of this site as a **rolling release log** of my mind:  
+  - **Posts** capture experiments, reflections, and how-tos.  
+  - **Projects** showcase live deliverables (site templates, scripts, visual aids).  
+  - **Cheat Sheets** distill complex topics into one-page references.  
+  - **Contact** opens a Formspree pipeline straight to my inbox if you need something built or fixed.  
+  
+  Everything is version-controlled, openly documented, and tagged for easy search. I believe transparency breeds trust—and trust is the only sustainable marketing strategy left on the internet.  
+  
+  ---  
+  
+  ## The Road Ahead  
+  
+  **May–June 2025**:  
+  - Publish the first **three** skill-building workbooks (Reading, Note-Taking, and Thinking Clearly).  
+  - Soft-launch the **Launch-in-a-Day** website package on Upwork and local networking groups.  
+  - Release a free “Mini Zettelkasten” template via Payhip to grow the mailing list.  
+  
+  **Summer 2025**:  
+  - Wrap the remaining **seven** workbooks.  
+  - Host a beta **cohort course** combining workbook content with live Q&A.  
+  - Offer **Automation-as-a-Service** bundles: pre-built PowerShell tools with optional support tiers.  
+  
+  **Fall 2025 and Beyond**:  
+  - Expand the **Stoic Figures Timeline Site** with community contributions.  
+  - Launch a **family-centric podcast** on resilience, mindful tech, and small-scale entrepreneurship.  
+  - Develop a **Small-Biz Cyber-Readiness Kit**, pairing security hardening with one-hour staff micro-trainings.  
+  
+  None of these milestones are set in stone; they’re way-points in a learning journey. If real-world feedback steers me elsewhere, perfect—iteration is the point.  
+  
+  ---  
+  
+  ## A Personal Invitation  
+  
+  If you’re:  
+  - **A parent** craving systems that create space for presence,  
+  - **A creator** itching to ship without drowning in tool setups,  
+  - **A business owner** tired of gambling with security, or  
+  - **A learner** hunting for practical, visual frameworks—  
+  
+  —then pull up a chair. Send a note, grab a cheat sheet, or poke around the code. I’m building in public not because it’s trendy, but because it forces me to stay honest, adaptive, and relentlessly useful.  
+  
+  Thank you for reading this far. The internet is overflowing with content, and your attention is the scarcest currency I know. I promise to spend it wisely—by shipping tools, insights, and practices that repay your trust with compound interest.  
+  
+  **Forward we go.**  
+  
+  — *Joe*  
