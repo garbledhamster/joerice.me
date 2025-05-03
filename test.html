@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Global Stoic Timeline</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Fonts & Icons -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+/* ==== Base =============================== */
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Inter",system-ui,Arial,sans-serif;
+  line-height:1.55;
+  background:#f5f7fa;
+  color:#333;
+}
+header{
+  text-align:center;
+  padding:3rem 1rem 2rem;
+}
+h1{font-size:2.2rem;font-weight:600;margin-bottom:.25rem}
+p.lead{max-width:640px;margin:0 auto;font-size:1.05rem;color:#555}
+/* ==== Timeline layout ==================== */
+.timeline{
+  width:90%;
+  max-width:900px;
+  margin:3rem auto;
+  position:relative;
+  padding-left:2rem;
+}
+.timeline::before{
+  content:"";
+  position:absolute;
+  left:1rem;
+  top:0;
+  bottom:0;
+  width:4px;
+  background:#cbd5e1;
+}
+.item{
+  position:relative;
+  margin:0 0 2rem 0;
+  padding-left:1.75rem;
+}
+.item::before{
+  content:"";
+  position:absolute;
+  left:-.58rem;
+  top:.4rem;
+  width:14px;
+  height:14px;
+  background:#1e40af;
+  border-radius:50%;
+  border:4px solid #f5f7fa;
+}
+.item h3{
+  font-size:1.15rem;
+  font-weight:600;
+  margin-bottom:.15rem;
+  color:#1e293b;
+}
+.item .date{
+  font-size:.9rem;
+  font-weight:600;
+  color:#475569;
+}
+.item p{
+  font-size:.94rem;
+  margin-top:.2rem;
+  color:#334155;
+}
+/* ==== Filters (optional) ================= */
+#filterWrap{
+  text-align:center;
+  margin:1rem 0 2rem;
+}
+button.tag{
+  background:#e2e8f0;
+  border:none;
+  border-radius:9999px;
+  padding:.35rem 1rem;
+  margin:.25rem;
+  font-size:.85rem;
+  cursor:pointer;
+  transition:background .2s;
+}
+button.tag.active,button.tag:hover{background:#1e40af;color:#fff}
+footer{
+  text-align:center;
+  font-size:.8rem;
+  color:#64748b;
+  padding:3rem 1rem 4rem;
+}
+/* ==== Responsive ========================= */
+@media(min-width:700px){
+  h1{font-size:2.6rem}
+  .item{margin-left:1rem}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Stoic &amp; Stoic‑Spirited Timeline</h1>
+  <p class="lead">
+    A chronological walk through rulers, sages, activists, and mystics
+    who embodied resilience, virtue, and reason—long before and after the
+    formal Stoic school of Athens.
+  </p>
+</header>
+
+<div id="filterWrap">
+  <button class="tag active" data-tag="all">All</button>
+  <button class="tag" data-tag="sage">Sages&nbsp;✦</button>
+  <button class="tag" data-tag="ruler">Rulers&nbsp;⚖︎</button>
+  <button class="tag" data-tag="activist">Activists&nbsp;✊</button>
+  <button class="tag" data-tag="mystic">Mystics&nbsp;❂</button>
+</div>
+
+<!-- ======= Timeline ========= -->
+<section class="timeline" id="timeline">
+
+  <!-- Earliest -->
+  <article class="item sage" data-year="-2400">
+    <span class="date">c. 2400 BCE — Egypt</span>
+    <h3>Vizier Ptahhotep</h3>
+    <p>Authored the <em>Maxims</em>: moderation, justice, and calm self‑control.</p>
+  </article>
+
+  <article class="item mystic" data-year="-599">
+    <span class="date">599–527 BCE — India</span>
+    <h3>Mahavira</h3>
+    <p>Jain teacher of total non‑attachment and fearless ascetic endurance.</p>
+  </article>
+
+  <article class="item mystic" data-year="-563">
+    <span class="date">563–483 BCE — India</span>
+    <h3>Siddhartha Gautama (“The Buddha”)</h3>
+    <p>Sought freedom from craving; taught the Middle Way of equanimity.</p>
+  </article>
+
+  <article class="item sage" data-year="-551">
+    <span class="date">551–479 BCE — China</span>
+    <h3>Confucius</h3>
+    <p>Virtue of <em>ren</em>, duty, and humility despite political setbacks.</p>
+  </article>
+
+  <article class="item sage" data-year="-6c">
+    <span class="date">6th c BCE — China</span>
+    <h3>Laozi</h3>
+    <p>Taught <em>wu wei</em>—effortless alignment with the way of nature.</p>
+  </article>
+
+  <article class="item sage" data-year="-400">
+    <span class="date">c. 400 BCE — China</span>
+    <h3>Zhuangzi</h3>
+    <p>Parables of radical freedom from fear, fame, and fixed identity.</p>
+  </article>
+
+  <article class="item sage" data-year="-470">
+    <span class="date">470–399 BCE — Greece</span>
+    <h3>Socrates</h3>
+    <p>Unflinching search for virtue; drank the hemlock in serene resolve.</p>
+  </article>
+
+  <article class="item sage" data-year="-412">
+    <span class="date">412–323 BCE — Greece</span>
+    <h3>Diogenes of Sinope</h3>
+    <p>Radical Cynic poverty: “I have nothing yet lack nothing.”</p>
+  </article>
+
+  <article class="item sage" data-year="-350">
+    <span class="date">350–280 BCE — Greece</span>
+    <h3>Hipparchia of Maroneia</h3>
+    <p>Noblewoman who chose Cynic hardship and fearless public debate.</p>
+  </article>
+
+  <article class="item sage" data-year="-334">
+    <span class="date">334–262 BCE — Cyprus → Athens</span>
+    <h3>Zeno of Citium</h3>
+    <p>Founded Stoicism; preached living according to reasoned nature.</p>
+  </article>
+
+  <article class="item sage" data-year="-330">
+    <span class="date">330–230 BCE — Asia Minor</span>
+    <h3>Cleanthes</h3>
+    <p>Water‑carrier by night, Stoic hymnist by day—labour &amp; fortitude.</p>
+  </article>
+
+  <article class="item ruler" data-year="-304">
+    <span class="date">304–232 BCE — India</span>
+    <h3>Ashoka the Great&nbsp;⚖︎</h3>
+    <p>Converted from conquest to dharma & welfare; edicts on non‑violence.</p>
+  </article>
+
+  <article class="item ruler" data-year="-95">
+    <span class="date">95–46 BCE — Rome</span>
+    <h3>Cato the Younger&nbsp;⚖︎</h3>
+    <p>Austere senator who chose death over compromise of liberty.</p>
+  </article>
+
+  <article class="item activist" data-year="-73">
+    <span class="date">c. 73–42 BCE — Rome</span>
+    <h3>Porcia Catonis</h3>
+    <p>Stoic fortitude symbol—wounded herself to prove secret‑keeping grit.</p>
+  </article>
+
+  <!-- Early Common Era -->
+  <article class="item sage" data-year="4">
+    <span class="date">4 BCE–65 CE — Hispania/Rome</span>
+    <h3>Seneca the Younger</h3>
+    <p>Essays on anger &amp; tranquility; met forced suicide calmly.</p>
+  </article>
+
+  <article class="item mystic" data-year="4bce">
+    <span class="date">4 BCE–30 CE — Judea</span>
+    <h3>Jesus of Nazareth</h3>
+    <p>Forgiveness under torture; “treasures in heaven, not on earth.”</p>
+  </article>
+
+  <article class="item sage" data-year="50">
+    <span class="date">c. 50–135 CE — Phrygia/Greece</span>
+    <h3>Epictetus</h3>
+    <p>Former slave: “We control only our judgments.”</p>
+  </article>
+
+  <article class="item ruler" data-year="86">
+    <span class="date">86–161 CE — Rome</span>
+    <h3>Antoninus Pius&nbsp;⚖︎</h3>
+    <p>23 years of steady, humane governance; no showy wars.</p>
+  </article>
+
+  <article class="item ruler" data-year="121">
+    <span class="date">121–180 CE — Rome</span>
+    <h3>Marcus Aurelius&nbsp;⚖︎</h3>
+    <p>Wrote the <em>Meditations</em> amid war &amp; plague—duty, humility, reason.</p>
+  </article>
+
+  <!-- 4th–8th centuries -->
+  <article class="item mystic" data-year="360">
+    <span class="date">c. 360–415 — Alexandria</span>
+    <h3>Hypatia</h3>
+    <p>Scholar killed for calm, rational teaching amid turmoil.</p>
+  </article>
+
+  <article class="item sage" data-year="369">
+    <span class="date">369–286 BCE — China</span>
+    <h3>Zhuangzi</h3>
+    <p>Detachment parables: butterfly dream, fish in a jar.</p>
+  </article>
+
+  <article class="item mystic" data-year="500">
+    <span class="date">fl. 5th–6th c — India → China</span>
+    <h3>Bodhidharma</h3>
+    <p>Nine‑year cave meditation—founder of Zen’s wall‑gazing.</p>
+  </article>
+
+  <article class="item sage" data-year="480">
+    <span class="date">480–524 — Italy</span>
+    <h3>Boethius</h3>
+    <p><em>Consolation of Philosophy</em> written on death row.</p>
+  </article>
+
+  <article class="item mystic" data-year="570">
+    <span class="date">570–632 — Arabia</span>
+    <h3>Muhammad</h3>
+    <p>Endured persecution; ruled humbly; forgave conquerors of Mecca.</p>
+  </article>
+
+  <article class="item sage" data-year="700">
+    <span class="date">8th c — India</span>
+    <h3>Shantideva</h3>
+    <p><em>Bodhicaryāvatāra</em> on boundless patience &amp; compassion.</p>
+  </article>
+
+  <article class="item ruler" data-year="531">
+    <span class="date">501–579 — Persia</span>
+    <h3>Khosrow I&nbsp;⚖︎</h3>
+    <p>Nicknamed “the Just”; hosted exiled Greek philosophers.</p>
+  </article>
+
+  <article class="item mystic" data-year="714">
+    <span class="date">714–801 — Iraq</span>
+    <h3>Rabiʿa al‑ʿAdawiyya</h3>
+    <p>Ascetic Sufi of selfless divine love; torch &amp; water parable.</p>
+  </article>
+
+  <article class="item ruler" data-year="598">
+    <span class="date">598–649 — China</span>
+    <h3>Emperor Taizong&nbsp;⚖︎</h3>
+    <p>Merit exams, open trade, candid advisors—Golden Age start.</p>
+  </article>
+
+  <article class="item ruler" data-year="763">
+    <span class="date">763–809 — Baghdad</span>
+    <h3>Harun al‑Rashid&nbsp;⚖︎</h3>
+    <p>Funded House of Wisdom, translation movement, arts &amp; science.</p>
+  </article>
+
+  <!-- 9th–15th centuries -->
+  <article class="item ruler" data-year="849">
+    <span class="date">849–899 — England</span>
+    <h3>Alfred the Great&nbsp;⚖︎</h3>
+    <p>Rebuilt learning &amp; law after Viking wars; translated philosophy.</p>
+  </article>
+
+  <article class="item ruler" data-year="1137">
+    <span class="date">1137–1193 — Middle East</span>
+    <h3>Saladin&nbsp;⚖︎</h3>
+    <p>Merciful capture of Jerusalem; died almost penniless from charity.</p>
+  </article>
+
+  <article class="item mystic" data-year="1181">
+    <span class="date">1181–1226 — Italy</span>
+    <h3>Francis of Assisi</h3>
+    <p>Joyful poverty; brotherhood with all creatures.</p>
+  </article>
+
+  <article class="item ruler" data-year="1217">
+    <span class="date">1217–1255 — Mali</span>
+    <h3>Sundiata Keita&nbsp;⚖︎</h3>
+    <p>From crippled exile to charter of human rights (Kurukan Fuga).</p>
+  </article>
+
+  <article class="item sage" data-year="1332">
+    <span class="date">1332–1406 — Tunisia</span>
+    <h3>Ibn Khaldun</h3>
+    <p>Cyclical history &amp; resilience of <em>asabiyyah</em>.</p>
+  </article>
+
+  <article class="item ruler" data-year="1402">
+    <span class="date">1402–1472 — Texcoco</span>
+    <h3>Nezahualcóyotl&nbsp;⚖︎</h3>
+    <p>Poet‑king; humane laws &amp; ban on sacrifice in his capital.</p>
+  </article>
+
+  <article class="item ruler" data-year="1397">
+    <span class="date">1397–1450 — Korea</span>
+    <h3>Sejong the Great&nbsp;⚖︎</h3>
+    <p>Created Hangul; championed science &amp; fair taxes.</p>
+  </article>
+
+  <article class="item activist" data-year="1478">
+    <span class="date">1478–1535 — England</span>
+    <h3>Thomas More</h3>
+    <p>Chose conscience over king; faced execution with wit.</p>
+  </article>
+
+  <article class="item mystic" data-year="1522">
+    <span class="date">1522–1591 — Japan</span>
+    <h3>Sen no Rikyū</h3>
+    <p>Zen tea master of wabi‑sabi simplicity &amp; death dignity.</p>
+  </article>
+
+  <article class="item ruler" data-year="1543">
+    <span class="date">1543–1616 — Japan</span>
+    <h3>Tokugawa Ieyasu&nbsp;⚖︎</h3>
+    <p>Patient unifier: “Life is like holding snow—do not rush.”</p>
+  </article>
+
+  <article class="item ruler" data-year="1582">
+    <span class="date">1582–1663 — Angola</span>
+    <h3>Queen Nzinga&nbsp;⚖︎</h3>
+    <p>Fierce resistance to colonial Portugal; later ascetic court.</p>
+  </article>
+
+  <article class="item sage" data-year="1584">
+    <span class="date">1584–1645 — Japan</span>
+    <h3>Miyamoto Musashi</h3>
+    <p>Samurai strategist; cave hermit writing <em>Five Rings</em>.</p>
+  </article>
+
+  <!-- Modern -->
+  <article class="item activist" data-year="1745">
+    <span class="date">1745–1797 — Nigeria → Britain</span>
+    <h3>Olaudah Equiano</h3>
+    <p>Abolitionist memoirist; bought freedom, argued with reason.</p>
+  </article>
+
+  <article class="item activist" data-year="1818">
+    <span class="date">1818–1895 — USA</span>
+    <h3>Frederick Douglass</h3>
+    <p>From slavery to eloquent advocate of liberty &amp; dignity.</p>
+  </article>
+
+  <article class="item activist" data-year="1822">
+    <span class="date">c. 1822–1913 — USA</span>
+    <h3>Harriet Tubman</h3>
+    <p>Risked life leading 70+ people to freedom—iron resolve.</p>
+  </article>
+
+  <article class="item activist" data-year="1840">
+    <span class="date">1840–1904 — Nez Perce</span>
+    <h3>Chief Joseph</h3>
+    <p>“I will fight no more forever” — dignified surrender.</p>
+  </article>
+
+  <article class="item sage" data-year="1905">
+    <span class="date">1905–1997 — Austria</span>
+    <h3>Viktor Frankl</h3>
+    <p><em>Man’s Search for Meaning</em>: freedom in choosing attitude.</p>
+  </article>
+
+  <article class="item activist" data-year="1906">
+    <span class="date">1906–1945 — Germany</span>
+    <h3>Dietrich Bonhoeffer</h3>
+    <p>Moral resistance to Nazism; serene before execution.</p>
+  </article>
+
+  <article class="item activist" data-year="1869">
+    <span class="date">1869–1948 — India</span>
+    <h3>Mahatma Gandhi</h3>
+    <p>Non‑violent satyagraha; ascetic life &amp; hunger strikes.</p>
+  </article>
+
+  <article class="item activist" data-year="1918">
+    <span class="date">1918–2013 — South Africa</span>
+    <h3>Nelson Mandela</h3>
+    <p>27 years prison; emerged forgiving, unified a nation.</p>
+  </article>
+
+</section>
+
+<footer>
+  Built with ❤️ for lovers of wisdom &amp; resilience.  &copy; 2025
+</footer>
+
+<!-- Tiny JS for filtering -->
+<script>
+const tags=document.querySelectorAll('button.tag');
+const items=document.querySelectorAll('.item');
+tags.forEach(btn=>btn.addEventListener('click',()=>{
+  tags.forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const t=btn.dataset.tag;
+  items.forEach(i=>{
+    i.style.display=(t==='all'||i.classList.contains(t))?'block':'none';
+  });
+}));
+</script>
+</body>
+</html>

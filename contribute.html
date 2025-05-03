@@ -5,251 +5,53 @@
   <title>Positive Impact Contributors</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- Google Font: Nunito Sans (same as BuyMeACoffee) -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link
-    href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap"
-    rel="stylesheet"
-  />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700&display=swap" rel="stylesheet">
 
   <style>
-    /* Basic Reset + Font */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Nunito Sans', sans-serif;
-      background: #f7f9fc;
-      color: #333;
-      text-align: center;
-    }
-
-    h1, h2 {
-      font-weight: 700;
-      margin-bottom: 10px;
-    }
-
-    /* ----- Header Section ----- */
-    .header-section {
-      padding: 40px 20px 20px;
-      background: #ffffff;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-      margin-bottom: 20px;
-    }
-    .header-section h1 {
-      color: #495057;
-      font-size: 2rem;
-    }
-    .header-section hr {
-      margin: 10px auto;
-      width: 80px;
-      border: none;
-      height: 3px;
-      background: #ff5f5f;
-      border-radius: 5px;
-    }
-
-    /* ----- Two-Column Container ----- */
-    .container {
-      display: flex;
-      flex-wrap: nowrap;
-      flex-direction: row;
-      justify-content: center;
-      max-width: 1200px;
-      margin: 0 auto;
-      width: 100%;
-      min-height: 70vh;
-      padding: 0 10px;
-    }
-    /* Ensure columns are scrollable if content overflows. */
-    .supporters-col,
-    .bmac-col {
-      overflow-y: auto;
-      -webkit-overflow-scrolling: touch; /* smoother scrolling on iOS */
-    }
-
-    /* ----- Left Column: Supporters List ----- */
-    .supporters-col {
-      flex: 1 1 50%;
-      display: flex;
-      flex-direction: column;
-      padding: 10px;
-      position: relative;
-      margin-right: 10px;
-      background: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .supporters-col h2 {
-      margin-top: 20px;
-      color: #ff5f5f;
-    }
-    ul {
-      list-style: none;
-      padding: 20px;
-      margin: 0 auto;
-      max-width: 600px;
-      text-align: left;
-    }
-    li {
-      background: #fdfdfd;
-      border: 1px solid #eaeaea;
-      border-radius: 6px;
-      padding: 15px;
-      margin-bottom: 10px;
-      position: relative;
-      transition: transform 0.2s ease, box-shadow 0.2s ease;
-    }
-    li:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 12px rgba(0,0,0,0.05);
-    }
-    .supporter-name {
-      font-size: 1.1rem;
-      font-weight: 700;
-      color: #2f2f2f;
-      display: block;
-      margin-bottom: 8px;
-    }
-    .link-item {
-      color: #0073e6;
-      text-decoration: none;
-      font-size: 0.95rem;
-      font-weight: 600;
-    }
-    .link-item:hover {
-      text-decoration: underline;
-    }
-
-    /* ----- Right Column: BuyMeACoffee Embed ----- */
-    .bmac-col {
-      flex: 1 1 50%;
-      display: flex;
-      flex-direction: column;
-      padding: 10px;
-      align-items: center;
-      background: #ffffff;
-      border-radius: 8px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-    }
-    .bmac-col h2 {
-      margin: 20px 0 10px 0;
-      color: #ff5f5f;
-    }
-    .bmac-iframe-wrapper {
-      width: 100%;
-      max-width: 400px;
-      margin: 0 auto 20px;
-      flex-grow: 1;
-      cursor: pointer;
-      position: relative;
-      border-radius: 6px;
-      overflow: hidden;
-    }
-    .bmac-iframe-wrapper iframe {
-      pointer-events: none;
-      display: block;
-      width: 100%;
-      height: 65vh; /* enough to display BMaC content */
-      border: none;
-    }
-
-    /* ----- Button Grid Below ----- */
-    .button-grid {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      max-width: 1100px;
-      margin: 30px auto;
-    }
-    .grid-button {
-      background: #ff5f5f;
-      color: #fff;
-      padding: 12px 18px;
-      border-radius: 6px;
-      text-decoration: none;
-      font-weight: bold;
-      transition: background 0.3s ease;
-      display: inline-block;
-    }
-    .grid-button:hover {
-      background: #d94646;
-    }
-
-    /* ----- Tooltip Styles ----- */
-    .tooltip {
-      position: fixed;
-      background-color: #ffffff;
-      border: 1px solid #eaeaea;
-      border-radius: 6px;
-      padding: 10px;
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-      display: none;
-      z-index: 9999;
-      max-width: 280px;
-      font-size: 0.9rem;
-      transition: opacity 0.15s ease;
-    }
-    .tooltip strong {
-      font-weight: 600;
-    }
-
-    /* ----- Sticky Footer ----- */
-    footer {
-      width: 100%;
-      background: #ffffff;
-      text-align: center;
-      padding: 15px 0;
-      border-top: 1px solid #eaeaea;
-      box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.05);
-      position: sticky;
-      bottom: 0;
-      margin-top: 20px;
-    }
-    footer p {
-      font-size: 1rem;
-      color: #666666;
-    }
-    #contributorCount {
-      font-weight: 700;
-      color: #ff5f5f;
-    }
-
-    /* ----- Responsive Adjustments ----- */
-    @media (max-width: 768px) {
-      .container {
-        flex-direction: column;
-        min-height: auto;
-      }
-      .supporters-col,
-      .bmac-col {
-        flex: 1 1 100%;
-        width: 100%;
-        margin-right: 0;
-        margin-bottom: 20px;
-      }
-      .bmac-iframe-wrapper iframe {
-        height: 50vh; /* adjust for smaller screens */
-      }
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Nunito Sans',sans-serif;background:#f7f9fc;color:#333;text-align:center}
+    h1,h2{font-weight:700;margin-bottom:10px}
+    .header-section{padding:40px 20px 20px;background:#fff;box-shadow:0 2px 4px rgba(0,0,0,.1);margin-bottom:20px}
+    .header-section h1{color:#495057;font-size:2rem}
+    .header-section hr{margin:10px auto;width:80px;border:none;height:3px;background:#ff5f5f;border-radius:5px}
+    .container{display:flex;flex-direction:row;justify-content:center;max-width:1200px;margin:0 auto;width:100%;min-height:70vh;padding:0 10px}
+    .supporters-col,.bmac-col{overflow-y:auto;-webkit-overflow-scrolling:touch}
+    .supporters-col{flex:1 1 50%;display:flex;flex-direction:column;padding:10px;margin-right:10px;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .supporters-col h2{margin-top:20px;color:#ff5f5f}
+    ul{list-style:none;padding:20px;margin:0 auto;max-width:600px;text-align:left}
+    li{background:#fdfdfd;border:1px solid #eaeaea;border-radius:6px;padding:15px;margin-bottom:10px;transition:transform .2s ease,box-shadow .2s ease}
+    li:hover{transform:translateY(-2px);box-shadow:0 6px 12px rgba(0,0,0,.05)}
+    .supporter-name{font-size:1.1rem;font-weight:700;color:#2f2f2f;display:block;margin-bottom:8px}
+    .link-item{color:#0073e6;text-decoration:none;font-size:.95rem;font-weight:600}
+    .link-item:hover{text-decoration:underline}
+    .bmac-col{flex:1 1 50%;display:flex;flex-direction:column;padding:10px;align-items:center;background:#fff;border-radius:8px;box-shadow:0 1px 3px rgba(0,0,0,.05)}
+    .bmac-col h2{margin:20px 0 10px 0;color:#ff5f5f}
+    .bmac-button{background:#ff5f5f;color:#fff;font-weight:700;padding:14px 24px;border-radius:6px;text-decoration:none;transition:background .3s ease}
+    .bmac-button:hover{background:#d94646}
+    .button-grid{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;max-width:1100px;margin:30px auto}
+    .grid-button{background:#ff5f5f;color:#fff;padding:12px 18px;border-radius:6px;text-decoration:none;font-weight:bold;transition:background .3s ease}
+    .grid-button:hover{background:#d94646}
+    .tooltip{position:fixed;background:#fff;border:1px solid #eaeaea;border-radius:6px;padding:10px;box-shadow:0 4px 8px rgba(0,0,0,.1);display:none;z-index:9999;max-width:280px;font-size:.9rem;transition:opacity .15s ease}
+    .tooltip strong{font-weight:600}
+    footer{width:100%;background:#fff;text-align:center;padding:15px 0;border-top:1px solid #eaeaea;box-shadow:0 -2px 4px rgba(0,0,0,.05);position:sticky;bottom:0;margin-top:20px}
+    footer p{font-size:1rem;color:#666}
+    #contributorCount{font-weight:700;color:#ff5f5f}
+    @media(max-width:768px){
+      .container{flex-direction:column;min-height:auto}
+      .supporters-col,.bmac-col{flex:1 1 100%;width:100%;margin-right:0;margin-bottom:20px}
     }
   </style>
 </head>
 <body>
 
-  <!-- Header -->
   <div class="header-section">
     <h1>Positive Impact Contributors</h1>
-    <hr />
+    <hr>
   </div>
 
-  <!-- Container: Left (Supporters) + Right (BuyMeACoffee) -->
   <div class="container">
-    <!-- Left Column: Supporters -->
     <div class="supporters-col" id="supportersCol">
       <h2>Your Amazing Supporters</h2>
       <ul id="contributorsList">
@@ -268,26 +70,15 @@
           <a href="#" class="link-item" target="_blank"></a>
           <div class="tooltip"></div>
         </li>
-        <!-- Additional <li> items can be placed here -->
       </ul>
     </div>
 
-    <!-- Right Column: BuyMeACoffee -->
     <div class="bmac-col">
       <h2>Contribute on Buy Me A Coffee</h2>
-      <div
-        class="bmac-iframe-wrapper"
-        onclick="window.open('https://buymeacoffee.com/garbledhamster', '_blank')"
-      >
-        <iframe
-          src="https://buymeacoffee.com/garbledhamster"
-          allowfullscreen
-        ></iframe>
-      </div>
+      <a class="bmac-button" href="https://buymeacoffee.com/garbledhamster" target="_blank" rel="noopener">Buy&nbsp;Me&nbsp;a&nbsp;Coffee</a>
     </div>
   </div>
 
-  <!-- Button Grid -->
   <div class="button-grid">
     <a class="grid-button" href="https://adamrice.me" target="_blank">adamrice.me</a>
     <a class="grid-button" href="https://brutaltrimmer.xyz" target="_blank">brutaltrimmer.xyz</a>
@@ -321,106 +112,64 @@
     <a class="grid-button" href="https://zettelkasten.shop" target="_blank">zettelkasten.shop</a>
   </div>
 
-  <!-- Sticky Footer -->
   <footer>
     <p>Total Contributors: <span id="contributorCount">0</span></p>
   </footer>
 
   <script>
-    // 1. Update total contributors count
-    const contributorsList = document.getElementById('contributorsList');
-    const contributorCount = contributorsList.querySelectorAll('li').length;
-    document.getElementById('contributorCount').textContent = contributorCount;
+    const contributorsList=document.getElementById('contributorsList');
+    const contributorCount=contributorsList.querySelectorAll('li').length;
+    document.getElementById('contributorCount').textContent=contributorCount;
 
-    // 2. For each <li>, populate name/link & set up hover/click logic
-    const liItems = contributorsList.querySelectorAll('li');
+    contributorsList.querySelectorAll('li').forEach(li=>{
+      const supporterName=li.getAttribute('data-name');
+      const supporterUrl=li.getAttribute('data-url');
+      const nameElem=li.querySelector('.supporter-name');
+      const linkElem=li.querySelector('.link-item');
+      const tooltipElem=li.querySelector('.tooltip');
 
-    liItems.forEach((li) => {
-      const supporterName = li.getAttribute('data-name');
-      const supporterUrl = li.getAttribute('data-url');
-      const nameElem = li.querySelector('.supporter-name');
-      const linkElem = li.querySelector('.link-item');
-      const tooltipElem = li.querySelector('.tooltip');
+      nameElem.textContent=supporterName;
+      linkElem.textContent='Visit their website';
+      linkElem.href=supporterUrl;
 
-      // Populate name & link text
-      nameElem.textContent = supporterName;
-      linkElem.textContent = 'Visit their website';
-      linkElem.setAttribute('href', supporterUrl);
-
-      // Listen for mouseenter
-      li.addEventListener('mouseenter', () => {
-        tooltipElem.style.display = 'block'; // Show tooltip
-        tooltipElem.dataset.loaded = tooltipElem.dataset.loaded || 'false';
-
-        // If not loaded yet, fetch meta
-        if (tooltipElem.dataset.loaded === 'false') {
-          fetchMetadata(supporterUrl)
-            .then((meta) => {
-              tooltipElem.innerHTML = `
-                <strong>${meta.title || supporterName}</strong>
-                <p style="margin-top:5px;">
-                  ${meta.description || 'No description found.'}
-                </p>
-              `;
-              tooltipElem.dataset.loaded = 'true';
-            })
-            .catch(() => {
-              tooltipElem.innerHTML = `
-                <strong>${supporterName}</strong>
-                <p style="margin-top:5px;">
-                  Click this link to see more about ${supporterName}.
-                </p>
-              `;
-            });
+      li.addEventListener('mouseenter',()=>{
+        tooltipElem.style.display='block';
+        tooltipElem.dataset.loaded=tooltipElem.dataset.loaded||'false';
+        if(tooltipElem.dataset.loaded==='false'){
+          fetchMetadata(supporterUrl).then(meta=>{
+            tooltipElem.innerHTML=`<strong>${meta.title||supporterName}</strong><p style="margin-top:5px;">${meta.description||'No description found.'}</p>`;
+            tooltipElem.dataset.loaded='true';
+          }).catch(()=>{
+            tooltipElem.innerHTML=`<strong>${supporterName}</strong><p style="margin-top:5px;">Click this link to see more about ${supporterName}.</p>`;
+          });
         }
       });
 
-      // Listen for mouseleave
-      li.addEventListener('mouseleave', () => {
-        tooltipElem.style.display = 'none';
-      });
+      li.addEventListener('mouseleave',()=>{tooltipElem.style.display='none';});
 
-      // Position tooltip near cursor on mousemove
-      li.addEventListener('mousemove', (e) => {
-        const halfHeight = window.innerHeight / 2;
-        const offset = 15;
-
-        // Decide if we show above or below
-        if (e.clientY < halfHeight) {
-          tooltipElem.style.top = e.clientY + offset + 'px'; // below cursor
-        } else {
-          const tooltipHeight = tooltipElem.offsetHeight || 80;
-          tooltipElem.style.top = e.clientY - tooltipHeight - offset + 'px'; // above cursor
+      li.addEventListener('mousemove',e=>{
+        const halfHeight=window.innerHeight/2;
+        const offset=15;
+        if(e.clientY<halfHeight){
+          tooltipElem.style.top=e.clientY+offset+'px';
+        }else{
+          const tooltipHeight=tooltipElem.offsetHeight||80;
+          tooltipElem.style.top=e.clientY-tooltipHeight-offset+'px';
         }
-        tooltipElem.style.left = e.clientX + offset + 'px';
+        tooltipElem.style.left=e.clientX+offset+'px';
       });
 
-      // For mobile: direct tap to open link
-      li.addEventListener('touchstart', () => {
-        window.open(supporterUrl, '_blank');
-      });
+      li.addEventListener('touchstart',()=>{window.open(supporterUrl,'_blank');});
     });
 
-    // 3. Function to fetch & parse metadata from a given URL (CORS constraints may apply)
-    async function fetchMetadata(url) {
-      const response = await fetch(url);
-      const htmlText = await response.text();
-      // Parse HTML
-      const parser = new DOMParser();
-      const doc = parser.parseFromString(htmlText, 'text/html');
-
-      // Title
-      const titleTag = doc.querySelector('title');
-      const title = titleTag ? titleTag.textContent.trim() : '';
-
-      // Description
-      const ogDescTag = doc.querySelector("meta[property='og:description']");
-      const descTag = doc.querySelector("meta[name='description']");
-      const ogDescription = ogDescTag?.content?.trim() || '';
-      const metaDescription = descTag?.content?.trim() || '';
-      const description = ogDescription || metaDescription;
-
-      return { title, description };
+    async function fetchMetadata(url){
+      const response=await fetch(url);
+      const htmlText=await response.text();
+      const doc=new DOMParser().parseFromString(htmlText,'text/html');
+      const title=doc.querySelector('title')?.textContent.trim()||'';
+      const ogDescription=doc.querySelector("meta[property='og:description']")?.content.trim()||'';
+      const metaDescription=doc.querySelector("meta[name='description']")?.content.trim()||'';
+      return{title,description:ogDescription||metaDescription};
     }
   </script>
 
