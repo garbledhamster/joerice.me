@@ -1,267 +1,138 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <title>Joe Rice – Systems Engineer & Technologist</title>
-
-  <!-- Open Graph -->
-  <meta property="og:title" content="Joe Rice – Systems Engineer and Technologist" />
-  <meta property="og:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology." />
-  <meta property="og:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true" />
-  <meta property="og:url" content="https://joerice.me" />
-  <meta property="og:type" content="website" />
-  <meta property="og:site_name" content="Joe Rice" />
-  <meta property="og:locale" content="en_US" />
-  <meta property="og:image:width" content="1200" />
-  <meta property="og:image:height" content="630" />
-
-  <!-- Twitter -->
-  <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="Joe Rice – Systems Engineer and Technologist" />
-  <meta name="twitter:description" content="Welcome to my professional portfolio showcasing my accomplishments and dedication to empowering others through technology." />
-  <meta name="twitter:image" content="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/backgrounds/background1.jpg?raw=true" />
-
-  <!-- General SEO -->
-  <meta name="description" content="Joe Rice offers professional services in systems engineering, dedicated to empowering individuals and small businesses through technology." />
-  <meta name="keywords" content="systems engineer, technology, portfolio, Joe Rice, web development, IT solutions, IT security, cloud migrations, automation, Raspberry Pi" />
-  <meta name="author" content="Joe Rice" />
-  <meta name="theme-color" content="#00adb5" />
-
-  <link rel="icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true" />
-  <link rel="apple-touch-icon" href="https://github.com/garbledhamster/joerice.me/blob/main/assets/images/icons/logo1.png?raw=true" />
-  <link rel="manifest" href="/manifest.json" />
-
-  <!-- Montserrat font -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;700&display=swap" rel="stylesheet" />
-
-  <style>
-    :root{
-      --header-height:100px;
-      --bg-color:#151515;
-      --text-color:#f0f0f0;
-      --accent-color:#00adb5;
-      --divider-color:#333;
-      --transition-speed:.25s;
-      --font-family:'Montserrat',sans-serif;
-    }
-
-    *,*:before,*:after{box-sizing:border-box}
-    html{scroll-behavior:smooth}
-    @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-
-    body{
-      margin:0;
-      background:var(--bg-color);
-      color:var(--text-color);
-      font-family:var(--font-family);
-      line-height:1.6;
-      -webkit-font-smoothing:antialiased;
-    }
-
-    /* Header */
-    header{
-      position:fixed;
-      inset:0 0 auto 0;
-      height:var(--header-height);
-      background:linear-gradient(90deg,#003d46,#00646c,#008c93,#00adb5,#00c1c9,#00d5dd,#00e9f1);
-      display:flex;
-      flex-direction:column;
-      align-items:center;
-      justify-content:center;
-      z-index:999;
-      padding:.5rem;
-      text-align:center;
-    }
-
-    #site-title{
-      margin:.3rem 0;
-      font-size:1.5rem;
-      letter-spacing:.03em;
-    }
-    #site-title a{
-      color:var(--text-color);
-      text-decoration:none;
-      transition:color var(--transition-speed);
-    }
-    #site-title a:hover,
-    #site-title a:focus{color:var(--accent-color);outline:none}
-
-    /* Nav */
-    #nav-toggle{
-      display:none;
-      background:none;
-      border:2px solid var(--text-color);
-      color:var(--text-color);
-      font-size:1.2rem;
-      padding:.25rem .5rem;
-      border-radius:4px;
-      cursor:pointer;
-      transition:background var(--transition-speed),color var(--transition-speed);
-    }
-    #nav-toggle:hover,
-    #nav-toggle:focus{background:var(--text-color);color:var(--bg-color);outline:none}
-
-    nav{
-      display:flex;
-      gap:1.5rem;
-      justify-content:center;
-      align-items:center;
-      transition:max-height var(--transition-speed) ease-in-out;
-    }
-    nav a{
-      color:var(--text-color);
-      text-decoration:none;
-      font-size:1rem;
-      position:relative;
-    }
-    nav a:hover,
-    nav a:focus{color:var(--accent-color);outline:none}
-    nav a::after{
-      content:'';
-      position:absolute;
-      inset:auto 0 -4px 0;
-      height:2px;
-      background:var(--accent-color);
-      transform:scaleX(0);
-      transition:transform var(--transition-speed);
-      transform-origin:center;
-    }
-    nav a:hover::after,
-    nav a:focus::after{transform:scaleX(1)}
-
-    /* Mobile */
-    @media(max-width:600px){
-      #nav-toggle{display:block;margin-top:.3rem}
-      nav{
-        flex-direction:column;
-        max-height:0;
-        overflow:hidden;
-      }
-      nav.open{max-height:200px}
-    }
-
-    /* Main */
-    main{
-      margin-top:var(--header-height);
-      padding:2rem 1rem;
-      max-width:800px;
-      margin-inline:auto;
-    }
-    .section{
-      margin-bottom:2.5rem;
-      scroll-margin-top:calc(var(--header-height)+12px);
-    }
-    .icon-title{
-      display:flex;
-      align-items:center;
-      gap:.5rem;
-    }
-    h1,h2,h3,h4{margin:.4rem 0;color:var(--accent-color)}
-    .divider{
-      border:none;
-      height:1px;
-      background:var(--divider-color);
-      margin:1rem 0;
-    }
-
-    /* Footer */
-    footer{
-      text-align:center;
-      border-top:1px solid var(--divider-color);
-      color:#888;
-      padding:1rem 0;
-      font-size:.9rem;
-    }
-
-    /* Links in content */
-    a{color:var(--accent-color);text-decoration:none}
-    a:hover,a:focus{text-decoration:underline;outline:none}
-
-    ul{list-style:none;padding-left:1rem}
-    ul li{margin-bottom:.3rem}
-  </style>
-
-  <!-- YAML & Markdown libraries -->
-  <script defer src="https://cdn.jsdelivr.net/npm/js-yaml/dist/js-yaml.min.js"></script>
-  <script defer src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Joe Rice · Portfolio</title>
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js" as="script">
+<link rel="preload" href="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" as="script">
+<style>
+:root{--bg:#fff;--fg:#111;--border:#000;--space:clamp(8px,2vw,18px);--font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--blue:#0066ff;--red:#ff0059;--yellow:#ffd60a;--rose:#ff80a4;--green:#28c76f;--purple:#a259ff;}
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.6;}
+a{color:inherit;text-decoration:none;}
+ul,ol{list-style:none;padding-left:0;}
+.max{max-width:880px;margin-inline:auto;padding-inline:clamp(12px,4vw,32px);}
+header{background:var(--yellow);border-bottom:1px solid var(--border);text-align:center;font-weight:600;padding:6px 0;}
+.hero{display:grid;grid-template-columns:140px 1fr;gap:var(--space);padding-block:clamp(20px,8vw,60px);align-items:start;}
+.pic{width:140px;height:140px;border:1px solid var(--border);object-fit:cover;background:var(--rose);}
+.intro p{font-size:clamp(1rem,2.2vw,1.25rem);max-width:40ch;}
+/* ── hero meet-in animation ─────────────────────────────────── */
+body:not(.loaded) .hero .pic{opacity:0;transform:translateX(-40px);}
+body:not(.loaded) .hero .intro{opacity:0;transform:translateX(40px);}
+body.loaded .hero .pic,
+body.loaded .hero .intro{opacity:1;transform:none;transition:opacity .7s ease,transform .7s ease;}
+/* ───────────────────────────────────────────────────────────── */
+.search{margin-block:var(--space);}
+#q{width:100%;padding:.8rem 1rem;border:1px solid var(--border);background:var(--blue);color:#fff;}
+#q::placeholder{color:#e5e5e5;}
+.portfolio{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--green);color:#fff;}
+.portfolio h2{text-align:center;font-size:1.1rem;font-weight:700;margin-bottom:var(--space);}
+.subhead{font-size:.95rem;margin:.6rem 0 .4rem;text-decoration:underline;}
+.grid{display:grid;gap:var(--space);}
+.entry{border:1px solid var(--border);padding:1rem;background:var(--bg);color:var(--fg);cursor:pointer;transition:background .2s;}
+.entry:hover{background:#f5f5f5;}
+.pageControls{display:flex;justify-content:center;gap:1rem;margin-top:var(--space);}
+.pageBtn{cursor:pointer;padding:.4rem .8rem;border:1px solid var(--border);background:var(--bg);}
+.pageBtn[disabled]{opacity:.4;cursor:not-allowed;}
+#postView{display:none;margin-top:var(--space);background:var(--bg);color:var(--fg);border:1px solid var(--border);padding:1.5rem;position:relative;}
+#closePost{position:absolute;top:8px;right:12px;border:1px solid var(--border);background:var(--red);color:#fff;padding:.25rem .55rem;font-size:.8rem;cursor:pointer;}
+#closePost:hover{background:#fff;color:var(--red);}
+#postContent h1,#postContent h2,#postContent h3,#postContent p,#postContent ul,#postContent ol,#postContent blockquote,#postContent table{text-align:left;}
+#postContent h1,#postContent h2,#postContent h3{margin:1.2rem 0 .6rem;font-weight:700;}
+#postContent p,#postContent ul,#postContent ol,#postContent blockquote{margin:.6rem 0;}
+#postContent blockquote{border-left:4px solid var(--blue);padding-left:.8rem;font-style:italic;}
+#postContent ul{list-style:disc;margin-left:1.2rem;}
+#postContent ol{list-style:decimal;margin-left:1.2rem;}
+#postContent code{background:#f3f3f3;border:1px solid #ddd;padding:0 .2rem;font-family:monospace;}
+#postContent pre{background:#f3f3f3;border:1px solid #ddd;padding:1rem;overflow:auto;}
+#postContent table{width:100%;border-collapse:collapse;margin:1rem 0;}
+#postContent th,#postContent td{border:1px solid var(--border);padding:.5rem .7rem;text-align:left;}
+#postContent th{background:var(--blue);color:#fff;}
+#postContent tr:nth-child(even){background:#fafafa;}
+#postContent img{max-width:100%;height:auto;display:block;margin:.8rem 0;border:1px solid var(--border);}
+.gallery{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--rose);color:#fff;}
+.gallery h2{text-align:center;font-size:1.1rem;font-weight:700;margin-bottom:var(--space);}
+.galleryGrid{display:grid;gap:var(--space);grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
+.galleryGrid a{display:block;overflow:hidden;border:1px solid var(--border);aspect-ratio:1/1;}
+.galleryGrid img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .3s ease;}
+.galleryGrid img:hover{transform:scale(1.08);}
+.quotes{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--purple);color:#fff;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.15) inset;}
+.quotes h2{font-size:1.1rem;font-weight:700;margin-bottom:var(--space);}
+.quoteBox{min-height:120px;display:flex;flex-direction:column;justify-content:center;align-items:center;opacity:0;transition:opacity .6s;}
+.quoteBox.active{opacity:1;}
+.quoteBox blockquote{font-size:clamp(1rem,2.2vw,1.25rem);max-width:55ch;font-style:italic;margin-bottom:.6rem;}
+.quoteBox cite{font-size:.9rem;font-weight:600;}
+.progressWrap{width:100%;height:4px;margin-top:var(--space);display:flex;justify-content:center;}
+.progressBar{width:100%;height:4px;background:#fff;transition:width linear 6.4s;box-shadow:0 0 3px rgba(0,0,0,.25);}
+.contact{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--blue);color:#fff;}
+.contact h2{text-align:center;font-size:1.1rem;font-weight:700;margin-bottom:var(--space);}
+.contact label{display:block;font-weight:600;margin-top:.6rem;}
+.contact input,.contact select,.contact textarea{width:100%;padding:.6rem;border:1px solid var(--border);margin-top:.3rem;background:var(--bg);color:var(--fg);}
+.contact textarea{resize:vertical;min-height:120px;}
+.contact button{margin-top:1rem;background:var(--red);color:#fff;border:1px solid var(--border);padding:.6rem 1.2rem;cursor:pointer;}
+.contact button:hover{background:#fff;color:var(--red);}
+.links{border:1px solid var(--border);padding:calc(var(--space)*1.2);background:var(--red);color:#fff;margin-bottom:clamp(40px,8vw,80px);}
+.links h2{text-align:center;font-size:1.1rem;font-weight:700;margin-bottom:var(--space);}
+.links ol li{margin:.3rem 0;}
+.links a{border-bottom:1px solid #fff;}
+.links a:hover{background:#fff;color:var(--red);}
+footer{text-align:center;font-size:.75rem;padding:24px 0 60px;color:#666;border-top:1px solid var(--border);}
+@media(max-width:600px){.hero{grid-template-columns:1fr;}.pic{justify-self:center;}}
+</style>
 </head>
 <body>
-  <header>
-    <h1 id="site-title"><a href="/">Joe Rice</a></h1>
-    <button id="nav-toggle" aria-label="Toggle navigation">☰</button>
-    <nav id="main-nav" aria-label="Primary"></nav>
-  </header>
-
-  <main id="content"></main>
-
-  <footer>
-    &copy; <span id="footer-year"></span> Joe Rice. All Rights Reserved.
-  </footer>
-
-  <noscript style="display:block;text-align:center;padding:1rem;color:#ff6b6b;">
-    This site relies on JavaScript to load content. Please enable it for the full experience.
-  </noscript>
-
-  <script>
-    // Mobile nav toggle
-    document.getElementById('nav-toggle').addEventListener('click', () =>
-      document.getElementById('main-nav').classList.toggle('open')
-    );
-
-    async function loadSiteContent(){
-      try{
-        const res = await fetch('content.yaml');
-        if(!res.ok) throw new Error('Network response was not ok');
-        const yamlText = await res.text();
-        const site = jsyaml.load(yamlText);
-
-        // Title & header
-        document.title = site.site?.title || 'Joe Rice';
-        document.getElementById('site-title').innerHTML =
-          `<a href="${site.site?.url || '#'}">${site.site?.title || 'Joe Rice'}</a>`;
-
-        // Nav
-        const navLinks = site.sections.map(s =>
-          `<a href="#${s.id}" aria-label="Go to ${s.title} section">${s.title}</a>`
-        ).join('');
-        document.getElementById('main-nav').innerHTML = navLinks;
-
-        // Content
-        const sectionsHTML = site.sections.map(sec => {
-          if(Array.isArray(sec.subsections)){
-            const subs = sec.subsections.map(sub =>
-              `<h4>${sub.subtitle}</h4><div>${marked.parse(sub.content || '')}</div>`
-            ).join('');
-            return `
-              <section class="section" id="${sec.id}">
-                <div class="icon-title"><span>${sec.icon || ''}</span><h2>${sec.title}</h2></div>
-                <hr class="divider" />
-                ${subs}
-              </section>`;
-          }
-          return `
-            <section class="section" id="${sec.id}">
-              <div class="icon-title"><span>${sec.icon || ''}</span><h2>${sec.title}</h2></div>
-              <hr class="divider" />
-              <div>${marked.parse(sec.content || '')}</div>
-            </section>`;
-        }).join('');
-        document.getElementById('content').innerHTML = sectionsHTML;
-
-        // Footer year
-        document.getElementById('footer-year').textContent = new Date().getFullYear();
-
-      }catch(err){
-        console.error('Error loading site content:',err);
-        document.getElementById('content').innerHTML =
-          '<p style="color:#ff6b6b;">Failed to load content. Please try again later.</p>';
-      }
-    }
-    loadSiteContent();
-  </script>
+<header class="max">joerice.me</header>
+<main class="max">
+<section class="hero"><img class="pic" src="assets/images/pictures/profile.jpg" alt="Joe Rice"><div class="intro"><p>Hello — I’m <strong>Joe Rice</strong>. Husband, father, knowledge worker, entrepreneur. This site is a <strong>living portfolio</strong> of projects, writing, and experiments.</p></div></section>
+<div class="search"><input id="q" type="search" placeholder="Search posts and notes..."></div>
+<section class="portfolio">
+<h2>Portfolio</h2>
+<div class="subhead">Pinned</div><div class="grid" id="pinnedGrid"></div>
+<div class="subhead">Posts</div><div class="grid" id="entryGrid"></div>
+<div class="pageControls"><button id="prevBtn" class="pageBtn">Prev</button><button id="nextBtn" class="pageBtn">Next</button></div>
+<div id="postView"><button id="closePost">close</button><div id="postContent"></div></div>
+</section>
+<section class="gallery"><h2>Gallery</h2><div class="galleryGrid">
+<a href="https://picsum.photos/seed/family/1200/1200" target="_blank"><img src="https://picsum.photos/seed/family/300/300" alt="gallery image"></a>
+<a href="https://picsum.photos/seed/market/1200/1200" target="_blank"><img src="https://picsum.photos/seed/market/300/300" alt="gallery image"></a>
+<a href="https://picsum.photos/seed/coding/1200/1200" target="_blank"><img src="https://picsum.photos/seed/coding/300/300" alt="gallery image"></a>
+<a href="https://picsum.photos/seed/stoic/1200/1200" target="_blank"><img src="https://picsum.photos/seed/stoic/300/300" alt="gallery image"></a>
+<a href="https://picsum.photos/seed/city/1200/1200" target="_blank"><img src="https://picsum.photos/seed/city/300/300" alt="gallery image"></a>
+<a href="https://picsum.photos/seed/sunrise/1200/1200" target="_blank"><img src="https://picsum.photos/seed/sunrise/300/300" alt="gallery image"></a>
+</div></section>
+<section class="quotes">
+<h2>Quotes</h2>
+<div class="quoteBox" id="quoteBox"><blockquote id="quoteText"></blockquote><cite id="quoteCite"></cite></div>
+<div class="progressWrap"><div class="progressBar" id="quoteProgress"></div></div>
+</section>
+<section class="contact"><h2>Contact</h2><form action="https://formspree.io/f/xovqpvdv" method="POST"><label>Name<input type="text" name="name" required></label><label>Email<input type="email" name="email" required></label><label>Project Type<select name="project" required><option value="">Select an option...</option><option>Website Build</option><option>SEO Audit</option><option>Local SEO / Google Profile</option><option>Consulting Call</option><option>Training / Workshop</option><option>Other</option></select></label><label>Message<textarea name="message" required></textarea></label><button type="submit">Send</button></form></section>
+<section class="links"><h2>Useful Links</h2><ol><li><a href="https://news.ycombinator.com" target="_blank">Hacker News</a></li><li><a href="https://zettelkasten.de" target="_blank">Zettelkasten Method</a></li><li><a href="https://replit.com" target="_blank">Replit</a></li><li><a href="https://www.notion.so" target="_blank">Notion</a></li><li><a href="https://www.reddit.com/r/personalfinance/wiki/index" target="_blank">r/PersonalFinance Wiki</a></li><li><a href="https://www.khanacademy.org/college-careers-more/personal-finance" target="_blank">Khan Academy – Personal Finance</a></li><li><a href="https://www.nerdwallet.com" target="_blank">NerdWallet</a></li><li><a href="https://www.daveramsey.com/baby-steps" target="_blank">Dave Ramsey Baby Steps</a></li><li><a href="https://www.ycombinator.com/library" target="_blank">YC Startup Library</a></li><li><a href="https://www.indiehackers.com" target="_blank">Indie Hackers</a></li></ol></section>
+</main>
+<footer>&copy; <span id="year"></span> Joe Rice. All rights reserved.</footer>
+<script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+<script>
+document.getElementById('year').textContent=new Date().getFullYear();
+const pinned=[];const notes=[];const pageSize=10;let page=0;
+const pinnedGrid=document.getElementById('pinnedGrid');const entryGrid=document.getElementById('entryGrid');
+const prevBtn=document.getElementById('prevBtn');const nextBtn=document.getElementById('nextBtn');
+const postView=document.getElementById('postView');const postContent=document.getElementById('postContent');
+function renderPinned(){pinnedGrid.innerHTML=pinned.map(p=>`<a class="entry" data-url="${p.url}">${p.title}</a>`).join('');attachClickHandlers();}
+function renderPage(){const start=page*pageSize;const slice=notes.slice(start,start+pageSize);entryGrid.innerHTML=slice.map(n=>`<a class="entry" data-url="${n.url}">${n.title}</a>`).join('');prevBtn.disabled=page===0;nextBtn.disabled=start+pageSize>=notes.length;attachClickHandlers();}
+prevBtn.onclick=()=>{if(page>0){page--;renderPage();}};
+nextBtn.onclick=()=>{if((page+1)*pageSize<notes.length){page++;renderPage();}};
+function attachClickHandlers(){document.querySelectorAll('.entry').forEach(el=>{el.onclick=e=>openPost(e.currentTarget.dataset.url);});}
+async function openPost(url){try{const raw=await fetch(url).then(r=>r.text());const data=jsyaml.load(raw);postContent.innerHTML=marked.parse(data.content??'');postView.style.display='block';window.scrollTo({top:postView.offsetTop-20,behavior:'smooth'});}catch(err){postContent.innerHTML='<p>Unable to load this post.</p>';postView.style.display='block';console.error(err);}}
+document.getElementById('closePost').onclick=()=>{postView.style.display='none';};
+(async()=>{try{const loaderText=await fetch('posts/loader.yml').then(r=>r.text());const loaderData=jsyaml.load(loaderText);for(const p of loaderData.posts){const url=`posts/${p.file}`;const raw=await fetch(url).then(r=>r.text());const data=jsyaml.load(raw);const entry={title:data.title,date:data.date,url,pinned:data.pinned};(entry.pinned?pinned:notes).push(entry);}notes.sort((a,b)=>new Date(b.date)-new Date(a.date));renderPinned();renderPage();}catch(err){console.error('Loader failed',err);}})();
+document.getElementById('q').addEventListener('input',e=>{const v=e.target.value.toLowerCase();document.querySelectorAll('.entry').forEach(el=>{el.style.display=el.textContent.toLowerCase().includes(v)?'':'none';});});
+const quoteBox=document.getElementById('quoteBox');const quoteText=document.getElementById('quoteText');const quoteCite=document.getElementById('quoteCite');const progBar=document.getElementById('quoteProgress');let quotes=[],idx=0,slideMs=7000;
+function resetBar(){progBar.style.transition='none';progBar.style.width='100%';void progBar.offsetWidth;progBar.style.transition='width linear 6.4s';progBar.style.width='0%';}
+function showQuote(i){const q=quotes[i];quoteText.textContent=`“${q.text}”`;quoteCite.textContent=`— ${q.author??'Unknown'}`;quoteBox.classList.add('active');resetBar();}
+(async()=>{try{const qYaml=await fetch('quotes/quotes.yaml').then(r=>r.text());quotes=jsyaml.load(qYaml).quotes||[];if(!quotes.length)return;showQuote(0);setInterval(()=>{quoteBox.classList.remove('active');setTimeout(()=>{idx=(idx+1)%quotes.length;showQuote(idx);},600);},slideMs);}catch(err){console.error('Quotes failed',err);}})();
+/* ── add .loaded for hero animation ──────────────────────────── */
+window.addEventListener('DOMContentLoaded',()=>{requestAnimationFrame(()=>document.body.classList.add('loaded'));});
+</script>
 </body>
 </html>

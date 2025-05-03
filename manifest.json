@@ -1,15 +1,179 @@
-{
-  "name": "Joe Rice's Site",
-  "short_name": "JoeRice",
-  "start_url": "/",
-  "background_color": "#ffffff",
-  "theme_color": "#000000",
-  "display": "standalone",
-  "icons": [
-    {
-      "src": "favicon-192x192.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    }
-  ]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Joe Rice · Portfolio</title>
+
+<!-- ==========  STYLE  ========== -->
+<style>
+/* ----  THEME  ---- */
+:root{
+  --bg:#fff;--fg:#111;--border:#000;
+  --radius:0;--space:clamp(8px,2vw,18px);
+  --font:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+
+  /* neo-brutalist palette */
+  --blue:#0066ff;--red:#ff0059;--yellow:#ffd60a;
+  --rose:#ff80a4;--green:#28c76f;--purple:#a259ff;
 }
+
+/* BASIC RESET */
+*{box-sizing:border-box;margin:0;padding:0;}
+html,body{height:100%;background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.6;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;background:none;border:1px solid var(--border);}
+ul{list-style:none;}
+
+/* WRAPPER */
+.max{max-width:880px;margin-inline:auto;padding-inline:clamp(12px,4vw,32px);}
+
+/* HEADER */
+header{background:var(--yellow);border-block-end:1px solid var(--border);
+       text-align:center;font-weight:600;letter-spacing:.5px;padding:6px 0;}
+
+/* HERO */
+.hero{display:grid;grid-template-columns:140px 1fr;gap:var(--space);
+      padding-block:clamp(20px,8vw,60px);align-items:start;}
+.pic{width:140px;height:140px;border:1px solid var(--border);
+     object-fit:cover;background:var(--rose);}
+.intro p{font-size:clamp(1rem,2.2vw,1.25rem);max-width:40ch;}
+
+/* SEARCH */
+.search{margin-block:var(--space);}
+#q{width:100%;padding:.8rem 1rem;font-size:1rem;border:1px solid var(--border);
+    background:var(--blue);color:#fff;}
+#q::placeholder{color:#e5e5e5;}
+
+/* FILTERS */
+.filters{border:1px solid var(--border);padding:calc(var(--space)*1.2);
+         display:grid;gap:var(--space);background:var(--purple);color:#fff;}
+.filters h2{text-align:center;font-size:1.1rem;font-weight:700;}
+.groupWrap{display:flex;flex-wrap:wrap;gap:var(--space);justify-content:center;}
+.fGroup{min-width:150px;text-align:center;}
+.fGroup h3{font-size:.9rem;margin-block-end:4px;text-decoration:underline;}
+.fGroup button{display:block;width:100%;margin-block:2px;padding:.4rem .6rem;font-size:.8rem;
+               border-color:#fff;color:#fff;background:rgba(255,255,255,.1);}
+.fGroup button:hover{background:#fff;color:var(--purple);}
+
+/* PORTFOLIO */
+.portfolio{border:1px solid var(--border);margin-block:var(--space);
+           padding:calc(var(--space)*1.2);background:var(--green);color:#fff;}
+.portfolio h2{text-align:center;font-size:1.1rem;font-weight:700;margin-block-end:var(--space);}
+.grid{display:grid;gap:var(--space);}
+.item{border:1px solid var(--border);padding:1rem;background:var(--bg);color:var(--fg);
+      position:relative;transition:background .2s,transform .15s;}
+.item:hover{background:#f5f5f5;transform:translateY(-2px);}
+.item:first-child::after{content:"📌";position:absolute;top:8px;right:10px;}
+
+/* USEFUL LINKS */
+.links{border:1px solid var(--border);padding:calc(var(--space)*1.2);
+       background:var(--red);color:#fff;
+       /* --- extra bottom margin to create white-space before footer --- */
+       margin-bottom:clamp(40px,8vw,80px);}
+.links h2{text-align:center;font-size:1.1rem;font-weight:700;margin-block-end:var(--space);}
+.links ul li{margin:.4rem 0;}
+.links a{border-bottom:1px solid #fff;}
+.links a:hover{background:#fff;color:var(--red);}
+
+/* FOOTER */
+footer{text-align:center;font-size:.75rem;padding:24px 0 60px;color:#666;
+        border-top:1px solid var(--border);}
+
+/* RESPONSIVE */
+@media(max-width:600px){
+  .hero{grid-template-columns:1fr;}
+  .pic{justify-self:center;}
+}
+</style>
+</head>
+
+<body>
+<header class="max">joerice.me</header>
+
+<main class="max">
+
+  <!-- HERO -->
+  <section class="hero">
+    <!-- head-shot in place -->
+    <img class="pic" src="/assets/images/profile/profile.jpg" alt="Joe Rice headshot">
+    <div class="intro">
+      <p>Hello — I’m <strong>Joe Rice</strong>. Husband, father, knowledge worker, entrepreneur.  
+         This site is a <strong>living portfolio</strong> of projects, writing, and experiments.</p>
+    </div>
+  </section>
+
+  <!-- SEARCH -->
+  <div class="search">
+    <input id="q" type="search" placeholder="Type to search the portfolio…">
+  </div>
+
+  <!-- FILTERS -->
+  <section class="filters">
+    <h2>Filters / Categories</h2>
+    <div class="groupWrap">
+
+      <div class="fGroup">
+        <h3>Technical</h3>
+        <button data-filter="Project Management">Project Management</button>
+        <button data-filter="Support Specialist">Support Specialist</button>
+        <button data-filter="Engineer">Engineer</button>
+        <button data-filter="Knowledge Manager">Knowledge Manager</button>
+      </div>
+
+      <div class="fGroup">
+        <h3>Entrepreneurial</h3>
+        <button data-filter="Business Developer">Business Developer</button>
+        <button data-filter="Marketing Material">Marketing Material</button>
+      </div>
+
+      <div class="fGroup">
+        <h3>Personal</h3>
+        <button data-filter="Reading">Reading</button>
+        <button data-filter="Knowledge Creation">Knowledge Creation</button>
+        <button data-filter="Child Rearing">Child Rearing</button>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- PORTFOLIO -->
+  <section class="portfolio">
+    <h2>Portfolio</h2>
+    <div class="grid" id="list">
+      <a class="item" href="#">Who am I?  A quick intro to myself and my portfolio.</a>
+      <a class="item" href="#">How to Plan for a Project</a>
+      <a class="item" href="#">What I’ve Learned from Journaling</a>
+      <a class="item" href="#">Taking Notes Effectively</a>
+      <a class="item" href="#">My Learning Process in 2025</a>
+    </div>
+  </section>
+
+  <!-- USEFUL LINKS -->
+  <section class="links">
+    <h2>Useful Links</h2>
+    <ul>
+      <li><a href="https://www.bleepingcomputer.com" target="_blank" rel="noopener">Bleeping Computer</a></li>
+      <li><a href="#">Another Resource</a></li>
+    </ul>
+  </section>
+
+</main>
+
+<footer>&copy; <span id="y"></span> Joe Rice. All rights reserved.</footer>
+
+<!-- ==========  JS  ========== -->
+<script>
+/* dynamic year */
+document.getElementById('y').textContent = new Date().getFullYear();
+
+/* search filter */
+const q=document.getElementById('q');
+const items=[...document.querySelectorAll('#list .item')];
+q.addEventListener('input',e=>{
+  const v=e.target.value.toLowerCase();
+  items.forEach(i=>i.style.display=i.textContent.toLowerCase().includes(v)?'':'none');
+});
+</script>
+</body>
+</html>

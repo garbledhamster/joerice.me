@@ -1,0 +1,45 @@
+id: 0002
+title: How to Plan for a Project  
+date: 2025-05-03
+pinned: false
+tags: []
+content: |
+  # How to Plan for a Project  
+  
+  A five-step blueprint I’ve used on 100+ IT rollouts and freelance builds.
+  
+  ---
+  
+  ## 1. Clarify the Result  
+  Write a single sentence that answers *“What does “done” look like?”*
+  
+  ## 2. Map Constraints  
+  | Area   | Typical questions |
+  |--------|-------------------|
+  | Scope  | Must-have vs nice-to-have features? |
+  | Budget | Money, time, and attention limits? |
+  | Risk   | What breaks if this fails? |
+  
+  ![Farmers market](https://picsum.photos/seed/market/800/400)
+  
+  ## 3. Break into Milestones  
+  List no more than **6 milestones**—each < 2 weeks.
+  
+  ## 4. Assign Owners  
+  Every task gets *one* name. Collaboration ≠ shared accountability.
+  
+  ## 5. Schedule Review Loops  
+  Weekly 15-min stand-up → surface blockers early.
+  
+  ---
+  
+  ### Quick-Start Checklist
+  - [ ] Outcome sentence written  
+  - [ ] Constraints documented  
+  - [ ] Milestones drafted  
+  - [ ] Owners assigned  
+  - [ ] Review loop on calendar  
+  
+  > “Plans are worthless, but planning is everything.” — Dwight D. Eisenhower
+  
+  *Last updated · 2025-05-01*
