@@ -21,9 +21,5 @@
     <loc>https://joerice.me/#contact</loc>
     <priority>0.5</priority>
   </url>
-
-  <!-- ————— DYNAMIC POSTS  ————— -->
-  <!-- The snippet below is injected at build time by the simple script that follows. -->
-  <!-- {{POST_ENTRIES}} -->
-
+  
 </urlset>

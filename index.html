@@ -5,53 +5,54 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Joe Rice · Portfolio</title>
 
-<!-- fonts: neo-brutalist grotesque + bold headline -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Bebas+Neue&display=swap" rel="stylesheet">
-
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js" as="script">
 <link rel="preload" href="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js" as="script">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
-:root{
- --bg:#fff;--fg:#111;--border:#000;--space:clamp(8px,2vw,18px);
- --font:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
- --fontHead:"Bebas Neue","Impact",sans-serif;
- --blue:#0066ff;--red:#ff0033;--yellow:#ffd60a;--rose:#ff80a4;--green:#28c76f;--purple:#a259ff;
-}
+:root{--bg:#fff;--fg:#111;--border:#000;--space:clamp(8px,2vw,18px);--font:"Space Grotesk",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;--fontHead:"Bebas Neue","Impact",sans-serif;--blue:#0066ff;--red:#ff0033;--yellow:#ffd60a;--rose:#ff80a4;--green:#28c76f;--purple:#a259ff;}
 *{box-sizing:border-box;margin:0;padding:0;}
 html,body{background:var(--bg);color:var(--fg);font-family:var(--font);line-height:1.55;font-size:1rem;}
-
 h1,h2,h3{font-family:var(--fontHead);letter-spacing:.5px;}
 h1{font-size:clamp(1.9rem,4.5vw,2.6rem);}
 h2{font-size:clamp(1.45rem,3.5vw,2rem);}
 h3{font-size:clamp(1.2rem,3vw,1.5rem);}
-
 a{color:inherit;text-decoration:none;}
 ul,ol{list-style:none;padding-left:0;}
 .max{max-width:880px;margin-inline:auto;padding-inline:clamp(12px,4vw,32px);}
-
-/* header / hero */
-header{background:var(--yellow);border-bottom:1px solid var(--border);text-align:center;padding:8px 0;font-family:var(--fontHead);font-size:clamp(1.2rem,3vw,1.6rem);}
+/* header + nav */
+.siteHeader{background:var(--yellow);border-bottom:2px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:.6rem 1rem;position:relative;z-index:20;}
+.brand{font-family:var(--fontHead);font-size:clamp(1.3rem,3vw,1.8rem);}
+#mainNav{display:flex;gap:clamp(12px,2vw,24px);}
+#mainNav a{font-family:var(--fontHead);border:1px solid var(--border);padding:.3rem .7rem;white-space:nowrap;transition:background .2s;}
+#mainNav a:hover{background:var(--fg);color:var(--bg);}
+.menuToggle{display:none;flex-direction:column;gap:3px;border:1px solid var(--border);background:var(--yellow);padding:.35rem .45rem;cursor:pointer;}
+.menuToggle span{display:block;width:20px;height:2px;background:var(--border);}
+@media(max-width:700px){
+  #mainNav{position:absolute;top:100%;right:0;background:var(--yellow);flex-direction:column;align-items:flex-start;padding:1rem;border:2px solid var(--border);transform:scaleY(0);transform-origin:top;transition:transform .25s ease;}
+  #mainNav.open{transform:scaleY(1);}
+  #mainNav a{width:100%;border-width:1px 0 0 0;padding:.5rem 0;}
+  .menuToggle{display:flex;}
+}
+/* hero */
+header{display:none;}
 .hero{display:flex;flex-direction:column;align-items:center;gap:var(--space);padding-block:clamp(20px,8vw,60px);}
 .pic{width:140px;height:140px;border:1px solid var(--border);object-fit:cover;background:var(--rose);}
 .intro{text-align:center;}
 .intro p{font-size:clamp(1.05rem,2.4vw,1.3rem);max-width:40ch;margin-inline:auto;}
-
 /* social */
 .social{display:flex;gap:18px;margin-top:.4rem;flex-wrap:wrap;justify-content:center;}
 .social a{position:relative;font-size:1.55rem;transition:transform .2s;}
 .social a:hover{transform:scale(1.25);}
 .tooltip{position:absolute;bottom:calc(100% + 6px);left:50%;transform:translateX(-50%) translateY(4px);opacity:0;background:var(--fg);color:var(--bg);padding:4px 8px;border-radius:3px;font-size:.75rem;white-space:nowrap;pointer-events:none;transition:opacity .2s,transform .2s;}
 .social a.showTip .tooltip{opacity:1;transform:translateX(-50%) translateY(0);}
-
 /* search */
 .search{margin-block:var(--space);}
 #q{width:100%;padding:.8rem 1rem;border:1px solid var(--border);background:var(--blue);color:#fff;font-size:1rem;}
 #q::placeholder{color:#e5e5e5;}
-
-/* portfolio list */
+/* portfolio */
 .portfolio{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--green);color:#fff;}
 .subhead{font-family:var(--fontHead);margin:.6rem 0 .4rem;font-size:1rem;text-decoration:underline;}
 .grid{display:grid;gap:var(--space);}
@@ -75,7 +76,6 @@ header{background:var(--yellow);border-bottom:1px solid var(--border);text-align
 #postContent th{background:var(--blue);color:#fff;font-family:var(--fontHead);}
 #postContent tr:nth-child(even){background:#fafafa;}
 #postContent img{max-width:100%;height:auto;display:block;margin:.8rem 0;border:1px solid var(--border);}
-
 /* gallery */
 .gallery{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--rose);color:#fff;}
 .galleryGrid{display:grid;gap:var(--space);grid-template-columns:repeat(auto-fill,minmax(140px,1fr));}
@@ -83,7 +83,6 @@ header{background:var(--yellow);border-bottom:1px solid var(--border);text-align
 .galleryGrid img{width:100%;height:100%;display:block;object-fit:cover;transition:transform .3s ease;}
 .galleryGrid img:hover{transform:scale(1.1);}
 .galleryGrid img.tapped{transform:scale(1.1);}
-
 /* quotes */
 .quotes{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--purple);color:#fff;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.15) inset;user-select:none;cursor:default;}
 .quotes h2{margin-bottom:var(--space);}
@@ -92,7 +91,6 @@ header{background:var(--yellow);border-bottom:1px solid var(--border);text-align
 .quoteBox blockquote{font-size:clamp(1rem,2.2vw,1.25rem);max-width:55ch;font-style:italic;margin-bottom:.6rem;}
 .progressWrap{width:100%;height:4px;margin-top:var(--space);}
 .progressBar{width:100%;height:4px;background:#fff;transition:width linear 6.4s;box-shadow:0 0 3px rgba(0,0,0,.25);}
-
 /* contact */
 .contact{border:1px solid var(--border);margin-block:var(--space);padding:calc(var(--space)*1.2);background:var(--blue);color:#fff;}
 .contact h2{text-align:center;margin-bottom:var(--space);}
@@ -102,26 +100,34 @@ header{background:var(--yellow);border-bottom:1px solid var(--border);text-align
 .contact button{margin-top:1rem;background:var(--red);color:#fff;border:1px solid var(--border);padding:.6rem 1.2rem;cursor:pointer;font-family:var(--fontHead);}
 .contact button:hover{background:#fff;color:var(--red);}
 .contact button[disabled]{opacity:.6;cursor:not-allowed;}
-
 /* modal */
 .modal{position:fixed;inset:0;display:flex;justify-content:center;align-items:center;background:rgba(0,0,0,.6);backdrop-filter:blur(2px);z-index:50;opacity:0;pointer-events:none;transition:opacity .25s;}
 .modal.show{opacity:1;pointer-events:auto;}
 .modalContent{background:var(--bg);border:2px solid var(--border);padding:2rem;max-width:320px;text-align:center;font-size:1rem;}
-
 /* useful links */
 .links{border:1px solid var(--border);padding:calc(var(--space)*1.2);background:#d40032;color:#fff;margin-bottom:clamp(40px,8vw,80px);}
 .links h2{text-align:center;margin-bottom:var(--space);}
 .links ol{display:grid;grid-template-columns:repeat(2,1fr);gap:.3rem .8rem;font-size:.95rem;}
 .links a{border-bottom:1px solid #fff;}
 .links a:hover{background:#fff;color:#d40032;}
-
 footer{text-align:center;font-size:.8rem;padding:24px 0 60px;color:#666;border-top:1px solid var(--border);font-family:var(--fontHead);}
-
 @media(max-width:600px){.intro p{max-width:30ch;}}
 </style>
 </head>
 <body>
-<header class="max">joerice.me</header>
+<header class="siteHeader max">
+  <div class="brand"><a href="https://joerice.me/">joerice.me</a></div>
+  <button class="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
+  <nav id="mainNav">
+    <a href="https://joerice.me/">Home</a>
+    <a href="https://hire.joerice.me/">Hire Me</a>
+    <a href="https://joerice.me/#about">About Me</a>
+    <a href="https://joerice.me/#contact">Contact Me</a>
+    <a href="https://joerice.me/#quotes">Quotes</a>
+    <a href="https://joerice.me/#links">Useful Links</a>
+  </nav>
+</header>
+
 <main class="max">
 
 <section class="hero">
@@ -143,7 +149,7 @@ footer{text-align:center;font-size:.8rem;padding:24px 0 60px;color:#666;border-t
 
 <div class="search"><input id="q" type="search" placeholder="Search posts and notes..."></div>
 
-<section class="portfolio">
+<section class="portfolio" id="about">
 <h2>Portfolio</h2>
 <div class="subhead">Pinned</div><div class="grid" id="pinnedGrid"></div>
 <div class="subhead">Posts</div><div class="grid" id="entryGrid"></div>
@@ -160,13 +166,13 @@ footer{text-align:center;font-size:.8rem;padding:24px 0 60px;color:#666;border-t
  <a href="https://picsum.photos/seed/sunrise/1200/1200" target="_blank"><img src="https://picsum.photos/seed/sunrise/300/300" alt=""></a>
 </div></section>
 
-<section class="quotes">
+<section class="quotes" id="quotes">
 <h2>Quotes</h2>
 <div class="quoteBox" id="quoteBox"><blockquote id="quoteText"></blockquote><cite id="quoteCite"></cite></div>
 <div class="progressWrap"><div class="progressBar" id="quoteProgress"></div></div>
 </section>
 
-<section class="contact">
+<section class="contact" id="contact">
  <h2>Contact</h2>
  <form id="contactForm">
   <label>Name<input type="text" name="name" required></label>
@@ -179,7 +185,7 @@ footer{text-align:center;font-size:.8rem;padding:24px 0 60px;color:#666;border-t
  </form>
 </section>
 
-<section class="links"><h2>Useful Links</h2><ol>
+<section class="links" id="links"><h2>Useful Links</h2><ol>
 <li><a href="https://news.ycombinator.com" target="_blank">Hacker News</a></li>
 <li><a href="https://zettelkasten.de" target="_blank">Zettelkasten Method</a></li>
 <li><a href="https://replit.com" target="_blank">Replit</a></li>
@@ -198,17 +204,17 @@ footer{text-align:center;font-size:.8rem;padding:24px 0 60px;color:#666;border-t
 <li><a href="https://github.com" target="_blank">GitHub</a></li>
 </ol></section>
 </main>
+
 <footer>&copy; <span id="year"></span> Joe Rice. All rights reserved.</footer>
 
-<!-- modal -->
 <div class="modal" id="modal"><div class="modalContent"><p>Thank you! Your message has been sent.</p><button id="closeModal" style="margin-top:1rem;border:1px solid var(--border);padding:.5rem 1rem;background:var(--yellow);font-family:var(--fontHead);cursor:pointer;">close</button></div></div>
 
 <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 <script>
 document.getElementById('year').textContent=new Date().getFullYear();
-
-/* loader for posts (unchanged) */
+const menuToggle=document.querySelector('.menuToggle'),mainNav=document.getElementById('mainNav');menuToggle.addEventListener('click',()=>mainNav.classList.toggle('open'));
+/* existing JS from original file remains unchanged below */
 const pinned=[],notes=[],pageSize=10;let page=0;
 const pinnedGrid=document.getElementById('pinnedGrid'),entryGrid=document.getElementById('entryGrid');
 const prevBtn=document.getElementById('prevBtn'),nextBtn=document.getElementById('nextBtn');
@@ -220,59 +226,20 @@ function attachClickHandlers(){document.querySelectorAll('.entry').forEach(el=>e
 async function openPost(url){try{const raw=await fetch(url).then(r=>r.text());const data=jsyaml.load(raw);postContent.innerHTML=marked.parse(data.content??'');postView.style.display='block';window.scrollTo({top:postView.offsetTop-20,behavior:'smooth'});}catch(err){postContent.innerHTML='<p>Unable to load this post.</p>';postView.style.display='block';}}
 document.getElementById('closePost').onclick=()=>postView.style.display='none';
 (async()=>{try{const loaderText=await fetch('posts/loader.yml').then(r=>r.text());const loaderData=jsyaml.load(loaderText);for(const p of loaderData.posts){const url=`posts/${p.file}`;const raw=await fetch(url).then(r=>r.text());const data=jsyaml.load(raw);const entry={title:data.title,date:data.date,url,pinned:data.pinned};(entry.pinned?pinned:notes).push(entry);}notes.sort((a,b)=>new Date(b.date)-new Date(a.date));renderPinned();renderPage();}catch(e){console.error(e);}})();
-
-/* search filter */
 document.getElementById('q').addEventListener('input',e=>{const v=e.target.value.toLowerCase();document.querySelectorAll('.entry').forEach(el=>{el.style.display=el.textContent.toLowerCase().includes(v)?'':'none';});});
-
-/* quotes rotate */
-const quoteBox=document.getElementById('quoteBox'),quoteText=document.getElementById('quoteText'),quoteCite=document.getElementById('quoteCite'),progBar=document.getElementById('quoteProgress');
-let quotes=[],idx=0,slideMs=7000;
+const quoteBox=document.getElementById('quoteBox'),quoteText=document.getElementById('quoteText'),quoteCite=document.getElementById('quoteCite'),progBar=document.getElementById('quoteProgress');let quotes=[],idx=0,slideMs=7000;
 function resetBar(){progBar.style.transition='none';progBar.style.width='100%';void progBar.offsetWidth;progBar.style.transition='width linear 6.4s';progBar.style.width='0%';}
 function showQuote(i){const q=quotes[i];quoteText.textContent=`“${q.text}”`;quoteCite.textContent=`— ${q.author??'Unknown'}`;quoteBox.classList.add('active');resetBar();}
 (async()=>{try{const qYaml=await fetch('quotes/quotes.yaml').then(r=>r.text());quotes=jsyaml.load(qYaml).quotes||[];if(!quotes.length)return;showQuote(0);setInterval(()=>{quoteBox.classList.remove('active');setTimeout(()=>{idx=(idx+1)%quotes.length;showQuote(idx);},600);},slideMs);}catch(e){console.error(e);}})();
-
-/* reveal animation on load */
 window.addEventListener('DOMContentLoaded',()=>{requestAnimationFrame(()=>document.body.classList.add('loaded'));});
-
-/* contact modal */
 const modal=document.getElementById('modal'),closeModal=document.getElementById('closeModal');
 function openModal(){modal.classList.add('show');}
 function hideModal(){modal.classList.remove('show');}
-closeModal.onclick=hideModal;
-modal.addEventListener('click',e=>{if(e.target===modal)hideModal();});
-document.getElementById('contactForm').addEventListener('submit',async e=>{
- e.preventDefault();
- const fd=new FormData(e.target);
- try{await fetch('https://formspree.io/f/xovqpvdv',{method:'POST',body:fd,headers:{'Accept':'application/json'}});}catch{}
- e.target.reset();openModal();
-});
-
-/* touch-friendly gallery tap-to-zoom */
-const mobile=!matchMedia('(hover: hover)').matches;
-if(mobile){
- const imgs=[...document.querySelectorAll('.galleryGrid img')];
- imgs.forEach(img=>{
-  img.parentElement.addEventListener('click',e=>{
-   if(!img.classList.contains('tapped')){
-    e.preventDefault();
-    imgs.forEach(i=>i.classList.remove('tapped'));
-    img.classList.add('tapped');
-   } // second tap follows link normally
-  });
- });
-}
-
-/* social tooltips + random colors */
+closeModal.onclick=hideModal;modal.addEventListener('click',e=>{if(e.target===modal)hideModal();});
+document.getElementById('contactForm').addEventListener('submit',async e=>{e.preventDefault();const fd=new FormData(e.target);try{await fetch('https://formspree.io/f/xovqpvdv',{method:'POST',body:fd,headers:{'Accept':'application/json'}});}catch{}e.target.reset();openModal();});
+const mobile=!matchMedia('(hover: hover)').matches;if(mobile){const imgs=[...document.querySelectorAll('.galleryGrid img')];imgs.forEach(img=>{img.parentElement.addEventListener('click',e=>{if(!img.classList.contains('tapped')){e.preventDefault();imgs.forEach(i=>i.classList.remove('tapped'));img.classList.add('tapped');}});});}
 const colors=['var(--blue)','var(--red)','var(--yellow)','var(--rose)','var(--green)','var(--purple)'];
-document.querySelectorAll('.social a').forEach(a=>{
- const tip=document.createElement('span');tip.className='tooltip';tip.textContent=a.dataset.tip;a.appendChild(tip);
- const show=()=>{a.classList.add('showTip');const c=colors[Math.random()*colors.length|0];a.style.color=c;tip.style.background=c;};
- const hide=()=>{a.classList.remove('showTip');a.style.color='inherit';tip.style.background='var(--fg)';};
- if(!mobile){a.addEventListener('mouseenter',show);a.addEventListener('mouseleave',hide);}
- a.addEventListener('click',e=>{
-  if(mobile&&!a.classList.contains('showTip')){e.preventDefault();document.querySelectorAll('.social a').forEach(l=>{l.classList.remove('showTip');l.style.color='inherit';});show();}
- });
-});
+document.querySelectorAll('.social a').forEach(a=>{const tip=document.createElement('span');tip.className='tooltip';tip.textContent=a.dataset.tip;a.appendChild(tip);const show=()=>{a.classList.add('showTip');const c=colors[Math.random()*colors.length|0];a.style.color=c;tip.style.background=c;};const hide=()=>{a.classList.remove('showTip');a.style.color='inherit';tip.style.background='var(--fg)';};if(!mobile){a.addEventListener('mouseenter',show);a.addEventListener('mouseleave',hide);}a.addEventListener('click',e=>{if(mobile&&!a.classList.contains('showTip')){e.preventDefault();document.querySelectorAll('.social a').forEach(l=>{l.classList.remove('showTip');l.style.color='inherit';});show();}});});
 </script>
 </body>
 </html>
