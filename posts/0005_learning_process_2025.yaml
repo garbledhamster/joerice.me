@@ -5,25 +5,70 @@ pinned: false
 tags: []
 content: |
   # My Learning Process in 2025  
-  
-  Applying the **six-level learning ladder** to every new domain.
-  
   ---
-  
-  | Level | Action           | Checkpoint                  |
-  |-------|------------------|-----------------------------|
-  | Exposure     | Skim top 3 resources | List of core terms created |
-  | Organization | Create Zettels       | 15 atomic notes written    |
-  | Retrieval    | Flashcard sessions   | ≥ 80 % recall in 3 days     |
-  | Application  | Build mini-project   | Working script/prototype    |
-  | Analysis     | Compare frameworks   | Essay or teardown post      |
-  | Creation     | Teach or sell        | Public article / product    |
-  
-  ---
-  
-  ## Current focus
-  - Deepening PowerShell module design  
-  - Drafting “Static-Site in a Day” mini-course  
-  - Practicing stoic journaling with my 3-year-old (yes, really)
-  
-  *Last updated · 2025-04-20*
+
+  At the start of 2025, I decided to shift from passive reading to an active learning cycle—one where every book I opened would shape a real skill, process, or project. I settled on three core techniques: Fiona McPherson’s structured note-making, Tony Buzan’s mind mapping, and the Zettelkasten method of linked notes. Each offered a distinct lens: McPherson taught me how to read with intention, Buzan showed me how to sketch ideas visually, and Zettelkasten connected discrete insights into a living web of understanding :contentReference[oaicite:0]{index=0}.
+
+  ## Setting Intentions: From Reading to Doing
+
+  In January, I reread Mortimer Adler’s _How to Read a Book_, but this time through the lens of McPherson’s _Effective Notetaking_. Instead of underlining passages at random, I practiced her “question-first” approach: before each chapter, I wrote a single learning goal, such as “Understand the theory of spaced repetition.” As I read, I captured only what directly answered that question, turning passive highlights into focused notes :contentReference[oaicite:1]{index=1}. This constraint forced me to finish each session with at least one clear takeaway: a definition to memorize, a diagram to sketch, or a script to write.
+
+  ## Visual First Drafts: Mind Mapping
+
+  To shape those takeaways, I used mind maps as my “first draft.” I drew a central node for each new topic—“Spaced Repetition,” “Distributed Tracing,” or “Serverless Frameworks”—and branched out with keywords, icons, and color. Tony Buzan popularized these radial diagrams in the 1970s on his BBC show _Use Your Head_; he argued that mapping ideas in a non-linear, visual format aligns with our brain’s natural way of thinking :contentReference[oaicite:2]{index=2}. A quick sketch on paper helped me identify missing links—questions like “How does my current toolset support interval scheduling?”—before diving into code or deeper research.
+
+  ## Building a Knowledge Web: Zettelkasten
+
+  With raw insights in hand, I turned to my Zettelkasten—a digital slip-box inspired by Niklas Luhmann’s famed system. A Zettelkasten treats each note as an atomic idea, linked to related notes through tags or direct references :contentReference[oaicite:3]{index=3}. When I finished a mind map on “Kubernetes Pod Lifecycle,” I distilled each branch into one or two notes: “Pod vs. Container,” “Init Containers use case,” and “Liveness vs. Readiness probes.” Each note pointed forward to a practical next step: deploying a demo cluster, writing a blog post, or drafting test cases.
+
+  ## A Six-Stage Learning Ladder
+
+  To maintain momentum, I layered in my six-stage learning ladder: Exposure → Organization → Retrieval → Application → Analysis → Creation. Each stage had a “ready-to-advance” checkpoint:
+
+  1. **Exposure**: Create a mind map after a first skim.  
+  2. **Organization**: Write atomic Zettel notes and tag them.  
+  3. **Retrieval**: Quiz myself on key facts one week later.  
+  4. **Application**: Implement a small demo or script.  
+  5. **Analysis**: Compare my implementation to a reference or benchmark.  
+  6. **Creation**: Produce a final deliverable—a blog post, slide deck, or internal guide.
+
+  This structure ensured I never “finished” learning at Exposure or Organization; I only moved on once I’d proven my understanding through a concrete artifact.
+
+  ## Journaling for Reflection
+
+  At the end of each day, I spent ten minutes journaling key wins and roadblocks. In my commonplace book, I asked three questions: “What’s one insight I used today?”, “Where did I get stuck?”, and “What’s my next experiment?” This reflection mirrored mindfulness practices, anchoring me in progress and surfacing recurring gaps—often around the Analysis stage, where I sometimes rushed benchmarks. Regular review helped me adjust my schedule: allocating extra sessions for deeper analysis when needed.
+
+  ## Real-World Application: A Cloud Migration Case
+
+  In March, a client asked me to migrate their 50-user directory to Azure AD. I applied my cycle in practice:
+
+  - **Exposure**: Read Microsoft’s official guide and sketched a migration mind map.  
+  - **Organization**: Extracted five Zettel notes: “Azure AD Connect,” “SSO prerequisites,” “Password Hash Sync,” “User licensing,” “Rollback plan.”  
+  - **Retrieval**: A week later, I verbally outlined the steps to a colleague without notes.  
+  - **Application**: Provisioned a test tenant and ran a pilot sync.  
+  - **Analysis**: Measured sync times, error rates, and user login success—documented in my Zettelkasten.  
+  - **Creation**: Prepared a step-by-step runbook and training slides for the client’s IT team.
+
+  The result: a zero-downtime migration and a reusable template for future engagements.
+
+  ## Tools and Habits
+
+  I rely on three primary tools:
+
+  - **Obsidian** for Markdown Zettelkasten notes and linking.  
+  - **MindNode** for digital mind maps synced across devices.  
+  - **Day One** for brief end-of-day journal entries.
+
+  I block one hour each morning for Exposure→Organization and two hours mid-day for Application→Analysis. Creation and journaling fill the late afternoon. This predictable rhythm makes learning habitual.
+
+  ## Lessons Learned
+
+  1. **Intentional Reading** beats volume. A focused question yields deeper insight than two chapters of unfocused highlights.  
+  2. **Visual Sketches** clarify relationships and reveal blind spots before committing to code.  
+  3. **Atomic Notes** prevent information loss; each idea is retrievable through links and tags.  
+  4. **Checkpoints** enforce accountability: I don’t advance until I’ve created something measurable.  
+  5. **Daily Reflection** surfaces patterns and keeps the learning cycle honest.
+
+  ## Looking Ahead
+
+  As 2025 unfolds, I plan to extend this process to collaborative learning: inviting peer review of my mind maps, co-authoring Zettelkasten notes, and presenting monthly “learning show-and-tell” sessions. By making my system visible, I hope to both refine my own practice and help others transform reading into real-world outcomes.

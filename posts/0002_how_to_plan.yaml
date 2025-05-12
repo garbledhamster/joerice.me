@@ -5,41 +5,43 @@ pinned: false
 tags: []
 content: |
   # How to Plan for a Project  
-  
-  A five-step blueprint I’ve used on 100+ IT rollouts and freelance builds.
-  
   ---
-  
-  ## 1. Clarify the Result  
-  Write a single sentence that answers *“What does “done” look like?”*
-  
-  ## 2. Map Constraints  
-  | Area   | Typical questions |
-  |--------|-------------------|
-  | Scope  | Must-have vs nice-to-have features? |
-  | Budget | Money, time, and attention limits? |
-  | Risk   | What breaks if this fails? |
-  
-  ![Farmers market](https://picsum.photos/seed/market/800/400)
-  
-  ## 3. Break into Milestones  
-  List no more than **6 milestones**—each < 2 weeks.
-  
-  ## 4. Assign Owners  
-  Every task gets *one* name. Collaboration ≠ shared accountability.
-  
-  ## 5. Schedule Review Loops  
-  Weekly 15-min stand-up → surface blockers early.
-  
-  ---
-  
-  ### Quick-Start Checklist
-  - [ ] Outcome sentence written  
-  - [ ] Constraints documented  
-  - [ ] Milestones drafted  
-  - [ ] Owners assigned  
-  - [ ] Review loop on calendar  
-  
-  > “Plans are worthless, but planning is everything.” — Dwight D. Eisenhower
-  
-  *Last updated · 2025-05-01*
+
+  I use a hybrid waterfall-agile framework to guide every engagement through seven clear phases. This approach ensures structure without sacrificing adaptability.
+
+  1. **Initiation**  
+     - Define objectives, scope, and success criteria  
+     - Identify key stakeholders and decision-makers  
+     - Produce a concise project charter for approval  
+
+  2. **Administration**  
+     - Establish meeting cadence and communication channels  
+     - Assign roles, responsibilities, and escalation paths  
+     - Document budgets, contracts, and high-level timelines  
+
+  3. **Discovery**  
+     - Inventory existing systems, users, and integrations  
+     - Capture network diagrams, configurations, and screenshots  
+     - Note constraints, risks, and compliance requirements  
+
+  4. **Planning**  
+     - Break work into discrete tasks with estimated effort  
+     - Sequence tasks in a simple Gantt or kanban board  
+     - Schedule a midpoint review to validate assumptions  
+
+  5. **Staging**  
+     - Provision and configure test environments  
+     - Develop and rehearse rollback and validation procedures  
+     - Finalize cut-over dates and user-acceptance scenarios  
+
+  6. **Execution**  
+     - Follow the approved task lists, updating progress daily  
+     - Communicate status to stakeholders at agreed intervals  
+     - Log issues, apply fixes, and update documentation in real time  
+
+  7. **Closure**  
+     - Hand off final documentation and credentials  
+     - Conduct a brief lessons-learned session with the team  
+     - Obtain formal sign-off and archive all project artifacts  
+
+  By fleshing out each phase with concrete deliverables and simple checklists, every project remains transparent and manageable—whether it’s a routine network upgrade or a large-scale cloud migration.  
