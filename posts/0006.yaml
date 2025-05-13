@@ -2,7 +2,7 @@ id: 0006
 title: Troubleshooting an Internet Down Sitation
 date: 2025-05-13
 pinned: false
-tags: []
+tags: [troubleshooting, networking, support]
 content: |
   # Troubleshooting an Internet-Down Situation
   ---
@@ -58,7 +58,6 @@ content: |
   ---
 
   ### 4. Planning
-  -  
   - Prepared Phil for a possible temporary SOHO router if the firewall or its port proves faulty.  
   - Researched a compatible SOHO model; confirmed it can be shipped to his location.  
   - Contacted the ISP support line to troubleshoot the modem directly.

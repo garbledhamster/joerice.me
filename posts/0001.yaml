@@ -4,33 +4,36 @@ date: 2025-05-03
 pinned: true
 tags: []
 content: |
-  # Who Am I?  
+  # Who Am I?
+
   ---
 
-  **Joe Rice — Infrastructure & Automation Engineer**
+  **Joe Rice**
 
-  I transform complex, reactive IT environments into reliable, well-documented systems. My approach combines thoughtful design, robust automation, and clear processes to reduce downtime and support growth.
+  This little self "memory" is to remind me of where I came from.
 
-  ## About Me
+  Imagine you're looking at a series of double-hook coat racks stacked vertically, each with room for a coat and hat. They extend upward, with no visible ceiling, disappearing into a foggy, infinite void. A tall, unstable ladder leans against the wall, seemingly endless and ready to tip over at the slightest touch. Each hook holds a coat and a hat, but only up to a certain height, far beneath the infinite space above. The hats have holes marking where badges were previously pinned, while the coats still display their patches.
 
-  I began my career in 2015 at a managed service provider, responding to urgent issues and learning to maintain composure under pressure. Over time, I advanced through roles in support, projects, and engineering—always focusing on creating lasting improvements. Outside of work, I’m a husband and father applying the same disciplined mindset at home and in my ongoing learning.
+  Examining the first hat, you see "Residential" written across the front. It has only a few badge holes—evidence that badges moved upward as roles changed. The coat patches depict distinct experiences: one shows a smiling technician handing back a repaired computer to a grateful customer; another illustrates someone knocking on a door, while inside the window, a computer sparks urgently.
 
-  ## What I Do
+  To reach the next hat, you must step onto the ladder. The first rung feels shaky. You climb to the second coat, labeled "Tier 1 Support." Its patches show someone seated at a desk; another patch depicts the same individual onsite, installing computers in a cubicle surrounded by other cubicles.
 
-  - Provide advanced troubleshooting and root-cause analysis  
-  - Design and implement resilient network architectures (Cisco, Aruba)  
-  - Plan and execute cloud migrations (Azure AD, AWS)  
-  - Develop automation scripts and tools (PowerShell, Python)  
-  - Build and maintain comprehensive documentation frameworks (SOPs, KBs, Zettelkasten)  
+  Continuing upward, you arrive at the third hook. This hat reads "Projects Team." The patches depict a person installing hardware in a data center, another working with networking equipment connected to a laptop, and yet another patch illustrating them presenting at a roundtable with peers or customers.
 
-  ## A Decade in the Field
+  Finally, you reach the current coat and hat labeled "Engineer." This hat still displays badges gained from previous roles. The coat’s patches show someone standing before a whiteboard covered with sticky notes, another patch depicts them diligently writing documentation, and a third patch is split in half, illustrating designing on one side and implementation on the other.
 
-  In 2015, I began as a residential technician, installing and troubleshooting networks and workstations in client homes. My early work taught me to diagnose issues efficiently and communicate solutions clearly.
+  Although "Engineer" appears to be the current hat, nothing prevents the wearer from moving freely among hats.
 
-  Within a year, I joined the support team, handling escalations for both MSP and non-MSP clients. I resolved complex problems, refined support procedures, and contributed to knowledge base articles.
+  ### Professional Badges You Might Find on My Metaphorical Hat:
 
-  As a project technician and knowledge developer, I collaborated with engineers to document workflows, create runbooks, and streamline deployment processes—bridging the gap between support and engineering.
+  1. **Network Specialist (Network+):** Designing, troubleshooting, and implementing edge, access, and core network infrastructure.
+  2. **Security Specialist (Security+):** Configuring and designing infrastructure to meet security standards, and thoroughly investigating and remediating security incidents.
+  3. **Scripting & Automation:** Identifying repetitive tasks to automate or script, reducing errors and increasing efficiency.
+  4. **Standards & Knowledge Development:** Collaborating on standards and building documentation for internal and external knowledge bases.
+  5. **Project Management (Studying):** Planning and executing projects from initiation to closure, including documentation and clear customer communication, aligned with PMP standards.
+  6. **Support Specialist (AAS Degree):** Troubleshooting complex issues, educating team members, and sharing knowledge with customers and colleagues.
+  7. **Wireless Specialist:** Resolving wireless issues, conducting heatmaps, and designing installations for retirement communities, warehouses, small offices, and concert halls.
+  8. **Virtualization Specialist:** Designing, planning, and implementing virtual infrastructure with high availability and disaster recovery across multiple sites, including fiber-optic cabling termination.
+  9. **Customer Care:** Conscious, empathetic understanding of customer needs and issues.
 
-  By 2018, I was promoted to systems engineer, leading both on-premises infrastructure projects and cloud implementations. I managed Azure AD migrations for organizations of 50+ users and designed secure hybrid networks.
-
-  Today, my focus is on security architecture and knowledge development. I leverage a decade of field experience and collaboration with senior engineers to deliver solutions that are both effective and sustainable.
+  Looking around the room, you notice other rows filled with hats and various types of upper-body wear—T-shirts, sweatshirts, hoodies, long-sleeve shirts—each row representing different experiences.
