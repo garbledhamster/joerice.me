@@ -1,0 +1,113 @@
+id: 0006
+title: Troubleshooting an Internet Down Sitation
+date: 2025-05-13
+pinned: false
+tags: []
+content: |
+  # Troubleshooting an Internet-Down Situation
+  ---
+
+  When you receive a report that someone’s internet is down, what do you do first? Do you have a system or process to follow?
+
+  Over time, I’ve developed my troubleshooting ability by combining Lean methodologies and critical-thinking strategies. With this process, documenting both simple and complex issues becomes straightforward. As time goes on, it can become intuitive—or templatized to teach new and veteran technicians to plan more effectively.
+
+  **Basic Steps**  
+  1. **Identification** – Who, What, When, Where, Why, How, How Much  
+  2. **Administration** – Communication, Ticketing, Documentation  
+  3. **Discovery** – Big picture; lots of screenshots and notes  
+  4. **Planning** – Turn insights from phases 1–3 into a task list  
+  5. **Staging** – Communicate the plan; stage resources and prepare users  
+  6. **Execution** – Carry out the task list; perform QA and testing  
+  7. **Closing** – Document and communicate results  
+
+  Notice this is the same strategy as my project-planning process—because it works for both. Following these steps, you can systematically plan or solve almost anything.
+
+  ---
+
+  ## Troubleshooting a “Network Down” Scenario for a Car Dealership
+
+  ### 1. Identification
+  First, collect information from the customer via phone (since this is an emergency). If it were low- or medium-priority, email would suffice.
+
+  I use the “Five Ws” to build a clear picture of the customer’s experience, adjusting my language to fit the situation and expressing empathy for how stressful a network down can be.
+
+  - **Who:** Phill’s Cars and Beyond  
+  - **What:** “The internet is not working.”  
+  - **When:** “It started two hours ago.”  
+  - **Where:** “The main location in Dakota.”  
+  - **Why:** “We need the internet for transactions and inventory access.”  
+  - **How:** “It suddenly stopped working this morning.”  
+  - **How Much:** “The entire main office is affected; we can take orders on paper and handle backlog later.”
+
+  ---
+
+  ### 2. Administration
+  - Spoke with Phil on the phone; he can assist onsite if needed.  
+  - Reviewed network documentation (diagram, IPs, credentials).  
+  - Notified my manager; they approved the investigation and asked me to restore service ASAP.
+
+  ---
+
+  ### 3. Discovery
+  - Checked with team members familiar with Phill’s environment—no recent changes.  
+  - Verified ISP status page—no outages reported.  
+  - Pinged the public IP of the modem—responding normally.  
+  - Attempted to ping the firewall’s WAN interface—no response.  
+  - Conclusion: Something is broken between the modem and the firewall.
+
+  ---
+
+  ### 4. Planning
+  -  
+  - Prepared Phil for a possible temporary SOHO router if the firewall or its port proves faulty.  
+  - Researched a compatible SOHO model; confirmed it can be shipped to his location.  
+  - Contacted the ISP support line to troubleshoot the modem directly.
+
+  ---
+
+  ### 5. Staging
+  - ISP informed us that the account was suspended due to an unpaid bill (90+ days past due).  
+  - Phoned Phil to explain the situation; he agreed to settle the invoice immediately.  
+  - No firewall replacement needed now; service restoration depends on bill payment.
+
+  ---
+
+  ### 6. Execution
+  - Phil paid the outstanding invoice.  
+  - Confirmed the firewall’s WAN port is now pingable from our internal IP space.  
+  - Phil verified that internet service was fully restored.
+
+  ---
+
+  ### 7. Closing
+  - Cleaned up my notes; documented the sequence of events and root cause.  
+  - Finalized and communicated the resolution to Phil and management.
+
+  ---
+
+  #### Note Log (Rapid Logging)
+
+  `-` - Note 
+  `o` - Event
+  `+` - Task
+
+  ```text
+  - Phill called and reported their internet was out.
+  - It started about two hours ago; only the main location was affected.
+  o Notified Phill that I’m investigating.
+  o Had him reboot the modem—no change.
+  + Check for an ISP outage.
+  + Contact ISP support.
+  o Phill sent the public IP of the modem.
+  - I can ping the modem—no drops or latency.
+  - The firewall may be dead or a port failed.
+  - Cannot ping the WAN interface on the firewall.
+  - Customer is out of state; no onsite access.
+  o Phill confirmed firewall lights (LAN/WAN) are blinking.
+  o Called the ISP.
+  - ISP suspended service due to unpaid bill.
+  o Issue resolved: Phill paid the bill; internet restored in 10 minutes.
+  ```
+
+  **Total time to remediation:** 2 hours
+
