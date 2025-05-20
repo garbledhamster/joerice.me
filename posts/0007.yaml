@@ -1,0 +1,83 @@
+id: 0007
+title: 2) My Professional Resume
+date: 2025-05-13
+pinned: true
+tags: [resume, history, work]
+content: |
+  # Joseph Rice
+
+  **IT Systems Engineer & Solutions Builder**
+
+  ---
+
+  ## Professional Summary
+
+  **Pragmatic systems engineer, generalist, and “builder” with a decade of experience making complex IT environments run smoothly. Skilled at diagnosing tough technical problems, designing network and automation solutions, and creating documentation and processes that help teams and clients succeed. Enjoys turning chaos into clarity, empowering non-technical users, and building tools that scale. Looking to bring reliable, honest IT leadership to a small business, agency, or team that values practical results over hype.**
+
+  ---
+
+  ## Technical Skills
+
+  * **IT Infrastructure:** Windows Server, Windows Server Core, Linux (Debian/RedHat), Layer 2/3 Networking (Cisco, HP, Netgear), Firewalls (Sophos, Palo Alto, SonicWall), Virtualization (ESXi, vCenter, Azure HCI, Veeam)
+  * **Automation & Scripting:** PowerShell, Python, Process Automation, ConnectWise, PIA Automation, ChatGPT API
+  * **Cloud & Productivity:** Microsoft 365, Azure AD, O365, Exchange Online, DFS, Azure HCI
+  * **Monitoring & Management:** SolarWinds, Zabbix, WhatsUp Gold, ConnectWise Manage/Automate
+  * **Documentation & SOPs:** Strong at building clear, actionable SOPs, technical diagrams, and training resources (OneNote, Word, Visio)
+  * **Security & Recovery:** Network+, Security+, Veeam DR, Endpoint Hardening, Security Monitoring, Incident Response
+  * **Web & DNS:** GitHub Pages, Cloudflare, Static Sites, Basic SEO, Website Hosting/Support
+
+  ---
+
+  ## Experience
+
+  **Systems Engineer**
+  *Computers Nationwide* • Janesville, WI • Jan 2016 – Present
+
+  * Designed, deployed, and documented robust networks (Layer 2/3) for SMB and agency clients—reducing downtime and enabling business growth.
+  * Built and modernized IT environments: implemented DFS Namespaces, Azure HCI, virtualization, and cloud transitions for efficiency and reliability.
+  * Automated repetitive admin work using PowerShell and Python; created in-house scripts to save technician time and standardize processes.
+  * Led incident response and troubleshooting for escalated, high-impact issues—security events, server outages, and network latency.
+  * Produced detailed diagrams, SOPs, and hand-off documentation for internal and client use; known for making complex topics accessible.
+  * Integrated AI tools (ChatGPT, Power Automate, ConnectWise) to streamline ticket notes, task routing, and end-user support.
+
+  **Projects Team Member**
+  *Computers Nationwide* • Whitewater, WI • Nov 2015 – Jan 2016
+
+  * Created As-Built documentation for client projects; improved and maintained internal SOPs and templates.
+  * Supported network infrastructure rollouts, including firewalls, routers, and switches (physical and virtual environments).
+  * Assisted with fiber installation, termination, and host equipment upgrades.
+
+  **Technical Support Specialist**
+  *Computers Nationwide* • Whitewater, WI • Sep 2015 – Nov 2015
+
+  * Delivered Tier 1+ support to managed and non-managed clients; completed support tickets, on-site troubleshooting, and rapid escalations.
+  * Maintained client environments with regular updates and preventative maintenance.
+
+  ---
+
+  ## Education & Certifications
+
+  * **AAS, Computer Support Specialist** – Gateway Technical College (2022)
+
+    * Coursework: IT Project Management, Data Security & Recovery, Network Admin, Server & App Support
+  * **Diploma, Big Foot High School** – Walworth, WI (2013)
+  * **Certifications:**
+
+    * CompTIA Network+ (Active, exp. 2028)
+    * CompTIA Security+ (Active, exp. 2028)
+
+  ---
+
+  ## Projects & Portfolio
+
+  * **joerice.me:** Personal portfolio and blog—showcasing automation scripts, IT documentation frameworks, troubleshooting stories, and ongoing learning.
+  * **Automation/AI Integrations:** Integrated ChatGPT and scripting tools into helpdesk platforms, improving ticket handling and enabling tech self-service.
+  * **Knowledge Systems:** Built custom onboarding resources and SOPs for technical and non-technical audiences.
+
+  ---
+
+  ## Extras
+
+  **Hobbies:** Coding, scripting, building automations, process design, tech-for-good projects, family time, and exploring new ways to make tech more humane and approachable.
+
+  **References:** Available on request.

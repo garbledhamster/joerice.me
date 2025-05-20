@@ -657,4 +657,26 @@
     font-family: var(--fontHead);
     letter-spacing: 1px;
   }
+  .filters {
+    display: flex;
+    flex-wrap: wrap;
+    gap: .6rem;
+    margin-bottom: var(--space);
+  }
+  .filterBtn {
+    font-family: var(--fontHead);
+    border: 1px solid var(--border);
+    background: var(--bg);
+    padding: .35rem .9rem;
+    cursor: pointer;
+    transition: .2s;
+  }
+  .filterBtn:hover {
+    background: var(--fg);
+    color: var(--bg);
+  }
+  .filterBtn.active {
+    background: var(--yellow);
+    border-color: var(--fg);
+  }
   

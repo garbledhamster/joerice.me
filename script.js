@@ -41,14 +41,16 @@ const postContentEl = document.getElementById('postContentInner');
 const closePostBtn = document.getElementById('closePost');
 
 function renderPinned() {
-  pinnedGrid.innerHTML = pinned.map(p => `<a class="entry" data-url="${p.url}">${p.title}</a>`).join('');
+  pinnedGrid.innerHTML = pinned
+    .map(p => `<a class="entry" data-tags="${p.tags.join('|')}" data-url="${p.url}">${p.title}</a>`).join('');
   attachClickHandlers();
 }
 
 function renderPage() {
   const start = page * pageSize;
   const slice = notes.slice(start, start + pageSize);
-  entryGrid.innerHTML = slice.map(n => `<a class="entry" data-url="${n.url}">${n.title}</a>`).join('');
+  entryGrid.innerHTML = slice
+    .map(n => `<a class="entry" data-tags="${n.tags.join('|')}" data-url="${n.url}">${n.title}</a>`).join('');
   prevBtn.disabled = page === 0;
   nextBtn.disabled = start + pageSize >= notes.length;
   attachClickHandlers();
@@ -96,7 +98,13 @@ closePostBtn.addEventListener('click', () => {
           return r.text();
         });
         const data = jsyaml.load(raw);
-        const entry = { title: data.title, date: data.date, url: filePath, pinned: data.pinned };
+        const entry = {
+          title: data.title,
+          date: data.date,
+          url: filePath,
+          pinned: data.pinned,
+          tags: data.tags || []
+        };
         if (entry.pinned) pinned.push(entry);
         else notes.push(entry);
       } catch {}
@@ -233,3 +241,31 @@ document.querySelectorAll('.social a').forEach(a => {
     }
   });
 });
+
+// --- Tag filter logic ---
+const selectedTags = new Set();
+
+function filterEntries() {
+  document.querySelectorAll('.entry').forEach(el => {
+    const tags = (el.dataset.tags || '').split('|');
+    const hide = selectedTags.size &&
+                 ![...selectedTags].some(t => tags.includes(t));
+    el.style.display = hide ? 'none' : '';
+  });
+}
+
+document.querySelectorAll('.filterBtn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const tag = btn.dataset.tag;
+    btn.classList.toggle('active');
+    if (btn.classList.contains('active')) selectedTags.add(tag);
+    else selectedTags.delete(tag);
+    filterEntries();
+  });
+});
+
+const origRenderPage = renderPage;
+renderPage = (...args) => {
+  origRenderPage(...args);
+  filterEntries();
+};
