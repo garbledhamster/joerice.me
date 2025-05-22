@@ -1,39 +1,29 @@
 id: 0001
-title: Who Am I?  
+title: "1) Who is Joe Rice?"
 date: 2025-05-03
 pinned: true
 tags: []
 content: |
-  # Who Am I?
+  Hey, I’m Joe Rice—husband, dad, lifelong learner, and hands-on IT generalist who brings order to chaos (and calm to crises).
 
-  ---
+  **I believe tech should make life easier, not harder.** I’ve worn a lot of hats: frontline support, network engineer, project manager, and creator. My favorite part of this journey? Solving problems nobody else wants to touch—and making sure nobody has to fix the same thing twice.
 
-  **Joe Rice**
+  **Concrete example?** One time a customer factory-reset their core Cisco switch with a paper clip—instantly knocking their whole business offline. Within two hours, I had them running again: I reconfigured the firewall, used static IPs to access the switch, and rebuilt everything from backups. That’s my style—calm in the chaos, solutions in hand.
 
-  This little self "memory" is to remind me of where I came from.
+  **How I work:**
 
-  Imagine you're looking at a series of double-hook coat racks stacked vertically, each with room for a coat and hat. They extend upward, with no visible ceiling, disappearing into a foggy, infinite void. A tall, unstable ladder leans against the wall, seemingly endless and ready to tip over at the slightest touch. Each hook holds a coat and a hat, but only up to a certain height, far beneath the infinite space above. The hats have holes marking where badges were previously pinned, while the coats still display their patches.
+  * I run projects using ConnectWise Manage and OneNote, capturing every key detail.
+  * My version of rapid logging (inspired by bullet journaling) lets me distill complex issues into action items anyone can follow.
+  * I diagram everything in Visio—from networks and security plans to mind maps and presentations.
+  * At the end of every project, I jot down what I learned or built in a Zettelkasten-style card—so future Joe (or the next tech) never starts from zero.
 
-  Examining the first hat, you see "Residential" written across the front. It has only a few badge holes—evidence that badges moved upward as roles changed. The coat patches depict distinct experiences: one shows a smiling technician handing back a repaired computer to a grateful customer; another illustrates someone knocking on a door, while inside the window, a computer sparks urgently.
+  **My core values:**
 
-  To reach the next hat, you must step onto the ladder. The first rung feels shaky. You climb to the second coat, labeled "Tier 1 Support." Its patches show someone seated at a desk; another patch depicts the same individual onsite, installing computers in a cubicle surrounded by other cubicles.
+  * **Open-minded thinker & lifelong learner:** Always curious, always improving.
+  * **Driven problem solver:** Obstacles are puzzles to figure out, not roadblocks.
+  * **Loyal & adaptable:** I stick with the problem until it’s solved and never shy away from change.
+  * **Optimistic, but realistic:** I approach each challenge with hope and idealism, balanced by a skeptic’s eye for detail and risk.
 
-  Continuing upward, you arrive at the third hook. This hat reads "Projects Team." The patches depict a person installing hardware in a data center, another working with networking equipment connected to a laptop, and yet another patch illustrating them presenting at a roundtable with peers or customers.
+  This site is where I share my systems, notes, and insights for friends, family, and anyone searching for honest, practical tech solutions—or just a better way to learn and work.
 
-  Finally, you reach the current coat and hat labeled "Engineer." This hat still displays badges gained from previous roles. The coat’s patches show someone standing before a whiteboard covered with sticky notes, another patch depicts them diligently writing documentation, and a third patch is split in half, illustrating designing on one side and implementation on the other.
-
-  Although "Engineer" appears to be the current hat, nothing prevents the wearer from moving freely among hats.
-
-  ### Professional Badges You Might Find on My Metaphorical Hat:
-
-  1. **Network Specialist (Network+):** Designing, troubleshooting, and implementing edge, access, and core network infrastructure.
-  2. **Security Specialist (Security+):** Configuring and designing infrastructure to meet security standards, and thoroughly investigating and remediating security incidents.
-  3. **Scripting & Automation:** Identifying repetitive tasks to automate or script, reducing errors and increasing efficiency.
-  4. **Standards & Knowledge Development:** Collaborating on standards and building documentation for internal and external knowledge bases.
-  5. **Project Management (Studying):** Planning and executing projects from initiation to closure, including documentation and clear customer communication, aligned with PMP standards.
-  6. **Support Specialist (AAS Degree):** Troubleshooting complex issues, educating team members, and sharing knowledge with customers and colleagues.
-  7. **Wireless Specialist:** Resolving wireless issues, conducting heatmaps, and designing installations for retirement communities, warehouses, small offices, and concert halls.
-  8. **Virtualization Specialist:** Designing, planning, and implementing virtual infrastructure with high availability and disaster recovery across multiple sites, including fiber-optic cabling termination.
-  9. **Customer Care:** Conscious, empathetic understanding of customer needs and issues.
-
-  Looking around the room, you notice other rows filled with hats and various types of upper-body wear—T-shirts, sweatshirts, hoodies, long-sleeve shirts—each row representing different experiences.
+  **If you want someone who’ll bring clarity to your tech, optimism to your team, and real solutions to your table—let’s talk.**
