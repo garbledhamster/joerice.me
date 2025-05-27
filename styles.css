@@ -679,4 +679,56 @@
     background: var(--yellow);
     border-color: var(--fg);
   }
-  
+  .slideshow {
+    position: relative;
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  .slideshow figure {
+    margin: 0;
+    position: relative;
+  }
+  .slideshow img {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 8px;
+  }
+  .slideshow figcaption {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-family: var(--fontHead, 'Bebas Neue', sans-serif);
+    font-size: 1.1rem;
+    line-height: 1.3;
+    text-align: center;
+    box-sizing: border-box;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
+  }
+  .slideshow button {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(0, 0, 0, 0.45);
+    border: none;
+    color: #fff;
+    font-size: 2rem;
+    padding: 0 0.6rem;
+    cursor: pointer;
+    border-radius: 4px;
+    transition: background 0.2s;
+  }
+  .slideshow button:hover {
+    background: rgba(0, 0, 0, 0.7);
+  }
+  .slideshow .prev {
+    left: 0.5rem;
+  }
+  .slideshow .next {
+    right: 0.5rem;
+  }

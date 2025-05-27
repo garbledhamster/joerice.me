@@ -1,47 +1,61 @@
 id: 0002
-title: How to Plan for a Project  
+title: My Project Management Process
 date: 2025-05-03
 pinned: false
 tags: []
 content: |
-  # How to Plan for a Project  
-  ---
+   # My Project Management Process 
+   ---
 
-  I use a hybrid waterfall-agile framework to guide every engagement through seven clear phases. This approach ensures structure without sacrificing adaptability.
+   I use a hybrid waterfall/agile framework I developed over the past few years managing projects. My goal for the system was to reduce the cognitive load it takes for our team to plan projects; having a structured, understandable methodology helped me personally reduce my project planning time by 40%.  
 
-  1. **Initiation**  
-     - Define objectives, scope, and success criteria  
-     - Identify key stakeholders and decision-makers  
-     - Produce a concise project charter for approval  
+   Each phase—Initiation/Identification, Administration/Management, Discovery, Planning, Staging, Execution, Closure—has a general set of tasks that need to be defined for each project. The tasks generally involve:
 
-  2. **Administration**  
-     - Establish meeting cadence and communication channels  
-     - Assign roles, responsibilities, and escalation paths  
-     - Document budgets, contracts, and high-level timelines  
+   1. **Identification/Initiation**
 
-  3. **Discovery**  
-     - Inventory existing systems, users, and integrations  
-     - Capture network diagrams, configurations, and screenshots  
-     - Note constraints, risks, and compliance requirements  
+      - A client or customer brings in a request  
+      - The request is quoted and signed  
+      - Someone is assigned the project  
 
-  4. **Planning**  
-     - Break work into discrete tasks with estimated effort  
-     - Sequence tasks in a simple Gantt or kanban board  
-     - Schedule a midpoint review to validate assumptions  
+   2. **Management/Administration**  
 
-  5. **Staging**  
-     - Provision and configure test environments  
-     - Develop and rehearse rollback and validation procedures  
-     - Finalize cut-over dates and user-acceptance scenarios  
+      - General project management occurs in this phase  
+      - Documenting meeting durations and notes  
+      - Keeping a conversation log with the customer  
+      - Putting time toward documentation  
 
-  6. **Execution**  
-     - Follow the approved task lists, updating progress daily  
-     - Communicate status to stakeholders at agreed intervals  
-     - Log issues, apply fixes, and update documentation in real time  
+   3. **Discovery**  
 
-  7. **Closure**  
-     - Hand off final documentation and credentials  
-     - Conduct a brief lessons-learned session with the team  
-     - Obtain formal sign-off and archive all project artifacts  
+      - Talking with stakeholders about the systems they have  
+      - Documenting a big picture of the environment with notes and screenshots  
+      - Gathering analytics on the systems involved in the project  
 
-  By fleshing out each phase with concrete deliverables and simple checklists, every project remains transparent and manageable—whether it’s a routine network upgrade or a large-scale cloud migration.  
+   4. **Planning**  
+
+      - Review the documentation from the discovery phase; start planning  
+      - Build a project outline and task lists to accompany it  
+      - Midpoint review with key stakeholders discussing everything found and the plan  
+      - Develop a backout plan to undo any major changes  
+
+   5. **Staging**  
+
+      - Start provisioning the systems based on the task lists  
+      - Adjust task lists as you go, keeping them up to date  
+      - Do testing in this phase for whatever needs to be tested  
+      - Meet with the customer before the execution phase  
+
+   6. **Execution**  
+
+      - The main part of the project that involves stakeholders and communication  
+      - Execute backout plan as needed  
+      - Report to the stakeholders throughout the process  
+
+   7. **Closure**  
+
+      - Compile all relevant handoff documentation into a single handoff document  
+      - Finalize timesheets and notes  
+      - Work with key stakeholders and discuss the handoff documentation and their feedback  
+      - Close the project and bill the customer  
+
+   By following this project framework, I'm able to quickly plan projects and teach the process to a team or individual as needed. It helps keep projects clearly tracked and documented. The system is efficient and makes it easy to stay on top of project phases and notes. I'm always looking to improve my systems, and this is no exception. If you have feedback or want to collaborate, reach out to me using the contact form at the bottom of my page.
+

@@ -4,44 +4,21 @@
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
     <title>Joe Rice · Portfolio</title>
-
-    <!-- Preconnect & Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Bebas+Neue&family=Fira+Code&display=swap"
-      rel="stylesheet"
-    />
-
-    <!-- Stylesheets -->
-    <link
-      rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
-    />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Bebas+Neue&family=Fira+Code&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <link rel="stylesheet" href="styles.css"/>
-
-    <!-- Preload Scripts -->
-    <link
-      rel="preload"
-      as="script"
-      href="https://cdn.jsdelivr.net/npm/marked/marked.min.js"
-    />
-    <link
-      rel="preload"
-      as="script"
-      href="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"
-    />
+    <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js"/>
+    <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"/>
+    <style>
+   
+    </style>
   </head>
   <body>
     <header class="siteHeader">
-      <div class="brand">
-        <a href="https://joerice.me/">joerice.me</a>
-      </div>
-      <button class="menuToggle" aria-label="Menu">
-        <span></span>
-        <span></span>
-        <span></span>
-      </button>
+      <div class="brand"><a href="https://joerice.me/">joerice.me</a></div>
+      <button class="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
       <nav id="mainNav">
         <a href="https://joerice.me/">Home</a>
         <a href="https://joerice.me/#about">About Me</a>
@@ -50,134 +27,61 @@
         <a href="https://joerice.me/#links">Useful Links</a>
       </nav>
     </header>
-
     <main class="max">
       <section class="hero">
         <img class="pic" src="assets/images/pictures/profile.jpg" alt="Joe Rice"/>
         <div class="intro">
-          <p>
-            Husband, dad, and hands-on IT generalist—combining experience and ChatGPT to turn creative ideas and engineering projects into reality.     
-          </p>
-          <div class="social">
-            <a href="https://pin.it/7ikA1HZ4o" target="_blank" aria-label="Pinterest" data-tip="See my inspiration boards">
-              <i class="fab fa-pinterest"></i>
-            </a>
-            <a href="https://www.instagram.com/garbledhamster/" target="_blank" aria-label="Instagram" data-tip="Follow my snapshots">
-              <i class="fab fa-instagram"></i>
-            </a>
-            <a href="https://www.facebook.com/garbledhamster/" target="_blank" aria-label="Facebook" data-tip="Connect on Facebook">
-              <i class="fab fa-facebook"></i>
-            </a>
-            <a href="https://buymeacoffee.com/garbledhamster" target="_blank" aria-label="Buy Me A Coffee" data-tip="Tip me a coffee ☕">
-              <i class="fas fa-mug-hot"></i>
-            </a>
-            <a href="https://github.com/garbledhamster" target="_blank" aria-label="GitHub" data-tip="Check out my code">
-              <i class="fab fa-github"></i>
-            </a>
-            <a href="https://www.upwork.com/freelancers/~016021fb4f5ed4ff13?mp_source=share" target="_blank" aria-label="Upwork" data-tip="Hire me on Upwork">
-              <i class="fab fa-upwork"></i>
-            </a>
-            <a href="https://fiverr.com/" target="_blank" aria-label="Fiverr" data-tip="Quick gigs on Fiverr">
-              <i class="fab fa-fiverr"></i>
-            </a>
-            <a href="https://www.etsy.com/shop/zettelkastenshop" target="_blank" aria-label="Etsy" data-tip="Buy my resources">
-              <i class="fab fa-etsy"></i>
-            </a>
+          <p>I'm a husband, father, IT generalist, and entrepreneur at heart. I love sharing knowledge and have over a decade of experience in IT. If you're looking to connect with someone who's down to earth, open minded yet skeptical, and passionate about self improvement, I’d love to hear from you. To hire me for freelance or full-time work, just fill out the contact form below. I’ll respond within 24 hours.</p>
+                    <div class="social">
+            <a href="https://pin.it/7ikA1HZ4o" target="_blank" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
+            <a href="https://www.instagram.com/garbledhamster/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+            <a href="https://www.facebook.com/garbledhamster/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
+            <a href="https://buymeacoffee.com/garbledhamster" target="_blank" aria-label="Buy Me A Coffee"><i class="fas fa-mug-hot"></i></a>
+            <a href="https://github.com/garbledhamster" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
+            <a href="https://www.upwork.com/freelancers/~016021fb4f5ed4ff13?mp_source=share" target="_blank" aria-label="Upwork"><i class="fab fa-upwork"></i></a>
+            <a href="https://fiverr.com/" target="_blank" aria-label="Fiverr"><i class="fab fa-fiverr"></i></a>
+            <a href="https://www.etsy.com/shop/zettelkastenshop" target="_blank" aria-label="Etsy"><i class="fab fa-etsy"></i></a>
           </div>
         </div>
       </section>
-
-      <div class="search">
-        <input id="q" type="search" placeholder="Search posts and notes..."/>
-      </div>
-
+      <div class="search"><input id="q" type="search" placeholder="Search posts and notes..."/></div>
       <section class="portfolio" id="about">
         <h2>Portfolio</h2>
-      
-
         <div class="subhead">Pinned</div>
         <div class="grid" id="pinnedGrid"></div>
         <div class="subhead">Posts</div>
         <div class="grid" id="entryGrid"></div>
-        <div class="pageControls">
-          <button id="prevBtn" class="pageBtn">Prev</button>
-          <button id="nextBtn" class="pageBtn">Next</button>
-        </div>
-        <div id="postView">
-          <div id="postContent">
-            <button id="closePost">close</button>
-            <div id="postContentInner"><!-- markdown will go here --></div>
-          </div>
-        </div>
+        <div class="pageControls"><button id="prevBtn" class="pageBtn">Prev</button><button id="nextBtn" class="pageBtn">Next</button></div>
+        <div id="postView"><div id="postContent"><button id="closePost">close</button><div id="postContentInner"></div></div></div>
       </section>
-      
-
       <section class="gallery">
         <h2>Gallery</h2>
-        <div class="galleryGrid">
-          <a href="https://picsum.photos/seed/family/1200/1200" target="_blank">
-            <img src="https://picsum.photos/seed/family/300/300" alt=""/>
-          </a>
-          <a href="https://picsum.photos/seed/market/1200/1200" target="_blank">
-            <img src="https://picsum.photos/seed/market/300/300" alt=""/>
-          </a>
-          <a href="https://picsum.photos/seed/coding/1200/1200" target="_blank">
-            <img src="https://picsum.photos/seed/coding/300/300" alt=""/>
-          </a>
-          <a href="https://picsum.photos/seed/stoic/1200/1200" target="_blank">
-            <img src="https://picsum.photos/seed/stoic/300/300" alt=""/>
-          </a>
-          <a href="https://picsum.photos/seed/city/1200/1200" target="_blank">
-            <img src="https://picsum.photos/seed/city/300/300" alt=""/>
-          </a>
-          <a href="https://picsum.photos/seed/sunrise/1200/1200" target="_blank">
-            <img src="https://picsum.photos/seed/sunrise/300/300" alt=""/>
-          </a>
+        <div class="slideshow" id="slideshow">
+          <figure>
+            <a id="slideLink" href="#" target="_blank">
+              <img id="slideImage" src="" alt=""/>
+              <figcaption id="slideCaption"></figcaption>
+            </a>
+          </figure>
+          <button class="prev" id="prevSlide" aria-label="Previous">&#10094;</button>
+          <button class="next" id="nextSlide" aria-label="Next">&#10095;</button>
         </div>
       </section>
-
       <section class="quotes" id="quotes">
         <h2>Quotes</h2>
-        <div class="quoteBox" id="quoteBox">
-          <blockquote id="quoteText"></blockquote>
-          <cite id="quoteCite"></cite>
-        </div>
-        <div class="progressWrap">
-          <div class="progressBar" id="quoteProgress"></div>
-        </div>
+        <div class="quoteBox" id="quoteBox"><blockquote id="quoteText"></blockquote><cite id="quoteCite"></cite></div>
+        <div class="progressWrap"><div class="progressBar" id="quoteProgress"></div></div>
       </section>
-
       <section class="contact" id="contact">
         <h2>Contact</h2>
         <form id="contactForm">
-          <label>
-            Name
-            <input type="text" name="name" required/>
-          </label>
-          <label>
-            Email
-            <input type="email" name="email" required/>
-          </label>
-          <label>
-            Project Type
-            <select name="project" required>
-              <option value="">Select an option...</option>
-              <option>Website Build</option>
-              <option>SEO Audit</option>
-              <option>Local SEO / Google Profile</option>
-              <option>Consulting Call</option>
-              <option>Training / Workshop</option>
-              <option>Other</option>
-            </select>
-          </label>
-          <label>
-            Message
-            <textarea name="message" required></textarea>
-          </label>
+          <label>Name<input type="text" name="name" required/></label>
+          <label>Email<input type="email" name="email" required/></label>
+          <label>Contact Type<select name="project" required><option value="">Select an option...</option><option>Personal Website</option><option>Professional Website</option><option>Recruiter</option><option>Friend</option><option>Family</option><option>Training/Coaching</option><option>Other</option></select></label>
+          <label>Message<textarea name="message" required></textarea></label>
           <button type="submit">Send</button>
         </form>
       </section>
-
       <section class="links" id="links">
         <h2>Useful Links</h2>
         <ol>
@@ -200,23 +104,40 @@
         </ol>
       </section>
     </main>
-
     <footer>© <span id="year"></span> Joe Rice. All rights reserved.</footer>
-
     <div class="modal" id="modal">
-      <div class="modalContent">
-        <p>Thank you! Your message has been sent.</p>
-        <button
-          id="closeModal"
-          style="margin-top:1rem; border:1px solid var(--border); padding:.5rem 1rem; background:var(--yellow); font-family:var(--fontHead); cursor:pointer;"
-        >
-          close
-        </button>
-      </div>
+      <div class="modalContent"><p>Thank you! Your message has been sent.</p><button id="closeModal" style="margin-top:1rem; border:1px solid var(--border); padding:.5rem 1rem; background:var(--yellow); font-family:var(--fontHead); cursor:pointer;">close</button></div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <script type="module" src="script.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        const slides = [
+          {img:"https://picsum.photos/seed/family/1200/800", link:"https://picsum.photos/seed/family/1200/1200", caption:"Family: The people who keep me grounded and give purpose to every project, every late night, and every new adventure."},
+          {img:"https://picsum.photos/seed/market/1200/800", link:"https://picsum.photos/seed/market/1200/1200", caption:"Marketplace: Where ideas meet reality—sometimes you win, sometimes you learn, but you always grow."},
+          {img:"https://picsum.photos/seed/coding/1200/800", link:"https://picsum.photos/seed/coding/1200/1200", caption:"Coding: My workshop for building the future and tinkering with possibility, one script at a time."},
+          {img:"https://picsum.photos/seed/stoic/1200/800", link:"https://picsum.photos/seed/stoic/1200/1200", caption:"Stoic: A daily reminder to focus on what I can control and let go of what I can't."},
+          {img:"https://picsum.photos/seed/city/1200/800", link:"https://picsum.photos/seed/city/1200/1200", caption:"City: The buzz of opportunity, the challenge of keeping your head while everyone else is losing theirs."},
+          {img:"https://picsum.photos/seed/sunrise/1200/800", link:"https://picsum.photos/seed/sunrise/1200/1200", caption:"Sunrise: New beginnings, every day—reset, reflect, and restart stronger than before."}
+        ];
+        let current = 0;
+        const slideImage = document.getElementById("slideImage");
+        const slideCaption = document.getElementById("slideCaption");
+        const slideLink = document.getElementById("slideLink");
+        function showSlide(i) {
+          current = (i + slides.length) % slides.length;
+          const s = slides[current];
+          slideImage.src = s.img;
+          slideImage.alt = s.caption;
+          slideLink.href = s.link;
+          slideCaption.textContent = s.caption;
+        }
+        document.getElementById("prevSlide").addEventListener("click", () => showSlide(current - 1));
+        document.getElementById("nextSlide").addEventListener("click", () => showSlide(current + 1));
+        showSlide(0);
+      });
+      document.getElementById("year").textContent = new Date().getFullYear();
+    </script>
   </body>
 </html>
