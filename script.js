@@ -39,6 +39,60 @@ const nextBtn = document.getElementById('nextBtn');
 const postView = document.getElementById('postView');
 const postContentEl = document.getElementById('postContentInner');
 const closePostBtn = document.getElementById('closePost');
+const editPortfolioBtn = document.getElementById('editPortfolio');
+const isAdmin = window.localStorage.getItem('isAdmin') === 'true';
+let currentPost = null;
+let isEditorMode = false;
+
+function getStoredPostContent(url) {
+  return window.localStorage.getItem(`postEdit:${url}`);
+}
+
+function renderPostContent(content) {
+  postContentEl.innerHTML = marked.parse(content || '');
+}
+
+function exitEditorMode() {
+  if (!isEditorMode) return;
+  isEditorMode = false;
+  postView.classList.remove('editorMode');
+  if (currentPost) renderPostContent(currentPost.content);
+}
+
+function enterEditorMode() {
+  if (!isAdmin || !currentPost) return;
+  isEditorMode = true;
+  postView.classList.add('editorMode');
+  postContentEl.innerHTML = '';
+
+  const editor = document.createElement('textarea');
+  editor.className = 'postEditor';
+  editor.value = currentPost.content;
+
+  const controls = document.createElement('div');
+  controls.className = 'editorControls';
+
+  const cancelBtn = document.createElement('button');
+  cancelBtn.type = 'button';
+  cancelBtn.className = 'cancelBtn';
+  cancelBtn.textContent = 'Cancel';
+  cancelBtn.addEventListener('click', exitEditorMode);
+
+  const saveBtn = document.createElement('button');
+  saveBtn.type = 'button';
+  saveBtn.className = 'saveBtn';
+  saveBtn.textContent = 'Save';
+  saveBtn.addEventListener('click', () => {
+    const updated = editor.value;
+    window.localStorage.setItem(`postEdit:${currentPost.url}`, updated);
+    currentPost.content = updated;
+    exitEditorMode();
+  });
+
+  controls.append(cancelBtn, saveBtn);
+  postContentEl.append(editor, controls);
+  editor.focus();
+}
 
 function renderPinned() {
   pinnedGrid.innerHTML = pinned
@@ -67,11 +121,16 @@ function attachClickHandlers() {
 }
 
 async function openPost(url) {
+  exitEditorMode();
   try {
     const raw = await fetch(url).then(r => r.text());
     const data = jsyaml.load(raw);
-    postContentEl.innerHTML = marked.parse(data.content || '');
+    const storedContent = getStoredPostContent(url);
+    const content = storedContent ?? (data.content || '');
+    currentPost = { url, data, content };
+    renderPostContent(content);
   } catch {
+    currentPost = { url, data: null, content: '' };
     postContentEl.innerHTML = '<p>Unable to load this post.</p>';
   }
   lockScroll();
@@ -83,7 +142,24 @@ closePostBtn.addEventListener('click', () => {
   document.querySelectorAll('.entry.active').forEach(a => a.classList.remove('active'));
   postView.classList.remove('show');
   unlockScroll();
+  exitEditorMode();
 });
+
+if (editPortfolioBtn && isAdmin) {
+  editPortfolioBtn.hidden = false;
+  editPortfolioBtn.addEventListener('click', async () => {
+    let targetUrl = currentPost?.url;
+    if (!targetUrl) {
+      const activeEntry = document.querySelector('.entry.active');
+      targetUrl = activeEntry?.dataset.url;
+    }
+    if (!targetUrl) return;
+    if (!postView.classList.contains('show') || currentPost?.url !== targetUrl) {
+      await openPost(targetUrl);
+    }
+    enterEditorMode();
+  });
+}
 
 (async () => {
   try {
