@@ -1,5 +1,82 @@
 document.getElementById('year').textContent = new Date().getFullYear();
 
+const firebaseConfig = window.firebaseConfig || {
+  apiKey: 'YOUR_API_KEY',
+  authDomain: 'YOUR_AUTH_DOMAIN',
+  projectId: 'YOUR_PROJECT_ID',
+  storageBucket: 'YOUR_STORAGE_BUCKET',
+  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
+  appId: 'YOUR_APP_ID'
+};
+
+let auth = null;
+if (window.firebase?.apps?.length === 0) {
+  if (firebaseConfig?.apiKey && firebaseConfig.apiKey !== 'YOUR_API_KEY') {
+    window.firebase.initializeApp(firebaseConfig);
+  } else {
+    console.warn('Firebase config missing; auth is disabled.');
+  }
+}
+if (window.firebase?.auth) {
+  auth = window.firebase.auth();
+}
+
+let isAdmin = false;
+const adminEmail = 'jmjrice94@gmail.com';
+
+function isAdminUser() {
+  return isAdmin;
+}
+
+window.isAdminUser = isAdminUser;
+
+function updateAdminUi() {
+  const adminOnlyElements = document.querySelectorAll(
+    '[data-admin-only], .editButton, .editPanel'
+  );
+  adminOnlyElements.forEach(el => {
+    const shouldHide = !isAdmin;
+    el.hidden = shouldHide;
+    el.setAttribute('aria-hidden', String(shouldHide));
+    el.classList.toggle('admin-hidden', shouldHide);
+  });
+}
+
+function ensureAdmin(actionLabel = 'admin action') {
+  if (isAdmin) return true;
+  console.warn(`Blocked ${actionLabel}: not an admin user.`);
+  return false;
+}
+
+if (auth?.onAuthStateChanged) {
+  auth.onAuthStateChanged(user => {
+    isAdmin = user?.email === adminEmail;
+    updateAdminUi();
+  });
+} else {
+  updateAdminUi();
+}
+
+document.addEventListener('click', event => {
+  const adminTarget = event.target.closest('[data-admin-action], .editButton');
+  if (!adminTarget) return;
+  const label = adminTarget.dataset.adminAction || 'admin action';
+  if (!ensureAdmin(label)) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+});
+
+document.addEventListener('submit', event => {
+  const adminTarget = event.target.closest('[data-admin-action]');
+  if (!adminTarget) return;
+  const label = adminTarget.dataset.adminAction || 'admin action';
+  if (!ensureAdmin(label)) {
+    event.preventDefault();
+    event.stopPropagation();
+  }
+});
+
 function updateHeaderHeight() {
   const h = document.querySelector('.siteHeader').offsetHeight;
   document.documentElement.style.setProperty('--header-h', `${h}px`);
