@@ -137,7 +137,7 @@
 
   #mainNav a[aria-disabled="true"] {
     opacity: 0.55;
-    pointer-events: none;
+    cursor: not-allowed;
   }
 
   #mainNav a:hover,
