@@ -146,6 +146,18 @@ export function initAuth() {
   const loginEmail = $('#loginEmail');
   const loginCancel = $('#loginCancel');
 
+  if (loginModal) {
+    loginModal.addEventListener('click', event => {
+      if (event.target === loginModal) {
+        closeLoginModal();
+      }
+    });
+  }
+
+  if (loginCancel) {
+    loginCancel.addEventListener('click', closeLoginModal);
+  }
+
   if (!firebaseAvailable) {
     if (loginButton) {
       loginButton.setAttribute('aria-disabled', 'true');
@@ -180,18 +192,6 @@ export function initAuth() {
       }
       openLoginModal();
     });
-  }
-
-  if (loginModal) {
-    loginModal.addEventListener('click', event => {
-      if (event.target === loginModal) {
-        closeLoginModal();
-      }
-    });
-  }
-
-  if (loginCancel) {
-    loginCancel.addEventListener('click', closeLoginModal);
   }
 
   if (loginForm) {
