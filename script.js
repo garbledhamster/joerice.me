@@ -20,6 +20,11 @@ if (window.firebase?.apps?.length === 0) {
 if (window.firebase?.auth) {
   auth = window.firebase.auth();
 }
+let firestore = null;
+if (window.firebase?.apps?.length && window.firebase?.firestore) {
+  firestore = window.firebase.firestore();
+}
+const quotesDocRef = firestore ? firestore.collection('siteContent').doc('quotes') : null;
 
 let isAdmin = false;
 const adminEmail = 'jmjrice94@gmail.com';
@@ -75,6 +80,19 @@ document.addEventListener('submit', event => {
     event.preventDefault();
     event.stopPropagation();
   }
+});
+
+document.querySelectorAll('.editButton[data-panel-target]').forEach(button => {
+  const panel = document.getElementById(button.dataset.panelTarget);
+  if (panel) {
+    button.setAttribute('aria-expanded', String(!panel.classList.contains('is-collapsed')));
+  }
+  button.addEventListener('click', () => {
+    if (!ensureAdmin(button.dataset.adminAction || 'admin action')) return;
+    if (!panel) return;
+    const isCollapsed = panel.classList.toggle('is-collapsed');
+    button.setAttribute('aria-expanded', String(!isCollapsed));
+  });
 });
 
 function updateHeaderHeight() {
@@ -282,6 +300,15 @@ const progBar = document.getElementById('quoteProgress');
 let quotes = [];
 let idx = 0;
 const slideMs = 7000;
+let quoteInterval = null;
+let editingQuoteIndex = null;
+
+const quoteListItems = document.getElementById('quoteListItems');
+const quoteEditorPane = document.getElementById('quoteEditorPane');
+const quoteEditorText = document.getElementById('quoteEditorText');
+const quoteEditorAuthor = document.getElementById('quoteEditorAuthor');
+const quoteSaveButton = document.getElementById('quoteSaveButton');
+const quoteAddButton = document.querySelector('.quoteAddButton');
 
 function resetBar() {
   progBar.style.transition = 'none';
@@ -293,27 +320,127 @@ function resetBar() {
 
 function showQuote(i) {
   const q = quotes[i];
+  if (!q) return;
   quoteText.textContent = `“${q.text}”`;
   quoteCite.textContent = `— ${q.author || 'Unknown'}`;
   quoteBox.classList.add('active');
   resetBar();
 }
 
+async function loadQuotesFromYaml() {
+  const qYaml = await fetch('quotes/quotes.yaml').then(r => r.text());
+  return jsyaml.load(qYaml).quotes || [];
+}
+
+async function loadQuotes() {
+  if (quotesDocRef) {
+    try {
+      const doc = await quotesDocRef.get();
+      if (doc.exists) {
+        return doc.data().quotes || [];
+      }
+    } catch (error) {
+      console.warn('Unable to load quotes from Firestore, falling back to YAML.', error);
+    }
+  }
+  return loadQuotesFromYaml();
+}
+
+function startQuoteCarousel() {
+  if (!quotes.length) return;
+  showQuote(0);
+  if (quoteInterval) clearInterval(quoteInterval);
+  quoteInterval = setInterval(() => {
+    quoteBox.classList.remove('active');
+    setTimeout(() => {
+      idx = (idx + 1) % quotes.length;
+      showQuote(idx);
+    }, 600);
+  }, slideMs);
+}
+
+function renderQuoteList(activeIndex = editingQuoteIndex) {
+  if (!quoteListItems) return;
+  quoteListItems.innerHTML = quotes.map((quote, index) => `
+    <li>
+      <button class="quoteListButton ${index === activeIndex ? 'active' : ''}" type="button" data-index="${index}">
+        ${quote.text?.slice(0, 32) || 'Untitled'}${quote.text?.length > 32 ? '…' : ''}
+      </button>
+    </li>
+  `).join('');
+}
+
+function openQuoteEditor({ index, text, author }) {
+  editingQuoteIndex = index;
+  if (quoteEditorPane) {
+    quoteEditorPane.classList.add('is-active');
+  }
+  if (quoteEditorText) quoteEditorText.value = text || '';
+  if (quoteEditorAuthor) quoteEditorAuthor.value = author || '';
+  renderQuoteList(index);
+}
+
+async function saveQuotes() {
+  if (!quotesDocRef) {
+    console.warn('Firestore not configured; quote updates cannot be saved.');
+    return;
+  }
+  await quotesDocRef.set({ quotes }, { merge: true });
+}
+
 (async () => {
   try {
-    const qYaml = await fetch('quotes/quotes.yaml').then(r => r.text());
-    quotes = jsyaml.load(qYaml).quotes || [];
+    quotes = await loadQuotes();
     if (!quotes.length) return;
-    showQuote(0);
-    setInterval(() => {
-      quoteBox.classList.remove('active');
-      setTimeout(() => {
-        idx = (idx + 1) % quotes.length;
-        showQuote(idx);
-      }, 600);
-    }, slideMs);
+    startQuoteCarousel();
+    renderQuoteList(idx);
   } catch {}
 })();
+
+if (quoteListItems) {
+  quoteListItems.addEventListener('click', event => {
+    const button = event.target.closest('[data-index]');
+    if (!button) return;
+    const index = Number(button.dataset.index);
+    const quote = quotes[index];
+    if (!quote) return;
+    openQuoteEditor({ index, text: quote.text, author: quote.author });
+  });
+}
+
+if (quoteAddButton) {
+  quoteAddButton.addEventListener('click', () => {
+    if (!ensureAdmin('add quote')) return;
+    openQuoteEditor({ index: null, text: '', author: '' });
+  });
+}
+
+if (quoteSaveButton) {
+  quoteSaveButton.addEventListener('click', async () => {
+    if (!ensureAdmin('save quote')) return;
+    const text = quoteEditorText?.value.trim();
+    const author = quoteEditorAuthor?.value.trim();
+    if (!text) {
+      alert('Please add a quote before saving.');
+      return;
+    }
+    const updated = { text, author };
+    if (editingQuoteIndex === null || Number.isNaN(editingQuoteIndex)) {
+      quotes.push(updated);
+      editingQuoteIndex = quotes.length - 1;
+    } else {
+      quotes[editingQuoteIndex] = updated;
+    }
+    try {
+      await saveQuotes();
+    } catch (error) {
+      console.warn('Unable to save quotes.', error);
+    }
+    renderQuoteList(editingQuoteIndex);
+    idx = editingQuoteIndex;
+    showQuote(idx);
+  });
+}
 
 window.addEventListener('DOMContentLoaded', () => {
   requestAnimationFrame(() => document.body.classList.add('loaded'));

@@ -46,6 +46,39 @@
   h1 { font-size: clamp(1.9rem, 4.5vw, 2.6rem); }
   h2 { font-size: clamp(1.45rem, 3.5vw, 2rem); }
   h3 { font-size: clamp(1.2rem, 3vw, 1.5rem); }
+
+  .sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: var(--space);
+  }
+
+  .sectionHeader h2 {
+    margin: 0;
+  }
+
+  .editButton {
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.18);
+    color: #fff;
+    padding: .35rem .7rem;
+    font-family: var(--fontHead);
+    font-size: .85rem;
+    letter-spacing: .4px;
+    cursor: pointer;
+    transition: transform .2s, background .2s;
+  }
+
+  .editButton:hover {
+    background: rgba(0, 0, 0, 0.25);
+    transform: translateY(-1px);
+  }
+
+  .editPanel.is-collapsed {
+    display: none;
+  }
   
   a {
     color: inherit;
@@ -533,7 +566,7 @@
   
   /* Quotes carousel */
   .quotes h2 {
-    margin-bottom: var(--space);
+    margin-bottom: 0;
   }
   
   .quoteBox {
@@ -555,6 +588,149 @@
     max-width: 55ch;
     font-style: italic;
     margin-bottom: .6rem;
+  }
+
+  .galleryEditor {
+    background: rgba(0, 0, 0, 0.15);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: .75rem 1rem;
+    max-width: 680px;
+    margin: 0 auto var(--space);
+    display: grid;
+    gap: .6rem;
+    text-align: left;
+  }
+
+  .galleryEditorLabel {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    font-size: .9rem;
+  }
+
+  .galleryEditor input {
+    padding: .35rem .5rem;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+  }
+
+  .galleryEditorHelp {
+    font-size: .85rem;
+    opacity: .85;
+  }
+
+  .quoteEditor {
+    margin-top: var(--space);
+    display: grid;
+    grid-template-columns: minmax(180px, 220px) 1fr;
+    gap: var(--space);
+    text-align: left;
+  }
+
+  .quoteList {
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: .75rem;
+    display: flex;
+    flex-direction: column;
+    gap: .6rem;
+  }
+
+  .quoteListHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: var(--fontHead);
+    letter-spacing: .5px;
+  }
+
+  .quoteListHeader span {
+    font-size: 1.1rem;
+  }
+
+  .quoteAddButton {
+    border: 1px solid #fff;
+    background: rgba(255, 255, 255, 0.2);
+    color: #fff;
+    font-family: var(--fontHead);
+    padding: .2rem .6rem;
+    cursor: pointer;
+  }
+
+  #quoteListItems {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: .4rem;
+  }
+
+  .quoteListButton {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: transparent;
+    color: #fff;
+    text-align: left;
+    padding: .3rem .5rem;
+    cursor: pointer;
+    font-size: .85rem;
+  }
+
+  .quoteListButton.active {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: #fff;
+  }
+
+  .quoteEditorPane {
+    background: rgba(0, 0, 0, 0.18);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 10px;
+    padding: 1rem;
+    display: none;
+    flex-direction: column;
+    gap: .8rem;
+  }
+
+  .quoteEditorPane.is-active {
+    display: flex;
+  }
+
+  .quoteEditorHeader {
+    font-family: var(--fontHead);
+    font-size: 1.2rem;
+  }
+
+  .quoteEditorPane label {
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    font-size: .9rem;
+  }
+
+  .quoteEditorPane textarea,
+  .quoteEditorPane input {
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    padding: .45rem .6rem;
+  }
+
+  .quoteSaveButton {
+    align-self: flex-start;
+    border: 2px solid #fff;
+    background: transparent;
+    color: #fff;
+    padding: .4rem 1rem;
+    font-family: var(--fontHead);
+    border-radius: 0;
+    cursor: pointer;
+  }
+
+  @media (max-width: 720px) {
+    .quoteEditor {
+      grid-template-columns: 1fr;
+    }
   }
   
   /* Progress bar */

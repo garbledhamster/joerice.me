@@ -49,7 +49,6 @@
       <section class="portfolio" id="about">
         <div class="sectionHeader">
           <h2>Portfolio</h2>
-          <button id="editPortfolio" class="editBtn" type="button" hidden>Edit</button>
         </div>
         <div class="subhead">Pinned</div>
         <div class="grid" id="pinnedGrid"></div>
@@ -59,7 +58,19 @@
         <div id="postView"><div id="postContent"><button id="closePost">close</button><div id="postContentInner"></div></div></div>
       </section>
       <section class="gallery">
-        <h2>Gallery</h2>
+        <div class="sectionHeader">
+          <h2>Gallery</h2>
+          <button class="editButton" type="button" data-admin-action="toggle gallery editor" data-panel-target="galleryEditor" aria-expanded="false">Edit</button>
+        </div>
+        <div class="galleryEditor editPanel is-collapsed" id="galleryEditor" data-admin-only>
+          <label class="galleryEditorLabel">Add image
+            <input class="galleryFileInput" type="file" accept="image/*"/>
+          </label>
+          <p class="galleryEditorHelp">Admin-only: pick a new image to add to the slideshow and update the caption below.</p>
+          <label class="galleryEditorLabel">Caption
+            <input class="galleryCaptionInput" type="text" placeholder="Short caption for the slide"/>
+          </label>
+        </div>
         <div class="slideshow" id="slideshow">
           <figure>
             <a id="slideLink" href="#" target="_blank">
@@ -72,9 +83,31 @@
         </div>
       </section>
       <section class="quotes" id="quotes">
-        <h2>Quotes</h2>
+        <div class="sectionHeader">
+          <h2>Quotes</h2>
+          <button class="editButton" type="button" data-admin-action="toggle quotes editor" data-panel-target="quoteEditor" aria-expanded="false">Edit</button>
+        </div>
         <div class="quoteBox" id="quoteBox"><blockquote id="quoteText"></blockquote><cite id="quoteCite"></cite></div>
         <div class="progressWrap"><div class="progressBar" id="quoteProgress"></div></div>
+        <div class="quoteEditor editPanel is-collapsed" id="quoteEditor" data-admin-only>
+          <aside class="quoteList">
+            <div class="quoteListHeader">
+              <span>Quotes</span>
+              <button class="quoteAddButton" type="button">Add</button>
+            </div>
+            <ul id="quoteListItems"></ul>
+          </aside>
+          <div class="quoteEditorPane" id="quoteEditorPane">
+            <div class="quoteEditorHeader">Quote editor</div>
+            <label>Quote
+              <textarea id="quoteEditorText" rows="4" placeholder="Write the quote here"></textarea>
+            </label>
+            <label>Author
+              <input id="quoteEditorAuthor" type="text" placeholder="Quote author"/>
+            </label>
+            <button class="quoteSaveButton" id="quoteSaveButton" type="button">Save</button>
+          </div>
+        </div>
       </section>
       <section class="contact" id="contact">
         <h2>Contact</h2>
@@ -116,6 +149,7 @@
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     <script type="module" src="script.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function() {
