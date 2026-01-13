@@ -26,7 +26,7 @@
         <a href="https://joerice.me/#contact">Contact Me</a>
         <a href="https://joerice.me/#quotes">Quotes</a>
         <a href="https://joerice.me/#links">Useful Links</a>
-        <button class="navButton" id="loginButton" type="button">Login</button>
+        <a class="navButton" id="loginButton" href="#loginModal">Login</a>
       </nav>
     </header>
     <main class="max">
@@ -139,7 +139,7 @@
     <div class="modal" id="modal">
       <div class="modalContent"><p>Thank you! Your message has been sent.</p><button id="closeModal" style="margin-top:1rem; border:1px solid var(--border); padding:.5rem 1rem; background:var(--yellow); font-family:var(--fontHead); cursor:pointer;">close</button></div>
     </div>
-    <div class="modal loginModal" id="loginModal" aria-hidden="true">
+    <div class="modal loginModal" id="loginModal" aria-hidden="true" role="dialog" aria-modal="true">
       <div class="modalContent">
         <h3>Admin login</h3>
         <p>Enter your email to receive a sign-in link.</p>
@@ -148,7 +148,7 @@
           <input id="loginEmail" type="email" autocomplete="email" required/>
           <div class="loginActions">
             <button class="loginSendButton" type="submit">Send login link</button>
-            <button class="loginCancelButton" id="loginCancel" type="button">Cancel</button>
+            <a class="loginCancelButton" id="loginCancel" href="#" role="button">Cancel</a>
           </div>
         </form>
         <p class="loginStatus" id="loginStatus" role="status" aria-live="polite"></p>

@@ -827,7 +827,8 @@
     transition: opacity .25s;
   }
   
-  .modal.show {
+  .modal.show,
+  .modal:target {
     opacity: 1;
     pointer-events: auto;
   }
