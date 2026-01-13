@@ -39,8 +39,16 @@ function showQuote(i) {
 }
 
 async function loadQuotesFromYaml() {
-  const qYaml = await fetch('quotes/quotes.yaml').then(r => r.text());
-  return jsyaml.load(qYaml).quotes || [];
+  const yamlUrl = new URL('../../quotes/quotes.yaml', import.meta.url);
+  const response = await fetch(yamlUrl);
+  if (!response.ok) {
+    throw new Error(`Unable to load quotes YAML (${response.status}).`);
+  }
+  const qYaml = await response.text();
+  if (!globalThis.jsyaml?.load) {
+    throw new Error('YAML parser not available.');
+  }
+  return globalThis.jsyaml.load(qYaml)?.quotes || [];
 }
 
 async function loadQuotes() {
@@ -106,7 +114,9 @@ async function initQuoteData() {
     if (!quotes.length) return;
     startQuoteCarousel();
     renderQuoteList(idx);
-  } catch {}
+  } catch (error) {
+    console.warn('Unable to load quotes.', error);
+  }
 }
 
 export function initQuotes() {
