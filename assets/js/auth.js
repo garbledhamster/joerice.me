@@ -120,7 +120,7 @@ function initFirebase() {
       console.warn('Firebase config missing; auth is disabled.');
     }
   }
-  if (window.firebase?.auth) {
+  if (window.firebase?.apps?.length && window.firebase?.auth) {
     auth = window.firebase.auth();
   }
   if (window.firebase?.apps?.length && window.firebase?.firestore) {
