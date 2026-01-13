@@ -140,11 +140,6 @@
     cursor: not-allowed;
   }
 
-  #mainNav a[aria-disabled="true"]:hover {
-    background: transparent;
-    color: inherit;
-  }
-
   #mainNav a:hover,
   #mainNav button:hover {
     background: var(--fg);
