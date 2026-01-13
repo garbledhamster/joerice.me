@@ -64,13 +64,17 @@ function openLoginModal() {
   lockScroll();
 }
 
-function closeLoginModal() {
+function closeLoginModal(event) {
+  event?.preventDefault();
   const loginModal = $('#loginModal');
   if (!loginModal) return;
   loginModal.classList.remove('show');
   loginModal.setAttribute('aria-hidden', 'true');
   setLoginStatus('');
   unlockScroll();
+  if (window.location.hash === '#loginModal') {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
 }
 
 async function sendLoginLink(email) {
@@ -136,7 +140,8 @@ export function initAuth() {
   const loginCancel = $('#loginCancel');
 
   if (loginButton) {
-    loginButton.addEventListener('click', () => {
+    loginButton.addEventListener('click', event => {
+      event.preventDefault();
       if (isAdmin) {
         setLoginStatus('You are already signed in.');
       }
