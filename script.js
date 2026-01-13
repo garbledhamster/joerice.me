@@ -134,59 +134,17 @@ const nextBtn = document.getElementById('nextBtn');
 const postView = document.getElementById('postView');
 const postContentEl = document.getElementById('postContentInner');
 const closePostBtn = document.getElementById('closePost');
-const editPortfolioBtn = document.getElementById('editPortfolio');
-const isAdmin = window.localStorage.getItem('isAdmin') === 'true';
-let currentPost = null;
-let isEditorMode = false;
+const portfolioStatus = document.getElementById('portfolioStatus');
 
-function getStoredPostContent(url) {
-  return window.localStorage.getItem(`postEdit:${url}`);
-}
-
-function renderPostContent(content) {
-  postContentEl.innerHTML = marked.parse(content || '');
-}
-
-function exitEditorMode() {
-  if (!isEditorMode) return;
-  isEditorMode = false;
-  postView.classList.remove('editorMode');
-  if (currentPost) renderPostContent(currentPost.content);
-}
-
-function enterEditorMode() {
-  if (!isAdmin || !currentPost) return;
-  isEditorMode = true;
-  postView.classList.add('editorMode');
-  postContentEl.innerHTML = '';
-
-  const editor = document.createElement('textarea');
-  editor.className = 'postEditor';
-  editor.value = currentPost.content;
-
-  const controls = document.createElement('div');
-  controls.className = 'editorControls';
-
-  const cancelBtn = document.createElement('button');
-  cancelBtn.type = 'button';
-  cancelBtn.className = 'cancelBtn';
-  cancelBtn.textContent = 'Cancel';
-  cancelBtn.addEventListener('click', exitEditorMode);
-
-  const saveBtn = document.createElement('button');
-  saveBtn.type = 'button';
-  saveBtn.className = 'saveBtn';
-  saveBtn.textContent = 'Save';
-  saveBtn.addEventListener('click', () => {
-    const updated = editor.value;
-    window.localStorage.setItem(`postEdit:${currentPost.url}`, updated);
-    currentPost.content = updated;
-    exitEditorMode();
-  });
-
-  controls.append(cancelBtn, saveBtn);
-  postContentEl.append(editor, controls);
-  editor.focus();
+function setPortfolioStatus(message) {
+  if (!portfolioStatus) return;
+  if (!message) {
+    portfolioStatus.hidden = true;
+    portfolioStatus.textContent = '';
+    return;
+  }
+  portfolioStatus.hidden = false;
+  portfolioStatus.textContent = message;
 }
 
 function renderPinned() {
@@ -258,6 +216,7 @@ if (editPortfolioBtn && isAdmin) {
 
 (async () => {
   try {
+    setPortfolioStatus('Loading posts...');
     const loaderText = await fetch('posts/loader.yaml').then(r => r.text());
     const loaderData = jsyaml.load(loaderText);
     const count = Number(loaderData.posts) || 0;
@@ -283,7 +242,14 @@ if (editPortfolioBtn && isAdmin) {
     notes.sort((a, b) => new Date(b.date) - new Date(a.date));
     renderPinned();
     renderPage();
-  } catch {}
+    if (!pinned.length && !notes.length) {
+      setPortfolioStatus('No posts are available yet.');
+    } else {
+      setPortfolioStatus('');
+    }
+  } catch {
+    setPortfolioStatus('Unable to load posts right now.');
+  }
 })();
 
 document.getElementById('q').addEventListener('input', e => {
