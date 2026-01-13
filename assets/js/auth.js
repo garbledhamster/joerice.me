@@ -1,6 +1,7 @@
 import { $, $$ } from './dom.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
 
+const firebaseConfig = window.firebaseConfig ?? window.FIREBASE_CONFIG;
 const requiredFirebaseKeys = [
   'apiKey',
   'authDomain',
@@ -9,10 +10,11 @@ const requiredFirebaseKeys = [
   'messagingSenderId',
   'appId'
 ];
-let firebaseConfig = null;
-let missingFirebaseKeys = [];
-let hasFirebaseConfig = false;
-let firebaseAvailable = false;
+const missingFirebaseKeys = requiredFirebaseKeys.filter(
+  key => typeof firebaseConfig?.[key] !== 'string' || !firebaseConfig[key].trim()
+);
+const hasFirebaseConfig = missingFirebaseKeys.length === 0;
+let firebaseAvailable = hasFirebaseConfig;
 
 let auth = null;
 let firestore = null;
@@ -61,12 +63,6 @@ function setLoginStatus(message = '') {
 function getFirebaseUnavailableMessage() {
   if (!hasFirebaseConfig) {
     return `Firebase auth is unavailable. Missing config: ${missingFirebaseKeys.join(', ')}.`;
-  }
-  if (!window.firebase) {
-    return 'Firebase auth is unavailable. The Firebase SDK did not load.';
-  }
-  if (!auth) {
-    return 'Firebase auth is unavailable. Auth failed to initialize.';
   }
   return 'Firebase auth is unavailable. Check the site config.';
 }
@@ -184,6 +180,23 @@ export function initAuth() {
 
   initFirebase();
   if (!firebaseAvailable) {
+    if (loginButton) {
+      loginButton.setAttribute('aria-disabled', 'true');
+      loginButton.addEventListener('click', event => {
+        event.preventDefault();
+        setLoginStatus(getFirebaseUnavailableMessage());
+        openLoginModal();
+      });
+    }
+    if (loginForm) {
+      loginForm.addEventListener('submit', event => {
+        event.preventDefault();
+        setLoginStatus(getFirebaseUnavailableMessage());
+      });
+    }
+    if (loginEmail) {
+      loginEmail.removeAttribute('disabled');
+    }
     updateAdminUi();
   }
 
