@@ -1,14 +1,19 @@
 import { $, $$ } from './dom.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
 
-const firebaseConfig = window.firebaseConfig || {
-  apiKey: 'YOUR_API_KEY',
-  authDomain: 'YOUR_AUTH_DOMAIN',
-  projectId: 'YOUR_PROJECT_ID',
-  storageBucket: 'YOUR_STORAGE_BUCKET',
-  messagingSenderId: 'YOUR_MESSAGING_SENDER_ID',
-  appId: 'YOUR_APP_ID'
-};
+const firebaseConfig = window.firebaseConfig;
+const requiredFirebaseKeys = [
+  'apiKey',
+  'authDomain',
+  'projectId',
+  'storageBucket',
+  'messagingSenderId',
+  'appId'
+];
+const hasFirebaseConfig = requiredFirebaseKeys.every(
+  key => typeof firebaseConfig?.[key] === 'string' && firebaseConfig[key].trim()
+);
+let firebaseAvailable = hasFirebaseConfig;
 
 let auth = null;
 let firestore = null;
@@ -113,18 +118,20 @@ async function completeEmailLinkSignIn(email) {
 }
 
 function initFirebase() {
+  if (!firebaseAvailable) {
+    return;
+  }
   if (window.firebase?.apps?.length === 0) {
-    if (firebaseConfig?.apiKey && firebaseConfig.apiKey !== 'YOUR_API_KEY') {
-      window.firebase.initializeApp(firebaseConfig);
-    } else {
-      console.warn('Firebase config missing; auth is disabled.');
-    }
+    window.firebase.initializeApp(firebaseConfig);
   }
   if (window.firebase?.apps?.length && window.firebase?.auth) {
     auth = window.firebase.auth();
   }
   if (window.firebase?.apps?.length && window.firebase?.firestore) {
     firestore = window.firebase.firestore();
+  }
+  if (!auth) {
+    firebaseAvailable = false;
   }
 }
 
@@ -138,6 +145,32 @@ export function initAuth() {
   const loginForm = $('#loginForm');
   const loginEmail = $('#loginEmail');
   const loginCancel = $('#loginCancel');
+
+  if (!firebaseAvailable) {
+    if (loginButton) {
+      loginButton.setAttribute('aria-disabled', 'true');
+      loginButton.addEventListener('click', event => {
+        event.preventDefault();
+        setLoginStatus('Firebase auth is unavailable. Check the site config.');
+        openLoginModal();
+      });
+    }
+    if (loginForm) {
+      loginForm.addEventListener('submit', event => {
+        event.preventDefault();
+        setLoginStatus('Firebase auth is unavailable. Check the site config.');
+      });
+    }
+    if (loginEmail) {
+      loginEmail.disabled = true;
+    }
+    const loginSendButton = loginForm?.querySelector('button[type="submit"]');
+    if (loginSendButton) {
+      loginSendButton.disabled = true;
+    }
+    updateAdminUi();
+    return;
+  }
 
   if (loginButton) {
     loginButton.addEventListener('click', event => {
