@@ -1,3 +1,5 @@
+import { $ } from '../dom.js';
+
 let scrollY = 0;
 
 export function lockScroll() {
@@ -15,7 +17,7 @@ export function unlockScroll() {
 }
 
 function updateHeaderHeight() {
-  const header = document.querySelector('.siteHeader');
+  const header = $('.siteHeader');
   if (!header) return;
   const height = header.offsetHeight;
   document.documentElement.style.setProperty('--header-h', `${height}px`);
@@ -25,8 +27,8 @@ export function initLayout() {
   updateHeaderHeight();
   window.addEventListener('resize', updateHeaderHeight);
 
-  const menuToggle = document.querySelector('.menuToggle');
-  const mainNav = document.getElementById('mainNav');
+  const menuToggle = $('.menuToggle');
+  const mainNav = $('#mainNav');
   if (menuToggle && mainNav) {
     menuToggle.addEventListener('click', () => mainNav.classList.toggle('open'));
   }

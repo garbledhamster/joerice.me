@@ -1,3 +1,4 @@
+import { $, $$ } from './dom.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
 
 const firebaseConfig = window.firebaseConfig || {
@@ -21,7 +22,7 @@ export function isAdminUser() {
 }
 
 export function updateAdminUi() {
-  const adminOnlyElements = document.querySelectorAll(
+  const adminOnlyElements = $$(
     '[data-admin-only], .editButton, .editBtn, .editPanel'
   );
   adminOnlyElements.forEach(el => {
@@ -31,7 +32,7 @@ export function updateAdminUi() {
     el.classList.toggle('admin-hidden', shouldHide);
   });
 
-  const loginButton = document.getElementById('loginButton');
+  const loginButton = $('#loginButton');
   if (loginButton) {
     loginButton.textContent = isAdmin ? 'Admin' : 'Login';
   }
@@ -48,14 +49,14 @@ export function getFirestore() {
 }
 
 function setLoginStatus(message = '') {
-  const loginStatus = document.getElementById('loginStatus');
+  const loginStatus = $('#loginStatus');
   if (!loginStatus) return;
   loginStatus.textContent = message;
 }
 
 function openLoginModal() {
-  const loginModal = document.getElementById('loginModal');
-  const loginEmail = document.getElementById('loginEmail');
+  const loginModal = $('#loginModal');
+  const loginEmail = $('#loginEmail');
   if (!loginModal) return;
   loginModal.classList.add('show');
   loginModal.setAttribute('aria-hidden', 'false');
@@ -64,7 +65,7 @@ function openLoginModal() {
 }
 
 function closeLoginModal() {
-  const loginModal = document.getElementById('loginModal');
+  const loginModal = $('#loginModal');
   if (!loginModal) return;
   loginModal.classList.remove('show');
   loginModal.setAttribute('aria-hidden', 'true');
@@ -128,11 +129,11 @@ export function initAuth() {
 
   window.isAdminUser = isAdminUser;
 
-  const loginButton = document.getElementById('loginButton');
-  const loginModal = document.getElementById('loginModal');
-  const loginForm = document.getElementById('loginForm');
-  const loginEmail = document.getElementById('loginEmail');
-  const loginCancel = document.getElementById('loginCancel');
+  const loginButton = $('#loginButton');
+  const loginModal = $('#loginModal');
+  const loginForm = $('#loginForm');
+  const loginEmail = $('#loginEmail');
+  const loginCancel = $('#loginCancel');
 
   if (loginButton) {
     loginButton.addEventListener('click', () => {
@@ -208,8 +209,8 @@ export function initAuth() {
     }
   });
 
-  document.querySelectorAll('.editButton[data-panel-target], .editBtn[data-panel-target]').forEach(button => {
-    const panel = document.getElementById(button.dataset.panelTarget);
+  $$('.editButton[data-panel-target], .editBtn[data-panel-target]').forEach(button => {
+    const panel = $(`#${button.dataset.panelTarget}`);
     if (panel) {
       button.setAttribute('aria-expanded', String(!panel.classList.contains('is-collapsed')));
     }

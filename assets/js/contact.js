@@ -1,3 +1,5 @@
+import { $ } from './dom.js';
+
 let modal = null;
 let closeModalButton = null;
 let contactForm = null;
@@ -13,9 +15,9 @@ function hideModal() {
 }
 
 export function initContact() {
-  modal = document.getElementById('modal');
-  closeModalButton = document.getElementById('closeModal');
-  contactForm = document.getElementById('contactForm');
+  modal = $('#modal');
+  closeModalButton = $('#closeModal');
+  contactForm = $('#contactForm');
 
   if (closeModalButton) {
     closeModalButton.addEventListener('click', hideModal);

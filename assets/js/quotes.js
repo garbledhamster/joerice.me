@@ -1,4 +1,5 @@
 import { ensureAdmin, getFirestore } from './auth.js';
+import { $ } from './dom.js';
 
 let quoteBox = null;
 let quoteText = null;
@@ -109,17 +110,17 @@ async function initQuoteData() {
 }
 
 export function initQuotes() {
-  quoteBox = document.getElementById('quoteBox');
-  quoteText = document.getElementById('quoteText');
-  quoteCite = document.getElementById('quoteCite');
-  progBar = document.getElementById('quoteProgress');
-  quoteStatus = document.getElementById('quoteStatus');
-  quoteListItems = document.getElementById('quoteListItems');
-  quoteEditorPane = document.getElementById('quoteEditorPane');
-  quoteEditorText = document.getElementById('quoteEditorText');
-  quoteEditorAuthor = document.getElementById('quoteEditorAuthor');
-  quoteSaveButton = document.getElementById('quoteSaveButton');
-  quoteAddButton = document.querySelector('.quoteAddButton');
+  quoteBox = $('#quoteBox');
+  quoteText = $('#quoteText');
+  quoteCite = $('#quoteCite');
+  progBar = $('#quoteProgress');
+  quoteStatus = $('#quoteStatus');
+  quoteListItems = $('#quoteListItems');
+  quoteEditorPane = $('#quoteEditorPane');
+  quoteEditorText = $('#quoteEditorText');
+  quoteEditorAuthor = $('#quoteEditorAuthor');
+  quoteSaveButton = $('#quoteSaveButton');
+  quoteAddButton = $('.quoteAddButton');
 
   const firestore = getFirestore();
   quotesDocRef = firestore ? firestore.collection('siteContent').doc('quotes') : null;
