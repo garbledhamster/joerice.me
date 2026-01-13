@@ -122,17 +122,24 @@
     gap: clamp(12px, 2vw, 24px);
   }
   
-  #mainNav a {
+  #mainNav a,
+  #mainNav button {
     font-family: var(--fontHead);
     border: 1px solid var(--border);
     padding: .3rem .7rem;
     white-space: nowrap;
     transition: background .2s;
   }
-  
-  #mainNav a:hover {
+
+  #mainNav a:hover,
+  #mainNav button:hover {
     background: var(--fg);
     color: var(--bg);
+  }
+
+  #mainNav button {
+    background: transparent;
+    cursor: pointer;
   }
   
   .menuToggle {
@@ -172,7 +179,8 @@
     #mainNav.open {
       transform: scaleY(1);
     }
-    #mainNav a {
+    #mainNav a,
+    #mainNav button {
       width: 100%;
       border-width: 1px 0 0;
       padding: .5rem 0;
@@ -831,6 +839,56 @@
     max-width: 320px;
     text-align: center;
     font-size: 1rem;
+  }
+
+  .loginModal .modalContent {
+    max-width: 360px;
+    text-align: left;
+  }
+
+  .loginModal h3 {
+    margin-top: 0;
+  }
+
+  .loginModal form {
+    display: grid;
+    gap: .75rem;
+    margin-top: 1rem;
+  }
+
+  .loginModal input {
+    border: 1px solid var(--border);
+    padding: .5rem;
+    font-family: var(--font);
+  }
+
+  .loginActions {
+    display: flex;
+    gap: .5rem;
+    flex-wrap: wrap;
+  }
+
+  .loginSendButton,
+  .loginCancelButton {
+    border: 1px solid var(--border);
+    padding: .45rem .9rem;
+    font-family: var(--fontHead);
+    cursor: pointer;
+  }
+
+  .loginSendButton {
+    background: var(--green);
+    color: #fff;
+  }
+
+  .loginCancelButton {
+    background: transparent;
+  }
+
+  .loginStatus {
+    margin-top: .75rem;
+    min-height: 1.2rem;
+    color: var(--blue);
   }
   
   /* Links section */

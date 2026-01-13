@@ -37,7 +37,7 @@ window.isAdminUser = isAdminUser;
 
 function updateAdminUi() {
   const adminOnlyElements = document.querySelectorAll(
-    '[data-admin-only], .editButton, .editPanel'
+    '[data-admin-only], .editButton, .editBtn, .editPanel'
   );
   adminOnlyElements.forEach(el => {
     const shouldHide = !isAdmin;
@@ -45,12 +45,126 @@ function updateAdminUi() {
     el.setAttribute('aria-hidden', String(shouldHide));
     el.classList.toggle('admin-hidden', shouldHide);
   });
+
+  const loginButton = document.getElementById('loginButton');
+  if (loginButton) {
+    loginButton.textContent = isAdmin ? 'Admin' : 'Login';
+  }
 }
 
 function ensureAdmin(actionLabel = 'admin action') {
   if (isAdmin) return true;
   console.warn(`Blocked ${actionLabel}: not an admin user.`);
   return false;
+}
+
+const loginButton = document.getElementById('loginButton');
+const loginModal = document.getElementById('loginModal');
+const loginForm = document.getElementById('loginForm');
+const loginEmail = document.getElementById('loginEmail');
+const loginStatus = document.getElementById('loginStatus');
+const loginCancel = document.getElementById('loginCancel');
+let pendingEmailSignInLink = null;
+
+function setLoginStatus(message = '') {
+  if (!loginStatus) return;
+  loginStatus.textContent = message;
+}
+
+function openLoginModal() {
+  if (!loginModal) return;
+  loginModal.classList.add('show');
+  loginModal.setAttribute('aria-hidden', 'false');
+  setTimeout(() => loginEmail?.focus(), 0);
+  lockScroll();
+}
+
+function closeLoginModal() {
+  if (!loginModal) return;
+  loginModal.classList.remove('show');
+  loginModal.setAttribute('aria-hidden', 'true');
+  setLoginStatus('');
+  unlockScroll();
+}
+
+async function sendLoginLink(email) {
+  if (!auth?.sendSignInLinkToEmail) {
+    setLoginStatus('Firebase auth is unavailable. Check the site config.');
+    return;
+  }
+  const actionCodeSettings = {
+    url: `${window.location.origin}${window.location.pathname}`,
+    handleCodeInApp: true
+  };
+  try {
+    await auth.sendSignInLinkToEmail(email, actionCodeSettings);
+    window.localStorage.setItem('emailForSignIn', email);
+    setLoginStatus('Check your inbox for a sign-in link.');
+  } catch (error) {
+    console.error('Failed to send sign-in link', error);
+    setLoginStatus('Unable to send the sign-in link. Please try again.');
+  }
+}
+
+async function completeEmailLinkSignIn(email) {
+  if (!pendingEmailSignInLink || !auth?.signInWithEmailLink) return;
+  try {
+    await auth.signInWithEmailLink(email, pendingEmailSignInLink);
+    window.localStorage.removeItem('emailForSignIn');
+    pendingEmailSignInLink = null;
+    const cleanUrl = new URL(window.location.href);
+    cleanUrl.search = '';
+    cleanUrl.hash = '';
+    window.location.replace(cleanUrl.toString());
+  } catch (error) {
+    console.error('Failed to complete email link sign-in', error);
+    setLoginStatus('Unable to complete sign-in. Please try again.');
+  }
+}
+
+if (loginButton) {
+  loginButton.addEventListener('click', () => {
+    if (isAdmin) {
+      setLoginStatus('You are already signed in.');
+    }
+    openLoginModal();
+  });
+}
+
+if (loginModal) {
+  loginModal.addEventListener('click', event => {
+    if (event.target === loginModal) {
+      closeLoginModal();
+    }
+  });
+}
+
+if (loginCancel) {
+  loginCancel.addEventListener('click', closeLoginModal);
+}
+
+if (loginForm) {
+  loginForm.addEventListener('submit', async event => {
+    event.preventDefault();
+    const email = loginEmail?.value.trim();
+    if (!email) return;
+    if (pendingEmailSignInLink) {
+      await completeEmailLinkSignIn(email);
+      return;
+    }
+    await sendLoginLink(email);
+  });
+}
+
+if (auth?.isSignInWithEmailLink && auth.isSignInWithEmailLink(window.location.href)) {
+  pendingEmailSignInLink = window.location.href;
+  const storedEmail = window.localStorage.getItem('emailForSignIn');
+  if (storedEmail) {
+    completeEmailLinkSignIn(storedEmail);
+  } else {
+    setLoginStatus('Enter your email to finish signing in.');
+    openLoginModal();
+  }
 }
 
 if (auth?.onAuthStateChanged) {
@@ -63,7 +177,7 @@ if (auth?.onAuthStateChanged) {
 }
 
 document.addEventListener('click', event => {
-  const adminTarget = event.target.closest('[data-admin-action], .editButton');
+  const adminTarget = event.target.closest('[data-admin-action], .editButton, .editBtn');
   if (!adminTarget) return;
   const label = adminTarget.dataset.adminAction || 'admin action';
   if (!ensureAdmin(label)) {
@@ -82,7 +196,7 @@ document.addEventListener('submit', event => {
   }
 });
 
-document.querySelectorAll('.editButton[data-panel-target]').forEach(button => {
+document.querySelectorAll('.editButton[data-panel-target], .editBtn[data-panel-target]').forEach(button => {
   const panel = document.getElementById(button.dataset.panelTarget);
   if (panel) {
     button.setAttribute('aria-expanded', String(!panel.classList.contains('is-collapsed')));
