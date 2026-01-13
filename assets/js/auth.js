@@ -19,6 +19,8 @@ let firebaseAvailable = hasFirebaseConfig;
 let auth = null;
 let firestore = null;
 let isAdmin = false;
+let currentUserId = null;
+const authListeners = new Set();
 
 const adminEmail = 'jmjrice94@gmail.com';
 let pendingEmailSignInLink = null;
@@ -52,6 +54,16 @@ export function ensureAdmin(actionLabel = 'admin action') {
 
 export function getFirestore() {
   return firestore;
+}
+
+export function getCurrentUserId() {
+  return currentUserId;
+}
+
+export function onAuthStateChange(callback) {
+  if (typeof callback !== 'function') return () => {};
+  authListeners.add(callback);
+  return () => authListeners.delete(callback);
 }
 
 function setLoginStatus(message = '') {
@@ -155,6 +167,16 @@ function initFirebase() {
   }
 }
 
+function notifyAuthListeners(user) {
+  authListeners.forEach(listener => {
+    try {
+      listener(user);
+    } catch (error) {
+      console.warn('Auth state listener failed.', error);
+    }
+  });
+}
+
 export function initAuth() {
   initFirebase();
 
@@ -248,10 +270,13 @@ export function initAuth() {
   if (auth?.onAuthStateChanged) {
     auth.onAuthStateChanged(user => {
       isAdmin = user?.email === adminEmail;
+      currentUserId = user?.uid ?? null;
       updateAdminUi();
+      notifyAuthListeners(user);
     });
   } else {
     updateAdminUi();
+    notifyAuthListeners(null);
   }
 
   document.addEventListener('click', event => {
