@@ -1,7 +1,6 @@
 import { $, $$ } from './dom.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
 
-const firebaseConfig = window.firebaseConfig;
 const requiredFirebaseKeys = [
   'apiKey',
   'authDomain',
@@ -10,10 +9,10 @@ const requiredFirebaseKeys = [
   'messagingSenderId',
   'appId'
 ];
-const hasFirebaseConfig = requiredFirebaseKeys.every(
-  key => typeof firebaseConfig?.[key] === 'string' && firebaseConfig[key].trim()
-);
-let firebaseAvailable = hasFirebaseConfig;
+let firebaseConfig = null;
+let missingFirebaseKeys = [];
+let hasFirebaseConfig = false;
+let firebaseAvailable = false;
 
 let auth = null;
 let firestore = null;
@@ -59,6 +58,19 @@ function setLoginStatus(message = '') {
   loginStatus.textContent = message;
 }
 
+function getFirebaseUnavailableMessage() {
+  if (!hasFirebaseConfig) {
+    return `Firebase auth is unavailable. Missing config: ${missingFirebaseKeys.join(', ')}.`;
+  }
+  if (!window.firebase) {
+    return 'Firebase auth is unavailable. The Firebase SDK did not load.';
+  }
+  if (!auth) {
+    return 'Firebase auth is unavailable. Auth failed to initialize.';
+  }
+  return 'Firebase auth is unavailable. Check the site config.';
+}
+
 function openLoginModal() {
   const loginModal = $('#loginModal');
   const loginEmail = $('#loginEmail');
@@ -83,8 +95,9 @@ function closeLoginModal(event) {
 }
 
 async function sendLoginLink(email) {
+  initFirebase();
   if (!auth?.sendSignInLinkToEmail) {
-    setLoginStatus('Firebase auth is unavailable. Check the site config.');
+    setLoginStatus(getFirebaseUnavailableMessage());
     return;
   }
   const actionCodeSettings = {
@@ -97,11 +110,13 @@ async function sendLoginLink(email) {
     setLoginStatus('Check your inbox for a sign-in link.');
   } catch (error) {
     console.error('Failed to send sign-in link', error);
-    setLoginStatus('Unable to send the sign-in link. Please try again.');
+    const errorMessage = error?.message ? ` ${error.message}` : '';
+    setLoginStatus(`Unable to send the sign-in link. Please try again.${errorMessage}`);
   }
 }
 
 async function completeEmailLinkSignIn(email) {
+  initFirebase();
   if (!pendingEmailSignInLink || !auth?.signInWithEmailLink) return;
   try {
     await auth.signInWithEmailLink(email, pendingEmailSignInLink);
@@ -113,12 +128,21 @@ async function completeEmailLinkSignIn(email) {
     window.location.replace(cleanUrl.toString());
   } catch (error) {
     console.error('Failed to complete email link sign-in', error);
-    setLoginStatus('Unable to complete sign-in. Please try again.');
+    const errorMessage = error?.message ? ` ${error.message}` : '';
+    setLoginStatus(`Unable to complete sign-in. Please try again.${errorMessage}`);
   }
 }
 
 function initFirebase() {
-  if (!firebaseAvailable) {
+  firebaseConfig = window.firebaseConfig ?? window.FIREBASE_CONFIG ?? null;
+  missingFirebaseKeys = requiredFirebaseKeys.filter(
+    key => typeof firebaseConfig?.[key] !== 'string' || !firebaseConfig[key].trim()
+  );
+  hasFirebaseConfig = missingFirebaseKeys.length === 0;
+  firebaseAvailable = hasFirebaseConfig;
+  if (!firebaseAvailable || !window.firebase) {
+    auth = null;
+    firestore = null;
     return;
   }
   if (window.firebase?.apps?.length === 0) {
@@ -158,31 +182,20 @@ export function initAuth() {
     loginCancel.addEventListener('click', closeLoginModal);
   }
 
+  initFirebase();
   if (!firebaseAvailable) {
-    if (loginButton) {
-      loginButton.setAttribute('aria-disabled', 'true');
-      loginButton.addEventListener('click', event => {
-        event.preventDefault();
-        setLoginStatus('Firebase auth is unavailable. Check the site config.');
-        openLoginModal();
-      });
-    }
-    if (loginForm) {
-      loginForm.addEventListener('submit', event => {
-        event.preventDefault();
-        setLoginStatus('Firebase auth is unavailable. Check the site config.');
-      });
-    }
-    if (loginEmail) {
-      loginEmail.removeAttribute('disabled');
-    }
     updateAdminUi();
-    return;
   }
 
   if (loginButton) {
     loginButton.addEventListener('click', event => {
       event.preventDefault();
+      initFirebase();
+      if (!firebaseAvailable) {
+        setLoginStatus(getFirebaseUnavailableMessage());
+        openLoginModal();
+        return;
+      }
       if (isAdmin) {
         setLoginStatus('You are already signed in.');
       }
@@ -193,6 +206,11 @@ export function initAuth() {
   if (loginForm) {
     loginForm.addEventListener('submit', async event => {
       event.preventDefault();
+      initFirebase();
+      if (!firebaseAvailable) {
+        setLoginStatus(getFirebaseUnavailableMessage());
+        return;
+      }
       const email = loginEmail?.value.trim();
       if (!email) return;
       if (pendingEmailSignInLink) {
