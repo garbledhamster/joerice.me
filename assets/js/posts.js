@@ -1,4 +1,5 @@
 import { ensureAdmin, isAdminUser } from './auth.js';
+import { $, $$ } from './dom.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
 
 const pinned = [];
@@ -31,9 +32,9 @@ function setPortfolioStatus(message) {
 }
 
 function attachClickHandlers() {
-  document.querySelectorAll('.entry').forEach(el => {
+  $$('.entry').forEach(el => {
     el.addEventListener('click', async () => {
-      document.querySelectorAll('.entry.active').forEach(a => a.classList.remove('active'));
+      $$('.entry.active').forEach(a => a.classList.remove('active'));
       el.classList.add('active');
       await openPost(el.dataset.url);
     });
@@ -41,7 +42,7 @@ function attachClickHandlers() {
 }
 
 function filterEntries() {
-  document.querySelectorAll('.entry').forEach(el => {
+  $$('.entry').forEach(el => {
     const tags = (el.dataset.tags || '').split('|');
     const hide = selectedTags.size &&
                  ![...selectedTags].some(t => tags.includes(t));
@@ -138,22 +139,22 @@ async function loadPosts() {
 }
 
 export function initPosts() {
-  pinnedGrid = document.getElementById('pinnedGrid');
-  entryGrid = document.getElementById('entryGrid');
-  prevBtn = document.getElementById('prevBtn');
-  nextBtn = document.getElementById('nextBtn');
-  postView = document.getElementById('postView');
-  postContentEl = document.getElementById('postContentInner');
-  closePostBtn = document.getElementById('closePost');
-  portfolioStatus = document.getElementById('portfolioStatus');
-  editPortfolioBtn = document.getElementById('editPortfolioBtn');
-  searchInput = document.getElementById('q');
+  pinnedGrid = $('#pinnedGrid');
+  entryGrid = $('#entryGrid');
+  prevBtn = $('#prevBtn');
+  nextBtn = $('#nextBtn');
+  postView = $('#postView');
+  postContentEl = $('#postContentInner');
+  closePostBtn = $('#closePost');
+  portfolioStatus = $('#portfolioStatus');
+  editPortfolioBtn = $('#editPortfolioBtn');
+  searchInput = $('#q');
 
   if (!pinnedGrid || !entryGrid) return;
 
   if (closePostBtn) {
     closePostBtn.addEventListener('click', () => {
-      document.querySelectorAll('.entry.active').forEach(a => a.classList.remove('active'));
+      $$('.entry.active').forEach(a => a.classList.remove('active'));
       if (postView) postView.classList.remove('show');
       unlockScroll();
       if (typeof window.exitEditorMode === 'function') {
@@ -168,7 +169,7 @@ export function initPosts() {
       if (!ensureAdmin('edit portfolio')) return;
       let targetUrl = currentPost?.url;
       if (!targetUrl) {
-        const activeEntry = document.querySelector('.entry.active');
+        const activeEntry = $('.entry.active');
         targetUrl = activeEntry?.dataset.url;
       }
       if (!targetUrl) return;
@@ -184,13 +185,13 @@ export function initPosts() {
   if (searchInput) {
     searchInput.addEventListener('input', e => {
       const v = e.target.value.toLowerCase();
-      document.querySelectorAll('.entry').forEach(el => {
+      $$('.entry').forEach(el => {
         el.style.display = el.textContent.toLowerCase().includes(v) ? '' : 'none';
       });
     });
   }
 
-  document.querySelectorAll('.filterBtn').forEach(btn => {
+  $$('.filterBtn').forEach(btn => {
     btn.addEventListener('click', () => {
       const tag = btn.dataset.tag;
       btn.classList.toggle('active');
