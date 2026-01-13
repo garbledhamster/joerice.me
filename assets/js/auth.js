@@ -1,7 +1,7 @@
 import { $, $$ } from './dom.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
 
-const firebaseConfig = window.firebaseConfig;
+const firebaseConfig = window.firebaseConfig ?? window.FIREBASE_CONFIG;
 const requiredFirebaseKeys = [
   'apiKey',
   'authDomain',
@@ -10,9 +10,10 @@ const requiredFirebaseKeys = [
   'messagingSenderId',
   'appId'
 ];
-const hasFirebaseConfig = requiredFirebaseKeys.every(
-  key => typeof firebaseConfig?.[key] === 'string' && firebaseConfig[key].trim()
+const missingFirebaseKeys = requiredFirebaseKeys.filter(
+  key => typeof firebaseConfig?.[key] !== 'string' || !firebaseConfig[key].trim()
 );
+const hasFirebaseConfig = missingFirebaseKeys.length === 0;
 let firebaseAvailable = hasFirebaseConfig;
 
 let auth = null;
@@ -59,6 +60,13 @@ function setLoginStatus(message = '') {
   loginStatus.textContent = message;
 }
 
+function getFirebaseUnavailableMessage() {
+  if (!hasFirebaseConfig) {
+    return `Firebase auth is unavailable. Missing config: ${missingFirebaseKeys.join(', ')}.`;
+  }
+  return 'Firebase auth is unavailable. Check the site config.';
+}
+
 function openLoginModal() {
   const loginModal = $('#loginModal');
   const loginEmail = $('#loginEmail');
@@ -84,7 +92,7 @@ function closeLoginModal(event) {
 
 async function sendLoginLink(email) {
   if (!auth?.sendSignInLinkToEmail) {
-    setLoginStatus('Firebase auth is unavailable. Check the site config.');
+    setLoginStatus(getFirebaseUnavailableMessage());
     return;
   }
   const actionCodeSettings = {
@@ -97,7 +105,8 @@ async function sendLoginLink(email) {
     setLoginStatus('Check your inbox for a sign-in link.');
   } catch (error) {
     console.error('Failed to send sign-in link', error);
-    setLoginStatus('Unable to send the sign-in link. Please try again.');
+    const errorMessage = error?.message ? ` ${error.message}` : '';
+    setLoginStatus(`Unable to send the sign-in link. Please try again.${errorMessage}`);
   }
 }
 
@@ -113,7 +122,8 @@ async function completeEmailLinkSignIn(email) {
     window.location.replace(cleanUrl.toString());
   } catch (error) {
     console.error('Failed to complete email link sign-in', error);
-    setLoginStatus('Unable to complete sign-in. Please try again.');
+    const errorMessage = error?.message ? ` ${error.message}` : '';
+    setLoginStatus(`Unable to complete sign-in. Please try again.${errorMessage}`);
   }
 }
 
@@ -163,14 +173,14 @@ export function initAuth() {
       loginButton.setAttribute('aria-disabled', 'true');
       loginButton.addEventListener('click', event => {
         event.preventDefault();
-        setLoginStatus('Firebase auth is unavailable. Check the site config.');
+        setLoginStatus(getFirebaseUnavailableMessage());
         openLoginModal();
       });
     }
     if (loginForm) {
       loginForm.addEventListener('submit', event => {
         event.preventDefault();
-        setLoginStatus('Firebase auth is unavailable. Check the site config.');
+        setLoginStatus(getFirebaseUnavailableMessage());
       });
     }
     if (loginEmail) {
