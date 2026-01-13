@@ -263,6 +263,7 @@ const quoteBox = document.getElementById('quoteBox');
 const quoteText = document.getElementById('quoteText');
 const quoteCite = document.getElementById('quoteCite');
 const progBar = document.getElementById('quoteProgress');
+const quoteStatus = document.getElementById('quoteStatus');
 let quotes = [];
 let idx = 0;
 const slideMs = 7000;
