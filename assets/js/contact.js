@@ -1,0 +1,45 @@
+let modal = null;
+let closeModalButton = null;
+let contactForm = null;
+
+function openModal() {
+  if (!modal) return;
+  modal.classList.add('show');
+}
+
+function hideModal() {
+  if (!modal) return;
+  modal.classList.remove('show');
+}
+
+export function initContact() {
+  modal = document.getElementById('modal');
+  closeModalButton = document.getElementById('closeModal');
+  contactForm = document.getElementById('contactForm');
+
+  if (closeModalButton) {
+    closeModalButton.addEventListener('click', hideModal);
+  }
+
+  if (modal) {
+    modal.addEventListener('click', e => {
+      if (e.target === modal) hideModal();
+    });
+  }
+
+  if (contactForm) {
+    contactForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const fd = new FormData(e.target);
+      try {
+        await fetch('https://formspree.io/f/xovqpvdv', {
+          method: 'POST',
+          body: fd,
+          headers: { 'Accept': 'application/json' }
+        });
+      } catch {}
+      e.target.reset();
+      openModal();
+    });
+  }
+}
