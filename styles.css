@@ -257,6 +257,34 @@
     font-size: 1rem;
     text-decoration: underline;
   }
+
+  .sectionHeader {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+  }
+
+  .sectionHeader h2 {
+    margin: 0;
+  }
+
+  .sectionHeader .editBtn {
+    margin-left: auto;
+    padding: .25rem .65rem;
+    font-size: .75rem;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    font-family: var(--fontHead);
+    border: 1px solid rgba(255,255,255,.8);
+    background: rgba(0,0,0,.15);
+    color: #fff;
+    cursor: pointer;
+  }
+
+  .sectionHeader .editBtn:hover {
+    background: #fff;
+    color: var(--green);
+  }
   
   /* Grid & entries */
   .grid {
@@ -359,6 +387,44 @@
   
   #postView.show #postContent {
     transform: scale(1);
+  }
+
+  #postView.editorMode #postContent {
+    max-width: min(920px, 94vw);
+  }
+
+  .postEditor {
+    width: 100%;
+    min-height: 50vh;
+    padding: 1rem;
+    border: 1px solid var(--border);
+    background: #f8f8f8;
+    color: #222;
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: .95rem;
+    resize: vertical;
+  }
+
+  .editorControls {
+    display: flex;
+    justify-content: flex-end;
+    gap: .6rem;
+    margin-top: 1rem;
+  }
+
+  .editorControls button {
+    border: 1px solid var(--border);
+    padding: .4rem .9rem;
+    font-family: var(--fontHead);
+    cursor: pointer;
+  }
+
+  .editorControls .saveBtn {
+    background: var(--yellow);
+  }
+
+  .editorControls .cancelBtn {
+    background: var(--bg);
   }
   
   /* Post content styling */
