@@ -197,7 +197,7 @@ export function initPosts() {
       btn.classList.toggle('active');
       if (btn.classList.contains('active')) selectedTags.add(tag);
       else selectedTags.delete(tag);
-      filterEntries();
+      renderPage();
     });
   });
 
