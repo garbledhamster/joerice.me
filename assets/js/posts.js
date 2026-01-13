@@ -20,6 +20,10 @@ let portfolioStatus = null;
 let editPortfolioBtn = null;
 let searchInput = null;
 
+function getYamlParser() {
+  return globalThis.jsyaml;
+}
+
 function setPortfolioStatus(message) {
   if (!portfolioStatus) return;
   if (!message) {
@@ -75,8 +79,12 @@ export async function openPost(url) {
     window.exitEditorMode();
   }
   try {
+    const yaml = getYamlParser();
+    if (!yaml) {
+      throw new Error('YAML parser unavailable');
+    }
     const raw = await fetch(url).then(r => r.text());
-    const data = jsyaml.load(raw);
+    const data = yaml.load(raw);
     const storedContent = typeof window.getStoredPostContent === 'function'
       ? window.getStoredPostContent(url)
       : null;
@@ -103,8 +111,13 @@ export async function openPost(url) {
 async function loadPosts() {
   try {
     setPortfolioStatus('Loading posts...');
+    const yaml = getYamlParser();
+    if (!yaml) {
+      setPortfolioStatus('Unable to load posts right now.');
+      return;
+    }
     const loaderText = await fetch('posts/loader.yaml').then(r => r.text());
-    const loaderData = jsyaml.load(loaderText);
+    const loaderData = yaml.load(loaderText);
     const count = Number(loaderData.posts) || 0;
     for (let i = 1; i <= count; i++) {
       const filePath = `posts/${String(i).padStart(4, '0')}.yaml`;
@@ -113,7 +126,7 @@ async function loadPosts() {
           if (!r.ok) throw new Error();
           return r.text();
         });
-        const data = jsyaml.load(raw);
+        const data = yaml.load(raw);
         const entry = {
           title: data.title,
           date: data.date,
