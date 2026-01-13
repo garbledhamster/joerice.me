@@ -131,6 +131,11 @@
     transition: background .2s;
   }
 
+  #mainNav a[aria-disabled="true"] {
+    opacity: 0.55;
+    pointer-events: none;
+  }
+
   #mainNav a:hover,
   #mainNav button:hover {
     background: var(--fg);
