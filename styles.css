@@ -257,6 +257,48 @@
     font-size: 1rem;
     text-decoration: underline;
   }
+
+  .sectionHeader {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+
+  .sectionHeader h2 {
+    margin: 0;
+  }
+
+  .editBtn {
+    border: 1px solid #fff;
+    background: transparent;
+    color: #fff;
+    font-family: var(--fontHead);
+    font-size: .85rem;
+    letter-spacing: .08em;
+    padding: .3rem .7rem;
+    text-transform: uppercase;
+    cursor: pointer;
+  }
+
+  .editBtn:hover {
+    background: #fff;
+    color: var(--fg);
+  }
+
+  .portfolioStatus {
+    margin: .6rem 0;
+    padding: .5rem .75rem;
+    border: 1px dashed rgba(255,255,255,0.6);
+    font-size: .95rem;
+  }
+
+  .quoteStatus {
+    margin: 0 0 var(--space);
+    padding: .5rem .75rem;
+    border: 1px dashed rgba(255,255,255,0.6);
+    font-size: .95rem;
+  }
   
   /* Grid & entries */
   .grid {

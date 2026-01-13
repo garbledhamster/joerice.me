@@ -39,6 +39,18 @@ const nextBtn = document.getElementById('nextBtn');
 const postView = document.getElementById('postView');
 const postContentEl = document.getElementById('postContentInner');
 const closePostBtn = document.getElementById('closePost');
+const portfolioStatus = document.getElementById('portfolioStatus');
+
+function setPortfolioStatus(message) {
+  if (!portfolioStatus) return;
+  if (!message) {
+    portfolioStatus.hidden = true;
+    portfolioStatus.textContent = '';
+    return;
+  }
+  portfolioStatus.hidden = false;
+  portfolioStatus.textContent = message;
+}
 
 function renderPinned() {
   pinnedGrid.innerHTML = pinned
@@ -87,7 +99,10 @@ closePostBtn.addEventListener('click', () => {
 
 (async () => {
   try {
-    const loaderText = await fetch('posts/loader.yaml').then(r => r.text());
+    setPortfolioStatus('Loading posts...');
+    const loaderResponse = await fetch('posts/loader.yaml');
+    if (!loaderResponse.ok) throw new Error('Posts unavailable');
+    const loaderText = await loaderResponse.text();
     const loaderData = jsyaml.load(loaderText);
     const count = Number(loaderData.posts) || 0;
     for (let i = 1; i <= count; i++) {
@@ -112,7 +127,14 @@ closePostBtn.addEventListener('click', () => {
     notes.sort((a, b) => new Date(b.date) - new Date(a.date));
     renderPinned();
     renderPage();
-  } catch {}
+    if (!pinned.length && !notes.length) {
+      setPortfolioStatus('No posts are available yet.');
+    } else {
+      setPortfolioStatus('');
+    }
+  } catch {
+    setPortfolioStatus('Unable to load posts right now.');
+  }
 })();
 
 document.getElementById('q').addEventListener('input', e => {
@@ -126,6 +148,7 @@ const quoteBox = document.getElementById('quoteBox');
 const quoteText = document.getElementById('quoteText');
 const quoteCite = document.getElementById('quoteCite');
 const progBar = document.getElementById('quoteProgress');
+const quoteStatus = document.getElementById('quoteStatus');
 let quotes = [];
 let idx = 0;
 const slideMs = 7000;
@@ -140,17 +163,36 @@ function resetBar() {
 
 function showQuote(i) {
   const q = quotes[i];
+  if (!q) return;
   quoteText.textContent = `“${q.text}”`;
   quoteCite.textContent = `— ${q.author || 'Unknown'}`;
   quoteBox.classList.add('active');
   resetBar();
 }
 
+function setQuoteStatus(message) {
+  if (!quoteStatus) return;
+  if (!message) {
+    quoteStatus.hidden = true;
+    quoteStatus.textContent = '';
+    return;
+  }
+  quoteStatus.hidden = false;
+  quoteStatus.textContent = message;
+}
+
 (async () => {
   try {
-    const qYaml = await fetch('quotes/quotes.yaml').then(r => r.text());
+    setQuoteStatus('Loading quotes...');
+    const qResponse = await fetch('quotes/quotes.yaml');
+    if (!qResponse.ok) throw new Error('Quotes unavailable');
+    const qYaml = await qResponse.text();
     quotes = jsyaml.load(qYaml).quotes || [];
-    if (!quotes.length) return;
+    if (!quotes.length) {
+      setQuoteStatus('No quotes are available yet.');
+      return;
+    }
+    setQuoteStatus('');
     showQuote(0);
     setInterval(() => {
       quoteBox.classList.remove('active');
@@ -159,7 +201,9 @@ function showQuote(i) {
         showQuote(idx);
       }, 600);
     }, slideMs);
-  } catch {}
+  } catch {
+    setQuoteStatus('Unable to load quotes right now.');
+  }
 })();
 
 window.addEventListener('DOMContentLoaded', () => {
