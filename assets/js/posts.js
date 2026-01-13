@@ -20,6 +20,15 @@ let portfolioStatus = null;
 let editPortfolioBtn = null;
 let searchInput = null;
 
+function renderPostContent(content) {
+  if (!postContentEl) return;
+  if (typeof window.marked?.parse === 'function') {
+    postContentEl.innerHTML = window.marked.parse(content);
+    return;
+  }
+  postContentEl.innerHTML = content;
+}
+
 function getYamlParser() {
   return globalThis.jsyaml;
 }
@@ -90,11 +99,7 @@ export async function openPost(url) {
       : null;
     const content = storedContent ?? (data.content || '');
     currentPost = { url, data, content };
-    if (typeof window.renderPostContent === 'function') {
-      window.renderPostContent(content);
-    } else if (postContentEl) {
-      postContentEl.innerHTML = content;
-    }
+    renderPostContent(content);
   } catch {
     currentPost = { url, data: null, content: '' };
     if (postContentEl) {
