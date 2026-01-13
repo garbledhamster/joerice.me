@@ -50,7 +50,7 @@
       <section class="portfolio" id="about">
         <div class="sectionHeader">
           <h2>Portfolio</h2>
-          <button class="editBtn" id="editPortfolioBtn" type="button">Edit</button>
+          <button class="editBtn" id="addPortfolioBtn" type="button" data-admin-only>Add Post</button>
         </div>
         <div class="portfolioStatus" id="portfolioStatus" hidden></div>
         <div class="subhead">Pinned</div>
@@ -154,11 +154,41 @@
         <p class="loginStatus" id="loginStatus" role="status" aria-live="polite"></p>
       </div>
     </div>
+    <div class="modal portfolioModal" id="portfolioModal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="modalContent">
+        <div class="portfolioModalHeader">
+          <h3 id="portfolioModalTitle">Add portfolio post</h3>
+          <button class="portfolioCloseButton" id="portfolioCloseButton" type="button">Close</button>
+        </div>
+        <label class="portfolioField">Title
+          <input id="portfolioPostTitle" type="text" placeholder="Post title"/>
+        </label>
+        <label class="portfolioField portfolioBodyField">Post
+          <textarea id="portfolioPostBody" placeholder="Write your post here"></textarea>
+        </label>
+        <div class="portfolioActions">
+          <button class="portfolioSaveButton" id="portfolioSaveButton" type="button">Save</button>
+          <button class="portfolioDeleteButton" id="portfolioDeleteButton" type="button">Delete</button>
+        </div>
+        <p class="portfolioEditorStatus" id="portfolioEditorStatus" role="status" aria-live="polite"></p>
+      </div>
+    </div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script>
+      window.firebaseConfig = {
+        apiKey: "AIzaSyBfLjtPI90S8WodG19OrEO6jmT-8lvqF1I",
+        authDomain: "joerice-6050b.firebaseapp.com",
+        projectId: "joerice-6050b",
+        storageBucket: "joerice-6050b.firebasestorage.app",
+        messagingSenderId: "653941248098",
+        appId: "1:653941248098:web:0c3ec15b49a312aacf813b",
+        measurementId: "G-SS56CMWCR7"
+      };
+    </script>
     <script type="module" src="assets/js/main.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function() {
