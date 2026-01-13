@@ -6,6 +6,8 @@ const pinned = [];
 const notes = [];
 const pageSize = 10;
 const selectedTags = new Set();
+const localPosts = [];
+const localPostsStorageKey = 'portfolioLocalPosts';
 let page = 0;
 let currentPost = null;
 
@@ -17,8 +19,17 @@ let postView = null;
 let postContentEl = null;
 let closePostBtn = null;
 let portfolioStatus = null;
-let editPortfolioBtn = null;
+let addPortfolioBtn = null;
 let searchInput = null;
+let portfolioModal = null;
+let portfolioModalTitle = null;
+let portfolioCloseButton = null;
+let portfolioPostTitle = null;
+let portfolioPostBody = null;
+let portfolioSaveButton = null;
+let portfolioDeleteButton = null;
+let portfolioEditorStatus = null;
+let editingLocalPostId = null;
 
 function renderPostContent(content) {
   if (!postContentEl) return;
@@ -44,11 +55,107 @@ function setPortfolioStatus(message) {
   portfolioStatus.textContent = message;
 }
 
+function setEditorStatus(message) {
+  if (!portfolioEditorStatus) return;
+  portfolioEditorStatus.textContent = message || '';
+}
+
+function loadLocalPosts() {
+  localPosts.length = 0;
+  try {
+    const raw = window.localStorage.getItem(localPostsStorageKey);
+    if (!raw) return;
+    const parsed = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return;
+    parsed.forEach(post => {
+      if (!post?.id || !post?.title || typeof post?.content !== 'string') return;
+      localPosts.push({
+        id: post.id,
+        title: post.title,
+        content: post.content,
+        date: post.date || new Date().toISOString()
+      });
+    });
+  } catch {
+    setPortfolioStatus('Unable to load saved posts.');
+  }
+}
+
+function saveLocalPosts() {
+  window.localStorage.setItem(localPostsStorageKey, JSON.stringify(localPosts));
+}
+
+function syncLocalPostsToNotes() {
+  const nonLocalNotes = notes.filter(note => !note.local);
+  notes.length = 0;
+  notes.push(...nonLocalNotes);
+  localPosts.forEach(post => {
+    notes.push({
+      title: post.title,
+      date: post.date,
+      url: `local:${post.id}`,
+      pinned: false,
+      tags: [],
+      local: true,
+      id: post.id
+    });
+  });
+  notes.sort((a, b) => new Date(b.date) - new Date(a.date));
+}
+
+function getLocalPostById(id) {
+  return localPosts.find(post => post.id === id) || null;
+}
+
+function openPortfolioEditor(post = null) {
+  if (!portfolioModal) return;
+  editingLocalPostId = post?.id ?? null;
+  if (portfolioModalTitle) {
+    portfolioModalTitle.textContent = editingLocalPostId
+      ? 'Edit portfolio post'
+      : 'Add portfolio post';
+  }
+  if (portfolioPostTitle) {
+    portfolioPostTitle.value = post?.title || '';
+  }
+  if (portfolioPostBody) {
+    portfolioPostBody.value = post?.content || '';
+  }
+  if (portfolioDeleteButton) {
+    portfolioDeleteButton.disabled = !editingLocalPostId;
+  }
+  setEditorStatus('');
+  portfolioModal.classList.add('show');
+  portfolioModal.setAttribute('aria-hidden', 'false');
+  setTimeout(() => portfolioPostTitle?.focus(), 0);
+  lockScroll();
+}
+
+function closePortfolioEditor() {
+  if (!portfolioModal) return;
+  portfolioModal.classList.remove('show');
+  portfolioModal.setAttribute('aria-hidden', 'true');
+  setEditorStatus('');
+  unlockScroll();
+  if (window.location.hash === '#portfolioModal') {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+}
+
 function attachClickHandlers() {
   $$('.entry').forEach(el => {
     el.addEventListener('click', async () => {
       $$('.entry.active').forEach(a => a.classList.remove('active'));
       el.classList.add('active');
+      if (el.dataset.source === 'local' && isAdminUser()) {
+        const localPost = getLocalPostById(el.dataset.id);
+        if (localPost) {
+          openPortfolioEditor(localPost);
+        } else {
+          setPortfolioStatus('Unable to load that draft.');
+        }
+        return;
+      }
       await openPost(el.dataset.url);
     });
   });
@@ -76,7 +183,11 @@ export function renderPage() {
   const start = page * pageSize;
   const slice = notes.slice(start, start + pageSize);
   entryGrid.innerHTML = slice
-    .map(n => `<a class="entry" data-tags="${n.tags.join('|')}" data-url="${n.url}">${n.title}</a>`).join('');
+    .map(n => {
+      const sourceAttr = n.local ? ' data-source="local"' : '';
+      const idAttr = n.local ? ` data-id="${n.id}"` : '';
+      return `<a class="entry" data-tags="${n.tags.join('|')}" data-url="${n.url}"${sourceAttr}${idAttr}>${n.title}</a>`;
+    }).join('');
   if (prevBtn) prevBtn.disabled = page === 0;
   if (nextBtn) nextBtn.disabled = start + pageSize >= notes.length;
   attachClickHandlers();
@@ -92,14 +203,23 @@ export async function openPost(url) {
     if (!yaml) {
       throw new Error('YAML parser unavailable');
     }
-    const raw = await fetch(url).then(r => r.text());
-    const data = yaml.load(raw);
-    const storedContent = typeof window.getStoredPostContent === 'function'
-      ? window.getStoredPostContent(url)
-      : null;
-    const content = storedContent ?? (data.content || '');
-    currentPost = { url, data, content };
-    renderPostContent(content);
+    if (url.startsWith('local:')) {
+      const localId = url.replace('local:', '');
+      const localPost = getLocalPostById(localId);
+      if (!localPost) throw new Error('Local post unavailable');
+      const content = localPost.content || '';
+      currentPost = { url, data: { title: localPost.title }, content, local: true };
+      renderPostContent(content);
+    } else {
+      const raw = await fetch(url).then(r => r.text());
+      const data = yaml.load(raw);
+      const storedContent = typeof window.getStoredPostContent === 'function'
+        ? window.getStoredPostContent(url)
+        : null;
+      const content = storedContent ?? (data.content || '');
+      currentPost = { url, data, content };
+      renderPostContent(content);
+    }
   } catch {
     currentPost = { url, data: null, content: '' };
     if (postContentEl) {
@@ -143,6 +263,8 @@ async function loadPosts() {
         else notes.push(entry);
       } catch {}
     }
+    loadLocalPosts();
+    syncLocalPostsToNotes();
     notes.sort((a, b) => new Date(b.date) - new Date(a.date));
     renderPinned();
     renderPage();
@@ -165,8 +287,16 @@ export function initPosts() {
   postContentEl = $('#postContentInner');
   closePostBtn = $('#closePost');
   portfolioStatus = $('#portfolioStatus');
-  editPortfolioBtn = $('#editPortfolioBtn');
+  addPortfolioBtn = $('#addPortfolioBtn');
   searchInput = $('#q');
+  portfolioModal = $('#portfolioModal');
+  portfolioModalTitle = $('#portfolioModalTitle');
+  portfolioCloseButton = $('#portfolioCloseButton');
+  portfolioPostTitle = $('#portfolioPostTitle');
+  portfolioPostBody = $('#portfolioPostBody');
+  portfolioSaveButton = $('#portfolioSaveButton');
+  portfolioDeleteButton = $('#portfolioDeleteButton');
+  portfolioEditorStatus = $('#portfolioEditorStatus');
 
   if (!pinnedGrid || !entryGrid) return;
 
@@ -181,22 +311,81 @@ export function initPosts() {
     });
   }
 
-  if (editPortfolioBtn) {
-    editPortfolioBtn.hidden = !isAdminUser();
-    editPortfolioBtn.addEventListener('click', async () => {
-      if (!ensureAdmin('edit portfolio')) return;
-      let targetUrl = currentPost?.url;
-      if (!targetUrl) {
-        const activeEntry = $('.entry.active');
-        targetUrl = activeEntry?.dataset.url;
+  if (addPortfolioBtn) {
+    addPortfolioBtn.hidden = !isAdminUser();
+    addPortfolioBtn.addEventListener('click', () => {
+      if (!ensureAdmin('add portfolio post')) return;
+      openPortfolioEditor();
+    });
+  }
+
+  if (portfolioModal) {
+    portfolioModal.addEventListener('click', event => {
+      if (event.target === portfolioModal) {
+        closePortfolioEditor();
       }
-      if (!targetUrl) return;
-      if (postView && (!postView.classList.contains('show') || currentPost?.url !== targetUrl)) {
-        await openPost(targetUrl);
+    });
+  }
+
+  if (portfolioCloseButton) {
+    portfolioCloseButton.addEventListener('click', closePortfolioEditor);
+  }
+
+  if (portfolioSaveButton) {
+    portfolioSaveButton.addEventListener('click', () => {
+      if (!ensureAdmin('save portfolio post')) return;
+      const title = portfolioPostTitle?.value.trim();
+      const content = portfolioPostBody?.value.trim();
+      if (!title || !content) {
+        setEditorStatus('Title and post content are required.');
+        return;
       }
-      if (typeof window.enterEditorMode === 'function') {
-        window.enterEditorMode();
+      const now = new Date().toISOString();
+      if (editingLocalPostId) {
+        const existing = getLocalPostById(editingLocalPostId);
+        if (!existing) {
+          setEditorStatus('Unable to find that post.');
+          return;
+        }
+        existing.title = title;
+        existing.content = content;
+        existing.date = now;
+      } else {
+        const newId = window.crypto?.randomUUID?.() ?? `local-${Date.now()}`;
+        localPosts.unshift({
+          id: newId,
+          title,
+          content,
+          date: now
+        });
+        editingLocalPostId = newId;
       }
+      saveLocalPosts();
+      syncLocalPostsToNotes();
+      renderPage();
+      setPortfolioStatus('');
+      closePortfolioEditor();
+    });
+  }
+
+  if (portfolioDeleteButton) {
+    portfolioDeleteButton.addEventListener('click', () => {
+      if (!ensureAdmin('delete portfolio post')) return;
+      if (!editingLocalPostId) {
+        setEditorStatus('There is no post to delete.');
+        return;
+      }
+      const index = localPosts.findIndex(post => post.id === editingLocalPostId);
+      if (index === -1) {
+        setEditorStatus('Unable to find that post.');
+        return;
+      }
+      localPosts.splice(index, 1);
+      saveLocalPosts();
+      syncLocalPostsToNotes();
+      renderPage();
+      setPortfolioStatus('');
+      closePortfolioEditor();
     });
   }
 

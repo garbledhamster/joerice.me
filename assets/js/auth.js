@@ -91,6 +91,7 @@ function closeLoginModal(event) {
 }
 
 async function sendLoginLink(email) {
+  initFirebase();
   if (!auth?.sendSignInLinkToEmail) {
     setLoginStatus(getFirebaseUnavailableMessage());
     return;
@@ -111,6 +112,7 @@ async function sendLoginLink(email) {
 }
 
 async function completeEmailLinkSignIn(email) {
+  initFirebase();
   if (!pendingEmailSignInLink || !auth?.signInWithEmailLink) return;
   try {
     await auth.signInWithEmailLink(email, pendingEmailSignInLink);
@@ -128,7 +130,15 @@ async function completeEmailLinkSignIn(email) {
 }
 
 function initFirebase() {
-  if (!firebaseAvailable) {
+  firebaseConfig = window.firebaseConfig ?? window.FIREBASE_CONFIG ?? null;
+  missingFirebaseKeys = requiredFirebaseKeys.filter(
+    key => typeof firebaseConfig?.[key] !== 'string' || !firebaseConfig[key].trim()
+  );
+  hasFirebaseConfig = missingFirebaseKeys.length === 0;
+  firebaseAvailable = hasFirebaseConfig;
+  if (!firebaseAvailable || !window.firebase) {
+    auth = null;
+    firestore = null;
     return;
   }
   if (window.firebase?.apps?.length === 0) {
@@ -168,6 +178,7 @@ export function initAuth() {
     loginCancel.addEventListener('click', closeLoginModal);
   }
 
+  initFirebase();
   if (!firebaseAvailable) {
     if (loginButton) {
       loginButton.setAttribute('aria-disabled', 'true');
@@ -187,12 +198,17 @@ export function initAuth() {
       loginEmail.removeAttribute('disabled');
     }
     updateAdminUi();
-    return;
   }
 
   if (loginButton) {
     loginButton.addEventListener('click', event => {
       event.preventDefault();
+      initFirebase();
+      if (!firebaseAvailable) {
+        setLoginStatus(getFirebaseUnavailableMessage());
+        openLoginModal();
+        return;
+      }
       if (isAdmin) {
         setLoginStatus('You are already signed in.');
       }
@@ -203,6 +219,11 @@ export function initAuth() {
   if (loginForm) {
     loginForm.addEventListener('submit', async event => {
       event.preventDefault();
+      initFirebase();
+      if (!firebaseAvailable) {
+        setLoginStatus(getFirebaseUnavailableMessage());
+        return;
+      }
       const email = loginEmail?.value.trim();
       if (!email) return;
       if (pendingEmailSignInLink) {
