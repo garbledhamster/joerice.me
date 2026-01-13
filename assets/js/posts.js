@@ -39,6 +39,7 @@ let portfolioSaveButton = null;
 let portfolioDeleteButton = null;
 let portfolioEditorStatus = null;
 let editingLocalPostId = null;
+let isPortfolioEditorReadOnly = false;
 
 function renderPostContent(content) {
   if (!postContentEl) return;
@@ -87,6 +88,27 @@ function setPortfolioStatus(message) {
 function setEditorStatus(message) {
   if (!portfolioEditorStatus) return;
   portfolioEditorStatus.textContent = message || '';
+}
+
+function setPortfolioEditorReadOnly(isReadOnly) {
+  isPortfolioEditorReadOnly = isReadOnly;
+  if (portfolioPostTitle) {
+    portfolioPostTitle.readOnly = isReadOnly;
+  }
+  if (portfolioPostBody) {
+    portfolioPostBody.readOnly = isReadOnly;
+  }
+  if (portfolioSaveButton) {
+    portfolioSaveButton.disabled = isReadOnly;
+  }
+  if (portfolioDeleteButton) {
+    portfolioDeleteButton.disabled = isReadOnly || !editingPostId;
+  }
+  if (isReadOnly) {
+    setEditorStatus('Preloaded posts are read-only.');
+  } else {
+    setEditorStatus('');
+  }
 }
 
 function loadLocalPosts() {
@@ -174,14 +196,21 @@ async function loadFirestorePosts() {
 
 function openPortfolioEditor(post = null) {
   if (!portfolioModal) return;
+  const isReadOnlyPost = !!post && !['local', 'firestore'].includes(post?.source ?? '');
   editingLocalPostId = post?.id ?? null;
   editingPostId = post?.id ?? null;
   editingPostSource = post?.source ?? null;
   editingPostCreatedDate = post?.createdDate ?? null;
+  if (isReadOnlyPost) {
+    editingLocalPostId = null;
+    editingPostId = null;
+    editingPostSource = null;
+    editingPostCreatedDate = null;
+  }
   if (portfolioModalTitle) {
     portfolioModalTitle.textContent = editingPostId
-      ? 'Edit portfolio post'
-      : 'Add portfolio post';
+      ? 'Edit Post'
+      : 'Add Post';
   }
   if (portfolioPostTitle) {
     portfolioPostTitle.value = post?.title || '';
@@ -192,7 +221,7 @@ function openPortfolioEditor(post = null) {
   if (portfolioDeleteButton) {
     portfolioDeleteButton.disabled = !editingPostId;
   }
-  setEditorStatus('');
+  setPortfolioEditorReadOnly(isReadOnlyPost);
   portfolioModal.classList.add('show');
   portfolioModal.setAttribute('aria-hidden', 'false');
   setTimeout(() => portfolioPostTitle?.focus(), 0);
@@ -204,6 +233,7 @@ function closePortfolioEditor() {
   portfolioModal.classList.remove('show');
   portfolioModal.setAttribute('aria-hidden', 'true');
   setEditorStatus('');
+  setPortfolioEditorReadOnly(false);
   unlockScroll();
   editingLocalPostId = null;
   editingPostId = null;
@@ -414,6 +444,7 @@ export function initPosts() {
   if (portfolioSaveButton) {
     portfolioSaveButton.addEventListener('click', async () => {
       if (!ensureAdmin('save portfolio post')) return;
+      if (isPortfolioEditorReadOnly) return;
       const title = portfolioPostTitle?.value.trim();
       const content = portfolioPostBody?.value.trim();
       if (!title || !content) {
@@ -476,6 +507,7 @@ export function initPosts() {
   if (portfolioDeleteButton) {
     portfolioDeleteButton.addEventListener('click', async () => {
       if (!ensureAdmin('delete portfolio post')) return;
+      if (isPortfolioEditorReadOnly) return;
       if (!editingPostId) {
         setEditorStatus('There is no post to delete.');
         return;
