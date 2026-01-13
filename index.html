@@ -82,6 +82,25 @@
         </div>
         <div class="quoteBox" id="quoteBox"><blockquote id="quoteText"></blockquote><cite id="quoteCite"></cite></div>
         <div class="progressWrap"><div class="progressBar" id="quoteProgress"></div></div>
+        <div class="quoteEditor editPanel is-collapsed" id="quoteEditor" data-admin-only>
+          <aside class="quoteList">
+            <div class="quoteListHeader">
+              <span>Quotes</span>
+              <button class="quoteAddButton" type="button">Add</button>
+            </div>
+            <ul id="quoteListItems"></ul>
+          </aside>
+          <div class="quoteEditorPane" id="quoteEditorPane">
+            <div class="quoteEditorHeader">Quote editor</div>
+            <label>Quote
+              <textarea id="quoteEditorText" rows="4" placeholder="Write the quote here"></textarea>
+            </label>
+            <label>Author
+              <input id="quoteEditorAuthor" type="text" placeholder="Quote author"/>
+            </label>
+            <button class="quoteSaveButton" id="quoteSaveButton" type="button">Save</button>
+          </div>
+        </div>
       </section>
       <section class="contact" id="contact">
         <h2>Contact</h2>
@@ -121,6 +140,9 @@
     </div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
     <script type="module" src="script.js"></script>
     <script>
       document.addEventListener("DOMContentLoaded", function() {
