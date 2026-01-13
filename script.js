@@ -39,6 +39,18 @@ const nextBtn = document.getElementById('nextBtn');
 const postView = document.getElementById('postView');
 const postContentEl = document.getElementById('postContentInner');
 const closePostBtn = document.getElementById('closePost');
+const portfolioStatus = document.getElementById('portfolioStatus');
+
+function setPortfolioStatus(message) {
+  if (!portfolioStatus) return;
+  if (!message) {
+    portfolioStatus.hidden = true;
+    portfolioStatus.textContent = '';
+    return;
+  }
+  portfolioStatus.hidden = false;
+  portfolioStatus.textContent = message;
+}
 
 function renderPinned() {
   pinnedGrid.innerHTML = pinned
@@ -87,6 +99,7 @@ closePostBtn.addEventListener('click', () => {
 
 (async () => {
   try {
+    setPortfolioStatus('Loading posts...');
     const loaderText = await fetch('posts/loader.yaml').then(r => r.text());
     const loaderData = jsyaml.load(loaderText);
     const count = Number(loaderData.posts) || 0;
@@ -112,7 +125,14 @@ closePostBtn.addEventListener('click', () => {
     notes.sort((a, b) => new Date(b.date) - new Date(a.date));
     renderPinned();
     renderPage();
-  } catch {}
+    if (!pinned.length && !notes.length) {
+      setPortfolioStatus('No posts are available yet.');
+    } else {
+      setPortfolioStatus('');
+    }
+  } catch {
+    setPortfolioStatus('Unable to load posts right now.');
+  }
 })();
 
 document.getElementById('q').addEventListener('input', e => {
