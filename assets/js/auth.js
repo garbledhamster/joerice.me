@@ -174,11 +174,7 @@ export function initAuth() {
       });
     }
     if (loginEmail) {
-      loginEmail.disabled = true;
-    }
-    const loginSendButton = loginForm?.querySelector('button[type="submit"]');
-    if (loginSendButton) {
-      loginSendButton.disabled = true;
+      loginEmail.removeAttribute('disabled');
     }
     updateAdminUi();
     return;
