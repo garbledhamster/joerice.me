@@ -1,7 +1,7 @@
 import { $, $$ } from './dom.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
 
-const firebaseConfig = window.firebaseConfig ?? window.FIREBASE_CONFIG;
+let firebaseConfig = window.firebaseConfig ?? window.FIREBASE_CONFIG;
 const requiredFirebaseKeys = [
   'apiKey',
   'authDomain',
@@ -10,10 +10,10 @@ const requiredFirebaseKeys = [
   'messagingSenderId',
   'appId'
 ];
-const missingFirebaseKeys = requiredFirebaseKeys.filter(
+let missingFirebaseKeys = requiredFirebaseKeys.filter(
   key => typeof firebaseConfig?.[key] !== 'string' || !firebaseConfig[key].trim()
 );
-const hasFirebaseConfig = missingFirebaseKeys.length === 0;
+let hasFirebaseConfig = missingFirebaseKeys.length === 0;
 let firebaseAvailable = hasFirebaseConfig;
 
 let auth = null;
