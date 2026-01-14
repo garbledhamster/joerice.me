@@ -523,10 +523,10 @@ export function initPosts() {
           const createdDate = editingPostCreatedDate ?? now;
           await docRef.set({
             'userId': userId,
-            'Title': title,
-            'Body': content,
-            'Created Date': createdDate,
-            'Last Edited Date': now
+            'title': title,
+            'body': content,
+            'createdDate': createdDate,
+            'lastEditedDate': now
           }, { merge: true });
           editingPostId = docRef.id;
           editingPostSource = 'firestore';
