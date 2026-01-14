@@ -199,7 +199,9 @@ async function handleUpload() {
     setEditorStatus('Uploading...');
     
     // Generate unique image ID
-    const imageId = crypto?.randomUUID ? crypto.randomUUID() : `img_${Date.now()}`;
+    const imageId = crypto?.randomUUID 
+      ? crypto.randomUUID() 
+      : `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     const storagePath = `Images/${userId}/${imageId}`;
     
     // Upload to Storage
@@ -274,11 +276,11 @@ async function handleSave() {
     const imageIndex = images.findIndex(img => img.id === selectedImageDoc.id);
     if (imageIndex !== -1) {
       images[imageIndex].caption = caption;
-    }
-    
-    // Update slideshow if this is the current slide
-    if (currentSlideIndex === imageIndex) {
-      showSlide(currentSlideIndex);
+      
+      // Update slideshow if this is the current slide
+      if (currentSlideIndex === imageIndex) {
+        showSlide(currentSlideIndex);
+      }
     }
     
     // Re-render grid to show updated caption
