@@ -172,21 +172,16 @@ async function loadFirestorePosts() {
     return;
   }
   try {
-    // Note: This query requires a composite index in Firestore for optimal performance
-    // Index fields: userId (Ascending), Created Date (Descending)
+    // Fetch posts for the current user and sort locally to support flexible field naming
     const baseQuery = postsRef.where('userId', '==', userId);
-    const orderedQuery = baseQuery.orderBy('Created Date', 'desc');
-    const query = typeof orderedQuery.select === 'function'
-      ? orderedQuery.select('Title', 'Created Date', 'Last Edited Date')
-      : orderedQuery;
-    const snapshot = await query.get();
+    const snapshot = await baseQuery.get();
     const entries = [];
     snapshot.forEach(doc => {
       const data = doc.data() || {};
       entries.push({
-        title: data['Title'] || 'Untitled',
-        date: data['Created Date'] || new Date().toISOString(),
-        lastEdited: data['Last Edited Date'] || data['Created Date'] || null,
+        title: data['Title'] || data['title'] || 'Untitled',
+        date: data['Created Date'] || data['createdDate'] || new Date().toISOString(),
+        lastEdited: data['Last Edited Date'] || data['lastEditedDate'] || data['Created Date'] || data['createdDate'] || null,
         url: `firestore:${doc.id}`,
         pinned: false,
         tags: [],
@@ -326,7 +321,7 @@ export async function openPost(url) {
       const doc = await postsRef.doc(postId).get();
       if (!doc.exists) throw new Error('Post unavailable');
       const data = doc.data() || {};
-      const content = data['Body'] || '';
+      const content = data['Body'] || data['body'] || '';
       currentPost = { 
         url, 
         data, 
@@ -334,7 +329,7 @@ export async function openPost(url) {
         firestore: true, 
         id: postId, 
         source: 'firestore',
-        createdDate: data['Created Date']
+        createdDate: data['Created Date'] || data['createdDate']
       };
       renderPostContent(content);
       // Show edit button for Firestore posts in admin mode
@@ -528,10 +523,10 @@ export function initPosts() {
           const createdDate = editingPostCreatedDate ?? now;
           await docRef.set({
             'userId': userId,
-            'Title': title,
-            'Body': content,
-            'Created Date': createdDate,
-            'Last Edited Date': now
+            'title': title,
+            'body': content,
+            'createdDate': createdDate,
+            'lastEditedDate': now
           }, { merge: true });
           editingPostId = docRef.id;
           editingPostSource = 'firestore';
