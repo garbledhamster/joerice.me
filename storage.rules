@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    function isAdmin() {
+      return request.auth != null && request.auth.token.email == "jmjrice94@gmail.com";
+    }
+
+    match /Images/{userId}/{imageId} {
+      // Anyone can read images
+      allow read: if true;
+      
+      // Only admin can upload, update, or delete images
+      allow write: if isAdmin();
+    }
+
+    // Default: deny all other access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}
