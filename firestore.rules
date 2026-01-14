@@ -5,14 +5,9 @@ service cloud.firestore {
       return request.auth != null && request.auth.token.email == "jmjrice94@gmail.com";
     }
 
-    match /Posts/{userId} {
+    match /Posts/{postId} {
       allow read: if true;
       allow create, update, delete: if isAdmin();
-
-      match /posts/{postId} {
-        allow read: if true;
-        allow create, update, delete: if isAdmin();
-      }
     }
 
     match /Images/{document} {

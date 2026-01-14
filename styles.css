@@ -948,13 +948,16 @@
 
   .portfolioBodyField {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: .35rem;
+    min-height: 0;
   }
 
   .portfolioBodyField textarea {
     flex: 1;
-    min-height: 100%;
-    height: 100%;
-    resize: none;
+    min-height: 200px;
+    resize: vertical;
   }
 
   .portfolioActions {

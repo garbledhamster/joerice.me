@@ -27,6 +27,7 @@ let nextBtn = null;
 let postView = null;
 let postContentEl = null;
 let closePostBtn = null;
+let editPostBtn = null;
 let portfolioStatus = null;
 let addPortfolioBtn = null;
 let searchInput = null;
@@ -63,9 +64,8 @@ function clearCurrentPost() {
 
 function getPostsCollectionRef() {
   const firestore = getFirestore();
-  const userId = getCurrentUserId();
-  if (!firestore || !userId) return null;
-  return firestore.collection('Posts').doc(userId).collection('posts');
+  if (!firestore) return null;
+  return firestore.collection('Posts');
 }
 
 function removeNotesBySource(source) {
@@ -161,12 +161,14 @@ function getLocalPostById(id) {
 
 async function loadFirestorePosts() {
   const postsRef = getPostsCollectionRef();
-  if (!postsRef) {
+  const userId = getCurrentUserId();
+  if (!postsRef || !userId) {
     removeNotesBySource('firestore');
     return;
   }
   try {
-    const orderedQuery = postsRef.orderBy('Created Date', 'desc');
+    const baseQuery = postsRef.where('userId', '==', userId);
+    const orderedQuery = baseQuery.orderBy('Created Date', 'desc');
     const query = typeof orderedQuery.select === 'function'
       ? orderedQuery.select('Title', 'Created Date', 'Last Edited Date')
       : orderedQuery;
@@ -292,14 +294,24 @@ export async function openPost(url) {
     window.exitEditorMode();
   }
   clearCurrentPost();
+  
+  // Hide edit button by default
+  if (editPostBtn) {
+    editPostBtn.hidden = true;
+  }
+  
   try {
     if (url.startsWith('local:')) {
       const localId = url.replace('local:', '');
       const localPost = getLocalPostById(localId);
       if (!localPost) throw new Error('Local post unavailable');
       const content = localPost.content || '';
-      currentPost = { url, data: { title: localPost.title }, content, local: true };
+      currentPost = { url, data: { title: localPost.title }, content, local: true, id: localId, source: 'local' };
       renderPostContent(content);
+      // Show edit button for local posts in admin mode
+      if (editPostBtn && isAdminUser()) {
+        editPostBtn.hidden = false;
+      }
     } else if (url.startsWith('firestore:')) {
       const postId = url.replace('firestore:', '');
       const postsRef = getPostsCollectionRef();
@@ -308,8 +320,20 @@ export async function openPost(url) {
       if (!doc.exists) throw new Error('Post unavailable');
       const data = doc.data() || {};
       const content = data['Body'] || '';
-      currentPost = { url, data, content, firestore: true };
+      currentPost = { 
+        url, 
+        data, 
+        content, 
+        firestore: true, 
+        id: postId, 
+        source: 'firestore',
+        createdDate: data['Created Date']
+      };
       renderPostContent(content);
+      // Show edit button for Firestore posts in admin mode
+      if (editPostBtn && isAdminUser()) {
+        editPostBtn.hidden = false;
+      }
     } else {
       const yaml = getYamlParser();
       if (!yaml) {
@@ -321,8 +345,9 @@ export async function openPost(url) {
         ? window.getStoredPostContent(url)
         : null;
       const content = storedContent ?? (data.content || '');
-      currentPost = { url, data, content };
+      currentPost = { url, data, content, source: 'yaml' };
       renderPostContent(content);
+      // Don't show edit button for YAML posts (they're read-only)
     }
   } catch {
     currentPost = { url, data: null, content: '' };
@@ -410,6 +435,7 @@ export function initPosts() {
   postView = $('#postView');
   postContentEl = $('#postContentInner');
   closePostBtn = $('#closePost');
+  editPostBtn = $('#editPostBtn');
   portfolioStatus = $('#portfolioStatus');
   addPortfolioBtn = $('#addPortfolioBtn');
   searchInput = $('#q');
@@ -432,6 +458,25 @@ export function initPosts() {
       unlockScroll();
       if (typeof window.exitEditorMode === 'function') {
         window.exitEditorMode();
+      }
+    });
+  }
+
+  if (editPostBtn) {
+    editPostBtn.addEventListener('click', () => {
+      if (!ensureAdmin('edit post')) return;
+      if (!currentPost) return;
+      
+      // Only allow editing of local and firestore posts
+      if (currentPost.source === 'local' || currentPost.source === 'firestore') {
+        const postToEdit = {
+          id: currentPost.id,
+          title: currentPost.data?.Title || currentPost.data?.title || 'Untitled',
+          content: currentPost.content || '',
+          source: currentPost.source,
+          createdDate: currentPost.createdDate
+        };
+        openPortfolioEditor(postToEdit);
       }
     });
   }
@@ -468,12 +513,14 @@ export function initPosts() {
       }
       const now = new Date().toISOString();
       const postsRef = getPostsCollectionRef();
-      if (postsRef) {
+      const userId = getCurrentUserId();
+      if (postsRef && userId) {
         try {
           const isEditing = editingPostId && editingPostSource === 'firestore';
           const docRef = isEditing ? postsRef.doc(editingPostId) : postsRef.doc();
           const createdDate = editingPostCreatedDate ?? now;
           await docRef.set({
+            'userId': userId,
             'Title': title,
             'Body': content,
             'Created Date': createdDate,
