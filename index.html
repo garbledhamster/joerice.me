@@ -11,109 +11,10 @@
     <link rel="stylesheet" href="styles.css"/>
     <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js"/>
     <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"/>
-
     <style>
-      /* Screen-reader-only utility (if not already in styles.css) */
-      .srOnly {
-        position: absolute !important;
-        width: 1px !important;
-        height: 1px !important;
-        padding: 0 !important;
-        margin: -1px !important;
-        overflow: hidden !important;
-        clip: rect(0, 0, 0, 0) !important;
-        white-space: nowrap !important;
-        border: 0 !important;
-      }
-
-      /* Portfolio editor modal: clean layout (title input top, full-height textarea, actions bottom) */
-      .modal.portfolioModal .modalContent {
-        display: flex;
-        flex-direction: column;
-        width: min(980px, calc(100vw - 2rem));
-        height: min(85vh, 860px);
-        padding: 1rem;
-        gap: 0.75rem;
-      }
-
-      .portfolioModalHeader {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 0.75rem;
-      }
-
-      .portfolioModalHeader h3 {
-        margin: 0;
-      }
-
-      .portfolioCloseButton {
-        border: 1px solid var(--border, #ddd);
-        background: var(--panel, #fff);
-        border-radius: 12px;
-        padding: 0.55rem 0.85rem;
-        cursor: pointer;
-        font: inherit;
-      }
-
-      .portfolioField {
-        display: flex;
-        flex-direction: column;
-        gap: 0.35rem;
-      }
-
-      .portfolioField input,
-      .portfolioField textarea {
-        width: 100%;
-        font: inherit;
-        border: 1px solid var(--border, #ddd);
-        border-radius: 12px;
-        padding: 0.85rem;
-        background: var(--panel, #fff);
-        color: inherit;
-      }
-
-      .portfolioBodyField {
-        flex: 1;
-        min-height: 0;
-      }
-
-      #portfolioPostBody {
-        flex: 1;
-        min-height: 0;
-        resize: none;
-        line-height: 1.5;
-      }
-
-      .portfolioActions {
-        display: flex;
-        gap: 0.5rem;
-        justify-content: flex-end;
-        padding-top: 0.25rem;
-      }
-
-      .portfolioActions button {
-        border-radius: 12px;
-        padding: 0.6rem 0.95rem;
-        border: 1px solid var(--border, #ddd);
-        background: var(--panel, #fff);
-        cursor: pointer;
-        font: inherit;
-      }
-
-      .portfolioActions button:disabled {
-        opacity: 0.55;
-        cursor: not-allowed;
-      }
-
-      .portfolioEditorStatus {
-        margin: 0;
-        min-height: 1.25rem;
-        opacity: 0.9;
-      }
+   
     </style>
   </head>
-
   <body>
     <header class="siteHeader">
       <div class="brand"><a href="https://joerice.me/">joerice.me</a></div>
@@ -128,13 +29,12 @@
         <a class="navButton" id="loginButton" href="#loginModal">Login</a>
       </nav>
     </header>
-
     <main class="max">
       <section class="hero">
         <img class="pic" src="assets/images/pictures/profile.jpg" alt="Joe Rice"/>
         <div class="intro">
           <p>I'm a husband, father, IT generalist, and entrepreneur at heart. I love sharing knowledge and have over a decade of experience in IT. If you're looking to connect with someone who's down to earth, open minded yet skeptical, and passionate about self improvement, I’d love to hear from you. To hire me for freelance or full-time work, just fill out the contact form below. I’ll respond within 24 hours.</p>
-          <div class="social">
+                    <div class="social">
             <a href="https://pin.it/7ikA1HZ4o" target="_blank" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
             <a href="https://www.instagram.com/garbledhamster/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
             <a href="https://www.facebook.com/garbledhamster/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
@@ -146,37 +46,20 @@
           </div>
         </div>
       </section>
-
       <div class="search"><input id="q" type="search" placeholder="Search posts and notes..."/></div>
-
       <section class="portfolio" id="about">
         <div class="sectionHeader">
           <h2>Portfolio</h2>
-          <!-- Portfolio shows ONLY Add Post (admin-only) -->
           <button class="editBtn" id="addPortfolioBtn" type="button" data-admin-only>Add Post</button>
         </div>
-
         <div class="portfolioStatus" id="portfolioStatus" hidden></div>
-
         <div class="subhead">Pinned</div>
         <div class="grid" id="pinnedGrid"></div>
-
         <div class="subhead">Posts</div>
         <div class="grid" id="entryGrid"></div>
-
-        <div class="pageControls">
-          <button id="prevBtn" class="pageBtn">Prev</button>
-          <button id="nextBtn" class="pageBtn">Next</button>
-        </div>
-
-        <div id="postView">
-          <div id="postContent">
-            <button id="closePost" type="button">close</button>
-            <div id="postContentInner"></div>
-          </div>
-        </div>
+        <div class="pageControls"><button id="prevBtn" class="pageBtn">Prev</button><button id="nextBtn" class="pageBtn">Next</button></div>
+        <div id="postView"><div id="postContent"><button id="closePost">close</button><div id="postContentInner"></div></div></div>
       </section>
-
       <section class="gallery">
         <div class="sectionHeader">
           <h2>Gallery</h2>
@@ -193,7 +76,6 @@
           <button class="next" id="nextSlide" aria-label="Next">&#10095;</button>
         </div>
       </section>
-
       <section class="quotes" id="quotes">
         <div class="sectionHeader">
           <h2>Quotes</h2>
@@ -221,27 +103,16 @@
           </div>
         </div>
       </section>
-
       <section class="contact" id="contact">
         <h2>Contact</h2>
         <form id="contactForm">
           <label>Name<input type="text" name="name" required/></label>
           <label>Email<input type="email" name="email" required/></label>
-          <label>Contact Type<select name="project" required>
-            <option value="">Select an option...</option>
-            <option>Personal Website</option>
-            <option>Professional Website</option>
-            <option>Recruiter</option>
-            <option>Friend</option>
-            <option>Family</option>
-            <option>Training/Coaching</option>
-            <option>Other</option>
-          </select></label>
+          <label>Contact Type<select name="project" required><option value="">Select an option...</option><option>Personal Website</option><option>Professional Website</option><option>Recruiter</option><option>Friend</option><option>Family</option><option>Training/Coaching</option><option>Other</option></select></label>
           <label>Message<textarea name="message" required></textarea></label>
           <button type="submit">Send</button>
         </form>
       </section>
-
       <section class="links" id="links">
         <h2>Useful Links</h2>
         <ol>
@@ -264,16 +135,10 @@
         </ol>
       </section>
     </main>
-
     <footer>© <span id="year"></span> Joe Rice. All rights reserved.</footer>
-
     <div class="modal" id="modal">
-      <div class="modalContent">
-        <p>Thank you! Your message has been sent.</p>
-        <button id="closeModal" style="margin-top:1rem; border:1px solid var(--border); padding:.5rem 1rem; background:var(--yellow); font-family:var(--fontHead); cursor:pointer;">close</button>
-      </div>
+      <div class="modalContent"><p>Thank you! Your message has been sent.</p><button id="closeModal" style="margin-top:1rem; border:1px solid var(--border); padding:.5rem 1rem; background:var(--yellow); font-family:var(--fontHead); cursor:pointer;">close</button></div>
     </div>
-
     <div class="modal loginModal" id="loginModal" aria-hidden="true" role="dialog" aria-modal="true">
       <div class="modalContent">
         <h3>Admin login</h3>
@@ -289,42 +154,30 @@
         <p class="loginStatus" id="loginStatus" role="status" aria-live="polite"></p>
       </div>
     </div>
-
-    <!-- Portfolio Editor Modal -->
     <div class="modal portfolioModal" id="portfolioModal" aria-hidden="true" role="dialog" aria-modal="true">
       <div class="modalContent">
         <div class="portfolioModalHeader">
           <h3 id="portfolioModalTitle">Add Post</h3>
           <button class="portfolioCloseButton" id="portfolioCloseButton" type="button">Close</button>
         </div>
-
-        <!-- Clean title input -->
-        <label class="portfolioField">
-          <span class="srOnly">Title</span>
-          <input id="portfolioPostTitle" type="text" placeholder="Title"/>
+        <label class="portfolioField">Title
+          <input id="portfolioPostTitle" type="text" placeholder="Post title"/>
         </label>
-
-        <!-- Full-height editor -->
-        <label class="portfolioField portfolioBodyField">
-          <span class="srOnly">Post</span>
+        <label class="portfolioField portfolioBodyField">Post
           <textarea id="portfolioPostBody" placeholder="Write your post here"></textarea>
         </label>
-
         <div class="portfolioActions">
           <button class="portfolioSaveButton" id="portfolioSaveButton" type="button">Save</button>
           <button class="portfolioDeleteButton" id="portfolioDeleteButton" type="button">Delete</button>
         </div>
-
         <p class="portfolioEditorStatus" id="portfolioEditorStatus" role="status" aria-live="polite"></p>
       </div>
     </div>
-
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-
     <script>
       window.firebaseConfig = {
         apiKey: "AIzaSyBfLjtPI90S8WodG19OrEO6jmT-8lvqF1I",
@@ -336,9 +189,7 @@
         measurementId: "G-SS56CMWCR7"
       };
     </script>
-
     <script type="module" src="assets/js/main.js"></script>
-
     <script>
       document.addEventListener("DOMContentLoaded", function() {
         const slides = [
