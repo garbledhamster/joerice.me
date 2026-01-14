@@ -55,6 +55,11 @@ function getYamlParser() {
   return globalThis.jsyaml;
 }
 
+function getPostTitle(post) {
+  if (!post || !post.data) return 'Untitled';
+  return post.data.Title || post.data.title || 'Untitled';
+}
+
 function clearCurrentPost() {
   currentPost = null;
   if (postContentEl) {
@@ -167,6 +172,8 @@ async function loadFirestorePosts() {
     return;
   }
   try {
+    // Note: This query requires a composite index in Firestore for optimal performance
+    // Index fields: userId (Ascending), Created Date (Descending)
     const baseQuery = postsRef.where('userId', '==', userId);
     const orderedQuery = baseQuery.orderBy('Created Date', 'desc');
     const query = typeof orderedQuery.select === 'function'
@@ -471,7 +478,7 @@ export function initPosts() {
       if (currentPost.source === 'local' || currentPost.source === 'firestore') {
         const postToEdit = {
           id: currentPost.id,
-          title: currentPost.data?.Title || currentPost.data?.title || 'Untitled',
+          title: getPostTitle(currentPost),
           content: currentPost.content || '',
           source: currentPost.source,
           createdDate: currentPost.createdDate
