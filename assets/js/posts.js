@@ -379,7 +379,7 @@ async function loadPosts() {
     // Load function 1: Load YAML posts
     await loadYamlPosts();
     
-    // Load function 2: Load Firestore posts or local posts
+    // Load function 2: Load Firestore posts (if available) or local posts
     const postsRef = getPostsCollectionRef();
     if (postsRef) {
       await loadFirestorePosts();
