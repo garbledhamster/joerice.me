@@ -22,12 +22,21 @@ The website consists of six core components:
 ├── styles.css           # Main stylesheet
 ├── assets/
 │   └── js/
-│       └── main.js      # Main JavaScript module
+│       ├── main.js      # Main JavaScript module (entry point)
+│       ├── auth.js      # Firebase authentication logic
+│       ├── posts.js     # Portfolio posts management
+│       ├── quotes.js    # Quotes management
+│       ├── contact.js   # Contact form handling
+│       ├── dom.js       # DOM utilities
+│       ├── tooltips.js  # Tooltip functionality
+│       └── ui/
+│           └── layout.js # Layout/UI utilities
 │   └── images/
 │       └── pictures/    # Profile and other images
 ├── posts/               # Blog posts as YAML files
 │   ├── 0001.yaml
 │   ├── 0002.yaml
+│   ├── loader.yaml      # Post loader configuration
 │   └── ...
 ├── quotes/
 │   └── quotes.yaml      # Quotes collection
@@ -106,7 +115,13 @@ quotes:
 - **Adding a post**: Create new YAML file in `/posts/` with sequential numbering
 - **Adding a quote**: Edit `/quotes/quotes.yaml` and add to the array
 - **Styling changes**: Modify `styles.css` using existing CSS variables
-- **Functionality**: Update `assets/js/main.js` or inline scripts in `index.html`
+- **Functionality**: JavaScript is modular:
+  - `main.js` - Entry point and initialization
+  - `auth.js` - Authentication features
+  - `posts.js` - Portfolio/blog functionality
+  - `quotes.js` - Quotes management
+  - `contact.js` - Contact form
+  - Other modules for specific features
 
 ## Code Style
 
