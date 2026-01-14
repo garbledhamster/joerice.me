@@ -337,14 +337,13 @@ export async function openPost(url) {
   }
 }
 
-async function loadPosts() {
+async function loadYamlPosts() {
+  const yaml = getYamlParser();
+  if (!yaml) {
+    console.warn('YAML parser not available, skipping YAML posts.');
+    return;
+  }
   try {
-    setPortfolioStatus('Loading posts...');
-    const yaml = getYamlParser();
-    if (!yaml) {
-      setPortfolioStatus('Unable to load posts right now.');
-      return;
-    }
     const loaderText = await fetch('posts/loader.yaml').then(r => r.text());
     const loaderData = yaml.load(loaderText);
     const count = Number(loaderData.posts) || 0;
@@ -361,12 +360,26 @@ async function loadPosts() {
           date: data.date,
           url: filePath,
           pinned: data.pinned,
-          tags: data.tags || []
+          tags: data.tags || [],
+          source: 'yaml'
         };
         if (entry.pinned) pinned.push(entry);
         else notes.push(entry);
       } catch {}
     }
+  } catch (error) {
+    console.warn('Unable to load YAML posts.', error);
+  }
+}
+
+async function loadPosts() {
+  try {
+    setPortfolioStatus('Loading posts...');
+    
+    // Load function 1: Load YAML posts
+    await loadYamlPosts();
+    
+    // Load function 2: Load Firestore posts (if available) or local posts
     const postsRef = getPostsCollectionRef();
     if (postsRef) {
       await loadFirestorePosts();
@@ -374,6 +387,7 @@ async function loadPosts() {
       loadLocalPosts();
       syncLocalPostsToNotes();
     }
+    
     notes.sort((a, b) => new Date(b.date) - new Date(a.date));
     renderPinned();
     renderPage();
@@ -382,7 +396,8 @@ async function loadPosts() {
     } else {
       setPortfolioStatus('');
     }
-  } catch {
+  } catch (error) {
+    console.error('Unable to load posts.', error);
     setPortfolioStatus('Unable to load posts right now.');
   }
 }
