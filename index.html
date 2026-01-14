@@ -63,7 +63,7 @@
       <section class="gallery">
         <div class="sectionHeader">
           <h2>Gallery</h2>
-          <button class="editBtn" id="editGalleryBtn" type="button">Edit</button>
+          <button class="editBtn" id="editGalleryBtn" type="button" data-admin-only data-panel-target="galleryEditor" data-admin-action="edit gallery">Edit</button>
         </div>
         <div class="slideshow" id="slideshow">
           <figure>
@@ -74,6 +74,29 @@
           </figure>
           <button class="prev" id="prevSlide" aria-label="Previous">&#10094;</button>
           <button class="next" id="nextSlide" aria-label="Next">&#10095;</button>
+        </div>
+        <div class="galleryEditor editPanel is-collapsed" id="galleryEditor" data-admin-only>
+          <div class="galleryEditorHeader">
+            <div class="galleryEditorHeaderRow">
+              <input type="file" id="galleryFileInput" accept="image/*" aria-label="Select image file"/>
+              <button class="galleryUploadButton" id="galleryUploadButton" type="button">Upload</button>
+            </div>
+            <p id="galleryEditorStatus" role="status" aria-live="polite"></p>
+          </div>
+          <div id="galleryGrid" class="galleryGrid"></div>
+          <div class="gallerySelectedEditor" id="gallerySelectedEditor">
+            <div class="gallerySelectedPreviewWrap">
+              <img id="gallerySelectedPreview" src="" alt="Selected image preview"/>
+            </div>
+            <label class="galleryEditorLabel">
+              Caption
+              <textarea id="galleryCaptionInput" rows="3" placeholder="Enter image caption"></textarea>
+            </label>
+            <div class="gallerySelectedActions">
+              <button class="gallerySaveButton" id="gallerySaveButton" type="button">Save</button>
+              <button class="galleryDeleteButton" id="galleryDeleteButton" type="button">Delete</button>
+            </div>
+          </div>
         </div>
       </section>
       <section class="quotes" id="quotes">
@@ -178,6 +201,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
     <script>
       window.firebaseConfig = {
         apiKey: "AIzaSyBfLjtPI90S8WodG19OrEO6jmT-8lvqF1I",
@@ -191,31 +215,6 @@
     </script>
     <script type="module" src="assets/js/main.js"></script>
     <script>
-      document.addEventListener("DOMContentLoaded", function() {
-        const slides = [
-          {img:"https://picsum.photos/seed/family/1200/800", link:"https://picsum.photos/seed/family/1200/1200", caption:"Family: The people who keep me grounded and give purpose to every project, every late night, and every new adventure."},
-          {img:"https://picsum.photos/seed/market/1200/800", link:"https://picsum.photos/seed/market/1200/1200", caption:"Marketplace: Where ideas meet reality—sometimes you win, sometimes you learn, but you always grow."},
-          {img:"https://picsum.photos/seed/coding/1200/800", link:"https://picsum.photos/seed/coding/1200/1200", caption:"Coding: My workshop for building the future and tinkering with possibility, one script at a time."},
-          {img:"https://picsum.photos/seed/stoic/1200/800", link:"https://picsum.photos/seed/stoic/1200/1200", caption:"Stoic: A daily reminder to focus on what I can control and let go of what I can't."},
-          {img:"https://picsum.photos/seed/city/1200/800", link:"https://picsum.photos/seed/city/1200/1200", caption:"City: The buzz of opportunity, the challenge of keeping your head while everyone else is losing theirs."},
-          {img:"https://picsum.photos/seed/sunrise/1200/800", link:"https://picsum.photos/seed/sunrise/1200/1200", caption:"Sunrise: New beginnings, every day—reset, reflect, and restart stronger than before."}
-        ];
-        let current = 0;
-        const slideImage = document.getElementById("slideImage");
-        const slideCaption = document.getElementById("slideCaption");
-        const slideLink = document.getElementById("slideLink");
-        function showSlide(i) {
-          current = (i + slides.length) % slides.length;
-          const s = slides[current];
-          slideImage.src = s.img;
-          slideImage.alt = s.caption;
-          slideLink.href = s.link;
-          slideCaption.textContent = s.caption;
-        }
-        document.getElementById("prevSlide").addEventListener("click", () => showSlide(current - 1));
-        document.getElementById("nextSlide").addEventListener("click", () => showSlide(current + 1));
-        showSlide(0);
-      });
       document.getElementById("year").textContent = new Date().getFullYear();
     </script>
   </body>

@@ -18,6 +18,7 @@ let firebaseAvailable = hasFirebaseConfig;
 
 let auth = null;
 let firestore = null;
+let storage = null;
 let isAdmin = false;
 let currentUserId = null;
 const authListeners = new Set();
@@ -54,6 +55,10 @@ export function ensureAdmin(actionLabel = 'admin action') {
 
 export function getFirestore() {
   return firestore;
+}
+
+export function getStorage() {
+  return storage;
 }
 
 export function getCurrentUserId() {
@@ -151,6 +156,7 @@ function initFirebase() {
   if (!firebaseAvailable || !window.firebase) {
     auth = null;
     firestore = null;
+    storage = null;
     return;
   }
   if (window.firebase?.apps?.length === 0) {
@@ -161,6 +167,9 @@ function initFirebase() {
   }
   if (window.firebase?.apps?.length && window.firebase?.firestore) {
     firestore = window.firebase.firestore();
+  }
+  if (window.firebase?.apps?.length && window.firebase?.storage) {
+    storage = window.firebase.storage();
   }
   if (!auth) {
     firebaseAvailable = false;

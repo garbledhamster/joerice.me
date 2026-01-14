@@ -4,12 +4,14 @@ import { initLayout } from './ui/layout.js';
 import { initPosts } from './posts.js';
 import { initQuotes } from './quotes.js';
 import { initTooltips } from './tooltips.js';
+import { initGallery } from './gallery.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initLayout();
   initAuth();
   initPosts();
   initQuotes();
+  initGallery();
   initContact();
   initTooltips();
 
