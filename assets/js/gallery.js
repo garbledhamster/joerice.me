@@ -209,7 +209,7 @@ function selectNextImage() {
 function renderGalleryGrid() {
   if (!galleryEditorGrid) return;
   
-  galleryGrid.innerHTML = images.map(img => {
+  galleryEditorGrid.innerHTML = images.map((img, index) => {
     const safeImgUrl = sanitizeUrl(img.img);
     const safeCaption = sanitizeText(img.caption || '');
     const shortCaption = img.caption?.slice(0, 50) || 'No caption';
@@ -218,9 +218,9 @@ function renderGalleryGrid() {
     const safeId = sanitizeText(img.id);
     
     return `
-    <div class="galleryGridItem" data-doc-id="${safeId}">
+    <div class="galleryEditorGridItem" data-doc-id="${safeId}" data-index="${index}">
       <img src="${safeImgUrl || '#'}" alt="${safeCaption}" loading="lazy"/>
-      <div class="galleryGridItemCaption">${safeShortCaption}</div>
+      <div class="galleryEditorGridItemCaption">${safeShortCaption}</div>
     </div>
   `;
   }).join('');
@@ -272,7 +272,7 @@ async function handleUpload() {
     const downloadURL = await uploadTask.ref.getDownloadURL();
     
     // Get caption from input and validate
-    const caption = galleryCaptionInput?.value?.trim() || '';
+    const caption = galleryEditorCaptionInput?.value?.trim() || '';
     const validatedCaption = validateLength(caption, 500);
     
     // Create Firestore document
@@ -325,7 +325,7 @@ async function handleSave() {
   try {
     setEditorStatus('Saving...');
     
-    const caption = galleryCaptionInput?.value?.trim() || '';
+    const caption = galleryEditorCaptionInput?.value?.trim() || '';
     const validatedCaption = validateLength(caption, 500);
     const docRef = firestore.collection('Images').doc(selectedImageDoc.id);
     

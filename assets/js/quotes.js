@@ -96,12 +96,35 @@ function renderQuoteList(activeIndex = editingQuoteIndex) {
   quoteListItems.innerHTML = quotes.map((quote, index) => {
     const safeText = sanitizeText(quote.text?.slice(0, 32) || 'Untitled');
     const ellipsis = quote.text?.length > 32 ? '…' : '';
-    const activeClass = index === activeIndex ? 'active' : '';
+    const isEditing = index === editingQuoteIndex;
+    const activeClass = index === activeIndex && !isEditing ? 'active' : '';
+    
+    // Show inline editor if this quote is being edited
+    if (isEditing) {
+      const safeQuoteText = sanitizeText(quote.text || '');
+      const safeQuoteAuthor = sanitizeText(quote.author || '');
+      return `
+      <li class="quote-list-item editing">
+        <div class="quote-inline-editor">
+          <textarea class="quote-inline-text" rows="3" placeholder="Write the quote here">${safeQuoteText}</textarea>
+          <input class="quote-inline-author" type="text" placeholder="Quote author" value="${safeQuoteAuthor}"/>
+          <div class="quote-inline-actions">
+            <button class="quote-inline-save" type="button" data-index="${index}">Save</button>
+            <button class="quote-inline-cancel" type="button" data-index="${index}">Cancel</button>
+            ${quote.id ? `<button class="quote-inline-delete" type="button" data-index="${index}">Delete</button>` : ''}
+          </div>
+        </div>
+      </li>
+    `;
+    }
+    
+    // Show regular quote button with edit button
     return `
-    <li>
-      <button class="quoteListButton ${activeClass}" type="button" data-index="${index}">
+    <li class="quote-list-item ${activeClass}">
+      <button class="quoteListButton" type="button" data-index="${index}">
         ${safeText}${ellipsis}
       </button>
+      <button class="quote-edit-button" type="button" data-index="${index}" title="Edit">✎</button>
     </li>
   `;
   }).join('');
@@ -365,6 +388,30 @@ export function initQuotes() {
       } catch (error) {
         console.warn('Unable to save quote.', error);
         alert('Unable to save quote. Please try again.');
+      }
+    });
+  }
+
+  // Setup edit quotes button
+  const editQuotesBtn = $('#editQuotesBtn');
+  const quoteEditor = $('#quoteEditor');
+  if (editQuotesBtn && quoteEditor) {
+    editQuotesBtn.addEventListener('click', () => {
+      // Check if user is admin before allowing edit
+      if (!ensureAdmin('edit quotes')) return;
+      
+      // Toggle the editor visibility
+      const isCollapsed = quoteEditor.classList.contains('is-collapsed');
+      if (isCollapsed) {
+        quoteEditor.classList.remove('is-collapsed');
+        editQuotesBtn.textContent = 'Close';
+      } else {
+        quoteEditor.classList.add('is-collapsed');
+        editQuotesBtn.textContent = 'Edit';
+        // Clear editing state when closing
+        editingQuoteId = null;
+        editingQuoteIndex = null;
+        renderQuoteList();
       }
     });
   }
