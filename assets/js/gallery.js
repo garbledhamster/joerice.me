@@ -14,7 +14,6 @@ let galleryEditorPicker = null;
 let galleryEditorEdit = null;
 let galleryEditorGrid = null;
 let galleryEditorUpload = null;
-let galleryEditorToggleButton = null;
 let galleryEditorFileInput = null;
 let galleryEditorUploadButton = null;
 let galleryEditorStatus = null;
@@ -33,12 +32,6 @@ let currentSlideIndex = 0;
 let selectedImageDoc = null;
 let selectedImageIndex = -1;
 let isEditorMode = false;
-
-// UI Text Constants
-const UPLOAD_BUTTON_TEXT = {
-  SHOW: '+ Upload New Image',
-  HIDE: '− Hide Upload'
-};
 
 // Fallback hardcoded slides for when Firebase images aren't available
 const fallbackSlides = [
@@ -308,12 +301,8 @@ async function handleUpload() {
       selectImage(newImage, newImageIndex);
     }
     
-    // Clear file input and hide upload area
+    // Clear file input
     if (galleryEditorFileInput) galleryEditorFileInput.value = '';
-    if (galleryEditorUpload) galleryEditorUpload.hidden = true;
-    if (galleryEditorToggleButton) {
-      galleryEditorToggleButton.textContent = UPLOAD_BUTTON_TEXT.SHOW;
-    }
     
   } catch (error) {
     console.error('Error uploading image:', error);
@@ -465,15 +454,9 @@ function showEditorPicker() {
   slideshow.hidden = true;
   galleryEditorContainer.hidden = false;
   
-  // Show picker, hide edit view and upload area
+  // Show picker, hide edit view
   if (galleryEditorPicker) galleryEditorPicker.hidden = false;
   if (galleryEditorEdit) galleryEditorEdit.hidden = true;
-  if (galleryEditorUpload) galleryEditorUpload.hidden = true;
-  
-  // Update toggle button text
-  if (galleryEditorToggleButton) {
-    galleryEditorToggleButton.textContent = UPLOAD_BUTTON_TEXT.SHOW;
-  }
   
   // Render the grid
   renderGalleryGrid();
@@ -528,7 +511,6 @@ export async function initGallery() {
   galleryEditorEdit = $('#galleryEditorEdit');
   galleryEditorGrid = $('#galleryEditorGrid');
   galleryEditorUpload = $('#galleryEditorUpload');
-  galleryEditorToggleButton = $('#galleryEditorToggleButton');
   galleryEditorFileInput = $('#galleryEditorFileInput');
   galleryEditorUploadButton = $('#galleryEditorUploadButton');
   galleryEditorStatus = $('#galleryEditorStatus');
@@ -553,20 +535,6 @@ export async function initGallery() {
   initSlideshow();
 
   // Initialize editor controls
-  if (galleryEditorToggleButton) {
-    galleryEditorToggleButton.addEventListener('click', () => {
-      if (!ensureAdmin('toggle upload area')) return;
-      
-      if (galleryEditorUpload) {
-        const isHidden = galleryEditorUpload.hidden;
-        galleryEditorUpload.hidden = !isHidden;
-        
-        // Update button text
-        galleryEditorToggleButton.textContent = isHidden ? UPLOAD_BUTTON_TEXT.HIDE : UPLOAD_BUTTON_TEXT.SHOW;
-      }
-    });
-  }
-
   if (galleryEditorUploadButton) {
     galleryEditorUploadButton.addEventListener('click', handleUpload);
   }
