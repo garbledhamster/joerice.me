@@ -248,6 +248,8 @@ async function loadFirestorePosts() {
         published: isPublished
       });
     });
+    
+    // Clean up existing Firestore and local entries before adding new ones
     removeNotesBySource('firestore');
     removePinnedBySource('firestore');
     removeNotesBySource('local');
