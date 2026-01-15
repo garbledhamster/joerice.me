@@ -34,6 +34,12 @@ let selectedImageDoc = null;
 let selectedImageIndex = -1;
 let isEditorMode = false;
 
+// UI Text Constants
+const UPLOAD_BUTTON_TEXT = {
+  SHOW: '+ Upload New Image',
+  HIDE: '− Hide Upload'
+};
+
 // Fallback hardcoded slides for when Firebase images aren't available
 const fallbackSlides = [
   {img:"https://picsum.photos/seed/family/1200/800", link:"https://picsum.photos/seed/family/1200/1200", caption:"Family: The people who keep me grounded and give purpose to every project, every late night, and every new adventure."},
@@ -306,7 +312,7 @@ async function handleUpload() {
     if (galleryEditorFileInput) galleryEditorFileInput.value = '';
     if (galleryEditorUpload) galleryEditorUpload.hidden = true;
     if (galleryEditorToggleButton) {
-      galleryEditorToggleButton.textContent = '+ Upload New Image';
+      galleryEditorToggleButton.textContent = UPLOAD_BUTTON_TEXT.SHOW;
     }
     
   } catch (error) {
@@ -439,7 +445,7 @@ function showEditorPicker() {
   
   // Update toggle button text
   if (galleryEditorToggleButton) {
-    galleryEditorToggleButton.textContent = '+ Upload New Image';
+    galleryEditorToggleButton.textContent = UPLOAD_BUTTON_TEXT.SHOW;
   }
   
   // Render the grid
@@ -529,7 +535,7 @@ export async function initGallery() {
         galleryEditorUpload.hidden = !isHidden;
         
         // Update button text
-        galleryEditorToggleButton.textContent = isHidden ? '− Hide Upload' : '+ Upload New Image';
+        galleryEditorToggleButton.textContent = isHidden ? UPLOAD_BUTTON_TEXT.HIDE : UPLOAD_BUTTON_TEXT.SHOW;
       }
     });
   }
