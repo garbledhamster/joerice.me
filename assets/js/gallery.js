@@ -1,5 +1,6 @@
 import { ensureAdmin, getFirestore, getStorage, getCurrentUserId } from './auth.js';
 import { $ } from './dom.js';
+import { sanitizeText, sanitizeUrl, validateLength } from './sanitize.js';
 
 // DOM elements
 let slideImage = null;
@@ -52,10 +53,15 @@ function showSlide(index) {
   currentSlideIndex = (index + images.length) % images.length;
   const slide = images[currentSlideIndex];
   
-  slideImage.src = slide.img;
-  slideImage.alt = slide.caption || '';
-  slideLink.href = slide.link || slide.img;
-  slideCaption.textContent = slide.caption || '';
+  const safeImgUrl = sanitizeUrl(slide.img);
+  const safeLinkUrl = sanitizeUrl(slide.link || slide.img);
+  
+  // Use safe defaults if sanitization blocks the URL
+  slideImage.src = safeImgUrl || '#';
+  slideImage.alt = sanitizeText(slide.caption || '');
+  slideLink.href = safeLinkUrl || '#';
+  // Note: textContent automatically escapes HTML, but we use sanitizeText for consistency
+  slideCaption.textContent = sanitizeText(slide.caption || '');
 }
 
 async function loadImagesFromFirestore() {
@@ -203,11 +209,21 @@ function selectNextImage() {
 function renderGalleryGrid() {
   if (!galleryEditorGrid) return;
   
-  galleryEditorGrid.innerHTML = images.map((img, index) => `
-    <div class="galleryEditorGridItem" data-doc-id="${img.id}" data-index="${index}" title="${img.caption || 'No caption'}">
-      <img src="${img.img}" alt="${img.caption || ''}" loading="lazy"/>
+  galleryGrid.innerHTML = images.map(img => {
+    const safeImgUrl = sanitizeUrl(img.img);
+    const safeCaption = sanitizeText(img.caption || '');
+    const shortCaption = img.caption?.slice(0, 50) || 'No caption';
+    const ellipsis = img.caption?.length > 50 ? '…' : '';
+    const safeShortCaption = sanitizeText(shortCaption + ellipsis);
+    const safeId = sanitizeText(img.id);
+    
+    return `
+    <div class="galleryGridItem" data-doc-id="${safeId}">
+      <img src="${safeImgUrl || '#'}" alt="${safeCaption}" loading="lazy"/>
+      <div class="galleryGridItemCaption">${safeShortCaption}</div>
     </div>
-  `).join('');
+  `;
+  }).join('');
 
   // Add click handlers to grid items
   const gridItems = galleryEditorGrid.querySelectorAll('.galleryEditorGridItem');
@@ -255,11 +271,15 @@ async function handleUpload() {
     const uploadTask = await storageRef.put(file);
     const downloadURL = await uploadTask.ref.getDownloadURL();
     
-    // Create Firestore document with empty caption initially
+    // Get caption from input and validate
+    const caption = galleryCaptionInput?.value?.trim() || '';
+    const validatedCaption = validateLength(caption, 500);
+    
+    // Create Firestore document
     const imagesCollection = firestore.collection('Images');
     const docRef = await imagesCollection.add({
       userId: userId,
-      quote: '',
+      quote: validatedCaption,
       storagePath: storagePath,
       downloadURL: downloadURL,
       createdAt: window.firebase.firestore.FieldValue.serverTimestamp(),
@@ -305,21 +325,22 @@ async function handleSave() {
   try {
     setEditorStatus('Saving...');
     
-    const caption = galleryEditorCaptionInput?.value?.trim() || '';
+    const caption = galleryCaptionInput?.value?.trim() || '';
+    const validatedCaption = validateLength(caption, 500);
     const docRef = firestore.collection('Images').doc(selectedImageDoc.id);
     
     await docRef.update({
-      quote: caption,
+      quote: validatedCaption,
       updatedAt: window.firebase.firestore.FieldValue.serverTimestamp()
     });
 
     setEditorStatus('Caption saved!');
     
-    // Update local state
-    selectedImageDoc.caption = caption;
+    // Update local state with validated caption
+    selectedImageDoc.caption = validatedCaption;
     const imageIndex = images.findIndex(img => img.id === selectedImageDoc.id);
     if (imageIndex !== -1) {
-      images[imageIndex].caption = caption;
+      images[imageIndex].caption = validatedCaption;
       
       // Update slideshow if this is the current slide
       if (currentSlideIndex === imageIndex) {

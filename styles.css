@@ -321,7 +321,7 @@
 
   .editBtn {
     border: 1px solid #fff;
-    background: transparent;
+    background: rgba(255, 255, 255, 0.25);
     color: #fff;
     font-family: var(--fontHead);
     font-size: .85rem;
@@ -329,11 +329,13 @@
     padding: .3rem .7rem;
     text-transform: uppercase;
     cursor: pointer;
+    transition: background .2s, transform .2s;
   }
 
   .editBtn:hover {
     background: #fff;
     color: var(--fg);
+    transform: translateY(-1px);
   }
 
   .portfolioStatus {
@@ -416,7 +418,7 @@
     right: 12px;
     z-index: 10;
     border: 1px solid var(--border);
-    background: var(--red);
+    background: var(--green);
     color: #fff;
     padding: .3rem .6rem;
     font-size: .8rem;
@@ -426,7 +428,28 @@
   
   #closePost:hover {
     background: #fff;
-    color: var(--red);
+    color: var(--green);
+  }
+
+  #editPostBtn {
+    position: absolute;
+    top: 12px;
+    right: 90px;
+    z-index: 10;
+    border: 1px solid var(--border);
+    background: var(--green);
+    color: #fff;
+    padding: .3rem .6rem;
+    font-size: .8rem;
+    cursor: pointer;
+    font-family: var(--fontHead);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+
+  #editPostBtn:hover {
+    background: #fff;
+    color: var(--green);
   }
   
   #postContent {
@@ -435,6 +458,8 @@
     color: var(--fg);
     max-width: 90%;
     max-height: 90%;
+    min-width: min(600px, 85vw);
+    min-height: min(400px, 70vh);
     overflow: auto;
     padding: 2rem;
     border-radius: 6px;
@@ -844,6 +869,25 @@
     gap: .4rem;
   }
 
+  .quote-list-item {
+    display: flex;
+    align-items: stretch;
+    gap: .3rem;
+  }
+
+  .quote-list-item.active {
+    background: rgba(255, 255, 255, 0.05);
+  }
+
+  .quote-list-item.editing {
+    flex-direction: column;
+    gap: .5rem;
+    padding: .5rem;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 5px;
+  }
+
   .quoteListButton {
     border: 1px solid rgba(255, 255, 255, 0.4);
     background: transparent;
@@ -852,11 +896,83 @@
     padding: .3rem .5rem;
     cursor: pointer;
     font-size: .85rem;
+    flex: 1;
   }
 
-  .quoteListButton.active {
-    background: rgba(255, 255, 255, 0.2);
-    border-color: #fff;
+  .quote-edit-button {
+    border: 1px solid rgba(255, 255, 255, 0.4);
+    background: transparent;
+    color: #fff;
+    padding: .3rem .5rem;
+    cursor: pointer;
+    font-size: .9rem;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .quote-edit-button:hover {
+    opacity: 1;
+    background: rgba(255, 255, 255, 0.1);
+  }
+
+  .quote-inline-editor {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem;
+  }
+
+  .quote-inline-text,
+  .quote-inline-author {
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+    padding: .45rem .6rem;
+    font-size: .9rem;
+    font-family: inherit;
+    resize: vertical;
+  }
+
+  .quote-inline-text {
+    min-height: 3rem;
+  }
+
+  .quote-inline-actions {
+    display: flex;
+    gap: .4rem;
+  }
+
+  .quote-inline-save,
+  .quote-inline-cancel,
+  .quote-inline-delete {
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: transparent;
+    color: #fff;
+    padding: .3rem .7rem;
+    cursor: pointer;
+    font-family: var(--fontHead);
+    font-size: .85rem;
+  }
+
+  .quote-inline-save {
+    border-color: var(--green);
+    color: var(--green);
+  }
+
+  .quote-inline-save:hover {
+    background: rgba(0, 255, 0, 0.1);
+  }
+
+  .quote-inline-delete {
+    border-color: var(--red);
+    color: var(--red);
+  }
+
+  .quote-inline-delete:hover {
+    background: rgba(255, 0, 0, 0.1);
+  }
+
+  .quote-inline-cancel:hover {
+    background: rgba(255, 255, 255, 0.1);
   }
 
   .quoteEditorPane {
@@ -1079,9 +1195,17 @@
   .portfolioCloseButton {
     border: 1px solid var(--border);
     padding: .4rem .8rem;
-    background: transparent;
+    background: var(--green);
+    color: #fff;
     font-family: var(--fontHead);
     cursor: pointer;
+    transition: background .2s;
+  }
+
+  .portfolioCloseButton:hover {
+    background: #fff;
+    color: var(--green);
+    border-color: var(--green);
   }
 
   .portfolioField {
