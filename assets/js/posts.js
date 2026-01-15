@@ -167,6 +167,10 @@ function getLocalPostById(id) {
   return localPosts.find(post => post.id === id) || null;
 }
 
+function isPostPublished(data) {
+  return data?.['published'] !== false; // Default to true if not set
+}
+
 async function loadFirestorePosts() {
   const postsRef = getPostsCollectionRef();
   const userId = getCurrentUserId();
@@ -183,7 +187,7 @@ async function loadFirestorePosts() {
       const data = doc.data() || {};
       
       // Filter by published status for non-admin users
-      const isPublished = data['published'] !== false; // Default to true if not set
+      const isPublished = isPostPublished(data);
       if (!isAdminUser() && !isPublished) {
         return; // Skip unpublished posts for non-admin users
       }
@@ -345,7 +349,7 @@ export async function openPost(url) {
       if (!doc.exists) throw new Error('Post unavailable');
       const data = doc.data() || {};
       const content = data['Body'] || data['body'] || '';
-      const isPublished = data['published'] !== false; // Default to true if not set
+      const isPublished = isPostPublished(data);
       currentPost = { 
         url, 
         data, 

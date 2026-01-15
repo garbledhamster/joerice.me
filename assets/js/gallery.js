@@ -458,6 +458,16 @@ function hideEditor() {
   // Clear selection and status
   clearSelection();
   setEditorStatus('');
+  
+  // Update edit button text
+  updateEditButtonText();
+}
+
+function updateEditButtonText() {
+  const editGalleryBtn = $('#editGalleryBtn');
+  if (editGalleryBtn) {
+    editGalleryBtn.textContent = isEditorMode ? 'Close' : 'Edit';
+  }
 }
 
 export async function initGallery() {
@@ -527,11 +537,6 @@ export async function initGallery() {
       } else {
         // If in picker view, close editor and show slideshow
         hideEditor();
-        // Update edit button text
-        const editGalleryBtn = $('#editGalleryBtn');
-        if (editGalleryBtn) {
-          editGalleryBtn.textContent = 'Edit';
-        }
       }
     });
   }
@@ -545,10 +550,9 @@ export async function initGallery() {
       // Toggle between editor and slideshow
       if (isEditorMode) {
         hideEditor();
-        editGalleryBtn.textContent = 'Edit';
       } else {
         showEditorPicker();
-        editGalleryBtn.textContent = 'Close';
+        updateEditButtonText();
       }
     });
   }
