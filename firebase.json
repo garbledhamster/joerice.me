@@ -12,7 +12,10 @@
       "**/.*",
       "**/node_modules/**",
       "storage.rules",
-      "firestore.rules"
+      "firestore.rules",
+      "README.md",
+      "DEPLOYMENT.md",
+      ".firebaserc"
     ],
     "rewrites": [
       {
