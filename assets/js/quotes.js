@@ -1,5 +1,6 @@
 import { ensureAdmin, getFirestore } from './auth.js';
 import { $ } from './dom.js';
+import { sanitizeText, validateLength } from './sanitize.js';
 
 let quoteBox = null;
 let quoteText = null;
@@ -93,33 +94,16 @@ function startQuoteCarousel() {
 function renderQuoteList(activeIndex = editingQuoteIndex) {
   if (!quoteListItems) return;
   quoteListItems.innerHTML = quotes.map((quote, index) => {
-    const isActive = index === activeIndex;
-    const isEditing = editingQuoteId && quote.id === editingQuoteId && isActive;
-    
-    if (isEditing) {
-      return `
-        <li class="quote-list-item editing" data-index="${index}" data-quote-id="${quote.id || ''}">
-          <div class="quote-inline-editor">
-            <textarea class="quote-inline-text" rows="2" placeholder="Quote text">${quote.text || ''}</textarea>
-            <input class="quote-inline-author" type="text" placeholder="Author" value="${quote.author || ''}" />
-            <div class="quote-inline-actions">
-              <button class="quote-inline-save" type="button" data-index="${index}">Save</button>
-              <button class="quote-inline-cancel" type="button" data-index="${index}">Cancel</button>
-              ${quote.id ? `<button class="quote-inline-delete" type="button" data-index="${index}">Delete</button>` : ''}
-            </div>
-          </div>
-        </li>
-      `;
-    }
-    
+    const safeText = sanitizeText(quote.text?.slice(0, 32) || 'Untitled');
+    const ellipsis = quote.text?.length > 32 ? '…' : '';
+    const activeClass = index === activeIndex ? 'active' : '';
     return `
-      <li class="quote-list-item ${isActive ? 'active' : ''}" data-index="${index}" data-quote-id="${quote.id || ''}">
-        <button class="quoteListButton" type="button" data-index="${index}">
-          ${quote.text?.slice(0, 50) || 'Untitled'}${quote.text?.length > 50 ? '…' : ''}
-        </button>
-        <button class="quote-edit-button" type="button" data-index="${index}" title="Edit quote">✎</button>
-      </li>
-    `;
+    <li>
+      <button class="quoteListButton ${activeClass}" type="button" data-index="${index}">
+        ${safeText}${ellipsis}
+      </button>
+    </li>
+  `;
   }).join('');
 }
 
@@ -347,7 +331,17 @@ export function initQuotes() {
         alert('Please add a quote before saving.');
         return;
       }
+      // Validate input lengths
+      const validatedText = validateLength(text, 1000);
+      const validatedAuthor = validateLength(author, 200);
       
+      const updated = { text: validatedText, author: validatedAuthor };
+      if (editingQuoteIndex === null || Number.isNaN(editingQuoteIndex)) {
+        quotes.push(updated);
+        editingQuoteIndex = quotes.length - 1;
+      } else {
+        quotes[editingQuoteIndex] = updated;
+      }
       try {
         const quoteId = editingQuoteId;
         const savedId = await saveQuote({ id: quoteId, text, author });
