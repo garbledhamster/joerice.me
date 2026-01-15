@@ -61,6 +61,18 @@ function getPostTitle(post) {
   return post.data.Title || post.data.title || 'Untitled';
 }
 
+function formatPostEntry(post) {
+  const safeTitle = sanitizeText(post.title);
+  const safeTags = (post.tags || []).map(t => sanitizeText(t)).join('|');
+  const safeUrl = sanitizeText(post.url);
+  const sourceAttr = post.source ? ` data-source="${sanitizeText(post.source)}"` : '';
+  const idAttr = post.id ? ` data-id="${sanitizeText(post.id)}"` : '';
+  const publishedAttr = post.published !== undefined ? ` data-published="${post.published}"` : '';
+  // Add visual indicator for unpublished posts (only visible to admins)
+  const unpublishedIndicator = (post.published === false && isAdminUser()) ? ' [DRAFT]' : '';
+  return `<a class="entry" data-tags="${safeTags}" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr}>${safeTitle}${unpublishedIndicator}</a>`;
+}
+
 function clearCurrentPost() {
   currentPost = null;
   if (postContentEl) {
@@ -308,16 +320,7 @@ function filterEntries() {
 
 function renderPinned() {
   if (!pinnedGrid) return;
-  pinnedGrid.innerHTML = pinned
-    .map(p => {
-      const safeTitle = sanitizeText(p.title);
-      const safeTags = p.tags.map(t => sanitizeText(t)).join('|');
-      const safeUrl = sanitizeText(p.url);
-      const publishedAttr = p.published !== undefined ? ` data-published="${p.published}"` : '';
-      // Add visual indicator for unpublished posts (only visible to admins)
-      const unpublishedIndicator = (p.published === false && isAdminUser()) ? ' [DRAFT]' : '';
-      return `<a class="entry" data-tags="${safeTags}" data-url="${safeUrl}"${publishedAttr}>${safeTitle}${unpublishedIndicator}</a>`;
-    }).join('');
+  pinnedGrid.innerHTML = pinned.map(p => formatPostEntry(p)).join('');
   attachClickHandlers();
   filterEntries();
 }
@@ -326,18 +329,7 @@ export function renderPage() {
   if (!entryGrid) return;
   const start = page * pageSize;
   const slice = notes.slice(start, start + pageSize);
-  entryGrid.innerHTML = slice
-    .map(n => {
-      const safeTitle = sanitizeText(n.title);
-      const safeTags = n.tags.map(t => sanitizeText(t)).join('|');
-      const safeUrl = sanitizeText(n.url);
-      const sourceAttr = n.source ? ` data-source="${sanitizeText(n.source)}"` : '';
-      const idAttr = n.id ? ` data-id="${sanitizeText(n.id)}"` : '';
-      const publishedAttr = n.published !== undefined ? ` data-published="${n.published}"` : '';
-      // Add visual indicator for unpublished posts (only visible to admins)
-      const unpublishedIndicator = (n.published === false && isAdminUser()) ? ' [DRAFT]' : '';
-      return `<a class="entry" data-tags="${safeTags}" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr}>${safeTitle}${unpublishedIndicator}</a>`;
-    }).join('');
+  entryGrid.innerHTML = slice.map(n => formatPostEntry(n)).join('');
   if (prevBtn) prevBtn.disabled = page === 0;
   if (nextBtn) nextBtn.disabled = start + pageSize >= notes.length;
   attachClickHandlers();
