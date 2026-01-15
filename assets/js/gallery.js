@@ -370,13 +370,23 @@ async function handleSave() {
 }
 
 async function handleDelete() {
-  if (!ensureAdmin('delete gallery image')) return;
+  console.log('handleDelete called');
+  
+  if (!ensureAdmin('delete gallery image')) {
+    console.log('Admin check failed');
+    return;
+  }
+  
   if (!selectedImageDoc) {
+    console.log('No image selected');
     setEditorStatus('No image selected.');
     return;
   }
 
+  console.log('Deleting image:', selectedImageDoc.id);
+
   if (!confirm('Are you sure you want to delete this image? This cannot be undone.')) {
+    console.log('Deletion cancelled by user');
     return;
   }
 
@@ -384,18 +394,22 @@ async function handleDelete() {
   const storage = getStorage();
 
   if (!firestore || !storage) {
+    console.log('Firebase not configured:', { firestore: !!firestore, storage: !!storage });
     setEditorStatus('Firebase not configured.');
     return;
   }
 
   try {
     setEditorStatus('Deleting...');
+    console.log('Starting deletion process...');
     
     // Delete from Storage
     if (selectedImageDoc.storagePath) {
       try {
+        console.log('Deleting from storage:', selectedImageDoc.storagePath);
         const storageRef = storage.ref(selectedImageDoc.storagePath);
         await storageRef.delete();
+        console.log('Storage deletion successful');
       } catch (error) {
         console.warn('Error deleting from storage:', error);
         // Continue with Firestore deletion even if storage delete fails
@@ -403,13 +417,16 @@ async function handleDelete() {
     }
     
     // Delete from Firestore
+    console.log('Deleting from Firestore:', selectedImageDoc.id);
     const docRef = firestore.collection('Images').doc(selectedImageDoc.id);
     await docRef.delete();
+    console.log('Firestore deletion successful');
 
-    setEditorStatus('Image deleted!');
+    setEditorStatus('Image deleted successfully!');
     
     // Remove from local state
     images = images.filter(img => img.id !== selectedImageDoc.id);
+    console.log('Updated local images array, new length:', images.length);
     
     // Clear selection
     clearSelection();
@@ -423,8 +440,18 @@ async function handleDelete() {
       showSlide(currentSlideIndex);
     }
     
+    // Return to picker view after deletion
+    if (galleryEditorPicker && galleryEditorEdit) {
+      galleryEditorPicker.hidden = false;
+      galleryEditorEdit.hidden = true;
+    }
+    
+    // Clear status after a short delay
+    setTimeout(() => setEditorStatus(''), 2000);
+    
   } catch (error) {
     console.error('Error deleting image:', error);
+    console.error('Error details:', error.code, error.message);
     setEditorStatus(`Delete failed: ${error.message || 'Unknown error'}`);
   }
 }
