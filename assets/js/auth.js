@@ -25,6 +25,7 @@ const authListeners = new Set();
 
 const adminEmail = 'jmjrice94@gmail.com';
 let pendingEmailSignInLink = null;
+let isSigningInAnonymously = false;
 
 export function isAdminUser() {
   return isAdmin;
@@ -279,16 +280,24 @@ export function initAuth() {
   if (auth?.onAuthStateChanged) {
     auth.onAuthStateChanged(async user => {
       // If no user is signed in, sign in anonymously to allow Firestore access
-      if (!user && auth?.signInAnonymously) {
+      // This is necessary because Firestore rules require request.auth != null
+      // Anonymous users can read published posts but cannot create/update/delete
+      if (!user && auth?.signInAnonymously && !isSigningInAnonymously) {
+        isSigningInAnonymously = true;
         try {
           await auth.signInAnonymously();
           // onAuthStateChanged will be called again with the anonymous user
           return;
         } catch (error) {
-          console.warn('Failed to sign in anonymously:', error);
+          console.warn('Failed to sign in anonymously:', error?.code || error?.message || error);
+          // If anonymous sign-in fails, continue without auth
+        } finally {
+          isSigningInAnonymously = false;
         }
       }
       
+      // Check if this is the admin user (by email)
+      // Anonymous users have no email, so isAdmin will be false
       isAdmin = user?.email === adminEmail;
       currentUserId = user?.uid ?? null;
       updateAdminUi();
