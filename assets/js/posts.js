@@ -173,26 +173,19 @@ function isPostPublished(data) {
 
 async function loadFirestorePosts() {
   const postsRef = getPostsCollectionRef();
-  const userId = getCurrentUserId();
-  if (!postsRef || !userId) {
+  if (!postsRef) {
     removeNotesBySource('firestore');
     return;
   }
   try {
-    // Fetch posts for the current user and sort locally to support flexible field naming
-    const baseQuery = postsRef.where('userId', '==', userId);
-    const snapshot = await baseQuery.get();
+    // Fetch all posts - Firebase rules will filter based on published status and admin role
+    // Admin users see all posts, non-admin users only see published posts
+    const snapshot = await postsRef.get();
     const entries = [];
-    const isAdmin = isAdminUser();
     
     snapshot.forEach(doc => {
       const data = doc.data() || {};
-      
-      // Filter by published status for non-admin users
       const isPublished = isPostPublished(data);
-      if (!isAdmin && !isPublished) {
-        return; // Skip unpublished posts for non-admin users
-      }
       
       entries.push({
         title: data['Title'] || data['title'] || 'Untitled',
