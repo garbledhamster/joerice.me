@@ -458,6 +458,16 @@ function hideEditor() {
   // Clear selection and status
   clearSelection();
   setEditorStatus('');
+  
+  // Update edit button text
+  updateEditButtonText();
+}
+
+function updateEditButtonText() {
+  const editGalleryBtn = $('#editGalleryBtn');
+  if (editGalleryBtn) {
+    editGalleryBtn.textContent = isEditorMode ? 'Close' : 'Edit';
+  }
 }
 
 export async function initGallery() {
@@ -536,7 +546,14 @@ export async function initGallery() {
   if (editGalleryBtn) {
     editGalleryBtn.addEventListener('click', () => {
       if (!ensureAdmin('edit gallery')) return;
-      showEditorPicker();
+      
+      // Toggle between editor and slideshow
+      if (isEditorMode) {
+        hideEditor();
+      } else {
+        showEditorPicker();
+        updateEditButtonText();
+      }
     });
   }
 }

@@ -40,6 +40,7 @@ let portfolioPostBody = null;
 let portfolioSaveButton = null;
 let portfolioDeleteButton = null;
 let portfolioEditorStatus = null;
+let portfolioPostPublished = null;
 let editingLocalPostId = null;
 let isPortfolioEditorReadOnly = false;
 
@@ -102,6 +103,9 @@ function setPortfolioEditorReadOnly(isReadOnly) {
   if (portfolioPostBody) {
     portfolioPostBody.readOnly = isReadOnly;
   }
+  if (portfolioPostPublished) {
+    portfolioPostPublished.disabled = isReadOnly;
+  }
   if (portfolioSaveButton) {
     portfolioSaveButton.disabled = isReadOnly;
   }
@@ -163,6 +167,10 @@ function getLocalPostById(id) {
   return localPosts.find(post => post.id === id) || null;
 }
 
+function isPostPublished(data) {
+  return data?.published !== false; // Default to true if not set
+}
+
 async function loadFirestorePosts() {
   const postsRef = getPostsCollectionRef();
   const userId = getCurrentUserId();
@@ -175,8 +183,17 @@ async function loadFirestorePosts() {
     const baseQuery = postsRef.where('userId', '==', userId);
     const snapshot = await baseQuery.get();
     const entries = [];
+    const isAdmin = isAdminUser();
+    
     snapshot.forEach(doc => {
       const data = doc.data() || {};
+      
+      // Filter by published status for non-admin users
+      const isPublished = isPostPublished(data);
+      if (!isAdmin && !isPublished) {
+        return; // Skip unpublished posts for non-admin users
+      }
+      
       entries.push({
         title: data['Title'] || data['title'] || 'Untitled',
         date: data['Created Date'] || data['createdDate'] || new Date().toISOString(),
@@ -185,7 +202,8 @@ async function loadFirestorePosts() {
         pinned: false,
         tags: [],
         id: doc.id,
-        source: 'firestore'
+        source: 'firestore',
+        published: isPublished
       });
     });
     removeNotesBySource('firestore');
@@ -220,6 +238,10 @@ function openPortfolioEditor(post = null) {
   }
   if (portfolioPostBody) {
     portfolioPostBody.value = post?.content || '';
+  }
+  if (portfolioPostPublished) {
+    // Default to checked (published) for new posts, use existing value for edits
+    portfolioPostPublished.checked = post?.published !== false;
   }
   if (portfolioDeleteButton) {
     portfolioDeleteButton.disabled = !editingPostId;
@@ -329,6 +351,7 @@ export async function openPost(url) {
       if (!doc.exists) throw new Error('Post unavailable');
       const data = doc.data() || {};
       const content = data['Body'] || data['body'] || '';
+      const isPublished = isPostPublished(data);
       currentPost = { 
         url, 
         data, 
@@ -336,7 +359,8 @@ export async function openPost(url) {
         firestore: true, 
         id: postId, 
         source: 'firestore',
-        createdDate: data['Created Date'] || data['createdDate']
+        createdDate: data['Created Date'] || data['createdDate'],
+        published: isPublished
       };
       renderPostContent(content);
       // Show edit button for Firestore posts in admin mode
@@ -456,6 +480,7 @@ export function initPosts() {
   portfolioSaveButton = $('#portfolioSaveButton');
   portfolioDeleteButton = $('#portfolioDeleteButton');
   portfolioEditorStatus = $('#portfolioEditorStatus');
+  portfolioPostPublished = $('#portfolioPostPublished');
 
   if (!pinnedGrid || !entryGrid) return;
 
@@ -483,7 +508,8 @@ export function initPosts() {
           title: getPostTitle(currentPost),
           content: currentPost.content || '',
           source: currentPost.source,
-          createdDate: currentPost.createdDate
+          createdDate: currentPost.createdDate,
+          published: currentPost.published !== false // Default to true if not set
         };
         openPortfolioEditor(postToEdit);
       }
@@ -529,6 +555,7 @@ export function initPosts() {
       }
       
       const now = new Date().toISOString();
+      const published = portfolioPostPublished?.checked ?? true; // Default to true if checkbox doesn't exist
       const postsRef = getPostsCollectionRef();
       const userId = getCurrentUserId();
       if (postsRef && userId) {
@@ -541,7 +568,8 @@ export function initPosts() {
             'title': validatedTitle,
             'body': validatedContent,
             'createdDate': createdDate,
-            'lastEditedDate': now
+            'lastEditedDate': now,
+            'published': published
           }, { merge: true });
           editingPostId = docRef.id;
           editingPostSource = 'firestore';
