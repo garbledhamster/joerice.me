@@ -9,6 +9,7 @@ let quoteStatus = null;
 let quotes = [];
 let idx = 0;
 let quoteInterval = null;
+let editingQuoteId = null;
 let editingQuoteIndex = null;
 let quoteListItems = null;
 let quoteEditorPane = null;
@@ -16,7 +17,7 @@ let quoteEditorText = null;
 let quoteEditorAuthor = null;
 let quoteSaveButton = null;
 let quoteAddButton = null;
-let quotesDocRef = null;
+let quotesCollectionRef = null;
 
 const slideMs = 7000;
 
@@ -52,11 +53,21 @@ async function loadQuotesFromYaml() {
 }
 
 async function loadQuotes() {
-  if (quotesDocRef) {
+  if (quotesCollectionRef) {
     try {
-      const doc = await quotesDocRef.get();
-      if (doc.exists) {
-        return doc.data().quotes || [];
+      const snapshot = await quotesCollectionRef.orderBy('createdAt', 'desc').get();
+      const loadedQuotes = [];
+      snapshot.forEach(doc => {
+        const data = doc.data();
+        loadedQuotes.push({
+          id: doc.id,
+          text: data.text || '',
+          author: data.author || '',
+          createdAt: data.createdAt
+        });
+      });
+      if (loadedQuotes.length > 0) {
+        return loadedQuotes;
       }
     } catch (error) {
       console.warn('Unable to load quotes from Firestore, falling back to YAML.', error);
@@ -81,17 +92,40 @@ function startQuoteCarousel() {
 
 function renderQuoteList(activeIndex = editingQuoteIndex) {
   if (!quoteListItems) return;
-  quoteListItems.innerHTML = quotes.map((quote, index) => `
-    <li>
-      <button class="quoteListButton ${index === activeIndex ? 'active' : ''}" type="button" data-index="${index}">
-        ${quote.text?.slice(0, 32) || 'Untitled'}${quote.text?.length > 32 ? '…' : ''}
-      </button>
-    </li>
-  `).join('');
+  quoteListItems.innerHTML = quotes.map((quote, index) => {
+    const isActive = index === activeIndex;
+    const isEditing = editingQuoteId && quote.id === editingQuoteId && isActive;
+    
+    if (isEditing) {
+      return `
+        <li class="quote-list-item editing" data-index="${index}" data-quote-id="${quote.id || ''}">
+          <div class="quote-inline-editor">
+            <textarea class="quote-inline-text" rows="2" placeholder="Quote text">${quote.text || ''}</textarea>
+            <input class="quote-inline-author" type="text" placeholder="Author" value="${quote.author || ''}" />
+            <div class="quote-inline-actions">
+              <button class="quote-inline-save" type="button" data-index="${index}">Save</button>
+              <button class="quote-inline-cancel" type="button" data-index="${index}">Cancel</button>
+              ${quote.id ? `<button class="quote-inline-delete" type="button" data-index="${index}">Delete</button>` : ''}
+            </div>
+          </div>
+        </li>
+      `;
+    }
+    
+    return `
+      <li class="quote-list-item ${isActive ? 'active' : ''}" data-index="${index}" data-quote-id="${quote.id || ''}">
+        <button class="quoteListButton" type="button" data-index="${index}">
+          ${quote.text?.slice(0, 50) || 'Untitled'}${quote.text?.length > 50 ? '…' : ''}
+        </button>
+        <button class="quote-edit-button" type="button" data-index="${index}" title="Edit quote">✎</button>
+      </li>
+    `;
+  }).join('');
 }
 
 function openQuoteEditor({ index, text, author }) {
   editingQuoteIndex = index;
+  editingQuoteId = index !== null && quotes[index] ? quotes[index].id : null;
   if (quoteEditorPane) {
     quoteEditorPane.classList.add('is-active');
   }
@@ -100,12 +134,50 @@ function openQuoteEditor({ index, text, author }) {
   renderQuoteList(index);
 }
 
-async function saveQuotes() {
-  if (!quotesDocRef) {
+async function saveQuote(quoteData) {
+  if (!quotesCollectionRef) {
     console.warn('Firestore not configured; quote updates cannot be saved.');
+    return null;
+  }
+  
+  const { id, text, author } = quoteData;
+  const now = new Date().toISOString();
+  
+  if (id) {
+    // Update existing quote
+    await quotesCollectionRef.doc(id).set({
+      text,
+      author,
+      updatedAt: now
+    }, { merge: true });
+    return id;
+  } else {
+    // Create new quote
+    const docRef = await quotesCollectionRef.add({
+      text,
+      author,
+      createdAt: now,
+      updatedAt: now
+    });
+    return docRef.id;
+  }
+}
+
+async function deleteQuote(quoteId) {
+  if (!quotesCollectionRef || !quoteId) {
+    console.warn('Cannot delete quote: Firestore not configured or no ID provided.');
     return;
   }
-  await quotesDocRef.set({ quotes }, { merge: true });
+  await quotesCollectionRef.doc(quoteId).delete();
+}
+
+async function reloadQuotes() {
+  try {
+    quotes = await loadQuotes();
+    renderQuoteList();
+  } catch (error) {
+    console.warn('Unable to reload quotes.', error);
+  }
 }
 
 async function initQuoteData() {
@@ -133,25 +205,121 @@ export function initQuotes() {
   quoteAddButton = $('.quoteAddButton');
 
   const firestore = getFirestore();
-  quotesDocRef = firestore ? firestore.collection('siteContent').doc('quotes') : null;
+  quotesCollectionRef = firestore ? firestore.collection('Quotes') : null;
 
   if (!quoteBox) return;
 
   if (quoteListItems) {
     quoteListItems.addEventListener('click', event => {
-      const button = event.target.closest('[data-index]');
-      if (!button) return;
-      const index = Number(button.dataset.index);
-      const quote = quotes[index];
-      if (!quote) return;
-      openQuoteEditor({ index, text: quote.text, author: quote.author });
+      // Handle quote selection (view quote in carousel)
+      const viewButton = event.target.closest('.quoteListButton');
+      if (viewButton) {
+        const index = Number(viewButton.dataset.index);
+        const quote = quotes[index];
+        if (!quote) return;
+        idx = index;
+        showQuote(idx);
+        renderQuoteList(index);
+        return;
+      }
+      
+      // Handle inline edit button
+      const editButton = event.target.closest('.quote-edit-button');
+      if (editButton) {
+        if (!ensureAdmin('edit quote')) return;
+        const index = Number(editButton.dataset.index);
+        const quote = quotes[index];
+        if (!quote) return;
+        editingQuoteIndex = index;
+        editingQuoteId = quote.id || null;
+        renderQuoteList(index);
+        return;
+      }
+      
+      // Handle inline save button
+      const saveButton = event.target.closest('.quote-inline-save');
+      if (saveButton) {
+        if (!ensureAdmin('save quote')) return;
+        const index = Number(saveButton.dataset.index);
+        const listItem = saveButton.closest('.quote-list-item');
+        const textArea = listItem.querySelector('.quote-inline-text');
+        const authorInput = listItem.querySelector('.quote-inline-author');
+        const text = textArea?.value.trim();
+        const author = authorInput?.value.trim();
+        
+        if (!text) {
+          alert('Please add quote text before saving.');
+          return;
+        }
+        
+        const quote = quotes[index];
+        saveQuote({ id: quote?.id, text, author }).then(savedId => {
+          quotes[index] = { id: savedId, text, author };
+          editingQuoteId = null;
+          editingQuoteIndex = null;
+          reloadQuotes().then(() => {
+            idx = index;
+            showQuote(idx);
+          });
+        }).catch(error => {
+          console.warn('Unable to save quote.', error);
+          alert('Unable to save quote. Please try again.');
+        });
+        return;
+      }
+      
+      // Handle inline cancel button
+      const cancelButton = event.target.closest('.quote-inline-cancel');
+      if (cancelButton) {
+        editingQuoteId = null;
+        editingQuoteIndex = null;
+        renderQuoteList();
+        return;
+      }
+      
+      // Handle inline delete button
+      const deleteButton = event.target.closest('.quote-inline-delete');
+      if (deleteButton) {
+        if (!ensureAdmin('delete quote')) return;
+        if (!confirm('Are you sure you want to delete this quote?')) return;
+        const index = Number(deleteButton.dataset.index);
+        const quote = quotes[index];
+        if (!quote?.id) return;
+        
+        deleteQuote(quote.id).then(() => {
+          editingQuoteId = null;
+          editingQuoteIndex = null;
+          reloadQuotes().then(() => {
+            if (idx >= quotes.length) {
+              idx = Math.max(0, quotes.length - 1);
+            }
+            if (quotes.length > 0) {
+              showQuote(idx);
+            }
+          });
+        }).catch(error => {
+          console.warn('Unable to delete quote.', error);
+          alert('Unable to delete quote. Please try again.');
+        });
+        return;
+      }
     });
   }
 
   if (quoteAddButton) {
     quoteAddButton.addEventListener('click', () => {
       if (!ensureAdmin('add quote')) return;
-      openQuoteEditor({ index: null, text: '', author: '' });
+      // Add a temporary quote to the array for inline editing
+      quotes.unshift({ text: '', author: '' });
+      editingQuoteIndex = 0;
+      editingQuoteId = null;
+      renderQuoteList(0);
+      // Scroll to top of list and focus on text field
+      setTimeout(() => {
+        quoteListItems?.scrollTo({ top: 0, behavior: 'smooth' });
+        const textArea = quoteListItems?.querySelector('.quote-inline-text');
+        textArea?.focus();
+      }, 0);
     });
   }
 
@@ -164,21 +332,31 @@ export function initQuotes() {
         alert('Please add a quote before saving.');
         return;
       }
-      const updated = { text, author };
-      if (editingQuoteIndex === null || Number.isNaN(editingQuoteIndex)) {
-        quotes.push(updated);
-        editingQuoteIndex = quotes.length - 1;
-      } else {
-        quotes[editingQuoteIndex] = updated;
-      }
+      
       try {
-        await saveQuotes();
+        const quoteId = editingQuoteId;
+        const savedId = await saveQuote({ id: quoteId, text, author });
+        
+        if (editingQuoteIndex !== null && editingQuoteIndex < quotes.length) {
+          quotes[editingQuoteIndex] = { id: savedId, text, author };
+        } else {
+          quotes.push({ id: savedId, text, author });
+          editingQuoteIndex = quotes.length - 1;
+        }
+        
+        await reloadQuotes();
+        idx = editingQuoteIndex;
+        showQuote(idx);
+        
+        if (quoteEditorPane) {
+          quoteEditorPane.classList.remove('is-active');
+        }
+        editingQuoteId = null;
+        editingQuoteIndex = null;
       } catch (error) {
-        console.warn('Unable to save quotes.', error);
+        console.warn('Unable to save quote.', error);
+        alert('Unable to save quote. Please try again.');
       }
-      renderQuoteList(editingQuoteIndex);
-      idx = editingQuoteIndex;
-      showQuote(idx);
     });
   }
 
