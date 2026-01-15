@@ -20,6 +20,7 @@ let currentPost = null;
 let editingPostId = null;
 let editingPostSource = null;
 let editingPostCreatedDate = null;
+let hasLoadedInitialPosts = false;
 
 let pinnedGrid = null;
 let entryGrid = null;
@@ -674,9 +675,14 @@ export function initPosts() {
   });
 
   onAuthStateChange(async () => {
-    await loadFirestorePosts();
-    renderPage();
+    // On first auth state change (including anonymous auth), load all posts
+    // On subsequent auth changes (login/logout), reload Firestore posts
+    if (!hasLoadedInitialPosts) {
+      hasLoadedInitialPosts = true;
+      await loadPosts();
+    } else {
+      await loadFirestorePosts();
+      renderPage();
+    }
   });
-
-  loadPosts();
 }
