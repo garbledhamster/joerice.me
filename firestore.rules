@@ -11,10 +11,10 @@ service cloud.firestore {
       // Check both 'published' (lowercase) and 'Published' (capitalized) for backward compatibility
       // A post is readable if NEITHER field is explicitly false
       // Logic: (published != false) AND (Published != false)
-      // - If published=false: blocks (false != false = false)
-      // - If Published=false: blocks (false != false = false) 
-      // - If both undefined: allows (undefined != false = true for both)
-      // - If either is true/truthy: allows (as long as the other isn't false)
+      // - If published=false: (false != false) AND X = false AND X = false (blocks)
+      // - If Published=false: X AND (false != false) = X AND false = false (blocks)
+      // - If both undefined: (undefined != false) AND (undefined != false) = true AND true = true (allows)
+      // - If either is true: (true != false) = true (allows, as long as the other isn't false)
       allow read: if isAdmin() || 
                      (resource.data.published != false && resource.data.Published != false);
       allow create, update, delete: if isAdmin();
