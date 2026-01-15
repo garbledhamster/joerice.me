@@ -8,21 +8,29 @@ let slideCaption = null;
 let slideLink = null;
 let prevSlideBtn = null;
 let nextSlideBtn = null;
-let galleryEditor = null;
-let galleryGrid = null;
-let galleryFileInput = null;
-let galleryUploadButton = null;
+let slideshow = null;
+let galleryEditorContainer = null;
+let galleryEditorPicker = null;
+let galleryEditorEdit = null;
+let galleryEditorGrid = null;
+let galleryEditorFileInput = null;
+let galleryEditorUploadButton = null;
 let galleryEditorStatus = null;
-let gallerySelectedEditor = null;
-let gallerySelectedPreview = null;
-let galleryCaptionInput = null;
-let gallerySaveButton = null;
-let galleryDeleteButton = null;
+let galleryEditorPreview = null;
+let galleryEditorCaptionInput = null;
+let galleryEditorSaveButton = null;
+let galleryEditorDeleteButton = null;
+let galleryEditorBackButton = null;
+let galleryEditorPrevBtn = null;
+let galleryEditorNextBtn = null;
+let galleryEditorNavInfo = null;
 
 // State
 let images = [];
 let currentSlideIndex = 0;
 let selectedImageDoc = null;
+let selectedImageIndex = -1;
+let isEditorMode = false;
 
 // Fallback hardcoded slides for when Firebase images aren't available
 const fallbackSlides = [
@@ -129,28 +137,46 @@ function initSlideshow() {
 
 function clearSelection() {
   selectedImageDoc = null;
-  if (gallerySelectedPreview) gallerySelectedPreview.src = '';
-  if (galleryCaptionInput) galleryCaptionInput.value = '';
-  if (gallerySelectedEditor) gallerySelectedEditor.style.display = 'none';
+  selectedImageIndex = -1;
+  if (galleryEditorPreview) galleryEditorPreview.src = '';
+  if (galleryEditorCaptionInput) galleryEditorCaptionInput.value = '';
+  updateNavButtons();
 }
 
-function selectImage(imageDoc) {
+function updateNavButtons() {
+  if (!galleryEditorPrevBtn || !galleryEditorNextBtn || !galleryEditorNavInfo) return;
+  
+  if (selectedImageIndex === -1 || images.length === 0) {
+    galleryEditorPrevBtn.disabled = true;
+    galleryEditorNextBtn.disabled = true;
+    galleryEditorNavInfo.textContent = '';
+  } else {
+    galleryEditorPrevBtn.disabled = selectedImageIndex === 0;
+    galleryEditorNextBtn.disabled = selectedImageIndex === images.length - 1;
+    galleryEditorNavInfo.textContent = `${selectedImageIndex + 1} of ${images.length}`;
+  }
+}
+
+function selectImage(imageDoc, index) {
   selectedImageDoc = imageDoc;
+  selectedImageIndex = index;
   
-  if (gallerySelectedPreview) {
-    gallerySelectedPreview.src = imageDoc.img;
+  if (galleryEditorPreview) {
+    galleryEditorPreview.src = imageDoc.img;
   }
   
-  if (galleryCaptionInput) {
-    galleryCaptionInput.value = imageDoc.caption || '';
-  }
-  
-  if (gallerySelectedEditor) {
-    gallerySelectedEditor.style.display = 'block';
+  if (galleryEditorCaptionInput) {
+    galleryEditorCaptionInput.value = imageDoc.caption || '';
   }
 
+  updateNavButtons();
+
+  // Show edit view, hide picker
+  if (galleryEditorPicker) galleryEditorPicker.hidden = true;
+  if (galleryEditorEdit) galleryEditorEdit.hidden = false;
+
   // Update selected state in grid
-  const gridItems = galleryGrid?.querySelectorAll('.galleryGridItem');
+  const gridItems = galleryEditorGrid?.querySelectorAll('.galleryEditorGridItem');
   gridItems?.forEach(item => {
     if (item.dataset.docId === imageDoc.id) {
       item.classList.add('selected');
@@ -160,8 +186,28 @@ function selectImage(imageDoc) {
   });
 }
 
+function selectPreviousImage() {
+  if (selectedImageIndex > 0) {
+    const prevIndex = selectedImageIndex - 1;
+    const prevImage = images[prevIndex];
+    if (prevImage) {
+      selectImage(prevImage, prevIndex);
+    }
+  }
+}
+
+function selectNextImage() {
+  if (selectedImageIndex < images.length - 1) {
+    const nextIndex = selectedImageIndex + 1;
+    const nextImage = images[nextIndex];
+    if (nextImage) {
+      selectImage(nextImage, nextIndex);
+    }
+  }
+}
+
 function renderGalleryGrid() {
-  if (!galleryGrid) return;
+  if (!galleryEditorGrid) return;
   
   galleryGrid.innerHTML = images.map(img => {
     const safeImgUrl = sanitizeUrl(img.img);
@@ -180,13 +226,14 @@ function renderGalleryGrid() {
   }).join('');
 
   // Add click handlers to grid items
-  const gridItems = galleryGrid.querySelectorAll('.galleryGridItem');
+  const gridItems = galleryEditorGrid.querySelectorAll('.galleryEditorGridItem');
   gridItems.forEach(item => {
     item.addEventListener('click', () => {
       const docId = item.dataset.docId;
+      const index = parseInt(item.dataset.index, 10);
       const imageDoc = images.find(img => img.id === docId);
       if (imageDoc) {
-        selectImage(imageDoc);
+        selectImage(imageDoc, index);
       }
     });
   });
@@ -195,7 +242,7 @@ function renderGalleryGrid() {
 async function handleUpload() {
   if (!ensureAdmin('upload gallery image')) return;
 
-  const file = galleryFileInput?.files?.[0];
+  const file = galleryEditorFileInput?.files?.[0];
   if (!file) {
     setEditorStatus('Please select an image file first.');
     return;
@@ -216,7 +263,7 @@ async function handleUpload() {
     // Generate unique image ID
     const imageId = crypto?.randomUUID 
       ? crypto.randomUUID() 
-      : `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      : `img_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
     const storagePath = `Images/${userId}/${imageId}`;
     
     // Upload to Storage
@@ -246,14 +293,15 @@ async function handleUpload() {
     renderGalleryGrid();
     showSlide(0); // Show the newly uploaded image
     
-    // Select the newly uploaded image
-    const newImage = images.find(img => img.id === docRef.id);
-    if (newImage) {
-      selectImage(newImage);
+    // Select the newly uploaded image and switch to edit view
+    const newImageIndex = images.findIndex(img => img.id === docRef.id);
+    const newImage = images[newImageIndex];
+    if (newImage && newImageIndex !== -1) {
+      selectImage(newImage, newImageIndex);
     }
     
     // Clear file input
-    if (galleryFileInput) galleryFileInput.value = '';
+    if (galleryEditorFileInput) galleryEditorFileInput.value = '';
     
   } catch (error) {
     console.error('Error uploading image:', error);
@@ -369,6 +417,49 @@ async function handleDelete() {
   }
 }
 
+function showEditorPicker() {
+  if (!galleryEditorContainer || !slideshow) return;
+  
+  isEditorMode = true;
+  
+  // Hide slideshow, show editor container
+  slideshow.hidden = true;
+  galleryEditorContainer.hidden = false;
+  
+  // Show picker, hide edit view
+  if (galleryEditorPicker) galleryEditorPicker.hidden = false;
+  if (galleryEditorEdit) galleryEditorEdit.hidden = true;
+  
+  // Render the grid
+  renderGalleryGrid();
+  
+  // Clear any previous status and selection
+  setEditorStatus('');
+  clearSelection();
+}
+
+function showEditorEdit() {
+  if (!galleryEditorPicker || !galleryEditorEdit) return;
+  
+  // Hide picker, show edit view
+  galleryEditorPicker.hidden = true;
+  galleryEditorEdit.hidden = false;
+}
+
+function hideEditor() {
+  if (!galleryEditorContainer || !slideshow) return;
+  
+  isEditorMode = false;
+  
+  // Show slideshow, hide editor
+  slideshow.hidden = false;
+  galleryEditorContainer.hidden = true;
+  
+  // Clear selection and status
+  clearSelection();
+  setEditorStatus('');
+}
+
 export async function initGallery() {
   // Get DOM elements
   slideImage = $('#slideImage');
@@ -376,16 +467,22 @@ export async function initGallery() {
   slideLink = $('#slideLink');
   prevSlideBtn = $('#prevSlide');
   nextSlideBtn = $('#nextSlide');
-  galleryEditor = $('#galleryEditor');
-  galleryGrid = $('#galleryGrid');
-  galleryFileInput = $('#galleryFileInput');
-  galleryUploadButton = $('#galleryUploadButton');
+  slideshow = $('#slideshow');
+  galleryEditorContainer = $('#galleryEditorContainer');
+  galleryEditorPicker = $('#galleryEditorPicker');
+  galleryEditorEdit = $('#galleryEditorEdit');
+  galleryEditorGrid = $('#galleryEditorGrid');
+  galleryEditorFileInput = $('#galleryEditorFileInput');
+  galleryEditorUploadButton = $('#galleryEditorUploadButton');
   galleryEditorStatus = $('#galleryEditorStatus');
-  gallerySelectedEditor = $('#gallerySelectedEditor');
-  gallerySelectedPreview = $('#gallerySelectedPreview');
-  galleryCaptionInput = $('#galleryCaptionInput');
-  gallerySaveButton = $('#gallerySaveButton');
-  galleryDeleteButton = $('#galleryDeleteButton');
+  galleryEditorPreview = $('#galleryEditorPreview');
+  galleryEditorCaptionInput = $('#galleryEditorCaptionInput');
+  galleryEditorSaveButton = $('#galleryEditorSaveButton');
+  galleryEditorDeleteButton = $('#galleryEditorDeleteButton');
+  galleryEditorBackButton = $('#galleryEditorBackButton');
+  galleryEditorPrevBtn = $('#galleryEditorPrevBtn');
+  galleryEditorNextBtn = $('#galleryEditorNextBtn');
+  galleryEditorNavInfo = $('#galleryEditorNavInfo');
 
   if (!slideImage || !slideCaption || !slideLink) {
     console.warn('Gallery elements not found.');
@@ -398,34 +495,48 @@ export async function initGallery() {
   // Initialize slideshow
   initSlideshow();
 
-  // Initialize editor if available
-  if (galleryUploadButton) {
-    galleryUploadButton.addEventListener('click', handleUpload);
+  // Initialize editor controls
+  if (galleryEditorUploadButton) {
+    galleryEditorUploadButton.addEventListener('click', handleUpload);
   }
 
-  if (gallerySaveButton) {
-    gallerySaveButton.addEventListener('click', handleSave);
+  if (galleryEditorSaveButton) {
+    galleryEditorSaveButton.addEventListener('click', handleSave);
   }
 
-  if (galleryDeleteButton) {
-    galleryDeleteButton.addEventListener('click', handleDelete);
+  if (galleryEditorDeleteButton) {
+    galleryEditorDeleteButton.addEventListener('click', handleDelete);
   }
 
-  // Hide selected editor initially
-  if (gallerySelectedEditor) {
-    gallerySelectedEditor.style.display = 'none';
+  if (galleryEditorPrevBtn) {
+    galleryEditorPrevBtn.addEventListener('click', selectPreviousImage);
   }
 
-  // When editor panel opens, render the grid
+  if (galleryEditorNextBtn) {
+    galleryEditorNextBtn.addEventListener('click', selectNextImage);
+  }
+
+  if (galleryEditorBackButton) {
+    galleryEditorBackButton.addEventListener('click', () => {
+      // If in edit view, go back to picker
+      if (galleryEditorEdit && !galleryEditorEdit.hidden) {
+        if (galleryEditorPicker) galleryEditorPicker.hidden = false;
+        galleryEditorEdit.hidden = true;
+        clearSelection();
+        setEditorStatus('');
+      } else {
+        // If in picker view, close editor and show slideshow
+        hideEditor();
+      }
+    });
+  }
+
+  // Setup edit button to show editor
   const editGalleryBtn = $('#editGalleryBtn');
-  if (editGalleryBtn && galleryEditor) {
+  if (editGalleryBtn) {
     editGalleryBtn.addEventListener('click', () => {
-      // Small delay to ensure panel is visible
-      setTimeout(() => {
-        if (!galleryEditor.classList.contains('is-collapsed')) {
-          renderGalleryGrid();
-        }
-      }, 50);
+      if (!ensureAdmin('edit gallery')) return;
+      showEditorPicker();
     });
   }
 }

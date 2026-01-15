@@ -68,7 +68,7 @@
       <section class="gallery">
         <div class="sectionHeader">
           <h2>Gallery</h2>
-          <button class="editBtn" id="editGalleryBtn" type="button" data-admin-only data-panel-target="galleryEditor" data-admin-action="edit gallery">Edit</button>
+          <button class="editBtn" id="editGalleryBtn" type="button" data-admin-only data-admin-action="edit gallery">Edit</button>
         </div>
         <div class="slideshow" id="slideshow">
           <figure>
@@ -80,26 +80,32 @@
           <button class="prev" id="prevSlide" aria-label="Previous">&#10094;</button>
           <button class="next" id="nextSlide" aria-label="Next">&#10095;</button>
         </div>
-        <div class="galleryEditor editPanel is-collapsed" id="galleryEditor" data-admin-only>
-          <div class="galleryEditorHeader">
-            <div class="galleryEditorHeaderRow">
-              <input type="file" id="galleryFileInput" accept="image/*" aria-label="Select image file"/>
-              <button class="galleryUploadButton" id="galleryUploadButton" type="button">Upload</button>
+        <div class="galleryEditorContainer" id="galleryEditorContainer" data-admin-only hidden>
+          <div class="galleryEditorPicker" id="galleryEditorPicker">
+            <div class="galleryEditorUpload">
+              <input type="file" id="galleryEditorFileInput" accept="image/*" aria-label="Select image file"/>
+              <button class="galleryEditorUploadButton" id="galleryEditorUploadButton" type="button">Upload New Image</button>
             </div>
-            <p id="galleryEditorStatus" role="status" aria-live="polite"></p>
+            <p class="galleryEditorStatus" id="galleryEditorStatus" role="status" aria-live="polite"></p>
+            <div class="galleryEditorGrid" id="galleryEditorGrid"></div>
           </div>
-          <div id="galleryGrid" class="galleryGrid"></div>
-          <div class="gallerySelectedEditor" id="gallerySelectedEditor">
-            <div class="gallerySelectedPreviewWrap">
-              <img id="gallerySelectedPreview" src="" alt="Selected image preview"/>
+          <div class="galleryEditorEdit" id="galleryEditorEdit" hidden>
+            <div class="galleryEditorNav">
+              <button class="galleryEditorNavBtn" id="galleryEditorPrevBtn" type="button" aria-label="Previous image">‹ Prev</button>
+              <span class="galleryEditorNavInfo" id="galleryEditorNavInfo"></span>
+              <button class="galleryEditorNavBtn" id="galleryEditorNextBtn" type="button" aria-label="Next image">Next ›</button>
+            </div>
+            <div class="galleryEditorPreviewWrap">
+              <img id="galleryEditorPreview" src="" alt="Selected image preview"/>
             </div>
             <label class="galleryEditorLabel">
               Caption
-              <textarea id="galleryCaptionInput" rows="3" placeholder="Enter image caption"></textarea>
+              <textarea id="galleryEditorCaptionInput" rows="3" placeholder="Enter image caption"></textarea>
             </label>
-            <div class="gallerySelectedActions">
-              <button class="gallerySaveButton" id="gallerySaveButton" type="button">Save</button>
-              <button class="galleryDeleteButton" id="galleryDeleteButton" type="button">Delete</button>
+            <div class="galleryEditorActions">
+              <button class="galleryEditorBackButton" id="galleryEditorBackButton" type="button">← Back to Gallery</button>
+              <button class="galleryEditorSaveButton" id="galleryEditorSaveButton" type="button">Save</button>
+              <button class="galleryEditorDeleteButton" id="galleryEditorDeleteButton" type="button">Delete</button>
             </div>
           </div>
         </div>
