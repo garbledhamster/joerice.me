@@ -397,6 +397,9 @@ export function initQuotes() {
   const quoteEditor = $('#quoteEditor');
   if (editQuotesBtn && quoteEditor) {
     editQuotesBtn.addEventListener('click', () => {
+      // Check if user is admin before allowing edit
+      if (!ensureAdmin('edit quotes')) return;
+      
       // Toggle the editor visibility
       const isCollapsed = quoteEditor.classList.contains('is-collapsed');
       if (isCollapsed) {
