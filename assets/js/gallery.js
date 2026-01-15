@@ -13,6 +13,8 @@ let galleryEditorContainer = null;
 let galleryEditorPicker = null;
 let galleryEditorEdit = null;
 let galleryEditorGrid = null;
+let galleryEditorUpload = null;
+let galleryEditorToggleButton = null;
 let galleryEditorFileInput = null;
 let galleryEditorUploadButton = null;
 let galleryEditorStatus = null;
@@ -300,8 +302,12 @@ async function handleUpload() {
       selectImage(newImage, newImageIndex);
     }
     
-    // Clear file input
+    // Clear file input and hide upload area
     if (galleryEditorFileInput) galleryEditorFileInput.value = '';
+    if (galleryEditorUpload) galleryEditorUpload.hidden = true;
+    if (galleryEditorToggleButton) {
+      galleryEditorToggleButton.textContent = '+ Upload New Image';
+    }
     
   } catch (error) {
     console.error('Error uploading image:', error);
@@ -426,9 +432,15 @@ function showEditorPicker() {
   slideshow.hidden = true;
   galleryEditorContainer.hidden = false;
   
-  // Show picker, hide edit view
+  // Show picker, hide edit view and upload area
   if (galleryEditorPicker) galleryEditorPicker.hidden = false;
   if (galleryEditorEdit) galleryEditorEdit.hidden = true;
+  if (galleryEditorUpload) galleryEditorUpload.hidden = true;
+  
+  // Update toggle button text
+  if (galleryEditorToggleButton) {
+    galleryEditorToggleButton.textContent = '+ Upload New Image';
+  }
   
   // Render the grid
   renderGalleryGrid();
@@ -482,6 +494,8 @@ export async function initGallery() {
   galleryEditorPicker = $('#galleryEditorPicker');
   galleryEditorEdit = $('#galleryEditorEdit');
   galleryEditorGrid = $('#galleryEditorGrid');
+  galleryEditorUpload = $('#galleryEditorUpload');
+  galleryEditorToggleButton = $('#galleryEditorToggleButton');
   galleryEditorFileInput = $('#galleryEditorFileInput');
   galleryEditorUploadButton = $('#galleryEditorUploadButton');
   galleryEditorStatus = $('#galleryEditorStatus');
@@ -506,6 +520,20 @@ export async function initGallery() {
   initSlideshow();
 
   // Initialize editor controls
+  if (galleryEditorToggleButton) {
+    galleryEditorToggleButton.addEventListener('click', () => {
+      if (!ensureAdmin('toggle upload area')) return;
+      
+      if (galleryEditorUpload) {
+        const isHidden = galleryEditorUpload.hidden;
+        galleryEditorUpload.hidden = !isHidden;
+        
+        // Update button text
+        galleryEditorToggleButton.textContent = isHidden ? '− Hide Upload' : '+ Upload New Image';
+      }
+    });
+  }
+
   if (galleryEditorUploadButton) {
     galleryEditorUploadButton.addEventListener('click', handleUpload);
   }
