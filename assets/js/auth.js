@@ -37,6 +37,9 @@ export function updateAdminUi() {
     '[data-admin-only], .editButton, .editBtn, .editPanel'
   );
   adminOnlyElements.forEach(el => {
+    // Skip gallery editor container - it has its own show/hide logic
+    if (el.id === 'galleryEditorContainer') return;
+    
     const shouldHide = !isAdmin;
     el.hidden = shouldHide;
     el.setAttribute('aria-hidden', String(shouldHide));
