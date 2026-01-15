@@ -204,7 +204,7 @@ function renderGalleryGrid() {
   if (!galleryEditorGrid) return;
   
   galleryEditorGrid.innerHTML = images.map((img, index) => `
-    <div class="galleryEditorGridItem" data-doc-id="${img.id}" data-index="${index}">
+    <div class="galleryEditorGridItem" data-doc-id="${img.id}" data-index="${index}" title="${img.caption || 'No caption'}">
       <img src="${img.img}" alt="${img.caption || ''}" loading="lazy"/>
     </div>
   `).join('');
@@ -499,8 +499,8 @@ export async function initGallery() {
     galleryEditorBackButton.addEventListener('click', () => {
       // If in edit view, go back to picker
       if (galleryEditorEdit && !galleryEditorEdit.hidden) {
-        if (galleryEditorPicker) galleryEditorPicker.hidden = false;
-        if (galleryEditorEdit) galleryEditorEdit.hidden = true;
+        galleryEditorPicker.hidden = false;
+        galleryEditorEdit.hidden = true;
         clearSelection();
         setEditorStatus('');
       } else {
