@@ -37,6 +37,9 @@ export function updateAdminUi() {
     '[data-admin-only], .editButton, .editBtn, .editPanel'
   );
   adminOnlyElements.forEach(el => {
+    // Skip elements with data-skip-admin-ui - they have their own show/hide logic
+    if (el.hasAttribute('data-skip-admin-ui')) return;
+    
     const shouldHide = !isAdmin;
     el.hidden = shouldHide;
     el.setAttribute('aria-hidden', String(shouldHide));
