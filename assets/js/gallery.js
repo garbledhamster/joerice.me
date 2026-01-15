@@ -13,6 +13,8 @@ let galleryEditorContainer = null;
 let galleryEditorPicker = null;
 let galleryEditorEdit = null;
 let galleryEditorGrid = null;
+let galleryEditorUpload = null;
+let galleryEditorToggleButton = null;
 let galleryEditorFileInput = null;
 let galleryEditorUploadButton = null;
 let galleryEditorStatus = null;
@@ -31,6 +33,12 @@ let currentSlideIndex = 0;
 let selectedImageDoc = null;
 let selectedImageIndex = -1;
 let isEditorMode = false;
+
+// UI Text Constants
+const UPLOAD_BUTTON_TEXT = {
+  SHOW: '+ Upload New Image',
+  HIDE: '− Hide Upload'
+};
 
 // Fallback hardcoded slides for when Firebase images aren't available
 const fallbackSlides = [
@@ -300,8 +308,12 @@ async function handleUpload() {
       selectImage(newImage, newImageIndex);
     }
     
-    // Clear file input
+    // Clear file input and hide upload area
     if (galleryEditorFileInput) galleryEditorFileInput.value = '';
+    if (galleryEditorUpload) galleryEditorUpload.hidden = true;
+    if (galleryEditorToggleButton) {
+      galleryEditorToggleButton.textContent = UPLOAD_BUTTON_TEXT.SHOW;
+    }
     
   } catch (error) {
     console.error('Error uploading image:', error);
@@ -358,13 +370,23 @@ async function handleSave() {
 }
 
 async function handleDelete() {
-  if (!ensureAdmin('delete gallery image')) return;
+  console.log('handleDelete called');
+  
+  if (!ensureAdmin('delete gallery image')) {
+    console.log('Admin check failed');
+    return;
+  }
+  
   if (!selectedImageDoc) {
+    console.log('No image selected');
     setEditorStatus('No image selected.');
     return;
   }
 
+  console.log('Deleting image:', selectedImageDoc.id);
+
   if (!confirm('Are you sure you want to delete this image? This cannot be undone.')) {
+    console.log('Deletion cancelled by user');
     return;
   }
 
@@ -372,18 +394,22 @@ async function handleDelete() {
   const storage = getStorage();
 
   if (!firestore || !storage) {
+    console.log('Firebase not configured:', { firestore: !!firestore, storage: !!storage });
     setEditorStatus('Firebase not configured.');
     return;
   }
 
   try {
     setEditorStatus('Deleting...');
+    console.log('Starting deletion process...');
     
     // Delete from Storage
     if (selectedImageDoc.storagePath) {
       try {
+        console.log('Deleting from storage:', selectedImageDoc.storagePath);
         const storageRef = storage.ref(selectedImageDoc.storagePath);
         await storageRef.delete();
+        console.log('Storage deletion successful');
       } catch (error) {
         console.warn('Error deleting from storage:', error);
         // Continue with Firestore deletion even if storage delete fails
@@ -391,13 +417,16 @@ async function handleDelete() {
     }
     
     // Delete from Firestore
+    console.log('Deleting from Firestore:', selectedImageDoc.id);
     const docRef = firestore.collection('Images').doc(selectedImageDoc.id);
     await docRef.delete();
+    console.log('Firestore deletion successful');
 
-    setEditorStatus('Image deleted!');
+    setEditorStatus('Image deleted successfully!');
     
     // Remove from local state
     images = images.filter(img => img.id !== selectedImageDoc.id);
+    console.log('Updated local images array, new length:', images.length);
     
     // Clear selection
     clearSelection();
@@ -411,8 +440,18 @@ async function handleDelete() {
       showSlide(currentSlideIndex);
     }
     
+    // Return to picker view after deletion
+    if (galleryEditorPicker && galleryEditorEdit) {
+      galleryEditorPicker.hidden = false;
+      galleryEditorEdit.hidden = true;
+    }
+    
+    // Clear status after a short delay
+    setTimeout(() => setEditorStatus(''), 2000);
+    
   } catch (error) {
     console.error('Error deleting image:', error);
+    console.error('Error details:', error.code, error.message);
     setEditorStatus(`Delete failed: ${error.message || 'Unknown error'}`);
   }
 }
@@ -426,9 +465,15 @@ function showEditorPicker() {
   slideshow.hidden = true;
   galleryEditorContainer.hidden = false;
   
-  // Show picker, hide edit view
+  // Show picker, hide edit view and upload area
   if (galleryEditorPicker) galleryEditorPicker.hidden = false;
   if (galleryEditorEdit) galleryEditorEdit.hidden = true;
+  if (galleryEditorUpload) galleryEditorUpload.hidden = true;
+  
+  // Update toggle button text
+  if (galleryEditorToggleButton) {
+    galleryEditorToggleButton.textContent = UPLOAD_BUTTON_TEXT.SHOW;
+  }
   
   // Render the grid
   renderGalleryGrid();
@@ -482,6 +527,8 @@ export async function initGallery() {
   galleryEditorPicker = $('#galleryEditorPicker');
   galleryEditorEdit = $('#galleryEditorEdit');
   galleryEditorGrid = $('#galleryEditorGrid');
+  galleryEditorUpload = $('#galleryEditorUpload');
+  galleryEditorToggleButton = $('#galleryEditorToggleButton');
   galleryEditorFileInput = $('#galleryEditorFileInput');
   galleryEditorUploadButton = $('#galleryEditorUploadButton');
   galleryEditorStatus = $('#galleryEditorStatus');
@@ -506,6 +553,20 @@ export async function initGallery() {
   initSlideshow();
 
   // Initialize editor controls
+  if (galleryEditorToggleButton) {
+    galleryEditorToggleButton.addEventListener('click', () => {
+      if (!ensureAdmin('toggle upload area')) return;
+      
+      if (galleryEditorUpload) {
+        const isHidden = galleryEditorUpload.hidden;
+        galleryEditorUpload.hidden = !isHidden;
+        
+        // Update button text
+        galleryEditorToggleButton.textContent = isHidden ? UPLOAD_BUTTON_TEXT.HIDE : UPLOAD_BUTTON_TEXT.SHOW;
+      }
+    });
+  }
+
   if (galleryEditorUploadButton) {
     galleryEditorUploadButton.addEventListener('click', handleUpload);
   }
