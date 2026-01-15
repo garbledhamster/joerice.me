@@ -87,16 +87,18 @@ function getPostsCollectionRef() {
   return firestore.collection('Posts');
 }
 
+function removeBySource(array, source) {
+  const filtered = array.filter(item => item.source !== source);
+  array.length = 0;
+  array.push(...filtered);
+}
+
 function removeNotesBySource(source) {
-  const filtered = notes.filter(note => note.source !== source);
-  notes.length = 0;
-  notes.push(...filtered);
+  removeBySource(notes, source);
 }
 
 function removePinnedBySource(source) {
-  const filtered = pinned.filter(note => note.source !== source);
-  pinned.length = 0;
-  pinned.push(...filtered);
+  removeBySource(pinned, source);
 }
 
 function setPortfolioStatus(message) {
@@ -251,13 +253,11 @@ async function loadFirestorePosts() {
     removeNotesBySource('local');
     
     // Separate entries into pinned and notes arrays
-    entries.forEach(entry => {
-      if (entry.pinned) {
-        pinned.push(entry);
-      } else {
-        notes.push(entry);
-      }
-    });
+    const pinnedEntries = entries.filter(entry => entry.pinned);
+    const regularEntries = entries.filter(entry => !entry.pinned);
+    
+    pinned.push(...pinnedEntries);
+    notes.push(...regularEntries);
     
     notes.sort((a, b) => new Date(b.date) - new Date(a.date));
   } catch (error) {
