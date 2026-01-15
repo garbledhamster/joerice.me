@@ -63,7 +63,7 @@
       <section class="gallery">
         <div class="sectionHeader">
           <h2>Gallery</h2>
-          <button class="editBtn" id="editGalleryBtn" type="button" data-admin-only data-panel-target="galleryEditor" data-admin-action="edit gallery">Edit</button>
+          <button class="editBtn" id="editGalleryBtn" type="button" data-admin-only data-admin-action="edit gallery">Edit</button>
         </div>
         <div class="slideshow" id="slideshow">
           <figure>
@@ -74,29 +74,6 @@
           </figure>
           <button class="prev" id="prevSlide" aria-label="Previous">&#10094;</button>
           <button class="next" id="nextSlide" aria-label="Next">&#10095;</button>
-        </div>
-        <div class="galleryEditor editPanel is-collapsed" id="galleryEditor" data-admin-only>
-          <div class="galleryEditorHeader">
-            <div class="galleryEditorHeaderRow">
-              <input type="file" id="galleryFileInput" accept="image/*" aria-label="Select image file"/>
-              <button class="galleryUploadButton" id="galleryUploadButton" type="button">Upload</button>
-            </div>
-            <p id="galleryEditorStatus" role="status" aria-live="polite"></p>
-          </div>
-          <div id="galleryGrid" class="galleryGrid"></div>
-          <div class="gallerySelectedEditor" id="gallerySelectedEditor">
-            <div class="gallerySelectedPreviewWrap">
-              <img id="gallerySelectedPreview" src="" alt="Selected image preview"/>
-            </div>
-            <label class="galleryEditorLabel">
-              Caption
-              <textarea id="galleryCaptionInput" rows="3" placeholder="Enter image caption"></textarea>
-            </label>
-            <div class="gallerySelectedActions">
-              <button class="gallerySaveButton" id="gallerySaveButton" type="button">Save</button>
-              <button class="galleryDeleteButton" id="galleryDeleteButton" type="button">Delete</button>
-            </div>
-          </div>
         </div>
       </section>
       <section class="quotes" id="quotes">
@@ -194,6 +171,38 @@
           <button class="portfolioDeleteButton" id="portfolioDeleteButton" type="button">Delete</button>
         </div>
         <p class="portfolioEditorStatus" id="portfolioEditorStatus" role="status" aria-live="polite"></p>
+      </div>
+    </div>
+    <div class="modal galleryModal" id="galleryModal" aria-hidden="true" role="dialog" aria-modal="true">
+      <div class="modalContent">
+        <div class="galleryModalHeader">
+          <h3>Edit Gallery</h3>
+          <button class="galleryModalCloseButton" id="galleryModalCloseButton" type="button">Close</button>
+        </div>
+        <div class="galleryModalUpload">
+          <input type="file" id="galleryModalFileInput" accept="image/*" aria-label="Select image file"/>
+          <button class="galleryModalUploadButton" id="galleryModalUploadButton" type="button">Upload</button>
+        </div>
+        <p class="galleryModalStatus" id="galleryModalStatus" role="status" aria-live="polite"></p>
+        <div class="galleryModalGrid" id="galleryModalGrid"></div>
+        <div class="galleryModalEditor" id="galleryModalEditor">
+          <div class="galleryModalNav">
+            <button class="galleryModalNavBtn" id="galleryModalPrevBtn" type="button" aria-label="Previous image">‹ Prev</button>
+            <span class="galleryModalNavInfo" id="galleryModalNavInfo"></span>
+            <button class="galleryModalNavBtn" id="galleryModalNextBtn" type="button" aria-label="Next image">Next ›</button>
+          </div>
+          <div class="galleryModalPreviewWrap">
+            <img id="galleryModalPreview" src="" alt="Selected image preview"/>
+          </div>
+          <label class="galleryModalLabel">
+            Caption
+            <textarea id="galleryModalCaptionInput" rows="3" placeholder="Enter image caption"></textarea>
+          </label>
+          <div class="galleryModalActions">
+            <button class="galleryModalSaveButton" id="galleryModalSaveButton" type="button">Save</button>
+            <button class="galleryModalDeleteButton" id="galleryModalDeleteButton" type="button">Delete</button>
+          </div>
+        </div>
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>

@@ -1,5 +1,6 @@
 import { ensureAdmin, getFirestore, getStorage, getCurrentUserId } from './auth.js';
 import { $ } from './dom.js';
+import { lockScroll, unlockScroll } from './ui/layout.js';
 
 // DOM elements
 let slideImage = null;
@@ -7,21 +8,26 @@ let slideCaption = null;
 let slideLink = null;
 let prevSlideBtn = null;
 let nextSlideBtn = null;
-let galleryEditor = null;
-let galleryGrid = null;
-let galleryFileInput = null;
-let galleryUploadButton = null;
-let galleryEditorStatus = null;
-let gallerySelectedEditor = null;
-let gallerySelectedPreview = null;
-let galleryCaptionInput = null;
-let gallerySaveButton = null;
-let galleryDeleteButton = null;
+let galleryModal = null;
+let galleryModalCloseButton = null;
+let galleryModalGrid = null;
+let galleryModalFileInput = null;
+let galleryModalUploadButton = null;
+let galleryModalStatus = null;
+let galleryModalEditor = null;
+let galleryModalPreview = null;
+let galleryModalCaptionInput = null;
+let galleryModalSaveButton = null;
+let galleryModalDeleteButton = null;
+let galleryModalPrevBtn = null;
+let galleryModalNextBtn = null;
+let galleryModalNavInfo = null;
 
 // State
 let images = [];
 let currentSlideIndex = 0;
 let selectedImageDoc = null;
+let selectedImageIndex = -1;
 
 // Fallback hardcoded slides for when Firebase images aren't available
 const fallbackSlides = [
@@ -34,8 +40,8 @@ const fallbackSlides = [
 ];
 
 function setEditorStatus(message) {
-  if (!galleryEditorStatus) return;
-  galleryEditorStatus.textContent = message || '';
+  if (!galleryModalStatus) return;
+  galleryModalStatus.textContent = message || '';
 }
 
 function showSlide(index) {
@@ -123,28 +129,47 @@ function initSlideshow() {
 
 function clearSelection() {
   selectedImageDoc = null;
-  if (gallerySelectedPreview) gallerySelectedPreview.src = '';
-  if (galleryCaptionInput) galleryCaptionInput.value = '';
-  if (gallerySelectedEditor) gallerySelectedEditor.style.display = 'none';
+  selectedImageIndex = -1;
+  if (galleryModalPreview) galleryModalPreview.src = '';
+  if (galleryModalCaptionInput) galleryModalCaptionInput.value = '';
+  if (galleryModalEditor) galleryModalEditor.style.display = 'none';
+  updateNavButtons();
 }
 
-function selectImage(imageDoc) {
+function updateNavButtons() {
+  if (!galleryModalPrevBtn || !galleryModalNextBtn || !galleryModalNavInfo) return;
+  
+  if (selectedImageIndex === -1 || images.length === 0) {
+    galleryModalPrevBtn.disabled = true;
+    galleryModalNextBtn.disabled = true;
+    galleryModalNavInfo.textContent = '';
+  } else {
+    galleryModalPrevBtn.disabled = selectedImageIndex === 0;
+    galleryModalNextBtn.disabled = selectedImageIndex === images.length - 1;
+    galleryModalNavInfo.textContent = `${selectedImageIndex + 1} of ${images.length}`;
+  }
+}
+
+function selectImage(imageDoc, index) {
   selectedImageDoc = imageDoc;
+  selectedImageIndex = index;
   
-  if (gallerySelectedPreview) {
-    gallerySelectedPreview.src = imageDoc.img;
+  if (galleryModalPreview) {
+    galleryModalPreview.src = imageDoc.img;
   }
   
-  if (galleryCaptionInput) {
-    galleryCaptionInput.value = imageDoc.caption || '';
+  if (galleryModalCaptionInput) {
+    galleryModalCaptionInput.value = imageDoc.caption || '';
   }
   
-  if (gallerySelectedEditor) {
-    gallerySelectedEditor.style.display = 'block';
+  if (galleryModalEditor) {
+    galleryModalEditor.style.display = 'flex';
   }
 
+  updateNavButtons();
+
   // Update selected state in grid
-  const gridItems = galleryGrid?.querySelectorAll('.galleryGridItem');
+  const gridItems = galleryModalGrid?.querySelectorAll('.galleryModalGridItem');
   gridItems?.forEach(item => {
     if (item.dataset.docId === imageDoc.id) {
       item.classList.add('selected');
@@ -154,24 +179,44 @@ function selectImage(imageDoc) {
   });
 }
 
+function selectPreviousImage() {
+  if (selectedImageIndex > 0) {
+    const prevIndex = selectedImageIndex - 1;
+    const prevImage = images[prevIndex];
+    if (prevImage) {
+      selectImage(prevImage, prevIndex);
+    }
+  }
+}
+
+function selectNextImage() {
+  if (selectedImageIndex < images.length - 1) {
+    const nextIndex = selectedImageIndex + 1;
+    const nextImage = images[nextIndex];
+    if (nextImage) {
+      selectImage(nextImage, nextIndex);
+    }
+  }
+}
+
 function renderGalleryGrid() {
-  if (!galleryGrid) return;
+  if (!galleryModalGrid) return;
   
-  galleryGrid.innerHTML = images.map(img => `
-    <div class="galleryGridItem" data-doc-id="${img.id}">
+  galleryModalGrid.innerHTML = images.map((img, index) => `
+    <div class="galleryModalGridItem" data-doc-id="${img.id}" data-index="${index}">
       <img src="${img.img}" alt="${img.caption || ''}" loading="lazy"/>
-      <div class="galleryGridItemCaption">${img.caption?.slice(0, 50) || 'No caption'}${img.caption?.length > 50 ? '…' : ''}</div>
     </div>
   `).join('');
 
   // Add click handlers to grid items
-  const gridItems = galleryGrid.querySelectorAll('.galleryGridItem');
+  const gridItems = galleryModalGrid.querySelectorAll('.galleryModalGridItem');
   gridItems.forEach(item => {
     item.addEventListener('click', () => {
       const docId = item.dataset.docId;
+      const index = parseInt(item.dataset.index, 10);
       const imageDoc = images.find(img => img.id === docId);
       if (imageDoc) {
-        selectImage(imageDoc);
+        selectImage(imageDoc, index);
       }
     });
   });
@@ -180,7 +225,7 @@ function renderGalleryGrid() {
 async function handleUpload() {
   if (!ensureAdmin('upload gallery image')) return;
 
-  const file = galleryFileInput?.files?.[0];
+  const file = galleryModalFileInput?.files?.[0];
   if (!file) {
     setEditorStatus('Please select an image file first.');
     return;
@@ -210,7 +255,7 @@ async function handleUpload() {
     const downloadURL = await uploadTask.ref.getDownloadURL();
     
     // Get caption from input
-    const caption = galleryCaptionInput?.value?.trim() || '';
+    const caption = galleryModalCaptionInput?.value?.trim() || '';
     
     // Create Firestore document
     const imagesCollection = firestore.collection('Images');
@@ -231,13 +276,14 @@ async function handleUpload() {
     showSlide(0); // Show the newly uploaded image
     
     // Select the newly uploaded image
-    const newImage = images.find(img => img.id === docRef.id);
-    if (newImage) {
-      selectImage(newImage);
+    const newImageIndex = images.findIndex(img => img.id === docRef.id);
+    const newImage = images[newImageIndex];
+    if (newImage && newImageIndex !== -1) {
+      selectImage(newImage, newImageIndex);
     }
     
     // Clear file input
-    if (galleryFileInput) galleryFileInput.value = '';
+    if (galleryModalFileInput) galleryModalFileInput.value = '';
     
   } catch (error) {
     console.error('Error uploading image:', error);
@@ -261,7 +307,7 @@ async function handleSave() {
   try {
     setEditorStatus('Saving...');
     
-    const caption = galleryCaptionInput?.value?.trim() || '';
+    const caption = galleryModalCaptionInput?.value?.trim() || '';
     const docRef = firestore.collection('Images').doc(selectedImageDoc.id);
     
     await docRef.update({
@@ -352,6 +398,41 @@ async function handleDelete() {
   }
 }
 
+function openGalleryModal() {
+  if (!galleryModal) return;
+  
+  galleryModal.classList.add('show');
+  galleryModal.setAttribute('aria-hidden', 'false');
+  lockScroll();
+  
+  // Render the grid
+  renderGalleryGrid();
+  
+  // Hide the editor initially
+  if (galleryModalEditor) {
+    galleryModalEditor.style.display = 'none';
+  }
+  
+  // Clear any previous status
+  setEditorStatus('');
+}
+
+function closeGalleryModal() {
+  if (!galleryModal) return;
+  
+  galleryModal.classList.remove('show');
+  galleryModal.setAttribute('aria-hidden', 'true');
+  unlockScroll();
+  
+  // Clear selection
+  clearSelection();
+  setEditorStatus('');
+  
+  if (window.location.hash === '#galleryModal') {
+    history.replaceState(null, '', window.location.pathname + window.location.search);
+  }
+}
+
 export async function initGallery() {
   // Get DOM elements
   slideImage = $('#slideImage');
@@ -359,16 +440,20 @@ export async function initGallery() {
   slideLink = $('#slideLink');
   prevSlideBtn = $('#prevSlide');
   nextSlideBtn = $('#nextSlide');
-  galleryEditor = $('#galleryEditor');
-  galleryGrid = $('#galleryGrid');
-  galleryFileInput = $('#galleryFileInput');
-  galleryUploadButton = $('#galleryUploadButton');
-  galleryEditorStatus = $('#galleryEditorStatus');
-  gallerySelectedEditor = $('#gallerySelectedEditor');
-  gallerySelectedPreview = $('#gallerySelectedPreview');
-  galleryCaptionInput = $('#galleryCaptionInput');
-  gallerySaveButton = $('#gallerySaveButton');
-  galleryDeleteButton = $('#galleryDeleteButton');
+  galleryModal = $('#galleryModal');
+  galleryModalCloseButton = $('#galleryModalCloseButton');
+  galleryModalGrid = $('#galleryModalGrid');
+  galleryModalFileInput = $('#galleryModalFileInput');
+  galleryModalUploadButton = $('#galleryModalUploadButton');
+  galleryModalStatus = $('#galleryModalStatus');
+  galleryModalEditor = $('#galleryModalEditor');
+  galleryModalPreview = $('#galleryModalPreview');
+  galleryModalCaptionInput = $('#galleryModalCaptionInput');
+  galleryModalSaveButton = $('#galleryModalSaveButton');
+  galleryModalDeleteButton = $('#galleryModalDeleteButton');
+  galleryModalPrevBtn = $('#galleryModalPrevBtn');
+  galleryModalNextBtn = $('#galleryModalNextBtn');
+  galleryModalNavInfo = $('#galleryModalNavInfo');
 
   if (!slideImage || !slideCaption || !slideLink) {
     console.warn('Gallery elements not found.');
@@ -381,34 +466,51 @@ export async function initGallery() {
   // Initialize slideshow
   initSlideshow();
 
-  // Initialize editor if available
-  if (galleryUploadButton) {
-    galleryUploadButton.addEventListener('click', handleUpload);
+  // Initialize modal controls
+  if (galleryModalUploadButton) {
+    galleryModalUploadButton.addEventListener('click', handleUpload);
   }
 
-  if (gallerySaveButton) {
-    gallerySaveButton.addEventListener('click', handleSave);
+  if (galleryModalSaveButton) {
+    galleryModalSaveButton.addEventListener('click', handleSave);
   }
 
-  if (galleryDeleteButton) {
-    galleryDeleteButton.addEventListener('click', handleDelete);
+  if (galleryModalDeleteButton) {
+    galleryModalDeleteButton.addEventListener('click', handleDelete);
   }
 
-  // Hide selected editor initially
-  if (gallerySelectedEditor) {
-    gallerySelectedEditor.style.display = 'none';
+  if (galleryModalPrevBtn) {
+    galleryModalPrevBtn.addEventListener('click', selectPreviousImage);
   }
 
-  // When editor panel opens, render the grid
+  if (galleryModalNextBtn) {
+    galleryModalNextBtn.addEventListener('click', selectNextImage);
+  }
+
+  if (galleryModalCloseButton) {
+    galleryModalCloseButton.addEventListener('click', closeGalleryModal);
+  }
+
+  // Close modal when clicking outside
+  if (galleryModal) {
+    galleryModal.addEventListener('click', (event) => {
+      if (event.target === galleryModal) {
+        closeGalleryModal();
+      }
+    });
+  }
+
+  // Hide editor initially
+  if (galleryModalEditor) {
+    galleryModalEditor.style.display = 'none';
+  }
+
+  // Setup edit button to open modal
   const editGalleryBtn = $('#editGalleryBtn');
-  if (editGalleryBtn && galleryEditor) {
+  if (editGalleryBtn) {
     editGalleryBtn.addEventListener('click', () => {
-      // Small delay to ensure panel is visible
-      setTimeout(() => {
-        if (!galleryEditor.classList.contains('is-collapsed')) {
-          renderGalleryGrid();
-        }
-      }, 50);
+      if (!ensureAdmin('edit gallery')) return;
+      openGalleryModal();
     });
   }
 }
