@@ -301,8 +301,11 @@ export function initAuth() {
 
   if (auth?.onAuthStateChanged) {
     auth.onAuthStateChanged(async user => {
-      // If no user is signed in, sign in anonymously to allow Firestore access
-      // This is necessary because Firestore rules require request.auth != null
+      // If no user is signed in, sign in anonymously to allow Firestore queries
+      // This is necessary because collection queries (without where clauses) evaluate
+      // security rules for all documents. If any document is inaccessible, the query fails.
+      // Anonymous auth allows the query to pass the authentication check in the rules,
+      // and then the security rules filter which documents the user can actually read.
       // Anonymous users can read published posts but cannot create/update/delete
       if (!user && auth?.signInAnonymously && !isSigningInAnonymously) {
         isSigningInAnonymously = true;
@@ -312,7 +315,10 @@ export function initAuth() {
           return;
         } catch (error) {
           console.warn('Failed to sign in anonymously:', error?.code || error?.message || error);
+          console.warn('Anonymous authentication may not be enabled in Firebase Console.');
+          console.warn('Users will only see published posts if Firestore queries succeed.');
           // If anonymous sign-in fails, continue without auth
+          // Queries may fail if there are unpublished posts in the database
         } finally {
           isSigningInAnonymously = false;
         }

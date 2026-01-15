@@ -193,8 +193,9 @@ async function loadFirestorePosts() {
     return;
   }
   try {
-    // Fetch all posts - Firebase rules will filter based on published status and admin role
+    // Fetch posts - Firebase rules will filter based on published status and admin role
     // Admin users see all posts, non-admin users only see published posts
+    // The security rules handle access control at the document level
     const snapshot = await postsRef.get();
     const entries = [];
     
@@ -220,6 +221,7 @@ async function loadFirestorePosts() {
     notes.sort((a, b) => new Date(b.date) - new Date(a.date));
   } catch (error) {
     console.warn('Unable to load posts from Firestore.', error);
+    console.error('Firestore error details:', error);
   }
 }
 
