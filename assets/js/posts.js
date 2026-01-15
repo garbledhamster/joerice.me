@@ -168,7 +168,21 @@ function getLocalPostById(id) {
 }
 
 function isPostPublished(data) {
-  return data?.published !== false; // Default to true if not set
+  // Check both 'published' (lowercase) and 'Published' (capitalized) for backward compatibility
+  // Default to true if not set (for backward compatibility with posts that don't have this field)
+  // A post is unpublished if ANY published-related field is explicitly false
+  const publishedLower = data?.published;
+  const publishedUpper = data?.Published;
+  
+  // If either field is explicitly false, the post is not published
+  // This handles: published=false, Published=false, or both=false
+  if (publishedLower === false || publishedUpper === false) {
+    return false;
+  }
+  
+  // Otherwise, default to published (true)
+  // This handles: both undefined, either true, or both true
+  return true;
 }
 
 async function loadFirestorePosts() {
