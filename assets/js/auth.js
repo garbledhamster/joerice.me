@@ -197,6 +197,7 @@ export function initAuth() {
   const loginForm = $('#loginForm');
   const loginEmail = $('#loginEmail');
   const loginCancel = $('#loginCancel');
+  const loginLogoutButton = $('#loginLogoutButton');
 
   if (loginModal) {
     loginModal.addEventListener('click', event => {
@@ -208,6 +209,26 @@ export function initAuth() {
 
   if (loginCancel) {
     loginCancel.addEventListener('click', closeLoginModal);
+  }
+
+  if (loginLogoutButton) {
+    loginLogoutButton.addEventListener('click', async () => {
+      if (!auth?.signOut) {
+        setLoginStatus('Unable to log out. Firebase auth is not available.');
+        return;
+      }
+      try {
+        await auth.signOut();
+        setLoginStatus('You have been logged out.');
+        setTimeout(() => {
+          closeLoginModal();
+        }, 1500);
+      } catch (error) {
+        console.error('Failed to log out', error);
+        const errorMessage = error?.message ? ` ${error.message}` : '';
+        setLoginStatus(`Unable to log out.${errorMessage}`);
+      }
+    });
   }
 
   initFirebase();
