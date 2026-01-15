@@ -7,6 +7,7 @@ import {
 } from './auth.js';
 import { $, $$ } from './dom.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
+import { sanitizeHtml, sanitizeMarkdown, sanitizeText, validateLength } from './sanitize.js';
 
 const pinned = [];
 const notes = [];
@@ -44,11 +45,9 @@ let isPortfolioEditorReadOnly = false;
 
 function renderPostContent(content) {
   if (!postContentEl) return;
-  if (typeof window.marked?.parse === 'function') {
-    postContentEl.innerHTML = window.marked.parse(content);
-    return;
-  }
-  postContentEl.innerHTML = content;
+  // Sanitize markdown content before rendering
+  const sanitizedHtml = sanitizeMarkdown(content);
+  postContentEl.innerHTML = sanitizedHtml;
 }
 
 function getYamlParser() {
@@ -270,7 +269,12 @@ function filterEntries() {
 function renderPinned() {
   if (!pinnedGrid) return;
   pinnedGrid.innerHTML = pinned
-    .map(p => `<a class="entry" data-tags="${p.tags.join('|')}" data-url="${p.url}">${p.title}</a>`).join('');
+    .map(p => {
+      const safeTitle = sanitizeText(p.title);
+      const safeTags = p.tags.map(t => sanitizeText(t)).join('|');
+      const safeUrl = sanitizeText(p.url);
+      return `<a class="entry" data-tags="${safeTags}" data-url="${safeUrl}">${safeTitle}</a>`;
+    }).join('');
   attachClickHandlers();
   filterEntries();
 }
@@ -281,9 +285,12 @@ export function renderPage() {
   const slice = notes.slice(start, start + pageSize);
   entryGrid.innerHTML = slice
     .map(n => {
-      const sourceAttr = n.source ? ` data-source="${n.source}"` : '';
-      const idAttr = n.id ? ` data-id="${n.id}"` : '';
-      return `<a class="entry" data-tags="${n.tags.join('|')}" data-url="${n.url}"${sourceAttr}${idAttr}>${n.title}</a>`;
+      const safeTitle = sanitizeText(n.title);
+      const safeTags = n.tags.map(t => sanitizeText(t)).join('|');
+      const safeUrl = sanitizeText(n.url);
+      const sourceAttr = n.source ? ` data-source="${sanitizeText(n.source)}"` : '';
+      const idAttr = n.id ? ` data-id="${sanitizeText(n.id)}"` : '';
+      return `<a class="entry" data-tags="${safeTags}" data-url="${safeUrl}"${sourceAttr}${idAttr}>${safeTitle}</a>`;
     }).join('');
   if (prevBtn) prevBtn.disabled = page === 0;
   if (nextBtn) nextBtn.disabled = start + pageSize >= notes.length;
@@ -513,6 +520,14 @@ export function initPosts() {
         setEditorStatus('Title and post content are required.');
         return;
       }
+      // Validate input length to prevent abuse
+      const validatedTitle = validateLength(title, 500);
+      const validatedContent = validateLength(content, 50000);
+      
+      if (validatedTitle.length !== title.length || validatedContent.length !== content.length) {
+        setEditorStatus('Content was truncated due to length restrictions.');
+      }
+      
       const now = new Date().toISOString();
       const postsRef = getPostsCollectionRef();
       const userId = getCurrentUserId();
@@ -523,8 +538,8 @@ export function initPosts() {
           const createdDate = editingPostCreatedDate ?? now;
           await docRef.set({
             'userId': userId,
-            'title': title,
-            'body': content,
+            'title': validatedTitle,
+            'body': validatedContent,
             'createdDate': createdDate,
             'lastEditedDate': now
           }, { merge: true });
@@ -547,15 +562,15 @@ export function initPosts() {
           setEditorStatus('Unable to find that post.');
           return;
         }
-        existing.title = title;
-        existing.content = content;
+        existing.title = validatedTitle;
+        existing.content = validatedContent;
         existing.date = now;
       } else {
         const newId = window.crypto?.randomUUID?.() ?? `local-${Date.now()}`;
         localPosts.unshift({
           id: newId,
-          title,
-          content,
+          title: validatedTitle,
+          content: validatedContent,
           date: now
         });
         editingLocalPostId = newId;

@@ -1,5 +1,6 @@
 import { ensureAdmin, getFirestore } from './auth.js';
 import { $ } from './dom.js';
+import { sanitizeText, validateLength } from './sanitize.js';
 
 let quoteBox = null;
 let quoteText = null;
@@ -81,13 +82,18 @@ function startQuoteCarousel() {
 
 function renderQuoteList(activeIndex = editingQuoteIndex) {
   if (!quoteListItems) return;
-  quoteListItems.innerHTML = quotes.map((quote, index) => `
+  quoteListItems.innerHTML = quotes.map((quote, index) => {
+    const safeText = sanitizeText(quote.text?.slice(0, 32) || 'Untitled');
+    const ellipsis = quote.text?.length > 32 ? '…' : '';
+    const activeClass = index === activeIndex ? 'active' : '';
+    return `
     <li>
-      <button class="quoteListButton ${index === activeIndex ? 'active' : ''}" type="button" data-index="${index}">
-        ${quote.text?.slice(0, 32) || 'Untitled'}${quote.text?.length > 32 ? '…' : ''}
+      <button class="quoteListButton ${activeClass}" type="button" data-index="${index}">
+        ${safeText}${ellipsis}
       </button>
     </li>
-  `).join('');
+  `;
+  }).join('');
 }
 
 function openQuoteEditor({ index, text, author }) {
@@ -164,7 +170,11 @@ export function initQuotes() {
         alert('Please add a quote before saving.');
         return;
       }
-      const updated = { text, author };
+      // Validate input lengths
+      const validatedText = validateLength(text, 1000);
+      const validatedAuthor = validateLength(author, 200);
+      
+      const updated = { text: validatedText, author: validatedAuthor };
       if (editingQuoteIndex === null || Number.isNaN(editingQuoteIndex)) {
         quotes.push(updated);
         editingQuoteIndex = quotes.length - 1;
