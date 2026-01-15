@@ -527,6 +527,11 @@ export async function initGallery() {
       } else {
         // If in picker view, close editor and show slideshow
         hideEditor();
+        // Update edit button text
+        const editGalleryBtn = $('#editGalleryBtn');
+        if (editGalleryBtn) {
+          editGalleryBtn.textContent = 'Edit';
+        }
       }
     });
   }
@@ -536,7 +541,15 @@ export async function initGallery() {
   if (editGalleryBtn) {
     editGalleryBtn.addEventListener('click', () => {
       if (!ensureAdmin('edit gallery')) return;
-      showEditorPicker();
+      
+      // Toggle between editor and slideshow
+      if (isEditorMode) {
+        hideEditor();
+        editGalleryBtn.textContent = 'Edit';
+      } else {
+        showEditorPicker();
+        editGalleryBtn.textContent = 'Close';
+      }
     });
   }
 }

@@ -830,7 +830,7 @@
   .quoteEditor {
     margin-top: var(--space);
     display: grid;
-    grid-template-columns: minmax(180px, 220px) 1fr;
+    grid-template-columns: 1fr;
     gap: var(--space);
     text-align: left;
   }
@@ -858,12 +858,17 @@
   }
 
   .quoteAddButton {
-    border: 1px solid #fff;
-    background: rgba(255, 255, 255, 0.2);
+    border: 1px solid rgba(255, 255, 255, 0.8);
+    background: var(--purple);
     color: #fff;
     font-family: var(--fontHead);
     padding: .2rem .6rem;
     cursor: pointer;
+    transition: background .2s;
+  }
+
+  .quoteAddButton:hover {
+    background: rgba(255, 255, 255, 0.2);
   }
 
   #quoteListItems {
@@ -894,29 +899,34 @@
 
   .quoteListButton {
     border: 1px solid rgba(255, 255, 255, 0.4);
-    background: transparent;
+    background: var(--purple);
     color: #fff;
     text-align: left;
     padding: .3rem .5rem;
     cursor: pointer;
     font-size: .85rem;
     flex: 1;
+    transition: background .2s;
+  }
+
+  .quoteListButton:hover {
+    background: rgba(255, 255, 255, 0.15);
   }
 
   .quote-edit-button {
     border: 1px solid rgba(255, 255, 255, 0.4);
-    background: transparent;
+    background: var(--purple);
     color: #fff;
     padding: .3rem .5rem;
     cursor: pointer;
     font-size: .9rem;
     opacity: 0.7;
-    transition: opacity 0.2s;
+    transition: opacity 0.2s, background 0.2s;
   }
 
   .quote-edit-button:hover {
     opacity: 1;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
   }
 
   .quote-inline-editor {
@@ -949,12 +959,13 @@
   .quote-inline-cancel,
   .quote-inline-delete {
     border: 1px solid rgba(255, 255, 255, 0.6);
-    background: transparent;
+    background: var(--purple);
     color: #fff;
     padding: .3rem .7rem;
     cursor: pointer;
     font-family: var(--fontHead);
     font-size: .85rem;
+    transition: background .2s;
   }
 
   .quote-inline-save {
@@ -963,7 +974,7 @@
   }
 
   .quote-inline-save:hover {
-    background: rgba(0, 255, 0, 0.1);
+    background: rgba(40, 199, 111, 0.2);
   }
 
   .quote-inline-delete {
@@ -972,11 +983,11 @@
   }
 
   .quote-inline-delete:hover {
-    background: rgba(255, 0, 0, 0.1);
+    background: rgba(255, 0, 51, 0.2);
   }
 
   .quote-inline-cancel:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.15);
   }
 
   .quoteEditorPane {
@@ -1016,12 +1027,17 @@
   .quoteSaveButton {
     align-self: flex-start;
     border: 2px solid #fff;
-    background: transparent;
+    background: var(--purple);
     color: #fff;
     padding: .4rem 1rem;
     font-family: var(--fontHead);
     border-radius: 0;
     cursor: pointer;
+    transition: background .2s;
+  }
+
+  .quoteSaveButton:hover {
+    background: rgba(255, 255, 255, 0.2);
   }
 
   @media (max-width: 720px) {
@@ -1267,6 +1283,26 @@
   .portfolioEditorStatus {
     min-height: 1.2rem;
     margin: 0;
+  }
+
+  .portfolioFieldCheckbox {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    font-size: .95rem;
+    cursor: pointer;
+    padding: .5rem 0;
+  }
+
+  .portfolioFieldCheckbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--green);
+  }
+
+  .portfolioFieldCheckbox span {
+    font-weight: 500;
   }
 
   /* Gallery Editor (Inline) */
