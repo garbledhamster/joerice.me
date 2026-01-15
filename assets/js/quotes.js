@@ -54,27 +54,35 @@ async function loadQuotesFromYaml() {
 }
 
 async function loadQuotes() {
+  // Load quotes from YAML (GitHub)
+  let yamlQuotes = [];
+  try {
+    yamlQuotes = await loadQuotesFromYaml();
+  } catch (error) {
+    console.warn('Unable to load quotes from YAML.', error);
+  }
+  
+  // Load quotes from Firebase if available
+  let firebaseQuotes = [];
   if (quotesCollectionRef) {
     try {
       const snapshot = await quotesCollectionRef.orderBy('createdAt', 'desc').get();
-      const loadedQuotes = [];
       snapshot.forEach(doc => {
         const data = doc.data();
-        loadedQuotes.push({
+        firebaseQuotes.push({
           id: doc.id,
           text: data.text || '',
           author: data.author || '',
           createdAt: data.createdAt
         });
       });
-      if (loadedQuotes.length > 0) {
-        return loadedQuotes;
-      }
     } catch (error) {
-      console.warn('Unable to load quotes from Firestore, falling back to YAML.', error);
+      console.warn('Unable to load quotes from Firestore.', error);
     }
   }
-  return loadQuotesFromYaml();
+  
+  // Combine both sources: Firebase quotes first (with id), then YAML quotes (without id)
+  return [...firebaseQuotes, ...yamlQuotes];
 }
 
 function startQuoteCarousel() {
