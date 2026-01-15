@@ -34,7 +34,7 @@ firebase login
 This will open a browser window for you to authenticate with your Google account.
 
 ### 3. Configure Your Firebase Project
-Edit the `.firebaserc` file and replace `your-firebase-project-id` with your actual Firebase project ID:
+Edit the `.firebaserc` file and replace `REPLACE-WITH-YOUR-FIREBASE-PROJECT-ID` with your actual Firebase project ID:
 
 ```json
 {

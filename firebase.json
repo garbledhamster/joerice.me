@@ -9,13 +9,19 @@
     "public": ".",
     "ignore": [
       "firebase.json",
-      "**/.*",
+      ".firebaserc",
+      ".git",
+      ".gitignore",
       "**/node_modules/**",
       "storage.rules",
       "firestore.rules",
       "README.md",
       "DEPLOYMENT.md",
-      ".firebaserc"
+      "**/*.env",
+      "**/*.env.*",
+      "**/*.key",
+      "**/*.pem",
+      "**/*.log"
     ],
     "rewrites": [
       {
