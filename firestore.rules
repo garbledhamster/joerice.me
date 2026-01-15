@@ -11,8 +11,9 @@ service cloud.firestore {
       // Non-admin users can only read posts where published == true
       // The client query uses where('published', '==', true) for non-admin users
       // which matches this security rule for Firestore to allow the query
-      allow read: if resource.data.published == true;
-      allow read, create, update, delete: if isAdmin();
+      // Check both 'published' (lowercase) and 'Published' (uppercase) for backward compatibility
+      allow read: if isAdmin() || resource.data.published == true || resource.data.Published == true;
+      allow create, update, delete: if isAdmin();
     }
 
     match /Images/{document} {
