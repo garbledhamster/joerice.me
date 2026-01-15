@@ -22,8 +22,9 @@ export function sanitizeHtml(html, options = {}) {
   
   if (!purify) {
     console.warn('DOMPurify not available. Content will not be sanitized.');
-    // Fallback: strip all HTML tags if DOMPurify is unavailable
-    return String(html || '').replace(/<[^>]*>/g, '');
+    // Fallback: escape all HTML entities if DOMPurify is unavailable
+    // This is safer than trying to strip tags with regex
+    return sanitizeText(String(html || ''));
   }
   
   const defaultOptions = {
