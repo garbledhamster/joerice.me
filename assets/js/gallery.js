@@ -52,7 +52,8 @@ function showSlide(index) {
   slideImage.src = safeImgUrl || '#';
   slideImage.alt = sanitizeText(slide.caption || '');
   slideLink.href = safeLinkUrl || '#';
-  slideCaption.textContent = slide.caption || '';
+  // Note: textContent automatically escapes HTML, but we use sanitizeText for consistency
+  slideCaption.textContent = sanitizeText(slide.caption || '');
 }
 
 async function loadImagesFromFirestore() {
