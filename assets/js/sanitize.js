@@ -52,29 +52,29 @@ export function sanitizeHtml(html, options = {}) {
   
   const config = { ...defaultOptions, ...options };
   
-  // Sanitize and return
-  const sanitized = purify.sanitize(html, config);
-  
-  // Add rel="noopener noreferrer" to external links for security
-  if (sanitized.includes('<a ')) {
-    const temp = document.createElement('div');
-    temp.innerHTML = sanitized;
-    const links = temp.querySelectorAll('a[href]');
-    links.forEach(link => {
-      const href = link.getAttribute('href');
+  // Configure DOMPurify to add security attributes to external links
+  purify.addHook('afterSanitizeAttributes', (node) => {
+    // Add rel="noopener noreferrer" to external links
+    if (node.tagName === 'A') {
+      const href = node.getAttribute('href');
       if (href && (href.startsWith('http://') || href.startsWith('https://'))) {
-        const currentRel = link.getAttribute('rel') || '';
+        const currentRel = node.getAttribute('rel') || '';
         const relParts = currentRel.split(' ').filter(Boolean);
         if (!relParts.includes('noopener')) relParts.push('noopener');
         if (!relParts.includes('noreferrer')) relParts.push('noreferrer');
-        link.setAttribute('rel', relParts.join(' '));
-        if (!link.getAttribute('target')) {
-          link.setAttribute('target', '_blank');
+        node.setAttribute('rel', relParts.join(' '));
+        if (!node.getAttribute('target')) {
+          node.setAttribute('target', '_blank');
         }
       }
-    });
-    return temp.innerHTML;
-  }
+    }
+  });
+  
+  // Sanitize and return
+  const sanitized = purify.sanitize(html, config);
+  
+  // Remove hook after use to avoid affecting other sanitization calls
+  purify.removeHook('afterSanitizeAttributes');
   
   return sanitized;
 }

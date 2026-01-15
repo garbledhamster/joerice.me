@@ -45,12 +45,13 @@ function showSlide(index) {
   currentSlideIndex = (index + images.length) % images.length;
   const slide = images[currentSlideIndex];
   
-  const safeImgUrl = sanitizeUrl(slide.img) || slide.img;
-  const safeLinkUrl = sanitizeUrl(slide.link || slide.img) || slide.img;
+  const safeImgUrl = sanitizeUrl(slide.img);
+  const safeLinkUrl = sanitizeUrl(slide.link || slide.img);
   
-  slideImage.src = safeImgUrl;
+  // Use safe defaults if sanitization blocks the URL
+  slideImage.src = safeImgUrl || '#';
   slideImage.alt = sanitizeText(slide.caption || '');
-  slideLink.href = safeLinkUrl;
+  slideLink.href = safeLinkUrl || '#';
   slideCaption.textContent = slide.caption || '';
 }
 
@@ -162,7 +163,7 @@ function renderGalleryGrid() {
   if (!galleryGrid) return;
   
   galleryGrid.innerHTML = images.map(img => {
-    const safeImgUrl = sanitizeUrl(img.img) || img.img;
+    const safeImgUrl = sanitizeUrl(img.img);
     const safeCaption = sanitizeText(img.caption || '');
     const shortCaption = img.caption?.slice(0, 50) || 'No caption';
     const ellipsis = img.caption?.length > 50 ? '…' : '';
@@ -171,7 +172,7 @@ function renderGalleryGrid() {
     
     return `
     <div class="galleryGridItem" data-doc-id="${safeId}">
-      <img src="${safeImgUrl}" alt="${safeCaption}" loading="lazy"/>
+      <img src="${safeImgUrl || '#'}" alt="${safeCaption}" loading="lazy"/>
       <div class="galleryGridItemCaption">${safeShortCaption}</div>
     </div>
   `;

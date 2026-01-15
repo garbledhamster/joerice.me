@@ -62,10 +62,21 @@ form-action 'self' https://formspree.io
 - Blocks framing of the site (prevents clickjacking)
 - Restricts form submissions to trusted endpoints
 
-**Note**: `'unsafe-inline'` is required for:
-- Firebase inline initialization script
+**Known Limitation**: `'unsafe-inline'` is currently required for:
+- Firebase inline initialization script (lines 206-214 in index.html)
+- Inline year update script (lines 217-219 in index.html)
 - Some inline styles in the HTML
-- Consider moving these to external files in a future update
+
+**Security Trade-off**: While `'unsafe-inline'` weakens CSP protection, the risk is mitigated by:
+1. All user-generated content is sanitized with DOMPurify before rendering
+2. The inline scripts are static and controlled by the site owner
+3. Firebase authentication controls who can modify content
+4. The CSP still blocks external script sources
+
+**Future Improvement**: Consider these options to remove `'unsafe-inline'`:
+- Use CSP nonces for inline scripts (requires server-side implementation)
+- Move Firebase config and year script to an external JS file
+- Use a build process to generate nonces at deployment time
 
 ### 3. Firebase Security Rules
 
