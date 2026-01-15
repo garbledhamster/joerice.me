@@ -1323,12 +1323,17 @@
 
   /* Gallery Editor (Inline) */
   .galleryEditorContainer {
+    display: none;
     margin-top: var(--space);
     background: rgba(0, 0, 0, 0.2);
     border: 1px solid rgba(255, 255, 255, 0.6);
     border-radius: 8px;
     padding: 1.2rem;
     min-height: 400px;
+  }
+  
+  .galleryEditorContainer:not([hidden]) {
+    display: block;
   }
 
   .galleryEditorPicker {
