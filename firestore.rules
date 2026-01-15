@@ -1,3 +1,4 @@
+
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
@@ -10,8 +11,8 @@ service cloud.firestore {
       // Non-admin users can only read posts where published == true
       // The client query uses where('published', '==', true) for non-admin users
       // which matches this security rule for Firestore to allow the query
-      allow read: if isAdmin() || resource.data.published == true;
-      allow create, update, delete: if isAdmin();
+      allow read: if resource.data.published == true;
+      allow read, create, update, delete: if isAdmin();
     }
 
     match /Images/{document} {
