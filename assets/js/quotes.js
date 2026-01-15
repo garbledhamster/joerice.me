@@ -253,20 +253,23 @@ export function initQuotes() {
         }
         
         const quote = quotes[index];
-        saveQuote({ id: quote?.id, text, author }).then(async savedId => {
-          editingQuoteId = null;
-          editingQuoteIndex = null;
-          await reloadQuotes();
-          // Find the saved quote's new index
-          const savedIndex = quotes.findIndex(q => q.id === savedId);
-          if (savedIndex !== -1) {
-            idx = savedIndex;
-            showQuote(idx);
+        (async () => {
+          try {
+            const savedId = await saveQuote({ id: quote?.id, text, author });
+            editingQuoteId = null;
+            editingQuoteIndex = null;
+            await reloadQuotes();
+            // Find the saved quote's new index
+            const savedIndex = quotes.findIndex(q => q.id === savedId);
+            if (savedIndex !== -1) {
+              idx = savedIndex;
+              showQuote(idx);
+            }
+          } catch (error) {
+            console.warn('Unable to save quote.', error);
+            alert('Unable to save quote. Please try again.');
           }
-        }).catch(error => {
-          console.warn('Unable to save quote.', error);
-          alert('Unable to save quote. Please try again.');
-        });
+        })();
         return;
       }
       
@@ -296,21 +299,23 @@ export function initQuotes() {
         const quote = quotes[index];
         if (!quote?.id) return;
         
-        deleteQuote(quote.id).then(() => {
-          editingQuoteId = null;
-          editingQuoteIndex = null;
-          reloadQuotes().then(() => {
+        (async () => {
+          try {
+            await deleteQuote(quote.id);
+            editingQuoteId = null;
+            editingQuoteIndex = null;
+            await reloadQuotes();
             if (idx >= quotes.length) {
               idx = Math.max(0, quotes.length - 1);
             }
             if (quotes.length > 0) {
               showQuote(idx);
             }
-          });
-        }).catch(error => {
-          console.warn('Unable to delete quote.', error);
-          alert('Unable to delete quote. Please try again.');
-        });
+          } catch (error) {
+            console.warn('Unable to delete quote.', error);
+            alert('Unable to delete quote. Please try again.');
+          }
+        })();
         return;
       }
     });
