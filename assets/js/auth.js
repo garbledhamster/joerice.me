@@ -24,6 +24,7 @@ let currentUserId = null;
 const authListeners = new Set();
 
 const adminEmail = 'jmjrice94@gmail.com';
+const LOGOUT_SUCCESS_DELAY_MS = 1500;
 let pendingEmailSignInLink = null;
 let isSigningInAnonymously = false;
 
@@ -222,7 +223,7 @@ export function initAuth() {
         setLoginStatus('You have been logged out.');
         setTimeout(() => {
           closeLoginModal();
-        }, 1500);
+        }, LOGOUT_SUCCESS_DELAY_MS);
       } catch (error) {
         console.error('Failed to log out', error);
         const errorMessage = error?.message ? ` ${error.message}` : '';

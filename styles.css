@@ -1203,7 +1203,7 @@
   }
 
   .loginLogoutButton:hover {
-    background: rgba(255, 0, 51, 0.1);
+    background: rgba(255, 0, 51, 0.15);
   }
 
   .portfolioModal .modalContent {
