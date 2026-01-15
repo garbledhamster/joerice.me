@@ -277,7 +277,18 @@ export function initAuth() {
   }
 
   if (auth?.onAuthStateChanged) {
-    auth.onAuthStateChanged(user => {
+    auth.onAuthStateChanged(async user => {
+      // If no user is signed in, sign in anonymously to allow Firestore access
+      if (!user && auth?.signInAnonymously) {
+        try {
+          await auth.signInAnonymously();
+          // onAuthStateChanged will be called again with the anonymous user
+          return;
+        } catch (error) {
+          console.warn('Failed to sign in anonymously:', error);
+        }
+      }
+      
       isAdmin = user?.email === adminEmail;
       currentUserId = user?.uid ?? null;
       updateAdminUi();
