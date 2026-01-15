@@ -97,7 +97,7 @@ function renderQuoteList(activeIndex = editingQuoteIndex) {
     const safeText = sanitizeText(quote.text?.slice(0, 32) || 'Untitled');
     const ellipsis = quote.text?.length > 32 ? '…' : '';
     const isEditing = index === editingQuoteIndex;
-    const activeClass = index === activeIndex && !isEditing ? 'active' : '';
+    const activeClass = !isEditing && activeIndex !== null && index === activeIndex ? 'active' : '';
     
     // Show inline editor if this quote is being edited
     if (isEditing) {
@@ -120,8 +120,8 @@ function renderQuoteList(activeIndex = editingQuoteIndex) {
     
     // Show regular quote button with edit button
     return `
-    <li class="quote-list-item ${activeClass}">
-      <button class="quoteListButton" type="button" data-index="${index}">
+    <li class="quote-list-item">
+      <button class="quoteListButton ${activeClass}" type="button" data-index="${index}">
         ${safeText}${ellipsis}
       </button>
       <button class="quote-edit-button" type="button" data-index="${index}" title="Edit">✎</button>
