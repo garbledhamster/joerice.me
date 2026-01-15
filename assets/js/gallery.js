@@ -247,7 +247,7 @@ async function handleUpload() {
     // Generate unique image ID
     const imageId = crypto?.randomUUID 
       ? crypto.randomUUID() 
-      : `img_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      : `img_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
     const storagePath = `Images/${userId}/${imageId}`;
     
     // Upload to Storage
@@ -499,7 +499,7 @@ export async function initGallery() {
     galleryEditorBackButton.addEventListener('click', () => {
       // If in edit view, go back to picker
       if (galleryEditorEdit && !galleryEditorEdit.hidden) {
-        galleryEditorPicker.hidden = false;
+        if (galleryEditorPicker) galleryEditorPicker.hidden = false;
         galleryEditorEdit.hidden = true;
         clearSelection();
         setEditorStatus('');
