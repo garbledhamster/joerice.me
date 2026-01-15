@@ -7,7 +7,8 @@ service cloud.firestore {
 
     match /Posts/{postId} {
       // Allow admin to read all posts, non-admin users can only read published posts
-      allow read: if isAdmin() || resource.data.published == true;
+      // Posts without a 'published' field default to published (true) for backward compatibility
+      allow read: if isAdmin() || resource.data.published != false;
       allow create, update, delete: if isAdmin();
     }
 
