@@ -564,6 +564,11 @@ export function initPosts() {
         setEditorStatus('Title and post content are required.');
         return;
       }
+      
+      if (!confirm('Are you sure you want to save this post?')) {
+        return;
+      }
+      
       // Validate input length to prevent abuse
       const validatedTitle = validateLength(title, 500);
       const validatedContent = validateLength(content, 50000);
@@ -637,6 +642,11 @@ export function initPosts() {
         setEditorStatus('There is no post to delete.');
         return;
       }
+      
+      if (!confirm('Are you sure you want to delete this post? This cannot be undone.')) {
+        return;
+      }
+      
       const postsRef = getPostsCollectionRef();
       if (postsRef && editingPostSource === 'firestore') {
         try {

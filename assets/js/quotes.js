@@ -259,6 +259,10 @@ export function initQuotes() {
           return;
         }
         
+        if (!confirm('Are you sure you want to save this quote?')) {
+          return;
+        }
+        
         const quote = quotes[index];
         (async () => {
           try {

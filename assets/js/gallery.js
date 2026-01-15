@@ -317,6 +317,10 @@ async function handleSave() {
     return;
   }
 
+  if (!confirm('Are you sure you want to save changes to this image caption?')) {
+    return;
+  }
+
   const firestore = getFirestore();
   if (!firestore) {
     setEditorStatus('Firestore not configured.');
