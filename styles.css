@@ -1190,6 +1190,22 @@
     color: var(--blue);
   }
 
+  .loginLogoutButton {
+    border: 1px solid var(--red);
+    background: transparent;
+    color: var(--red);
+    padding: .45rem .9rem;
+    font-family: var(--fontHead);
+    cursor: pointer;
+    margin-top: .75rem;
+    width: 100%;
+    transition: background .2s;
+  }
+
+  .loginLogoutButton:hover {
+    background: rgba(255, 0, 51, 0.15);
+  }
+
   .portfolioModal .modalContent {
     max-width: 760px;
     width: min(92vw, 760px);

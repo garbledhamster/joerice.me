@@ -24,6 +24,7 @@ let currentUserId = null;
 const authListeners = new Set();
 
 const adminEmail = 'jmjrice94@gmail.com';
+const LOGOUT_SUCCESS_DELAY_MS = 1500;
 let pendingEmailSignInLink = null;
 let isSigningInAnonymously = false;
 
@@ -197,6 +198,7 @@ export function initAuth() {
   const loginForm = $('#loginForm');
   const loginEmail = $('#loginEmail');
   const loginCancel = $('#loginCancel');
+  const loginLogoutButton = $('#loginLogoutButton');
 
   if (loginModal) {
     loginModal.addEventListener('click', event => {
@@ -208,6 +210,26 @@ export function initAuth() {
 
   if (loginCancel) {
     loginCancel.addEventListener('click', closeLoginModal);
+  }
+
+  if (loginLogoutButton) {
+    loginLogoutButton.addEventListener('click', async () => {
+      if (!auth?.signOut) {
+        setLoginStatus('Unable to log out. Firebase auth is not available.');
+        return;
+      }
+      try {
+        await auth.signOut();
+        setLoginStatus('You have been logged out.');
+        setTimeout(() => {
+          closeLoginModal();
+        }, LOGOUT_SUCCESS_DELAY_MS);
+      } catch (error) {
+        console.error('Failed to log out', error);
+        const errorMessage = error?.message ? ` ${error.message}` : '';
+        setLoginStatus(`Unable to log out.${errorMessage}`);
+      }
+    });
   }
 
   initFirebase();
