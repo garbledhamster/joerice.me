@@ -253,14 +253,16 @@ export function initQuotes() {
         }
         
         const quote = quotes[index];
-        saveQuote({ id: quote?.id, text, author }).then(savedId => {
-          quotes[index] = { id: savedId, text, author };
+        saveQuote({ id: quote?.id, text, author }).then(async savedId => {
           editingQuoteId = null;
           editingQuoteIndex = null;
-          reloadQuotes().then(() => {
-            idx = index;
+          await reloadQuotes();
+          // Find the saved quote's new index
+          const savedIndex = quotes.findIndex(q => q.id === savedId);
+          if (savedIndex !== -1) {
+            idx = savedIndex;
             showQuote(idx);
-          });
+          }
         }).catch(error => {
           console.warn('Unable to save quote.', error);
           alert('Unable to save quote. Please try again.');
@@ -271,6 +273,14 @@ export function initQuotes() {
       // Handle inline cancel button
       const cancelButton = event.target.closest('.quote-inline-cancel');
       if (cancelButton) {
+        const index = Number(cancelButton.dataset.index);
+        const quote = quotes[index];
+        
+        // If canceling a new quote (no ID), remove it from the array
+        if (!quote?.id) {
+          quotes.splice(index, 1);
+        }
+        
         editingQuoteId = null;
         editingQuoteIndex = null;
         renderQuoteList();
