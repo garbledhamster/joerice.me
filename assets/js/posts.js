@@ -168,7 +168,7 @@ function getLocalPostById(id) {
 }
 
 function isPostPublished(data) {
-  return data?.['published'] !== false; // Default to true if not set
+  return data?.published !== false; // Default to true if not set
 }
 
 async function loadFirestorePosts() {
@@ -183,12 +183,14 @@ async function loadFirestorePosts() {
     const baseQuery = postsRef.where('userId', '==', userId);
     const snapshot = await baseQuery.get();
     const entries = [];
+    const isAdmin = isAdminUser();
+    
     snapshot.forEach(doc => {
       const data = doc.data() || {};
       
       // Filter by published status for non-admin users
       const isPublished = isPostPublished(data);
-      if (!isAdminUser() && !isPublished) {
+      if (!isAdmin && !isPublished) {
         return; // Skip unpublished posts for non-admin users
       }
       
@@ -553,7 +555,7 @@ export function initPosts() {
       }
       
       const now = new Date().toISOString();
-      const published = portfolioPostPublished?.checked !== false; // Default to true
+      const published = portfolioPostPublished?.checked ?? true; // Default to true if checkbox doesn't exist
       const postsRef = getPostsCollectionRef();
       const userId = getCurrentUserId();
       if (postsRef && userId) {
