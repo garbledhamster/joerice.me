@@ -9,6 +9,12 @@ service cloud.firestore {
       // Allow admin to read all posts, non-admin users can only read published posts
       // Posts without a 'published' field default to published (true) for backward compatibility
       // Check both 'published' (lowercase) and 'Published' (capitalized) for backward compatibility
+      // A post is readable if NEITHER field is explicitly false
+      // Logic: (published != false) AND (Published != false)
+      // - If published=false: blocks (false != false = false)
+      // - If Published=false: blocks (false != false = false) 
+      // - If both undefined: allows (undefined != false = true for both)
+      // - If either is true/truthy: allows (as long as the other isn't false)
       allow read: if isAdmin() || 
                      (resource.data.published != false && resource.data.Published != false);
       allow create, update, delete: if isAdmin();
