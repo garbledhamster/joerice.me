@@ -193,10 +193,18 @@ async function loadFirestorePosts() {
     return;
   }
   try {
-    // Fetch posts - Firebase rules will filter based on published status and admin role
+    // Fetch posts with proper query based on user role
     // Admin users see all posts, non-admin users only see published posts
-    // The security rules handle access control at the document level
-    const snapshot = await postsRef.get();
+    // For non-admin users, we must add a query filter to match what the security rules allow
+    // Without this filter, the collection query fails with "Missing or insufficient permissions"
+    // because Firestore evaluates rules at query time
+    let query = postsRef;
+    if (!isAdminUser()) {
+      // Non-admin users (including anonymous) can only read published posts
+      // Add where clause to ensure query only requests accessible documents
+      query = postsRef.where('published', '==', true);
+    }
+    const snapshot = await query.get();
     const entries = [];
     
     snapshot.forEach(doc => {

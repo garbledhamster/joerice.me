@@ -6,19 +6,11 @@ service cloud.firestore {
     }
 
     match /Posts/{postId} {
-      // Allow admin to read all posts, anyone (including unauthenticated) can read published posts
-      // Posts without a 'published' field default to published (true) for backward compatibility
-      // Check both 'published' (lowercase) and 'Published' (capitalized) for backward compatibility
-      // A post is readable if NEITHER field is explicitly false
-      // Logic: admin OR (published != false AND Published != false)
-      // - If published=false: (false != false) AND X = false AND X = false (blocks)
-      // - If Published=false: X AND (false != false) = X AND false = false (blocks)
-      // - If both undefined: (undefined != false) AND (undefined != false) = true AND true = true (allows)
-      // - If either is true: (true != false) = true (allows, as long as the other isn't false)
-      // This rule works for both authenticated and unauthenticated users
-      allow read: if isAdmin() || 
-                     (resource.data.published != false && 
-                      resource.data.Published != false);
+      // Admin users can read all posts (published and unpublished)
+      // Non-admin users can only read posts where published == true
+      // The client query uses where('published', '==', true) for non-admin users
+      // which matches this security rule for Firestore to allow the query
+      allow read: if isAdmin() || resource.data.published == true;
       allow create, update, delete: if isAdmin();
     }
 
