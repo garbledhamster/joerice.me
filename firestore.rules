@@ -17,12 +17,16 @@ service cloud.firestore {
     }
 
     match /Images/{document} {
-      allow read: if true;
+      // Admin users can read all images (visible and hidden)
+      // Non-admin users can only read images where visible == true or visible field doesn't exist (backward compatibility)
+      allow read: if isAdmin() || resource.data.visible != false;
       allow create, update, delete: if isAdmin();
     }
 
     match /Quotes/{document} {
-      allow read: if true;
+      // Admin users can read all quotes (visible and hidden)
+      // Non-admin users can only read quotes where visible == true or visible field doesn't exist (backward compatibility)
+      allow read: if isAdmin() || resource.data.visible != false;
       allow create, update, delete: if isAdmin();
     }
 
