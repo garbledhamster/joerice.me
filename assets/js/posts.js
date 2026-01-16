@@ -9,6 +9,77 @@ import { $, $$ } from './dom.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
 import { sanitizeHtml, sanitizeMarkdown, sanitizeText, validateLength } from './sanitize.js';
 
+// Source type definitions with emoji and fields
+const SOURCE_TYPES = {
+  unknown: {
+    emoji: '❓',
+    label: 'Unknown',
+    fields: [
+      { key: 'title', label: 'Title', type: 'text', placeholder: 'Source title or description' }
+    ]
+  },
+  web: {
+    emoji: '🌐',
+    label: 'Web Link',
+    fields: [
+      { key: 'title', label: 'Title', type: 'text', placeholder: 'Page title' },
+      { key: 'url', label: 'URL', type: 'text', placeholder: 'https://example.com' },
+      { key: 'author', label: 'Author', type: 'text', placeholder: 'Author name (optional)' },
+      { key: 'accessedDate', label: 'Accessed', type: 'text', placeholder: 'Date accessed (optional)' }
+    ]
+  },
+  book: {
+    emoji: '📚',
+    label: 'Book',
+    fields: [
+      { key: 'title', label: 'Title', type: 'text', placeholder: 'Book title' },
+      { key: 'author', label: 'Author', type: 'text', placeholder: 'Author name' },
+      { key: 'publisher', label: 'Publisher', type: 'text', placeholder: 'Publisher (optional)' },
+      { key: 'year', label: 'Year', type: 'text', placeholder: 'Publication year' },
+      { key: 'pages', label: 'Pages', type: 'text', placeholder: 'Page numbers (optional)' }
+    ]
+  },
+  essay: {
+    emoji: '📝',
+    label: 'Essay',
+    fields: [
+      { key: 'title', label: 'Title', type: 'text', placeholder: 'Essay title' },
+      { key: 'author', label: 'Author', type: 'text', placeholder: 'Author name' },
+      { key: 'publication', label: 'Publication', type: 'text', placeholder: 'Where published (optional)' },
+      { key: 'year', label: 'Year', type: 'text', placeholder: 'Year (optional)' }
+    ]
+  },
+  person: {
+    emoji: '👤',
+    label: 'Person',
+    fields: [
+      { key: 'name', label: 'Name', type: 'text', placeholder: 'Person\'s name' },
+      { key: 'role', label: 'Role/Title', type: 'text', placeholder: 'Role or title (optional)' },
+      { key: 'context', label: 'Context', type: 'text', placeholder: 'How they contributed (optional)' }
+    ]
+  },
+  video: {
+    emoji: '🎬',
+    label: 'Video',
+    fields: [
+      { key: 'title', label: 'Title', type: 'text', placeholder: 'Video title' },
+      { key: 'url', label: 'URL', type: 'text', placeholder: 'https://youtube.com/...' },
+      { key: 'creator', label: 'Creator', type: 'text', placeholder: 'Channel or creator name' },
+      { key: 'year', label: 'Year', type: 'text', placeholder: 'Year (optional)' }
+    ]
+  },
+  podcast: {
+    emoji: '🎙️',
+    label: 'Podcast',
+    fields: [
+      { key: 'title', label: 'Episode Title', type: 'text', placeholder: 'Episode title' },
+      { key: 'show', label: 'Show Name', type: 'text', placeholder: 'Podcast name' },
+      { key: 'url', label: 'URL', type: 'text', placeholder: 'Episode link (optional)' },
+      { key: 'date', label: 'Date', type: 'text', placeholder: 'Episode date (optional)' }
+    ]
+  }
+};
+
 const pinned = [];
 const notes = [];
 const pageSize = 10;
@@ -45,6 +116,10 @@ let portfolioPostPublished = null;
 let portfolioPostPinned = null;
 let editingLocalPostId = null;
 let isPortfolioEditorReadOnly = false;
+let portfolioSourcesList = null;
+let portfolioAddSourceBtn = null;
+let currentSources = [];
+let editingSourceIndex = null;
 
 function renderPostContent(content) {
   if (!postContentEl) return;
@@ -137,11 +212,312 @@ function setPortfolioEditorReadOnly(isReadOnly) {
   if (portfolioDeleteButton) {
     portfolioDeleteButton.disabled = isReadOnly || !editingPostId;
   }
+  if (portfolioAddSourceBtn) {
+    portfolioAddSourceBtn.disabled = isReadOnly;
+  }
   if (isReadOnly) {
     setEditorStatus('Preloaded posts are read-only.');
   } else {
     setEditorStatus('');
   }
+}
+
+// Get source type info, defaulting to unknown
+function getSourceType(typeKey) {
+  return SOURCE_TYPES[typeKey] || SOURCE_TYPES.unknown;
+}
+
+// Get display title for a source
+function getSourceDisplayTitle(source) {
+  if (!source) return 'Untitled';
+  // Try different title-like fields based on type
+  return source.title || source.name || source.show || 'Untitled';
+}
+
+// Render source pills in the list
+function renderSourcePills() {
+  if (!portfolioSourcesList) return;
+  
+  if (currentSources.length === 0) {
+    portfolioSourcesList.innerHTML = '<span class="portfolioSourcesEmpty">No sources added yet</span>';
+    return;
+  }
+  
+  portfolioSourcesList.innerHTML = currentSources.map((source, index) => {
+    const typeInfo = getSourceType(source.type);
+    const displayTitle = sanitizeText(getSourceDisplayTitle(source));
+    const isEditing = editingSourceIndex === index;
+    
+    if (isEditing) {
+      return renderSourcePillEditor(source, index);
+    }
+    
+    return `
+      <div class="sourcePill" data-index="${index}" tabindex="0" role="button" aria-label="Edit source: ${displayTitle}">
+        <span class="sourcePillEmoji">${typeInfo.emoji}</span>
+        <span class="sourcePillTitle">${displayTitle}</span>
+      </div>
+    `;
+  }).join('');
+}
+
+// Render the inline editor for a source pill
+function renderSourcePillEditor(source, index) {
+  const typeInfo = getSourceType(source.type);
+  const typeOptions = Object.entries(SOURCE_TYPES).map(([key, info]) => {
+    const selected = key === (source.type || 'unknown') ? 'selected' : '';
+    return `<option value="${key}" ${selected}>${info.emoji} ${info.label}</option>`;
+  }).join('');
+  
+  const fieldInputs = typeInfo.fields.map(field => {
+    const value = sanitizeText(source[field.key] || '');
+    return `
+      <div class="sourcePillEditorField">
+        <label class="sourcePillEditorLabel">${field.label}</label>
+        <input class="sourcePillEditorInput" type="${field.type}" 
+               data-field="${field.key}" 
+               placeholder="${field.placeholder}"
+               value="${value}"/>
+      </div>
+    `;
+  }).join('');
+  
+  return `
+    <div class="sourcePill editing" data-index="${index}">
+      <div class="sourcePillEditor">
+        <div class="sourcePillEditorRow type-row">
+          <span class="sourcePillTypeEmoji">${typeInfo.emoji}</span>
+          <div class="sourcePillEditorField">
+            <label class="sourcePillEditorLabel">Type</label>
+            <select class="sourcePillEditorSelect" data-field="type">
+              ${typeOptions}
+            </select>
+          </div>
+        </div>
+        <div class="sourcePillTypeFields">
+          ${fieldInputs}
+        </div>
+        <div class="sourcePillEditorActions">
+          <button class="sourcePillDeleteBtn" type="button" data-index="${index}">Delete</button>
+          <button class="sourcePillCancelBtn" type="button" data-index="${index}">Cancel</button>
+          <button class="sourcePillSaveBtn" type="button" data-index="${index}">Done</button>
+        </div>
+      </div>
+    </div>
+  `;
+}
+
+// Handle source type change - re-render with new fields
+function handleSourceTypeChange(index, newType) {
+  if (index < 0 || index >= currentSources.length) return;
+  
+  const source = currentSources[index];
+  // Preserve common fields when switching types
+  const preservedData = {
+    title: source.title,
+    author: source.author,
+    url: source.url,
+    name: source.name
+  };
+  
+  // Reset source with new type, keeping preserved fields
+  currentSources[index] = {
+    type: newType,
+    ...preservedData
+  };
+  
+  renderSourcePills();
+  
+  // Focus on first input after re-render
+  setTimeout(() => {
+    const firstInput = portfolioSourcesList?.querySelector('.sourcePill.editing .sourcePillEditorInput');
+    firstInput?.focus();
+  }, 0);
+}
+
+// Save data from the currently editing source pill
+function saveEditingSourceData() {
+  if (editingSourceIndex === null || editingSourceIndex < 0 || editingSourceIndex >= currentSources.length) return;
+  
+  const pillEl = portfolioSourcesList?.querySelector(`.sourcePill.editing[data-index="${editingSourceIndex}"]`);
+  if (!pillEl) return;
+  
+  const source = currentSources[editingSourceIndex];
+  const inputs = pillEl.querySelectorAll('.sourcePillEditorInput');
+  
+  inputs.forEach(input => {
+    const fieldKey = input.dataset.field;
+    if (fieldKey) {
+      source[fieldKey] = input.value.trim();
+    }
+  });
+}
+
+// Close the currently editing source pill
+function closeEditingSource() {
+  if (editingSourceIndex !== null) {
+    saveEditingSourceData();
+  }
+  editingSourceIndex = null;
+  renderSourcePills();
+}
+
+// Open a source pill for editing
+function openSourceForEditing(index) {
+  // If already editing another pill, save it first
+  if (editingSourceIndex !== null && editingSourceIndex !== index) {
+    saveEditingSourceData();
+  }
+  
+  editingSourceIndex = index;
+  renderSourcePills();
+  
+  // Focus on type dropdown after render
+  setTimeout(() => {
+    const typeSelect = portfolioSourcesList?.querySelector('.sourcePill.editing .sourcePillEditorSelect');
+    typeSelect?.focus();
+  }, 0);
+}
+
+// Add a new source
+function addNewSource() {
+  // Close any currently editing source
+  if (editingSourceIndex !== null) {
+    saveEditingSourceData();
+  }
+  
+  // Add new source with unknown type
+  currentSources.push({
+    type: 'unknown',
+    title: ''
+  });
+  
+  // Open the new source for editing
+  editingSourceIndex = currentSources.length - 1;
+  renderSourcePills();
+  
+  // Focus on first input
+  setTimeout(() => {
+    const firstInput = portfolioSourcesList?.querySelector('.sourcePill.editing .sourcePillEditorInput');
+    firstInput?.focus();
+  }, 0);
+}
+
+// Delete a source
+function deleteSource(index) {
+  if (index < 0 || index >= currentSources.length) return;
+  
+  currentSources.splice(index, 1);
+  
+  // Adjust editing index if needed
+  if (editingSourceIndex === index) {
+    editingSourceIndex = null;
+  } else if (editingSourceIndex !== null && editingSourceIndex > index) {
+    editingSourceIndex--;
+  }
+  
+  renderSourcePills();
+}
+
+// Setup event listeners for source pills container
+function setupSourcePillsEventListeners() {
+  if (!portfolioSourcesList) return;
+  
+  portfolioSourcesList.addEventListener('click', (event) => {
+    const target = event.target;
+    
+    // Handle clicking on a pill to edit
+    const pill = target.closest('.sourcePill:not(.editing)');
+    if (pill) {
+      const index = Number(pill.dataset.index);
+      if (!Number.isNaN(index)) {
+        openSourceForEditing(index);
+      }
+      return;
+    }
+    
+    // Handle type dropdown change
+    const typeSelect = target.closest('.sourcePillEditorSelect');
+    if (typeSelect) {
+      return; // Let the change event handle this
+    }
+    
+    // Handle save button
+    const saveBtn = target.closest('.sourcePillSaveBtn');
+    if (saveBtn) {
+      const index = Number(saveBtn.dataset.index);
+      if (!Number.isNaN(index)) {
+        saveEditingSourceData();
+        editingSourceIndex = null;
+        renderSourcePills();
+      }
+      return;
+    }
+    
+    // Handle cancel button
+    const cancelBtn = target.closest('.sourcePillCancelBtn');
+    if (cancelBtn) {
+      const index = Number(cancelBtn.dataset.index);
+      if (!Number.isNaN(index)) {
+        // If it's a new empty source, remove it
+        const source = currentSources[index];
+        if (!getSourceDisplayTitle(source) || getSourceDisplayTitle(source) === 'Untitled') {
+          deleteSource(index);
+        } else {
+          editingSourceIndex = null;
+          renderSourcePills();
+        }
+      }
+      return;
+    }
+    
+    // Handle delete button
+    const deleteBtn = target.closest('.sourcePillDeleteBtn');
+    if (deleteBtn) {
+      const index = Number(deleteBtn.dataset.index);
+      if (!Number.isNaN(index)) {
+        deleteSource(index);
+      }
+      return;
+    }
+  });
+  
+  // Handle type select change
+  portfolioSourcesList.addEventListener('change', (event) => {
+    const typeSelect = event.target.closest('.sourcePillEditorSelect');
+    if (typeSelect) {
+      const pill = typeSelect.closest('.sourcePill');
+      if (pill) {
+        const index = Number(pill.dataset.index);
+        const newType = typeSelect.value;
+        if (!Number.isNaN(index)) {
+          // Save current values before changing type
+          saveEditingSourceData();
+          handleSourceTypeChange(index, newType);
+        }
+      }
+    }
+  });
+  
+  // Handle keyboard navigation for pills
+  portfolioSourcesList.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      const pill = event.target.closest('.sourcePill:not(.editing)');
+      if (pill) {
+        event.preventDefault();
+        const index = Number(pill.dataset.index);
+        if (!Number.isNaN(index)) {
+          openSourceForEditing(index);
+        }
+      }
+    }
+    
+    // Escape to cancel editing
+    if (event.key === 'Escape' && editingSourceIndex !== null) {
+      editingSourceIndex = null;
+      renderSourcePills();
+    }
+  });
 }
 
 function loadLocalPosts() {
@@ -305,6 +681,12 @@ function openPortfolioEditor(post = null) {
   if (portfolioDeleteButton) {
     portfolioDeleteButton.disabled = !editingPostId;
   }
+  
+  // Initialize sources
+  currentSources = Array.isArray(post?.sources) ? [...post.sources] : [];
+  editingSourceIndex = null;
+  renderSourcePills();
+  
   setPortfolioEditorReadOnly(isReadOnlyPost);
   portfolioModal.classList.add('show');
   portfolioModal.setAttribute('aria-hidden', 'false');
@@ -323,6 +705,8 @@ function closePortfolioEditor() {
   editingPostId = null;
   editingPostSource = null;
   editingPostCreatedDate = null;
+  currentSources = [];
+  editingSourceIndex = null;
   if (window.location.hash === '#portfolioModal') {
     history.replaceState(null, '', window.location.pathname + window.location.search);
   }
@@ -398,6 +782,7 @@ export async function openPost(url) {
       const content = data['Body'] || data['body'] || '';
       const isPublished = isPostPublished(data);
       const isPinned = data['pinned'] === true;
+      const sources = Array.isArray(data['sources']) ? data['sources'] : [];
       currentPost = { 
         url, 
         data, 
@@ -407,7 +792,8 @@ export async function openPost(url) {
         source: 'firestore',
         createdDate: data['Created Date'] || data['createdDate'],
         published: isPublished,
-        pinned: isPinned
+        pinned: isPinned,
+        sources: sources
       };
       renderPostContent(content);
       // Show edit button for Firestore posts in admin mode
@@ -531,8 +917,21 @@ export function initPosts() {
   portfolioEditorStatus = $('#portfolioEditorStatus');
   portfolioPostPublished = $('#portfolioPostPublished');
   portfolioPostPinned = $('#portfolioPostPinned');
+  portfolioSourcesList = $('#portfolioSourcesList');
+  portfolioAddSourceBtn = $('#portfolioAddSourceBtn');
 
   if (!pinnedGrid || !entryGrid) return;
+  
+  // Setup source pills event listeners
+  setupSourcePillsEventListeners();
+  
+  // Setup add source button
+  if (portfolioAddSourceBtn) {
+    portfolioAddSourceBtn.addEventListener('click', () => {
+      if (isPortfolioEditorReadOnly) return;
+      addNewSource();
+    });
+  }
 
   if (closePostBtn) {
     closePostBtn.addEventListener('click', () => {
@@ -560,7 +959,8 @@ export function initPosts() {
           source: currentPost.source,
           createdDate: currentPost.createdDate,
           published: currentPost.published !== false, // Default to true if not set
-          pinned: currentPost.pinned === true // Default to false if not set
+          pinned: currentPost.pinned === true, // Default to false if not set
+          sources: currentPost.sources || []
         };
         openPortfolioEditor(postToEdit);
       }
@@ -613,6 +1013,19 @@ export function initPosts() {
       const now = new Date().toISOString();
       const published = portfolioPostPublished?.checked ?? true; // Default to true if checkbox doesn't exist
       const pinned = portfolioPostPinned?.checked ?? false; // Default to false if checkbox doesn't exist
+      
+      // Save any editing source data before saving
+      if (editingSourceIndex !== null) {
+        saveEditingSourceData();
+        editingSourceIndex = null;
+      }
+      
+      // Filter out empty sources
+      const sourcesToSave = currentSources.filter(source => {
+        const displayTitle = getSourceDisplayTitle(source);
+        return displayTitle && displayTitle !== 'Untitled';
+      });
+      
       const postsRef = getPostsCollectionRef();
       const userId = getCurrentUserId();
       if (postsRef && userId) {
@@ -627,7 +1040,8 @@ export function initPosts() {
             'createdDate': createdDate,
             'lastEditedDate': now,
             'published': published,
-            'pinned': pinned
+            'pinned': pinned,
+            'sources': sourcesToSave
           }, { merge: true });
           editingPostId = docRef.id;
           editingPostSource = 'firestore';
