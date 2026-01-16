@@ -80,6 +80,8 @@ const SOURCE_TYPES = {
   }
 };
 
+const UNTITLED_SOURCE = 'Untitled';
+
 const pinned = [];
 const notes = [];
 const pageSize = 10;
@@ -229,9 +231,9 @@ function getSourceType(typeKey) {
 
 // Get display title for a source
 function getSourceDisplayTitle(source) {
-  if (!source) return 'Untitled';
+  if (!source) return UNTITLED_SOURCE;
   // Try different title-like fields based on type
-  return source.title || source.name || source.show || 'Untitled';
+  return source.title || source.name || source.show || UNTITLED_SOURCE;
 }
 
 // Render source pills in the list
@@ -312,7 +314,12 @@ function handleSourceTypeChange(index, newType) {
   if (index < 0 || index >= currentSources.length) return;
   
   const source = currentSources[index];
-  // Preserve common fields when switching types
+  // Preserve common fields when switching types to avoid data loss.
+  // These are the most commonly shared fields across source types:
+  // - title: used by Web, Book, Essay, Video, Podcast
+  // - author: used by Web, Book, Essay
+  // - url: used by Web, Video, Podcast
+  // - name: used by Person
   const preservedData = {
     title: source.title,
     author: source.author,
@@ -461,7 +468,8 @@ function setupSourcePillsEventListeners() {
       if (!Number.isNaN(index)) {
         // If it's a new empty source, remove it
         const source = currentSources[index];
-        if (!getSourceDisplayTitle(source) || getSourceDisplayTitle(source) === 'Untitled') {
+        const displayTitle = getSourceDisplayTitle(source);
+        if (!displayTitle || displayTitle === UNTITLED_SOURCE) {
           deleteSource(index);
         } else {
           editingSourceIndex = null;
@@ -1023,7 +1031,7 @@ export function initPosts() {
       // Filter out empty sources
       const sourcesToSave = currentSources.filter(source => {
         const displayTitle = getSourceDisplayTitle(source);
-        return displayTitle && displayTitle !== 'Untitled';
+        return displayTitle && displayTitle !== UNTITLED_SOURCE;
       });
       
       const postsRef = getPostsCollectionRef();
