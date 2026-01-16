@@ -261,6 +261,8 @@ async function loadFirestorePosts() {
     pinned.push(...pinnedEntries);
     notes.push(...regularEntries);
     
+    // Sort both pinned and notes arrays by date (most recent first)
+    pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
     notes.sort((a, b) => new Date(b.date) - new Date(a.date));
   } catch (error) {
     console.warn('Unable to load posts from Firestore.', error);
@@ -491,6 +493,8 @@ async function loadPosts() {
       syncLocalPostsToNotes();
     }
     
+    // Sort both pinned and notes arrays by date (most recent first)
+    pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
     notes.sort((a, b) => new Date(b.date) - new Date(a.date));
     renderPinned();
     renderPage();
