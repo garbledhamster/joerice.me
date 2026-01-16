@@ -121,58 +121,50 @@ async function loadImagesFromFirestore() {
   }
 }
 
+function getVisibleImages() {
+  return isAdminUser() 
+    ? images 
+    : images.filter(img => img.visible !== false);
+}
+
+function navigateSlideshow(direction) {
+  const visibleImages = getVisibleImages();
+  
+  if (!visibleImages.length) return;
+  
+  // Find current image in visible array
+  const currentVisibleIndex = visibleImages.findIndex(img => img.id === images[currentSlideIndex]?.id);
+  let newVisibleIndex;
+  
+  if (direction === 'next') {
+    newVisibleIndex = (currentVisibleIndex + 1) % visibleImages.length;
+  } else {
+    newVisibleIndex = (currentVisibleIndex - 1 + visibleImages.length) % visibleImages.length;
+  }
+  
+  const newImage = visibleImages[newVisibleIndex];
+  
+  // Find new image in full images array
+  const newIndex = images.findIndex(img => img.id === newImage.id);
+  if (newIndex !== -1) {
+    showSlide(newIndex);
+  }
+}
+
 function initSlideshow() {
   if (!slideImage || !slideCaption || !slideLink) return;
 
   if (prevSlideBtn) {
-    prevSlideBtn.addEventListener('click', () => {
-      // Filter visible images for public users
-      const visibleImages = isAdminUser() 
-        ? images 
-        : images.filter(img => img.visible !== false);
-      
-      if (!visibleImages.length) return;
-      
-      // Find current image in visible array
-      const currentVisibleIndex = visibleImages.findIndex(img => img.id === images[currentSlideIndex]?.id);
-      const newVisibleIndex = (currentVisibleIndex - 1 + visibleImages.length) % visibleImages.length;
-      const newImage = visibleImages[newVisibleIndex];
-      
-      // Find new image in full images array
-      const newIndex = images.findIndex(img => img.id === newImage.id);
-      if (newIndex !== -1) {
-        showSlide(newIndex);
-      }
-    });
+    prevSlideBtn.addEventListener('click', () => navigateSlideshow('prev'));
   }
 
   if (nextSlideBtn) {
-    nextSlideBtn.addEventListener('click', () => {
-      // Filter visible images for public users
-      const visibleImages = isAdminUser() 
-        ? images 
-        : images.filter(img => img.visible !== false);
-      
-      if (!visibleImages.length) return;
-      
-      // Find current image in visible array
-      const currentVisibleIndex = visibleImages.findIndex(img => img.id === images[currentSlideIndex]?.id);
-      const newVisibleIndex = (currentVisibleIndex + 1) % visibleImages.length;
-      const newImage = visibleImages[newVisibleIndex];
-      
-      // Find new image in full images array
-      const newIndex = images.findIndex(img => img.id === newImage.id);
-      if (newIndex !== -1) {
-        showSlide(newIndex);
-      }
-    });
+    nextSlideBtn.addEventListener('click', () => navigateSlideshow('next'));
   }
 
   if (images.length > 0) {
     // Show first visible image
-    const visibleImages = isAdminUser() 
-      ? images 
-      : images.filter(img => img.visible !== false);
+    const visibleImages = getVisibleImages();
     
     if (visibleImages.length > 0) {
       const firstVisibleIndex = images.findIndex(img => img.id === visibleImages[0].id);
@@ -302,21 +294,23 @@ function renderGalleryGrid() {
       if (!ensureAdmin('toggle image visibility')) return;
       
       const docId = button.dataset.docId;
-      const index = parseInt(button.dataset.index, 10);
-      const imageDoc = images[index];
+      const imageDoc = images.find(img => img.id === docId);
       
       if (!imageDoc?.id) {
         alert('Cannot toggle visibility for this image.');
         return;
       }
       
+      const currentVisibility = imageDoc.visible !== false;
+      
       try {
-        const newVisibility = await toggleImageVisibility(imageDoc.id, imageDoc.visible !== false);
+        const newVisibility = await toggleImageVisibility(imageDoc.id, currentVisibility);
         imageDoc.visible = newVisibility;
         renderGalleryGrid();
         
         // Update slideshow if needed
-        if (currentSlideIndex === index) {
+        const imageIndex = images.findIndex(img => img.id === docId);
+        if (currentSlideIndex === imageIndex) {
           showSlide(currentSlideIndex);
         }
       } catch (error) {

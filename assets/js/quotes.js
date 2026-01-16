@@ -96,12 +96,10 @@ function startQuoteCarousel() {
   
   if (!visibleQuotes.length) return;
   
-  // Update quotes array reference for carousel
-  const carouselQuotes = visibleQuotes;
   let carouselIdx = 0;
   
   const showCarouselQuote = (i) => {
-    const q = carouselQuotes[i];
+    const q = visibleQuotes[i];
     if (!q || !quoteText || !quoteCite || !quoteBox) return;
     quoteText.textContent = `"${q.text}"`;
     quoteCite.textContent = `— ${q.author || 'Unknown'}`;
@@ -115,7 +113,7 @@ function startQuoteCarousel() {
     if (!quoteBox) return;
     quoteBox.classList.remove('active');
     setTimeout(() => {
-      carouselIdx = (carouselIdx + 1) % carouselQuotes.length;
+      carouselIdx = (carouselIdx + 1) % visibleQuotes.length;
       showCarouselQuote(carouselIdx);
     }, 600);
   }, slideMs);
@@ -291,9 +289,11 @@ export function initQuotes() {
           return;
         }
         
+        const currentVisibility = quote.visible !== false;
+        
         (async () => {
           try {
-            const newVisibility = await toggleQuoteVisibility(quote.id, quote.visible !== false);
+            const newVisibility = await toggleQuoteVisibility(quote.id, currentVisibility);
             quote.visible = newVisibility;
             renderQuoteList();
             startQuoteCarousel(); // Restart carousel with updated visibility
