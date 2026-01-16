@@ -42,6 +42,7 @@ let portfolioSaveButton = null;
 let portfolioDeleteButton = null;
 let portfolioEditorStatus = null;
 let portfolioPostPublished = null;
+let portfolioPostPinned = null;
 let editingLocalPostId = null;
 let isPortfolioEditorReadOnly = false;
 
@@ -86,10 +87,18 @@ function getPostsCollectionRef() {
   return firestore.collection('Posts');
 }
 
+function removeBySource(array, source) {
+  const filtered = array.filter(item => item.source !== source);
+  array.length = 0;
+  array.push(...filtered);
+}
+
 function removeNotesBySource(source) {
-  const filtered = notes.filter(note => note.source !== source);
-  notes.length = 0;
-  notes.push(...filtered);
+  removeBySource(notes, source);
+}
+
+function removePinnedBySource(source) {
+  removeBySource(pinned, source);
 }
 
 function setPortfolioStatus(message) {
@@ -118,6 +127,9 @@ function setPortfolioEditorReadOnly(isReadOnly) {
   }
   if (portfolioPostPublished) {
     portfolioPostPublished.disabled = isReadOnly;
+  }
+  if (portfolioPostPinned) {
+    portfolioPostPinned.disabled = isReadOnly;
   }
   if (portfolioSaveButton) {
     portfolioSaveButton.disabled = isReadOnly;
@@ -222,22 +234,33 @@ async function loadFirestorePosts() {
     snapshot.forEach(doc => {
       const data = doc.data() || {};
       const isPublished = isPostPublished(data);
+      const isPinned = data['pinned'] === true;
       
       entries.push({
         title: data['Title'] || data['title'] || 'Untitled',
         date: data['Created Date'] || data['createdDate'] || new Date().toISOString(),
         lastEdited: data['Last Edited Date'] || data['lastEditedDate'] || data['Created Date'] || data['createdDate'] || null,
         url: `firestore:${doc.id}`,
-        pinned: false,
+        pinned: isPinned,
         tags: [],
         id: doc.id,
         source: 'firestore',
         published: isPublished
       });
     });
+    
+    // Clean up existing Firestore and local entries before adding new ones
     removeNotesBySource('firestore');
+    removePinnedBySource('firestore');
     removeNotesBySource('local');
-    notes.push(...entries);
+    
+    // Separate entries into pinned and notes arrays
+    const pinnedEntries = entries.filter(entry => entry.pinned);
+    const regularEntries = entries.filter(entry => !entry.pinned);
+    
+    pinned.push(...pinnedEntries);
+    notes.push(...regularEntries);
+    
     notes.sort((a, b) => new Date(b.date) - new Date(a.date));
   } catch (error) {
     console.warn('Unable to load posts from Firestore.', error);
@@ -272,6 +295,10 @@ function openPortfolioEditor(post = null) {
   if (portfolioPostPublished) {
     // Default to checked (published) for new posts, use existing value for edits
     portfolioPostPublished.checked = post?.published !== false;
+  }
+  if (portfolioPostPinned) {
+    // Default to unchecked (not pinned) for new posts, use existing value for edits
+    portfolioPostPinned.checked = post?.pinned === true;
   }
   if (portfolioDeleteButton) {
     portfolioDeleteButton.disabled = !editingPostId;
@@ -368,6 +395,7 @@ export async function openPost(url) {
       const data = doc.data() || {};
       const content = data['Body'] || data['body'] || '';
       const isPublished = isPostPublished(data);
+      const isPinned = data['pinned'] === true;
       currentPost = { 
         url, 
         data, 
@@ -376,7 +404,8 @@ export async function openPost(url) {
         id: postId, 
         source: 'firestore',
         createdDate: data['Created Date'] || data['createdDate'],
-        published: isPublished
+        published: isPublished,
+        pinned: isPinned
       };
       renderPostContent(content);
       // Show edit button for Firestore posts in admin mode
@@ -497,6 +526,7 @@ export function initPosts() {
   portfolioDeleteButton = $('#portfolioDeleteButton');
   portfolioEditorStatus = $('#portfolioEditorStatus');
   portfolioPostPublished = $('#portfolioPostPublished');
+  portfolioPostPinned = $('#portfolioPostPinned');
 
   if (!pinnedGrid || !entryGrid) return;
 
@@ -525,7 +555,8 @@ export function initPosts() {
           content: currentPost.content || '',
           source: currentPost.source,
           createdDate: currentPost.createdDate,
-          published: currentPost.published !== false // Default to true if not set
+          published: currentPost.published !== false, // Default to true if not set
+          pinned: currentPost.pinned === true // Default to false if not set
         };
         openPortfolioEditor(postToEdit);
       }
@@ -577,6 +608,7 @@ export function initPosts() {
       
       const now = new Date().toISOString();
       const published = portfolioPostPublished?.checked ?? true; // Default to true if checkbox doesn't exist
+      const pinned = portfolioPostPinned?.checked ?? false; // Default to false if checkbox doesn't exist
       const postsRef = getPostsCollectionRef();
       const userId = getCurrentUserId();
       if (postsRef && userId) {
@@ -590,12 +622,14 @@ export function initPosts() {
             'body': validatedContent,
             'createdDate': createdDate,
             'lastEditedDate': now,
-            'published': published
+            'published': published,
+            'pinned': pinned
           }, { merge: true });
           editingPostId = docRef.id;
           editingPostSource = 'firestore';
           editingPostCreatedDate = createdDate;
           await loadFirestorePosts();
+          renderPinned();
           renderPage();
           setPortfolioStatus('');
           closePortfolioEditor();
@@ -650,6 +684,7 @@ export function initPosts() {
         try {
           await postsRef.doc(editingPostId).delete();
           await loadFirestorePosts();
+          renderPinned();
           renderPage();
           setPortfolioStatus('');
           closePortfolioEditor();
@@ -700,6 +735,7 @@ export function initPosts() {
       await loadPosts();
     } else {
       await loadFirestorePosts();
+      renderPinned();
       renderPage();
     }
   });
