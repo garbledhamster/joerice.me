@@ -1,4 +1,4 @@
-import { ensureAdmin, getFirestore, getStorage, getCurrentUserId } from './auth.js';
+import { ensureAdmin, getFirestore, getStorage, getCurrentUserId, isAdminUser } from './auth.js';
 import { $ } from './dom.js';
 import { sanitizeText, sanitizeUrl, validateLength } from './sanitize.js';
 
@@ -108,7 +108,8 @@ async function loadImagesFromFirestore() {
           storagePath: data.storagePath,
           userId: data.userId,
           createdAt: data.createdAt,
-          updatedAt: data.updatedAt
+          updatedAt: data.updatedAt,
+          visible: data.visible !== false // Default to true if not set
         });
       }
     }
@@ -124,15 +125,59 @@ function initSlideshow() {
   if (!slideImage || !slideCaption || !slideLink) return;
 
   if (prevSlideBtn) {
-    prevSlideBtn.addEventListener('click', () => showSlide(currentSlideIndex - 1));
+    prevSlideBtn.addEventListener('click', () => {
+      // Filter visible images for public users
+      const visibleImages = isAdminUser() 
+        ? images 
+        : images.filter(img => img.visible !== false);
+      
+      if (!visibleImages.length) return;
+      
+      // Find current image in visible array
+      const currentVisibleIndex = visibleImages.findIndex(img => img.id === images[currentSlideIndex]?.id);
+      const newVisibleIndex = (currentVisibleIndex - 1 + visibleImages.length) % visibleImages.length;
+      const newImage = visibleImages[newVisibleIndex];
+      
+      // Find new image in full images array
+      const newIndex = images.findIndex(img => img.id === newImage.id);
+      if (newIndex !== -1) {
+        showSlide(newIndex);
+      }
+    });
   }
 
   if (nextSlideBtn) {
-    nextSlideBtn.addEventListener('click', () => showSlide(currentSlideIndex + 1));
+    nextSlideBtn.addEventListener('click', () => {
+      // Filter visible images for public users
+      const visibleImages = isAdminUser() 
+        ? images 
+        : images.filter(img => img.visible !== false);
+      
+      if (!visibleImages.length) return;
+      
+      // Find current image in visible array
+      const currentVisibleIndex = visibleImages.findIndex(img => img.id === images[currentSlideIndex]?.id);
+      const newVisibleIndex = (currentVisibleIndex + 1) % visibleImages.length;
+      const newImage = visibleImages[newVisibleIndex];
+      
+      // Find new image in full images array
+      const newIndex = images.findIndex(img => img.id === newImage.id);
+      if (newIndex !== -1) {
+        showSlide(newIndex);
+      }
+    });
   }
 
   if (images.length > 0) {
-    showSlide(0);
+    // Show first visible image
+    const visibleImages = isAdminUser() 
+      ? images 
+      : images.filter(img => img.visible !== false);
+    
+    if (visibleImages.length > 0) {
+      const firstVisibleIndex = images.findIndex(img => img.id === visibleImages[0].id);
+      showSlide(firstVisibleIndex !== -1 ? firstVisibleIndex : 0);
+    }
   }
 }
 
@@ -217,11 +262,16 @@ function renderGalleryGrid() {
     const ellipsis = img.caption?.length > 50 ? '…' : '';
     const safeShortCaption = sanitizeText(shortCaption + ellipsis);
     const safeId = sanitizeText(img.id);
+    const isVisible = img.visible !== false;
+    const visibilityClass = !isVisible ? 'gallery-image-hidden' : '';
     
     return `
-    <div class="galleryEditorGridItem" data-doc-id="${safeId}" data-index="${index}">
+    <div class="galleryEditorGridItem ${visibilityClass}" data-doc-id="${safeId}" data-index="${index}">
       <img src="${safeImgUrl || '#'}" alt="${safeCaption}" loading="lazy"/>
       <div class="galleryEditorGridItemCaption">${safeShortCaption}</div>
+      <button class="gallery-visibility-button" type="button" data-doc-id="${safeId}" data-index="${index}" title="${isVisible ? 'Hide from public' : 'Show to public'}" aria-label="${isVisible ? 'Hide from public' : 'Show to public'}">
+        <i class="fas fa-eye${isVisible ? '' : '-slash'}"></i>
+      </button>
     </div>
   `;
   }).join('');
@@ -229,12 +279,49 @@ function renderGalleryGrid() {
   // Add click handlers to grid items
   const gridItems = galleryEditorGrid.querySelectorAll('.galleryEditorGridItem');
   gridItems.forEach(item => {
-    item.addEventListener('click', () => {
+    item.addEventListener('click', (e) => {
+      // Don't trigger selection if clicking visibility button
+      if (e.target.closest('.gallery-visibility-button')) {
+        return;
+      }
+      
       const docId = item.dataset.docId;
       const index = parseInt(item.dataset.index, 10);
       const imageDoc = images.find(img => img.id === docId);
       if (imageDoc) {
         selectImage(imageDoc, index);
+      }
+    });
+  });
+  
+  // Add click handlers to visibility buttons
+  const visibilityButtons = galleryEditorGrid.querySelectorAll('.gallery-visibility-button');
+  visibilityButtons.forEach(button => {
+    button.addEventListener('click', async (e) => {
+      e.stopPropagation(); // Prevent triggering grid item click
+      if (!ensureAdmin('toggle image visibility')) return;
+      
+      const docId = button.dataset.docId;
+      const index = parseInt(button.dataset.index, 10);
+      const imageDoc = images[index];
+      
+      if (!imageDoc?.id) {
+        alert('Cannot toggle visibility for this image.');
+        return;
+      }
+      
+      try {
+        const newVisibility = await toggleImageVisibility(imageDoc.id, imageDoc.visible !== false);
+        imageDoc.visible = newVisibility;
+        renderGalleryGrid();
+        
+        // Update slideshow if needed
+        if (currentSlideIndex === index) {
+          showSlide(currentSlideIndex);
+        }
+      } catch (error) {
+        console.warn('Unable to toggle image visibility.', error);
+        alert('Unable to toggle visibility. Please try again.');
       }
     });
   });
@@ -283,6 +370,7 @@ async function handleUpload() {
       quote: validatedCaption,
       storagePath: storagePath,
       downloadURL: downloadURL,
+      visible: true, // Default to visible
       createdAt: window.firebase.firestore.FieldValue.serverTimestamp(),
       updatedAt: window.firebase.firestore.FieldValue.serverTimestamp()
     });
@@ -447,6 +535,23 @@ async function handleDelete() {
     console.error('Error details:', error.code, error.message);
     setEditorStatus(`Delete failed: ${error.message || 'Unknown error'}`);
   }
+}
+
+async function toggleImageVisibility(imageId, currentVisibility) {
+  const firestore = getFirestore();
+  if (!firestore || !imageId) {
+    console.warn('Cannot toggle visibility: Firestore not configured or no ID provided.');
+    return currentVisibility;
+  }
+  
+  const newVisibility = !currentVisibility;
+  const docRef = firestore.collection('Images').doc(imageId);
+  await docRef.update({
+    visible: newVisibility,
+    updatedAt: window.firebase.firestore.FieldValue.serverTimestamp()
+  });
+  
+  return newVisibility;
 }
 
 function showEditorPicker() {

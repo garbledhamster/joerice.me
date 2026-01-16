@@ -1,4 +1,4 @@
-import { ensureAdmin, getFirestore } from './auth.js';
+import { ensureAdmin, getFirestore, isAdminUser } from './auth.js';
 import { $ } from './dom.js';
 import { sanitizeText, validateLength } from './sanitize.js';
 
@@ -73,7 +73,8 @@ async function loadQuotes() {
           id: doc.id,
           text: data.text || '',
           author: data.author || '',
-          createdAt: data.createdAt
+          createdAt: data.createdAt,
+          visible: data.visible !== false // Default to true if not set
         });
       });
     } catch (error) {
@@ -87,14 +88,35 @@ async function loadQuotes() {
 
 function startQuoteCarousel() {
   if (!quotes.length) return;
-  showQuote(0);
+  
+  // Filter quotes for public users (admin sees all)
+  const visibleQuotes = isAdminUser() 
+    ? quotes 
+    : quotes.filter(q => q.visible !== false);
+  
+  if (!visibleQuotes.length) return;
+  
+  // Update quotes array reference for carousel
+  const carouselQuotes = visibleQuotes;
+  let carouselIdx = 0;
+  
+  const showCarouselQuote = (i) => {
+    const q = carouselQuotes[i];
+    if (!q || !quoteText || !quoteCite || !quoteBox) return;
+    quoteText.textContent = `"${q.text}"`;
+    quoteCite.textContent = `— ${q.author || 'Unknown'}`;
+    quoteBox.classList.add('active');
+    resetBar();
+  };
+  
+  showCarouselQuote(0);
   if (quoteInterval) clearInterval(quoteInterval);
   quoteInterval = setInterval(() => {
     if (!quoteBox) return;
     quoteBox.classList.remove('active');
     setTimeout(() => {
-      idx = (idx + 1) % quotes.length;
-      showQuote(idx);
+      carouselIdx = (carouselIdx + 1) % carouselQuotes.length;
+      showCarouselQuote(carouselIdx);
     }, 600);
   }, slideMs);
 }
@@ -106,6 +128,8 @@ function renderQuoteList(activeIndex = editingQuoteIndex) {
     const ellipsis = quote.text?.length > 32 ? '…' : '';
     const isEditing = index === editingQuoteIndex;
     const activeClass = index === activeIndex && !isEditing ? 'active' : '';
+    const isVisible = quote.visible !== false;
+    const visibilityClass = !isVisible ? 'quote-hidden' : '';
     
     // Show inline editor if this quote is being edited
     if (isEditing) {
@@ -126,11 +150,14 @@ function renderQuoteList(activeIndex = editingQuoteIndex) {
     `;
     }
     
-    // Show regular quote button with edit button
+    // Show regular quote button with edit and visibility buttons
     return `
-    <li class="quote-list-item ${activeClass}">
+    <li class="quote-list-item ${activeClass} ${visibilityClass}">
       <button class="quoteListButton" type="button" data-index="${index}">
         ${safeText}${ellipsis}
+      </button>
+      <button class="quote-visibility-button" type="button" data-index="${index}" title="${isVisible ? 'Hide from public' : 'Show to public'}" aria-label="${isVisible ? 'Hide from public' : 'Show to public'}">
+        <i class="fas fa-eye${isVisible ? '' : '-slash'}"></i>
       </button>
       <button class="quote-edit-button" type="button" data-index="${index}" title="Edit">✎</button>
     </li>
@@ -155,7 +182,7 @@ async function saveQuote(quoteData) {
     return null;
   }
   
-  const { id, text, author } = quoteData;
+  const { id, text, author, visible } = quoteData;
   const now = new Date().toISOString();
   
   if (id) {
@@ -163,6 +190,7 @@ async function saveQuote(quoteData) {
     await quotesCollectionRef.doc(id).set({
       text,
       author,
+      visible: visible !== false, // Default to true
       updatedAt: now
     }, { merge: true });
     return id;
@@ -171,6 +199,7 @@ async function saveQuote(quoteData) {
     const docRef = await quotesCollectionRef.add({
       text,
       author,
+      visible: visible !== false, // Default to true
       createdAt: now,
       updatedAt: now
     });
@@ -184,6 +213,19 @@ async function deleteQuote(quoteId) {
     return;
   }
   await quotesCollectionRef.doc(quoteId).delete();
+}
+
+async function toggleQuoteVisibility(quoteId, currentVisibility) {
+  if (!quotesCollectionRef || !quoteId) {
+    console.warn('Cannot toggle visibility: Firestore not configured or no ID provided.');
+    return;
+  }
+  const newVisibility = !currentVisibility;
+  await quotesCollectionRef.doc(quoteId).update({
+    visible: newVisibility,
+    updatedAt: new Date().toISOString()
+  });
+  return newVisibility;
 }
 
 async function reloadQuotes() {
@@ -235,6 +277,31 @@ export function initQuotes() {
         idx = index;
         showQuote(idx);
         renderQuoteList(index);
+        return;
+      }
+      
+      // Handle visibility toggle button
+      const visibilityButton = event.target.closest('.quote-visibility-button');
+      if (visibilityButton) {
+        if (!ensureAdmin('toggle quote visibility')) return;
+        const index = Number(visibilityButton.dataset.index);
+        const quote = quotes[index];
+        if (!quote?.id) {
+          alert('Cannot toggle visibility for quotes not yet saved.');
+          return;
+        }
+        
+        (async () => {
+          try {
+            const newVisibility = await toggleQuoteVisibility(quote.id, quote.visible !== false);
+            quote.visible = newVisibility;
+            renderQuoteList();
+            startQuoteCarousel(); // Restart carousel with updated visibility
+          } catch (error) {
+            console.warn('Unable to toggle quote visibility.', error);
+            alert('Unable to toggle visibility. Please try again.');
+          }
+        })();
         return;
       }
       
