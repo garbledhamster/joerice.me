@@ -54,7 +54,7 @@ const fallbackSlides = [
   {
     img: 'https://picsum.photos/seed/stoic/1200/800',
     link: 'https://picsum.photos/seed/stoic/1200/1200',
-    caption: "Stoic: A daily reminder to focus on what I can control and let go of what I can't.",
+    caption: 'Stoic: A daily reminder to focus on what I can control and let go of what I can\'t.',
   },
   {
     img: 'https://picsum.photos/seed/city/1200/800',
