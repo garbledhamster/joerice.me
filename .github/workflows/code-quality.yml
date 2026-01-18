@@ -27,10 +27,16 @@ jobs:
       - name: Run Biome (Format & Lint)
         run: npm run lint:biome
       
+      # html-validate: Verify HTML structure, accessibility, and SEO
+      # Note: continue-on-error is set due to pre-existing issues in the codebase
+      # TODO: Fix HTML validation errors and remove continue-on-error
       - name: Run html-validate
         run: npm run lint:html
         continue-on-error: true
       
+      # Stylelint: Analyze CSS rules and maintain styling quality
+      # Note: continue-on-error is set due to pre-existing CSS specificity issues
+      # TODO: Resolve CSS issues and remove continue-on-error
       - name: Run Stylelint
         run: npm run lint:css
         continue-on-error: true
