@@ -1,13 +1,7 @@
-import {
-  ensureAdmin,
-  getCurrentUserId,
-  getFirestore,
-  isAdminUser,
-  onAuthStateChange
-} from './auth.js';
+import { ensureAdmin, getCurrentUserId, getFirestore, isAdminUser, onAuthStateChange } from './auth.js';
 import { $, $$ } from './dom.js';
+import { sanitizeMarkdown, sanitizeText, validateLength } from './sanitize.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
-import { sanitizeHtml, sanitizeMarkdown, sanitizeText, validateLength } from './sanitize.js';
 
 const pinned = [];
 const notes = [];
@@ -15,7 +9,7 @@ const pageSize = 10;
 const selectedTags = new Set();
 const localPosts = [];
 const localPostsStorageKey = 'portfolioLocalPosts';
-let page = 0;
+const page = 0;
 let currentPost = null;
 let editingPostId = null;
 let editingPostSource = null;
@@ -64,13 +58,13 @@ function getPostTitle(post) {
 
 function formatPostEntry(post) {
   const safeTitle = sanitizeText(post.title);
-  const safeTags = (post.tags || []).map(t => sanitizeText(t)).join('|');
+  const safeTags = (post.tags || []).map((t) => sanitizeText(t)).join('|');
   const safeUrl = sanitizeText(post.url);
   const sourceAttr = post.source ? ` data-source="${sanitizeText(post.source)}"` : '';
   const idAttr = post.id ? ` data-id="${sanitizeText(post.id)}"` : '';
   const publishedAttr = post.published !== undefined ? ` data-published="${post.published}"` : '';
   // Add visual indicator for unpublished posts (only visible to admins)
-  const unpublishedIndicator = (post.published === false && isAdminUser()) ? ' [DRAFT]' : '';
+  const unpublishedIndicator = post.published === false && isAdminUser() ? ' [DRAFT]' : '';
   return `<a class="entry" data-tags="${safeTags}" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr}>${safeTitle}${unpublishedIndicator}</a>`;
 }
 
@@ -88,7 +82,7 @@ function getPostsCollectionRef() {
 }
 
 function removeBySource(array, source) {
-  const filtered = array.filter(item => item.source !== source);
+  const filtered = array.filter((item) => item.source !== source);
   array.length = 0;
   array.push(...filtered);
 }
@@ -151,13 +145,13 @@ function loadLocalPosts() {
     if (!raw) return;
     const parsed = JSON.parse(raw);
     if (!Array.isArray(parsed)) return;
-    parsed.forEach(post => {
+    parsed.forEach((post) => {
       if (!post?.id || !post?.title || typeof post?.content !== 'string') return;
       localPosts.push({
         id: post.id,
         title: post.title,
         content: post.content,
-        date: post.date || new Date().toISOString()
+        date: post.date || new Date().toISOString(),
       });
     });
   } catch {
@@ -170,10 +164,10 @@ function saveLocalPosts() {
 }
 
 function syncLocalPostsToNotes() {
-  const nonLocalNotes = notes.filter(note => !note.local);
+  const nonLocalNotes = notes.filter((note) => !note.local);
   notes.length = 0;
   notes.push(...nonLocalNotes);
-  localPosts.forEach(post => {
+  localPosts.forEach((post) => {
     notes.push({
       title: post.title,
       date: post.date,
@@ -182,14 +176,14 @@ function syncLocalPostsToNotes() {
       tags: [],
       local: true,
       id: post.id,
-      source: 'local'
+      source: 'local',
     });
   });
   notes.sort((a, b) => new Date(b.date) - new Date(a.date));
 }
 
 function getLocalPostById(id) {
-  return localPosts.find(post => post.id === id) || null;
+  return localPosts.find((post) => post.id === id) || null;
 }
 
 function isPostPublished(data) {
@@ -198,13 +192,13 @@ function isPostPublished(data) {
   // A post is unpublished if ANY published-related field is explicitly false
   const publishedLower = data?.published;
   const publishedUpper = data?.Published;
-  
+
   // If either field is explicitly false, the post is not published
   // This handles: published=false, Published=false, or both=false
   if (publishedLower === false || publishedUpper === false) {
     return false;
   }
-  
+
   // Otherwise, default to published (true)
   // This handles: both undefined, either true, or both true
   return true;
@@ -230,37 +224,37 @@ async function loadFirestorePosts() {
     }
     const snapshot = await query.get();
     const entries = [];
-    
-    snapshot.forEach(doc => {
+
+    snapshot.forEach((doc) => {
       const data = doc.data() || {};
       const isPublished = isPostPublished(data);
-      const isPinned = data['pinned'] === true;
-      
+      const isPinned = data.pinned === true;
+
       entries.push({
-        title: data['Title'] || data['title'] || 'Untitled',
-        date: data['Created Date'] || data['createdDate'] || new Date().toISOString(),
-        lastEdited: data['Last Edited Date'] || data['lastEditedDate'] || data['Created Date'] || data['createdDate'] || null,
+        title: data.Title || data.title || 'Untitled',
+        date: data['Created Date'] || data.createdDate || new Date().toISOString(),
+        lastEdited: data['Last Edited Date'] || data.lastEditedDate || data['Created Date'] || data.createdDate || null,
         url: `firestore:${doc.id}`,
         pinned: isPinned,
         tags: [],
         id: doc.id,
         source: 'firestore',
-        published: isPublished
+        published: isPublished,
       });
     });
-    
+
     // Clean up existing Firestore and local entries before adding new ones
     removeNotesBySource('firestore');
     removePinnedBySource('firestore');
     removeNotesBySource('local');
-    
+
     // Separate entries into pinned and notes arrays
-    const pinnedEntries = entries.filter(entry => entry.pinned);
-    const regularEntries = entries.filter(entry => !entry.pinned);
-    
+    const pinnedEntries = entries.filter((entry) => entry.pinned);
+    const regularEntries = entries.filter((entry) => !entry.pinned);
+
     pinned.push(...pinnedEntries);
     notes.push(...regularEntries);
-    
+
     // Sort both pinned and notes arrays by date (most recent first)
     pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
     notes.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -284,9 +278,7 @@ function openPortfolioEditor(post = null) {
     editingPostCreatedDate = null;
   }
   if (portfolioModalTitle) {
-    portfolioModalTitle.textContent = editingPostId
-      ? 'Edit Post'
-      : 'Add Post';
+    portfolioModalTitle.textContent = editingPostId ? 'Edit Post' : 'Add Post';
   }
   if (portfolioPostTitle) {
     portfolioPostTitle.value = post?.title || '';
@@ -329,9 +321,11 @@ function closePortfolioEditor() {
 }
 
 function attachClickHandlers() {
-  $$('.entry').forEach(el => {
+  $$('.entry').forEach((el) => {
     el.addEventListener('click', async () => {
-      $$('.entry.active').forEach(a => a.classList.remove('active'));
+      $$('.entry.active').forEach((a) => {
+        a.classList.remove('active');
+      });
       el.classList.add('active');
       await openPost(el.dataset.url);
     });
@@ -339,17 +333,16 @@ function attachClickHandlers() {
 }
 
 function filterEntries() {
-  $$('.entry').forEach(el => {
+  $$('.entry').forEach((el) => {
     const tags = (el.dataset.tags || '').split('|');
-    const hide = selectedTags.size &&
-                 ![...selectedTags].some(t => tags.includes(t));
+    const hide = selectedTags.size && ![...selectedTags].some((t) => tags.includes(t));
     el.style.display = hide ? 'none' : '';
   });
 }
 
 function renderPinned() {
   if (!pinnedGrid) return;
-  pinnedGrid.innerHTML = pinned.map(p => formatPostEntry(p)).join('');
+  pinnedGrid.innerHTML = pinned.map((p) => formatPostEntry(p)).join('');
   attachClickHandlers();
   filterEntries();
 }
@@ -358,7 +351,7 @@ export function renderPage() {
   if (!entryGrid) return;
   const start = page * pageSize;
   const slice = notes.slice(start, start + pageSize);
-  entryGrid.innerHTML = slice.map(n => formatPostEntry(n)).join('');
+  entryGrid.innerHTML = slice.map((n) => formatPostEntry(n)).join('');
   if (prevBtn) prevBtn.disabled = page === 0;
   if (nextBtn) nextBtn.disabled = start + pageSize >= notes.length;
   attachClickHandlers();
@@ -370,12 +363,12 @@ export async function openPost(url) {
     window.exitEditorMode();
   }
   clearCurrentPost();
-  
+
   // Hide edit button by default
   if (editPostBtn) {
     editPostBtn.hidden = true;
   }
-  
+
   try {
     if (url.startsWith('local:')) {
       const localId = url.replace('local:', '');
@@ -395,19 +388,19 @@ export async function openPost(url) {
       const doc = await postsRef.doc(postId).get();
       if (!doc.exists) throw new Error('Post unavailable');
       const data = doc.data() || {};
-      const content = data['Body'] || data['body'] || '';
+      const content = data.Body || data.body || '';
       const isPublished = isPostPublished(data);
-      const isPinned = data['pinned'] === true;
-      currentPost = { 
-        url, 
-        data, 
-        content, 
-        firestore: true, 
-        id: postId, 
+      const isPinned = data.pinned === true;
+      currentPost = {
+        url,
+        data,
+        content,
+        firestore: true,
+        id: postId,
         source: 'firestore',
-        createdDate: data['Created Date'] || data['createdDate'],
+        createdDate: data['Created Date'] || data.createdDate,
         published: isPublished,
-        pinned: isPinned
+        pinned: isPinned,
       };
       renderPostContent(content);
       // Show edit button for Firestore posts in admin mode
@@ -419,11 +412,9 @@ export async function openPost(url) {
       if (!yaml) {
         throw new Error('YAML parser unavailable');
       }
-      const raw = await fetch(url).then(r => r.text());
+      const raw = await fetch(url).then((r) => r.text());
       const data = yaml.load(raw);
-      const storedContent = typeof window.getStoredPostContent === 'function'
-        ? window.getStoredPostContent(url)
-        : null;
+      const storedContent = typeof window.getStoredPostContent === 'function' ? window.getStoredPostContent(url) : null;
       const content = storedContent ?? (data.content || '');
       currentPost = { url, data, content, source: 'yaml' };
       renderPostContent(content);
@@ -449,13 +440,13 @@ async function loadYamlPosts() {
     return;
   }
   try {
-    const loaderText = await fetch('posts/loader.yaml').then(r => r.text());
+    const loaderText = await fetch('posts/loader.yaml').then((r) => r.text());
     const loaderData = yaml.load(loaderText);
     const count = Number(loaderData.posts) || 0;
     for (let i = 1; i <= count; i++) {
       const filePath = `posts/${String(i).padStart(4, '0')}.yaml`;
       try {
-        const raw = await fetch(filePath).then(r => {
+        const raw = await fetch(filePath).then((r) => {
           if (!r.ok) throw new Error();
           return r.text();
         });
@@ -466,7 +457,7 @@ async function loadYamlPosts() {
           url: filePath,
           pinned: data.pinned,
           tags: data.tags || [],
-          source: 'yaml'
+          source: 'yaml',
         };
         if (entry.pinned) pinned.push(entry);
         else notes.push(entry);
@@ -480,10 +471,10 @@ async function loadYamlPosts() {
 async function loadPosts() {
   try {
     setPortfolioStatus('Loading posts...');
-    
+
     // Load function 1: Load YAML posts
     await loadYamlPosts();
-    
+
     // Load function 2: Load Firestore posts (if available) or local posts
     const postsRef = getPostsCollectionRef();
     if (postsRef) {
@@ -492,7 +483,7 @@ async function loadPosts() {
       loadLocalPosts();
       syncLocalPostsToNotes();
     }
-    
+
     // Sort both pinned and notes arrays by date (most recent first)
     pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
     notes.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -536,7 +527,9 @@ export function initPosts() {
 
   if (closePostBtn) {
     closePostBtn.addEventListener('click', () => {
-      $$('.entry.active').forEach(a => a.classList.remove('active'));
+      $$('.entry.active').forEach((a) => {
+        a.classList.remove('active');
+      });
       if (postView) postView.classList.remove('show');
       clearCurrentPost();
       unlockScroll();
@@ -550,7 +543,7 @@ export function initPosts() {
     editPostBtn.addEventListener('click', () => {
       if (!ensureAdmin('edit post')) return;
       if (!currentPost) return;
-      
+
       // Only allow editing of local and firestore posts
       if (currentPost.source === 'local' || currentPost.source === 'firestore') {
         const postToEdit = {
@@ -560,7 +553,7 @@ export function initPosts() {
           source: currentPost.source,
           createdDate: currentPost.createdDate,
           published: currentPost.published !== false, // Default to true if not set
-          pinned: currentPost.pinned === true // Default to false if not set
+          pinned: currentPost.pinned === true, // Default to false if not set
         };
         openPortfolioEditor(postToEdit);
       }
@@ -576,7 +569,7 @@ export function initPosts() {
   }
 
   if (portfolioModal) {
-    portfolioModal.addEventListener('click', event => {
+    portfolioModal.addEventListener('click', (event) => {
       if (event.target === portfolioModal) {
         closePortfolioEditor();
       }
@@ -597,19 +590,19 @@ export function initPosts() {
         setEditorStatus('Title and post content are required.');
         return;
       }
-      
+
       if (!confirm('Are you sure you want to save this post?')) {
         return;
       }
-      
+
       // Validate input length to prevent abuse
       const validatedTitle = validateLength(title, 500);
       const validatedContent = validateLength(content, 50000);
-      
+
       if (validatedTitle.length !== title.length || validatedContent.length !== content.length) {
         setEditorStatus('Content was truncated due to length restrictions.');
       }
-      
+
       const now = new Date().toISOString();
       const published = portfolioPostPublished?.checked ?? true; // Default to true if checkbox doesn't exist
       const pinned = portfolioPostPinned?.checked ?? false; // Default to false if checkbox doesn't exist
@@ -620,15 +613,18 @@ export function initPosts() {
           const isEditing = editingPostId && editingPostSource === 'firestore';
           const docRef = isEditing ? postsRef.doc(editingPostId) : postsRef.doc();
           const createdDate = editingPostCreatedDate ?? now;
-          await docRef.set({
-            'userId': userId,
-            'title': validatedTitle,
-            'body': validatedContent,
-            'createdDate': createdDate,
-            'lastEditedDate': now,
-            'published': published,
-            'pinned': pinned
-          }, { merge: true });
+          await docRef.set(
+            {
+              userId: userId,
+              title: validatedTitle,
+              body: validatedContent,
+              createdDate: createdDate,
+              lastEditedDate: now,
+              published: published,
+              pinned: pinned,
+            },
+            { merge: true },
+          );
           editingPostId = docRef.id;
           editingPostSource = 'firestore';
           editingPostCreatedDate = createdDate;
@@ -658,7 +654,7 @@ export function initPosts() {
           id: newId,
           title: validatedTitle,
           content: validatedContent,
-          date: now
+          date: now,
         });
         editingLocalPostId = newId;
       }
@@ -678,11 +674,11 @@ export function initPosts() {
         setEditorStatus('There is no post to delete.');
         return;
       }
-      
+
       if (!confirm('Are you sure you want to delete this post? This cannot be undone.')) {
         return;
       }
-      
+
       const postsRef = getPostsCollectionRef();
       if (postsRef && editingPostSource === 'firestore') {
         try {
@@ -698,7 +694,7 @@ export function initPosts() {
         }
         return;
       }
-      const index = localPosts.findIndex(post => post.id === editingLocalPostId);
+      const index = localPosts.findIndex((post) => post.id === editingLocalPostId);
       if (index === -1) {
         setEditorStatus('Unable to find that post.');
         return;
@@ -713,15 +709,15 @@ export function initPosts() {
   }
 
   if (searchInput) {
-    searchInput.addEventListener('input', e => {
+    searchInput.addEventListener('input', (e) => {
       const v = e.target.value.toLowerCase();
-      $$('.entry').forEach(el => {
+      $$('.entry').forEach((el) => {
         el.style.display = el.textContent.toLowerCase().includes(v) ? '' : 'none';
       });
     });
   }
 
-  $$('.filterBtn').forEach(btn => {
+  $$('.filterBtn').forEach((btn) => {
     btn.addEventListener('click', () => {
       const tag = btn.dataset.tag;
       btn.classList.toggle('active');

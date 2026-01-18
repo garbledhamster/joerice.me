@@ -19,39 +19,62 @@ function getDOMPurify() {
  */
 export function sanitizeHtml(html, options = {}) {
   const purify = getDOMPurify();
-  
+
   if (!purify) {
     console.warn('DOMPurify not available. Content will not be sanitized.');
     // Fallback: escape all HTML entities if DOMPurify is unavailable
     // This is safer than trying to strip tags with regex
     return sanitizeText(String(html || ''));
   }
-  
+
   const defaultOptions = {
     ALLOWED_TAGS: [
-      'h1', 'h2', 'h3', 'h4', 'h5', 'h6',
-      'p', 'br', 'hr',
-      'strong', 'b', 'em', 'i', 'u', 's', 'del', 'ins', 'mark', 'small',
-      'a', 'img',
-      'ul', 'ol', 'li',
-      'blockquote', 'pre', 'code',
-      'table', 'thead', 'tbody', 'tr', 'th', 'td',
-      'div', 'span'
+      'h1',
+      'h2',
+      'h3',
+      'h4',
+      'h5',
+      'h6',
+      'p',
+      'br',
+      'hr',
+      'strong',
+      'b',
+      'em',
+      'i',
+      'u',
+      's',
+      'del',
+      'ins',
+      'mark',
+      'small',
+      'a',
+      'img',
+      'ul',
+      'ol',
+      'li',
+      'blockquote',
+      'pre',
+      'code',
+      'table',
+      'thead',
+      'tbody',
+      'tr',
+      'th',
+      'td',
+      'div',
+      'span',
     ],
-    ALLOWED_ATTR: [
-      'href', 'title', 'target', 'rel',
-      'src', 'alt', 'width', 'height',
-      'class', 'id'
-    ],
+    ALLOWED_ATTR: ['href', 'title', 'target', 'rel', 'src', 'alt', 'width', 'height', 'class', 'id'],
     ALLOW_DATA_ATTR: false,
     ADD_ATTR: ['target'], // Allow target attribute for links
     // Ensure external links are safe
     SANITIZE_NAMED_PROPS: true,
-    RETURN_TRUSTED_TYPE: false
+    RETURN_TRUSTED_TYPE: false,
   };
-  
+
   const config = { ...defaultOptions, ...options };
-  
+
   // Configure DOMPurify to add security attributes to external links
   purify.addHook('afterSanitizeAttributes', (node) => {
     // Add rel="noopener noreferrer" to external links
@@ -69,13 +92,13 @@ export function sanitizeHtml(html, options = {}) {
       }
     }
   });
-  
+
   // Sanitize and return
   const sanitized = purify.sanitize(html, config);
-  
+
   // Remove hook after use to avoid affecting other sanitization calls
   purify.removeHook('afterSanitizeAttributes');
-  
+
   return sanitized;
 }
 
@@ -89,7 +112,7 @@ export function sanitizeText(text) {
   if (typeof text !== 'string') {
     return '';
   }
-  
+
   return text
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
@@ -109,10 +132,10 @@ export function sanitizeMarkdown(markdown) {
     console.warn('Marked.js not available. Returning sanitized text.');
     return sanitizeText(markdown);
   }
-  
+
   // Parse markdown to HTML
   const html = window.marked.parse(markdown);
-  
+
   // Sanitize the resulting HTML
   return sanitizeHtml(html);
 }
@@ -141,30 +164,34 @@ export function sanitizeUrl(url) {
   if (typeof url !== 'string') {
     return '';
   }
-  
+
   const trimmed = url.trim();
   const lower = trimmed.toLowerCase();
-  
+
   // Block dangerous protocols
-  if (lower.startsWith('javascript:') || 
-      lower.startsWith('data:') || 
-      lower.startsWith('vbscript:') ||
-      lower.startsWith('file:')) {
+  if (
+    lower.startsWith('javascript:') ||
+    lower.startsWith('data:') ||
+    lower.startsWith('vbscript:') ||
+    lower.startsWith('file:')
+  ) {
     console.warn('Blocked potentially dangerous URL:', url);
     return '';
   }
-  
+
   // Allow relative URLs, http, https, mailto
-  if (trimmed.startsWith('/') || 
-      trimmed.startsWith('./') ||
-      trimmed.startsWith('../') ||
-      lower.startsWith('http://') || 
-      lower.startsWith('https://') ||
-      lower.startsWith('mailto:') ||
-      lower.startsWith('#')) {
+  if (
+    trimmed.startsWith('/') ||
+    trimmed.startsWith('./') ||
+    trimmed.startsWith('../') ||
+    lower.startsWith('http://') ||
+    lower.startsWith('https://') ||
+    lower.startsWith('mailto:') ||
+    lower.startsWith('#')
+  ) {
     return trimmed;
   }
-  
+
   // If it doesn't match any safe pattern, return empty
   console.warn('URL does not match safe patterns:', url);
   return '';

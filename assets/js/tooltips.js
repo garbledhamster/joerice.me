@@ -6,25 +6,27 @@ export function initTooltips() {
   const mobile = !matchMedia('(hover: hover)').matches;
 
   if (mobile) {
-    $$('.galleryGrid img').forEach(img => {
-      img.parentElement?.addEventListener('click', e => {
+    $$('.galleryGrid img').forEach((img) => {
+      img.parentElement?.addEventListener('click', (e) => {
         if (!img.classList.contains('tapped')) {
           e.preventDefault();
-          $$('.galleryGrid img').forEach(i => i.classList.remove('tapped'));
+          $$('.galleryGrid img').forEach((i) => {
+            i.classList.remove('tapped');
+          });
           img.classList.add('tapped');
         }
       });
     });
   }
 
-  $$('.social a').forEach(a => {
+  $$('.social a').forEach((a) => {
     const tip = document.createElement('span');
     tip.className = 'tooltip';
     tip.textContent = a.dataset.tip;
     a.appendChild(tip);
     const show = () => {
       a.classList.add('showTip');
-      const c = colors[Math.random() * colors.length | 0];
+      const c = colors[(Math.random() * colors.length) | 0];
       a.style.color = c;
       tip.style.background = c;
     };
@@ -37,10 +39,10 @@ export function initTooltips() {
       a.addEventListener('mouseenter', show);
       a.addEventListener('mouseleave', hide);
     }
-    a.addEventListener('click', e => {
+    a.addEventListener('click', (e) => {
       if (mobile && !a.classList.contains('showTip')) {
         e.preventDefault();
-        $$('.social a').forEach(l => {
+        $$('.social a').forEach((l) => {
           l.classList.remove('showTip');
           l.style.color = 'inherit';
         });
