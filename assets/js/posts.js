@@ -328,6 +328,30 @@ function closePortfolioEditor() {
   }
 }
 
+function closeAllModalsAndReturnToMain() {
+  // Close the portfolio editor modal
+  closePortfolioEditor();
+
+  // Close the post view modal
+  if (postView) {
+    postView.classList.remove('show');
+  }
+
+  // Clear active entry selection
+  $$('.entry.active').forEach(a => a.classList.remove('active'));
+
+  // Clear current post
+  clearCurrentPost();
+
+  // Unlock scroll
+  unlockScroll();
+
+  // Exit editor mode if applicable
+  if (typeof window.exitEditorMode === 'function') {
+    window.exitEditorMode();
+  }
+}
+
 function attachClickHandlers() {
   $$('.entry').forEach(el => {
     el.addEventListener('click', async () => {
@@ -636,7 +660,7 @@ export function initPosts() {
           renderPinned();
           renderPage();
           setPortfolioStatus('');
-          closePortfolioEditor();
+          closeAllModalsAndReturnToMain();
         } catch (error) {
           console.warn('Unable to save post.', error);
           setEditorStatus('Unable to save this post right now.');
@@ -666,7 +690,7 @@ export function initPosts() {
       syncLocalPostsToNotes();
       renderPage();
       setPortfolioStatus('');
-      closePortfolioEditor();
+      closeAllModalsAndReturnToMain();
     });
   }
 
@@ -691,7 +715,7 @@ export function initPosts() {
           renderPinned();
           renderPage();
           setPortfolioStatus('');
-          closePortfolioEditor();
+          closeAllModalsAndReturnToMain();
         } catch (error) {
           console.warn('Unable to delete post.', error);
           setEditorStatus('Unable to delete this post right now.');
@@ -708,7 +732,7 @@ export function initPosts() {
       syncLocalPostsToNotes();
       renderPage();
       setPortfolioStatus('');
-      closePortfolioEditor();
+      closeAllModalsAndReturnToMain();
     });
   }
 
