@@ -1,6 +1,7 @@
 import { ensureAdmin, getCurrentUserId, getFirestore, isAdminUser, onAuthStateChange } from './auth.js';
 import { $, $$ } from './dom.js';
 import { sanitizeMarkdown, sanitizeText, validateLength } from './sanitize.js';
+import { isStockContentEnabled, onStockContentChange } from './stock.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
 
 const pinned = [];
@@ -439,6 +440,9 @@ async function loadYamlPosts() {
     console.warn('YAML parser not available, skipping YAML posts.');
     return;
   }
+  if (!isStockContentEnabled()) {
+    return;
+  }
   try {
     const loaderText = await fetch('posts/loader.yaml').then((r) => r.text());
     const loaderData = yaml.load(loaderText);
@@ -497,6 +501,23 @@ async function loadPosts() {
   } catch (error) {
     console.error('Unable to load posts.', error);
     setPortfolioStatus('Unable to load posts right now.');
+  }
+}
+
+async function refreshStockContent(enabled) {
+  removeNotesBySource('yaml');
+  removePinnedBySource('yaml');
+  if (enabled) {
+    await loadYamlPosts();
+  }
+  pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
+  notes.sort((a, b) => new Date(b.date) - new Date(a.date));
+  renderPinned();
+  renderPage();
+  if (!pinned.length && !notes.length) {
+    setPortfolioStatus('No posts are available yet.');
+  } else {
+    setPortfolioStatus('');
   }
 }
 
@@ -738,5 +759,10 @@ export function initPosts() {
       renderPinned();
       renderPage();
     }
+  });
+
+  onStockContentChange(async (enabled) => {
+    if (!hasLoadedInitialPosts) return;
+    await refreshStockContent(enabled);
   });
 }

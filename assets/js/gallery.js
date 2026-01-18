@@ -1,6 +1,7 @@
 import { ensureAdmin, getCurrentUserId, getFirestore, getStorage, isAdminUser } from './auth.js';
 import { $ } from './dom.js';
 import { sanitizeText, sanitizeUrl, validateLength } from './sanitize.js';
+import { isStockContentEnabled, onStockContentChange } from './stock.js';
 
 // DOM elements
 let slideImage = null;
@@ -91,10 +92,15 @@ function showSlide(index) {
 }
 
 async function loadImagesFromFirestore() {
+  const showStockContent = isStockContentEnabled();
   const firestore = getFirestore();
   if (!firestore) {
-    console.warn('Firestore not available, using fallback slides.');
-    return fallbackSlides;
+    if (showStockContent) {
+      console.warn('Firestore not available, using fallback slides.');
+      return fallbackSlides;
+    }
+    console.warn('Firestore not available, and stock content is disabled.');
+    return [];
   }
 
   try {
@@ -102,8 +108,11 @@ async function loadImagesFromFirestore() {
     const snapshot = await imagesCollection.orderBy('createdAt', 'desc').get();
 
     if (snapshot.empty) {
-      console.log('No images in Firestore, using fallback slides.');
-      return fallbackSlides;
+      if (showStockContent) {
+        console.log('No images in Firestore, using fallback slides.');
+        return fallbackSlides;
+      }
+      return [];
     }
 
     const storage = getStorage();
@@ -139,10 +148,13 @@ async function loadImagesFromFirestore() {
       }
     }
 
-    return loadedImages.length > 0 ? loadedImages : fallbackSlides;
+    if (loadedImages.length > 0) {
+      return loadedImages;
+    }
+    return showStockContent ? fallbackSlides : [];
   } catch (error) {
     console.warn('Error loading images from Firestore:', error);
-    return fallbackSlides;
+    return showStockContent ? fallbackSlides : [];
   }
 }
 
@@ -193,6 +205,19 @@ function initSlideshow() {
       const firstVisibleIndex = images.findIndex((img) => img.id === visibleImages[0].id);
       showSlide(firstVisibleIndex !== -1 ? firstVisibleIndex : 0);
     }
+  }
+}
+
+function clearSlideshow() {
+  if (slideImage) {
+    slideImage.src = '';
+    slideImage.alt = '';
+  }
+  if (slideCaption) {
+    slideCaption.textContent = '';
+  }
+  if (slideLink) {
+    slideLink.href = '#';
   }
 }
 
@@ -570,6 +595,25 @@ async function toggleImageVisibility(imageId, currentVisibility) {
   return newVisibility;
 }
 
+async function refreshGalleryContent() {
+  images = await loadImagesFromFirestore();
+  currentSlideIndex = 0;
+
+  if (!images.length) {
+    clearSlideshow();
+  } else {
+    const visibleImages = getVisibleImages();
+    if (visibleImages.length > 0) {
+      const firstVisibleIndex = images.findIndex((img) => img.id === visibleImages[0].id);
+      showSlide(firstVisibleIndex !== -1 ? firstVisibleIndex : 0);
+    }
+  }
+
+  if (isEditorMode) {
+    renderGalleryGrid();
+  }
+}
+
 function showEditorPicker() {
   if (!galleryEditorContainer || !slideshow) return;
 
@@ -653,11 +697,11 @@ export async function initGallery() {
     return;
   }
 
-  // Load images
-  images = await loadImagesFromFirestore();
-
   // Initialize slideshow
   initSlideshow();
+
+  // Load images
+  await refreshGalleryContent();
 
   // Initialize editor controls
   if (galleryEditorUploadButton) {
@@ -710,4 +754,8 @@ export async function initGallery() {
       }
     });
   }
+
+  onStockContentChange(async () => {
+    await refreshGalleryContent();
+  });
 }
