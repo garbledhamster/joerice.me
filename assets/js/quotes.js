@@ -1,7 +1,6 @@
 import { ensureAdmin, getFirestore, isAdminUser } from './auth.js';
 import { $ } from './dom.js';
 import { sanitizeText, validateLength } from './sanitize.js';
-import { isStockContentEnabled, onStockContentChange } from './stock.js';
 
 let quoteBox = null;
 let quoteText = null;
@@ -57,12 +56,10 @@ async function loadQuotesFromYaml() {
 async function loadQuotes() {
   // Load quotes from YAML (GitHub)
   let yamlQuotes = [];
-  if (isStockContentEnabled()) {
-    try {
-      yamlQuotes = await loadQuotesFromYaml();
-    } catch (error) {
-      console.warn('Unable to load quotes from YAML.', error);
-    }
+  try {
+    yamlQuotes = await loadQuotesFromYaml();
+  } catch (error) {
+    console.warn('Unable to load quotes from YAML.', error);
   }
 
   // Load quotes from Firebase if available
@@ -118,13 +115,6 @@ function startQuoteCarousel() {
       showCarouselQuote(carouselIdx);
     }, 600);
   }, slideMs);
-}
-
-function stopQuoteCarousel() {
-  if (quoteInterval) {
-    clearInterval(quoteInterval);
-    quoteInterval = null;
-  }
 }
 
 function renderQuoteList(activeIndex = editingQuoteIndex) {
@@ -243,14 +233,6 @@ async function reloadQuotes() {
   try {
     quotes = await loadQuotes();
     renderQuoteList();
-    if (quotes.length) {
-      startQuoteCarousel();
-    } else {
-      stopQuoteCarousel();
-      if (quoteText) quoteText.textContent = '';
-      if (quoteCite) quoteCite.textContent = '';
-      if (quoteBox) quoteBox.classList.remove('active');
-    }
   } catch (error) {
     console.warn('Unable to reload quotes.', error);
   }
@@ -517,8 +499,4 @@ export function initQuotes() {
   }
 
   initQuoteData();
-
-  onStockContentChange(() => {
-    reloadQuotes();
-  });
 }
