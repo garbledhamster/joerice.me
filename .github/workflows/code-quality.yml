@@ -1,0 +1,42 @@
+name: Code Quality and Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  code-quality:
+    name: Code Quality Checks
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          cache: 'npm'
+      
+      - name: Install dependencies
+        run: npm ci
+      
+      - name: Run Biome (Format & Lint Check)
+        run: npm run format:check && npx biome check .
+      
+      # html-validate: Verify HTML structure, accessibility, and SEO
+      # Note: continue-on-error is set due to pre-existing issues in the codebase
+      # TODO: Fix HTML validation errors and remove continue-on-error
+      - name: Run html-validate
+        run: npm run lint:html
+        continue-on-error: true
+      
+      # Stylelint: Analyze CSS rules and maintain styling quality
+      # Note: continue-on-error is set due to pre-existing CSS specificity issues
+      # TODO: Resolve CSS issues and remove continue-on-error
+      - name: Run Stylelint
+        run: npx stylelint "**/*.css"
+        continue-on-error: true
