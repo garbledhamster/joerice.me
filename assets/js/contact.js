@@ -24,20 +24,20 @@ export function initContact() {
   }
 
   if (modal) {
-    modal.addEventListener('click', e => {
+    modal.addEventListener('click', (e) => {
       if (e.target === modal) hideModal();
     });
   }
 
   if (contactForm) {
-    contactForm.addEventListener('submit', async e => {
+    contactForm.addEventListener('submit', async (e) => {
       e.preventDefault();
       const fd = new FormData(e.target);
       try {
         await fetch('https://formspree.io/f/xovqpvdv', {
           method: 'POST',
           body: fd,
-          headers: { 'Accept': 'application/json' }
+          headers: { Accept: 'application/json' },
         });
       } catch {}
       e.target.reset();

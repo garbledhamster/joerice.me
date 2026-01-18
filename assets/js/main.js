@@ -1,10 +1,10 @@
 import { initAuth } from './auth.js';
 import { initContact } from './contact.js';
-import { initLayout } from './ui/layout.js';
+import { initGallery } from './gallery.js';
 import { initPosts } from './posts.js';
 import { initQuotes } from './quotes.js';
 import { initTooltips } from './tooltips.js';
-import { initGallery } from './gallery.js';
+import { initLayout } from './ui/layout.js';
 
 document.addEventListener('DOMContentLoaded', () => {
   initLayout();

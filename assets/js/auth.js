@@ -2,16 +2,9 @@ import { $, $$ } from './dom.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
 
 let firebaseConfig = window.firebaseConfig ?? window.FIREBASE_CONFIG;
-const requiredFirebaseKeys = [
-  'apiKey',
-  'authDomain',
-  'projectId',
-  'storageBucket',
-  'messagingSenderId',
-  'appId'
-];
+const requiredFirebaseKeys = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
 let missingFirebaseKeys = requiredFirebaseKeys.filter(
-  key => typeof firebaseConfig?.[key] !== 'string' || !firebaseConfig[key].trim()
+  (key) => typeof firebaseConfig?.[key] !== 'string' || !firebaseConfig[key].trim(),
 );
 let hasFirebaseConfig = missingFirebaseKeys.length === 0;
 let firebaseAvailable = hasFirebaseConfig;
@@ -33,13 +26,11 @@ export function isAdminUser() {
 }
 
 export function updateAdminUi() {
-  const adminOnlyElements = $$(
-    '[data-admin-only], .editButton, .editBtn, .editPanel'
-  );
-  adminOnlyElements.forEach(el => {
+  const adminOnlyElements = $$('[data-admin-only], .editButton, .editBtn, .editPanel');
+  adminOnlyElements.forEach((el) => {
     // Skip elements with data-skip-admin-ui - they have their own show/hide logic
     if (el.hasAttribute('data-skip-admin-ui')) return;
-    
+
     const shouldHide = !isAdmin;
     el.hidden = shouldHide;
     el.setAttribute('aria-hidden', String(shouldHide));
@@ -120,7 +111,7 @@ async function sendLoginLink(email) {
   }
   const actionCodeSettings = {
     url: `${window.location.origin}${window.location.pathname}`,
-    handleCodeInApp: true
+    handleCodeInApp: true,
   };
   try {
     await auth.sendSignInLinkToEmail(email, actionCodeSettings);
@@ -154,7 +145,7 @@ async function completeEmailLinkSignIn(email) {
 function initFirebase() {
   firebaseConfig = window.firebaseConfig ?? window.FIREBASE_CONFIG ?? null;
   missingFirebaseKeys = requiredFirebaseKeys.filter(
-    key => typeof firebaseConfig?.[key] !== 'string' || !firebaseConfig[key].trim()
+    (key) => typeof firebaseConfig?.[key] !== 'string' || !firebaseConfig[key].trim(),
   );
   hasFirebaseConfig = missingFirebaseKeys.length === 0;
   firebaseAvailable = hasFirebaseConfig;
@@ -182,7 +173,7 @@ function initFirebase() {
 }
 
 function notifyAuthListeners(user) {
-  authListeners.forEach(listener => {
+  authListeners.forEach((listener) => {
     try {
       listener(user);
     } catch (error) {
@@ -204,7 +195,7 @@ export function initAuth() {
   const loginLogoutButton = $('#loginLogoutButton');
 
   if (loginModal) {
-    loginModal.addEventListener('click', event => {
+    loginModal.addEventListener('click', (event) => {
       if (event.target === loginModal) {
         closeLoginModal();
       }
@@ -239,14 +230,14 @@ export function initAuth() {
   if (!firebaseAvailable) {
     if (loginButton) {
       loginButton.setAttribute('aria-disabled', 'true');
-      loginButton.addEventListener('click', event => {
+      loginButton.addEventListener('click', (event) => {
         event.preventDefault();
         setLoginStatus(getFirebaseUnavailableMessage());
         openLoginModal();
       });
     }
     if (loginForm) {
-      loginForm.addEventListener('submit', event => {
+      loginForm.addEventListener('submit', (event) => {
         event.preventDefault();
         setLoginStatus(getFirebaseUnavailableMessage());
       });
@@ -258,7 +249,7 @@ export function initAuth() {
   }
 
   if (loginButton) {
-    loginButton.addEventListener('click', event => {
+    loginButton.addEventListener('click', (event) => {
       event.preventDefault();
       initFirebase();
       if (!firebaseAvailable) {
@@ -274,7 +265,7 @@ export function initAuth() {
   }
 
   if (loginForm) {
-    loginForm.addEventListener('submit', async event => {
+    loginForm.addEventListener('submit', async (event) => {
       event.preventDefault();
       initFirebase();
       if (!firebaseAvailable) {
@@ -291,7 +282,7 @@ export function initAuth() {
     });
   }
 
-  if (auth?.isSignInWithEmailLink && auth.isSignInWithEmailLink(window.location.href)) {
+  if (auth?.isSignInWithEmailLink?.(window.location.href)) {
     pendingEmailSignInLink = window.location.href;
     const storedEmail = window.localStorage.getItem('emailForSignIn');
     if (storedEmail) {
@@ -303,7 +294,7 @@ export function initAuth() {
   }
 
   if (auth?.onAuthStateChanged) {
-    auth.onAuthStateChanged(async user => {
+    auth.onAuthStateChanged(async (user) => {
       // If no user is signed in, sign in anonymously to allow Firestore queries
       // This is necessary because collection queries (without where clauses) evaluate
       // security rules for all documents. If any document is inaccessible, the query fails.
@@ -326,7 +317,7 @@ export function initAuth() {
           isSigningInAnonymously = false;
         }
       }
-      
+
       // Check if this is the admin user (by email)
       // Anonymous users have no email, so isAdmin will be false
       isAdmin = user?.email === adminEmail;
@@ -339,7 +330,7 @@ export function initAuth() {
     notifyAuthListeners(null);
   }
 
-  document.addEventListener('click', event => {
+  document.addEventListener('click', (event) => {
     const adminTarget = event.target.closest('[data-admin-action], .editButton, .editBtn');
     if (!adminTarget) return;
     const label = adminTarget.dataset.adminAction || 'admin action';
@@ -349,7 +340,7 @@ export function initAuth() {
     }
   });
 
-  document.addEventListener('submit', event => {
+  document.addEventListener('submit', (event) => {
     const adminTarget = event.target.closest('[data-admin-action]');
     if (!adminTarget) return;
     const label = adminTarget.dataset.adminAction || 'admin action';
@@ -359,7 +350,7 @@ export function initAuth() {
     }
   });
 
-  $$('.editButton[data-panel-target], .editBtn[data-panel-target]').forEach(button => {
+  $$('.editButton[data-panel-target], .editBtn[data-panel-target]').forEach((button) => {
     const panel = $(`#${button.dataset.panelTarget}`);
     if (panel) {
       button.setAttribute('aria-expanded', String(!panel.classList.contains('is-collapsed')));

@@ -151,12 +151,12 @@
         const halfHeight=window.innerHeight/2;
         const offset=15;
         if(e.clientY<halfHeight){
-          tooltipElem.style.top=e.clientY+offset+'px';
+          tooltipElem.style.top=`${e.clientY+offset}px`;
         }else{
           const tooltipHeight=tooltipElem.offsetHeight||80;
-          tooltipElem.style.top=e.clientY-tooltipHeight-offset+'px';
+          tooltipElem.style.top=`${e.clientY-tooltipHeight-offset}px`;
         }
-        tooltipElem.style.left=e.clientX+offset+'px';
+        tooltipElem.style.left=`${e.clientX+offset}px`;
       });
 
       li.addEventListener('touchstart',()=>{window.open(supporterUrl,'_blank');});

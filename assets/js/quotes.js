@@ -6,7 +6,7 @@ let quoteBox = null;
 let quoteText = null;
 let quoteCite = null;
 let progBar = null;
-let quoteStatus = null;
+let _quoteStatus = null;
 let quotes = [];
 let idx = 0;
 let quoteInterval = null;
@@ -61,43 +61,41 @@ async function loadQuotes() {
   } catch (error) {
     console.warn('Unable to load quotes from YAML.', error);
   }
-  
+
   // Load quotes from Firebase if available
-  let firebaseQuotes = [];
+  const firebaseQuotes = [];
   if (quotesCollectionRef) {
     try {
       const snapshot = await quotesCollectionRef.orderBy('createdAt', 'desc').get();
-      snapshot.forEach(doc => {
+      snapshot.forEach((doc) => {
         const data = doc.data();
         firebaseQuotes.push({
           id: doc.id,
           text: data.text || '',
           author: data.author || '',
           createdAt: data.createdAt,
-          visible: data.visible !== false // Default to true if not set
+          visible: data.visible !== false, // Default to true if not set
         });
       });
     } catch (error) {
       console.warn('Unable to load quotes from Firestore.', error);
     }
   }
-  
+
   // Combine both sources: Firebase quotes first (with id), then YAML quotes (without id)
   return [...firebaseQuotes, ...yamlQuotes];
 }
 
 function startQuoteCarousel() {
   if (!quotes.length) return;
-  
+
   // Filter quotes for public users (admin sees all)
-  const visibleQuotes = isAdminUser() 
-    ? quotes 
-    : quotes.filter(q => q.visible !== false);
-  
+  const visibleQuotes = isAdminUser() ? quotes : quotes.filter((q) => q.visible !== false);
+
   if (!visibleQuotes.length) return;
-  
+
   let carouselIdx = 0;
-  
+
   const showCarouselQuote = (i) => {
     const q = visibleQuotes[i];
     if (!q || !quoteText || !quoteCite || !quoteBox) return;
@@ -106,7 +104,7 @@ function startQuoteCarousel() {
     quoteBox.classList.add('active');
     resetBar();
   };
-  
+
   showCarouselQuote(0);
   if (quoteInterval) clearInterval(quoteInterval);
   quoteInterval = setInterval(() => {
@@ -121,19 +119,20 @@ function startQuoteCarousel() {
 
 function renderQuoteList(activeIndex = editingQuoteIndex) {
   if (!quoteListItems) return;
-  quoteListItems.innerHTML = quotes.map((quote, index) => {
-    const safeText = sanitizeText(quote.text?.slice(0, 32) || 'Untitled');
-    const ellipsis = quote.text?.length > 32 ? '…' : '';
-    const isEditing = index === editingQuoteIndex;
-    const activeClass = index === activeIndex && !isEditing ? 'active' : '';
-    const isVisible = quote.visible !== false;
-    const visibilityClass = !isVisible ? 'quote-hidden' : '';
-    
-    // Show inline editor if this quote is being edited
-    if (isEditing) {
-      const safeQuoteText = sanitizeText(quote.text || '');
-      const safeQuoteAuthor = sanitizeText(quote.author || '');
-      return `
+  quoteListItems.innerHTML = quotes
+    .map((quote, index) => {
+      const safeText = sanitizeText(quote.text?.slice(0, 32) || 'Untitled');
+      const ellipsis = quote.text?.length > 32 ? '…' : '';
+      const isEditing = index === editingQuoteIndex;
+      const activeClass = index === activeIndex && !isEditing ? 'active' : '';
+      const isVisible = quote.visible !== false;
+      const visibilityClass = !isVisible ? 'quote-hidden' : '';
+
+      // Show inline editor if this quote is being edited
+      if (isEditing) {
+        const safeQuoteText = sanitizeText(quote.text || '');
+        const safeQuoteAuthor = sanitizeText(quote.author || '');
+        return `
       <li class="quote-list-item editing">
         <div class="quote-inline-editor">
           <textarea class="quote-inline-text" rows="3" placeholder="Write the quote here">${safeQuoteText}</textarea>
@@ -146,10 +145,10 @@ function renderQuoteList(activeIndex = editingQuoteIndex) {
         </div>
       </li>
     `;
-    }
-    
-    // Show regular quote button with edit and visibility buttons
-    return `
+      }
+
+      // Show regular quote button with edit and visibility buttons
+      return `
     <li class="quote-list-item ${activeClass} ${visibilityClass}">
       <button class="quoteListButton" type="button" data-index="${index}">
         ${safeText}${ellipsis}
@@ -160,10 +159,11 @@ function renderQuoteList(activeIndex = editingQuoteIndex) {
       <button class="quote-edit-button" type="button" data-index="${index}" title="Edit">✎</button>
     </li>
   `;
-  }).join('');
+    })
+    .join('');
 }
 
-function openQuoteEditor({ index, text, author }) {
+function _openQuoteEditor({ index, text, author }) {
   editingQuoteIndex = index;
   editingQuoteId = index !== null && quotes[index] ? quotes[index].id : null;
   if (quoteEditorPane) {
@@ -179,18 +179,21 @@ async function saveQuote(quoteData) {
     console.warn('Firestore not configured; quote updates cannot be saved.');
     return null;
   }
-  
+
   const { id, text, author, visible } = quoteData;
   const now = new Date().toISOString();
-  
+
   if (id) {
     // Update existing quote
-    await quotesCollectionRef.doc(id).set({
-      text,
-      author,
-      visible: visible !== false, // Default to true
-      updatedAt: now
-    }, { merge: true });
+    await quotesCollectionRef.doc(id).set(
+      {
+        text,
+        author,
+        visible: visible !== false, // Default to true
+        updatedAt: now,
+      },
+      { merge: true },
+    );
     return id;
   } else {
     // Create new quote
@@ -199,7 +202,7 @@ async function saveQuote(quoteData) {
       author,
       visible: visible !== false, // Default to true
       createdAt: now,
-      updatedAt: now
+      updatedAt: now,
     });
     return docRef.id;
   }
@@ -221,7 +224,7 @@ async function toggleQuoteVisibility(quoteId, currentVisibility) {
   const newVisibility = !currentVisibility;
   await quotesCollectionRef.doc(quoteId).update({
     visible: newVisibility,
-    updatedAt: new Date().toISOString()
+    updatedAt: new Date().toISOString(),
   });
   return newVisibility;
 }
@@ -251,7 +254,7 @@ export function initQuotes() {
   quoteText = $('#quoteText');
   quoteCite = $('#quoteCite');
   progBar = $('#quoteProgress');
-  quoteStatus = $('#quoteStatus');
+  _quoteStatus = $('#quoteStatus');
   quoteListItems = $('#quoteListItems');
   quoteEditorPane = $('#quoteEditorPane');
   quoteEditorText = $('#quoteEditorText');
@@ -265,7 +268,7 @@ export function initQuotes() {
   if (!quoteBox) return;
 
   if (quoteListItems) {
-    quoteListItems.addEventListener('click', event => {
+    quoteListItems.addEventListener('click', (event) => {
       // Handle quote selection (view quote in carousel)
       const viewButton = event.target.closest('.quoteListButton');
       if (viewButton) {
@@ -277,7 +280,7 @@ export function initQuotes() {
         renderQuoteList(index);
         return;
       }
-      
+
       // Handle visibility toggle button
       const visibilityButton = event.target.closest('.quote-visibility-button');
       if (visibilityButton) {
@@ -288,9 +291,9 @@ export function initQuotes() {
           alert('Cannot toggle visibility for quotes not yet saved.');
           return;
         }
-        
+
         const currentVisibility = quote.visible !== false;
-        
+
         (async () => {
           try {
             const newVisibility = await toggleQuoteVisibility(quote.id, currentVisibility);
@@ -304,7 +307,7 @@ export function initQuotes() {
         })();
         return;
       }
-      
+
       // Handle inline edit button
       const editButton = event.target.closest('.quote-edit-button');
       if (editButton) {
@@ -317,7 +320,7 @@ export function initQuotes() {
         renderQuoteList(index);
         return;
       }
-      
+
       // Handle inline save button
       const saveButton = event.target.closest('.quote-inline-save');
       if (saveButton) {
@@ -328,16 +331,16 @@ export function initQuotes() {
         const authorInput = listItem.querySelector('.quote-inline-author');
         const text = textArea?.value.trim();
         const author = authorInput?.value.trim();
-        
+
         if (!text) {
           alert('Please add quote text before saving.');
           return;
         }
-        
+
         if (!confirm('Are you sure you want to save this quote?')) {
           return;
         }
-        
+
         const quote = quotes[index];
         (async () => {
           try {
@@ -346,7 +349,7 @@ export function initQuotes() {
             editingQuoteIndex = null;
             await reloadQuotes();
             // Find the saved quote's new index
-            const savedIndex = quotes.findIndex(q => q.id === savedId);
+            const savedIndex = quotes.findIndex((q) => q.id === savedId);
             if (savedIndex !== -1) {
               idx = savedIndex;
               showQuote(idx);
@@ -358,24 +361,24 @@ export function initQuotes() {
         })();
         return;
       }
-      
+
       // Handle inline cancel button
       const cancelButton = event.target.closest('.quote-inline-cancel');
       if (cancelButton) {
         const index = Number(cancelButton.dataset.index);
         const quote = quotes[index];
-        
+
         // If canceling a new quote (no ID), remove it from the array
         if (!quote?.id) {
           quotes.splice(index, 1);
         }
-        
+
         editingQuoteId = null;
         editingQuoteIndex = null;
         renderQuoteList();
         return;
       }
-      
+
       // Handle inline delete button
       const deleteButton = event.target.closest('.quote-inline-delete');
       if (deleteButton) {
@@ -384,7 +387,7 @@ export function initQuotes() {
         const index = Number(deleteButton.dataset.index);
         const quote = quotes[index];
         if (!quote?.id) return;
-        
+
         (async () => {
           try {
             await deleteQuote(quote.id);
@@ -436,7 +439,7 @@ export function initQuotes() {
       // Validate input lengths
       const validatedText = validateLength(text, 1000);
       const validatedAuthor = validateLength(author, 200);
-      
+
       const updated = { text: validatedText, author: validatedAuthor };
       if (editingQuoteIndex === null || Number.isNaN(editingQuoteIndex)) {
         quotes.push(updated);
@@ -447,18 +450,18 @@ export function initQuotes() {
       try {
         const quoteId = editingQuoteId;
         const savedId = await saveQuote({ id: quoteId, text, author });
-        
+
         if (editingQuoteIndex !== null && editingQuoteIndex < quotes.length) {
           quotes[editingQuoteIndex] = { id: savedId, text, author };
         } else {
           quotes.push({ id: savedId, text, author });
           editingQuoteIndex = quotes.length - 1;
         }
-        
+
         await reloadQuotes();
         idx = editingQuoteIndex;
         showQuote(idx);
-        
+
         if (quoteEditorPane) {
           quoteEditorPane.classList.remove('is-active');
         }
@@ -478,7 +481,7 @@ export function initQuotes() {
     editQuotesBtn.addEventListener('click', () => {
       // Check if user is admin before allowing edit
       if (!ensureAdmin('edit quotes')) return;
-      
+
       // Toggle the editor visibility
       const isCollapsed = quoteEditor.classList.contains('is-collapsed');
       if (isCollapsed) {
