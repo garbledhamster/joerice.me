@@ -34,6 +34,10 @@ export function initContact() {
       e.preventDefault();
       const fd = new FormData(e.target);
       try {
+        // Get reCAPTCHA token
+        const token = await grecaptcha.execute('6LcYpE4sAAAAALOW_7HWe81eUCnFkGFu-e8dAW_S', { action: 'submit' });
+        fd.append('g-recaptcha-response', token);
+
         await fetch('https://formspree.io/f/xovqpvdv', {
           method: 'POST',
           body: fd,
