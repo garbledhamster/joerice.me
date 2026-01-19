@@ -2,6 +2,7 @@ import { ensureAdmin, getCurrentUserId, getFirestore, isAdminUser, onAuthStateCh
 import { $, $$ } from './dom.js';
 import { sanitizeMarkdown, sanitizeText, validateLength } from './sanitize.js';
 import { lockScroll, unlockScroll } from './ui/layout.js';
+import { isGithubContentEnabled, onGithubContentChange } from './github-content.js';
 
 const pinned = [];
 const notes = [];
@@ -342,18 +343,22 @@ function filterEntries() {
 
 function renderPinned() {
   if (!pinnedGrid) return;
-  pinnedGrid.innerHTML = pinned.map((p) => formatPostEntry(p)).join('');
+  // Filter out GitHub (YAML) posts if disabled
+  const postsToRender = isGithubContentEnabled() ? pinned : pinned.filter((p) => p.source !== 'yaml');
+  pinnedGrid.innerHTML = postsToRender.map((p) => formatPostEntry(p)).join('');
   attachClickHandlers();
   filterEntries();
 }
 
 export function renderPage() {
   if (!entryGrid) return;
+  // Filter out GitHub (YAML) posts if disabled
+  const notesToRender = isGithubContentEnabled() ? notes : notes.filter((n) => n.source !== 'yaml');
   const start = page * pageSize;
-  const slice = notes.slice(start, start + pageSize);
+  const slice = notesToRender.slice(start, start + pageSize);
   entryGrid.innerHTML = slice.map((n) => formatPostEntry(n)).join('');
   if (prevBtn) prevBtn.disabled = page === 0;
-  if (nextBtn) nextBtn.disabled = start + pageSize >= notes.length;
+  if (nextBtn) nextBtn.disabled = start + pageSize >= notesToRender.length;
   attachClickHandlers();
   filterEntries();
 }
@@ -738,5 +743,11 @@ export function initPosts() {
       renderPinned();
       renderPage();
     }
+  });
+
+  // Listen for GitHub content visibility changes and re-render posts
+  onGithubContentChange(() => {
+    renderPinned();
+    renderPage();
   });
 }
