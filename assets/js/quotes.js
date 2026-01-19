@@ -1,6 +1,7 @@
 import { ensureAdmin, getFirestore, isAdminUser } from './auth.js';
 import { $ } from './dom.js';
 import { sanitizeText, validateLength } from './sanitize.js';
+import { isGithubContentEnabled, onGithubContentChange } from './github-content.js';
 
 let quoteBox = null;
 let quoteText = null;
@@ -57,7 +58,9 @@ async function loadQuotes() {
   // Load quotes from YAML (GitHub)
   let yamlQuotes = [];
   try {
-    yamlQuotes = await loadQuotesFromYaml();
+    const rawYamlQuotes = await loadQuotesFromYaml();
+    // Mark YAML quotes with source: 'yaml' so they can be filtered
+    yamlQuotes = rawYamlQuotes.map((quote) => ({ ...quote, source: 'yaml' }));
   } catch (error) {
     console.warn('Unable to load quotes from YAML.', error);
   }
@@ -75,6 +78,7 @@ async function loadQuotes() {
           author: data.author || '',
           createdAt: data.createdAt,
           visible: data.visible !== false, // Default to true if not set
+          source: 'firestore',
         });
       });
     } catch (error) {
@@ -90,7 +94,12 @@ function startQuoteCarousel() {
   if (!quotes.length) return;
 
   // Filter quotes for public users (admin sees all)
-  const visibleQuotes = isAdminUser() ? quotes : quotes.filter((q) => q.visible !== false);
+  let visibleQuotes = isAdminUser() ? quotes : quotes.filter((q) => q.visible !== false);
+
+  // Filter out GitHub (YAML) content if disabled
+  if (!isGithubContentEnabled()) {
+    visibleQuotes = visibleQuotes.filter((q) => q.source !== 'yaml');
+  }
 
   if (!visibleQuotes.length) return;
 
@@ -499,4 +508,9 @@ export function initQuotes() {
   }
 
   initQuoteData();
+
+  // Listen for GitHub content visibility changes and restart carousel
+  onGithubContentChange(() => {
+    startQuoteCarousel();
+  });
 }

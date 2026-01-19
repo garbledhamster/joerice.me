@@ -1384,7 +1384,8 @@ header {
   margin: 0;
 }
 
-.portfolioFieldCheckbox {
+.portfolioFieldCheckbox,
+.loginFieldCheckbox {
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -1393,14 +1394,16 @@ header {
   padding: 0.5rem 0;
 }
 
-.portfolioFieldCheckbox input[type="checkbox"] {
+.portfolioFieldCheckbox input[type="checkbox"],
+.loginFieldCheckbox input[type="checkbox"] {
   width: 20px;
   height: 20px;
   cursor: pointer;
   accent-color: var(--green);
 }
 
-.portfolioFieldCheckbox span {
+.portfolioFieldCheckbox span,
+.loginFieldCheckbox span {
   font-weight: 500;
 }
 
