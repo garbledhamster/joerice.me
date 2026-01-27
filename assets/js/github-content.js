@@ -21,7 +21,9 @@ export function isGithubContentEnabled() {
 export function setGithubContentEnabled(enabled) {
   window.localStorage.setItem(STORAGE_KEY, String(enabled));
   // Notify all registered callbacks
-  changeCallbacks.forEach((callback) => callback(enabled));
+  changeCallbacks.forEach((callback) => {
+    callback(enabled);
+  });
 }
 
 /**
