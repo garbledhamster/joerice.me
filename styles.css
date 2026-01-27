@@ -375,6 +375,7 @@ header {
   display: block;
   cursor: pointer;
   perspective: 1200px;
+  min-height: 220px;
 }
 
 .serviceToggle {
