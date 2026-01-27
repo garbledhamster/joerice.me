@@ -65,6 +65,13 @@ h3 {
   font-size: clamp(1.2rem, 3vw, 1.5rem);
 }
 
+.subhead {
+  font-family: var(--fontHead);
+  margin: 0.6rem 0 0.4rem;
+  font-size: 1rem;
+  text-decoration: underline;
+}
+
 .sectionHeader {
   display: flex;
   align-items: center;
@@ -311,6 +318,7 @@ header {
 .gallery,
 .quotes,
 .contact,
+.services,
 .links {
   border: 1px solid var(--border);
   margin-block: var(--space);
@@ -346,11 +354,87 @@ header {
   margin-bottom: clamp(40px, 8vw, 80px);
 }
 
-.subhead {
-  font-family: var(--fontHead);
-  margin: 0.6rem 0 0.4rem;
-  font-size: 1rem;
-  text-decoration: underline;
+.services {
+  background: var(--yellow);
+  color: var(--fg);
+}
+
+.servicesNote {
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.serviceGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space);
+}
+
+.serviceCard {
+  position: relative;
+  display: block;
+  cursor: pointer;
+  perspective: 1200px;
+}
+
+.serviceToggle {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  cursor: pointer;
+}
+
+.serviceCardInner {
+  position: relative;
+  min-height: 220px;
+  transform-style: preserve-3d;
+  transition: transform 0.6s ease;
+}
+
+.serviceCardFace {
+  position: absolute;
+  inset: 0;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--fg);
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.6rem;
+  backface-visibility: hidden;
+}
+
+.serviceCardFront p {
+  font-size: 0.98rem;
+}
+
+.serviceCardBack {
+  background: var(--fg);
+  color: var(--bg);
+  transform: rotateY(180deg);
+}
+
+.serviceCardBack ul {
+  list-style: disc;
+  padding-left: 1.1rem;
+  display: grid;
+  gap: 0.35rem;
+}
+
+.serviceCardHint {
+  font-size: 0.85rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.serviceCard:focus-within .serviceCardInner {
+  box-shadow: 0 0 0 3px var(--fg);
+}
+
+.serviceToggle:checked + .serviceCardInner {
+  transform: rotateY(180deg);
 }
 
 .sectionHeader {
