@@ -12,6 +12,7 @@
   --green: #28c76f;
   --purple: #a259ff;
   --header-h: 72px;
+  --service-card-height: 220px;
 }
 
 /* Base resets */
@@ -375,7 +376,7 @@ header {
   display: block;
   cursor: pointer;
   perspective: 1200px;
-  min-height: 220px;
+  min-height: var(--service-card-height);
 }
 
 .serviceToggle {
@@ -387,7 +388,7 @@ header {
 
 .serviceCardInner {
   position: relative;
-  min-height: 220px;
+  min-height: var(--service-card-height);
   transform-style: preserve-3d;
   transition: transform 0.6s ease;
 }
