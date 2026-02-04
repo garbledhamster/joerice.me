@@ -52,6 +52,53 @@ export function createServiceCard({
 }
 
 /**
+ * Create a navigation card with flip animation and link
+ * @param {Object} options - Card options
+ * @param {string} options.title - Card title
+ * @param {string} options.description - Front description
+ * @param {string[]} options.highlights - Back highlights list
+ * @param {string} options.route - Route to navigate to (e.g., '/portfolio')
+ * @param {string} options.ariaLabel - Aria label for accessibility
+ * @returns {string} Navigation card HTML
+ */
+export function createNavCard({
+	title,
+	description,
+	highlights = [],
+	route,
+	ariaLabel,
+}) {
+	const safeTitle = sanitizeText(title);
+	const safeDesc = sanitizeText(description);
+	const safeRoute = sanitizeText(route);
+	const safeAriaLabel = sanitizeText(ariaLabel || `Navigate to ${title}`);
+
+	const highlightsList = highlights
+		.map((h) => `<li>${sanitizeText(h)}</li>`)
+		.join("");
+
+	return `
+    <label class="serviceCard navCard" data-route="${safeRoute}">
+      <input class="serviceToggle" type="checkbox" aria-label="${safeAriaLabel}"/>
+      <span class="serviceCardInner">
+        <span class="serviceCardFace serviceCardFront">
+          <h3>${safeTitle}</h3>
+          <p>${safeDesc}</p>
+          <span class="serviceCardHint">Tap to flip</span>
+        </span>
+        <span class="serviceCardFace serviceCardBack">
+          <h3>Quick View</h3>
+          <ul>
+            ${highlightsList}
+          </ul>
+          <span class="serviceCardHint">Tap to visit</span>
+        </span>
+      </span>
+    </label>
+  `;
+}
+
+/**
  * Create a grid of service cards
  * @param {Object[]} services - Array of service data
  * @returns {string} Service grid HTML
