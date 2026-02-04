@@ -479,6 +479,38 @@ ol {
 	margin: 0;
 }
 
+.sectionHeaderLeft {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
+.refreshBtn {
+	border: 1px solid #fff;
+	background: rgb(255, 255, 255, 0.15);
+	color: #fff;
+	width: 2rem;
+	height: 2rem;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	cursor: pointer;
+	transition:
+		background 0.2s,
+		transform 0.2s;
+	border-radius: 4px;
+	font-size: 0.9rem;
+}
+
+.refreshBtn:hover {
+	background: rgb(255, 255, 255, 0.35);
+	transform: rotate(180deg);
+}
+
+.refreshBtn:active {
+	transform: rotate(360deg);
+}
+
 .editBtn {
 	border: 1px solid #fff;
 	background: rgb(255, 255, 255, 0.25);

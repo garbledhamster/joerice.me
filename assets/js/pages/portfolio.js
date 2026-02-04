@@ -46,7 +46,12 @@ export function getPortfolioTemplate() {
     <div class="search"><input id="q" type="search" placeholder="Search posts and notes..."/></div>
     <section class="portfolio" id="portfolioSection">
       <div class="sectionHeader">
-        <h2>Portfolio</h2>
+        <div class="sectionHeaderLeft">
+          <h2>Portfolio</h2>
+          <button class="refreshBtn" id="refreshPostsBtn" type="button" title="Refresh posts" aria-label="Refresh posts">
+            <i class="fas fa-sync"></i>
+          </button>
+        </div>
         <button class="editBtn" id="addPortfolioBtn" type="button" data-admin-only>Add Post</button>
       </div>
       <div class="portfolioStatus" id="portfolioStatus" hidden></div>
@@ -399,6 +404,20 @@ export function initPortfolio() {
 			addListener(addPortfolioBtn, "click", () => {
 				if (!ensureAdmin("add post")) return;
 				openModal("portfolioModal");
+			}),
+		);
+	}
+
+	// Refresh posts button
+	const refreshPostsBtn = $("#refreshPostsBtn");
+	if (refreshPostsBtn) {
+		cleanupFns.push(
+			addListener(refreshPostsBtn, "click", async () => {
+				// Clear existing posts
+				pinned.length = 0;
+				notes.length = 0;
+				// Reload all posts
+				await loadPosts();
 			}),
 		);
 	}
