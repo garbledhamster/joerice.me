@@ -385,6 +385,7 @@ async function handleUpload() {
 		const validatedCaption = validateLength(caption, 500);
 
 		// Create Firestore document
+		// Note: Field is named 'quote' in Firestore for historical reasons
 		const imagesCollection = firestore.collection("Images");
 		const docRef = await imagesCollection.add({
 			userId: userId,
@@ -448,6 +449,7 @@ async function handleSave() {
 		const validatedCaption = validateLength(caption, 500);
 		const docRef = firestore.collection("Images").doc(selectedImageDoc.id);
 
+		// Note: Field is named 'quote' in Firestore for historical reasons
 		await docRef.update({
 			quote: validatedCaption,
 			updatedAt: window.firebase.firestore.FieldValue.serverTimestamp(),
@@ -754,7 +756,7 @@ export async function initGallery() {
 				const imageDoc = images.find((img) => img.id === docId);
 
 				if (!imageDoc?.id) {
-					alert("Cannot toggle visibility for this image.");
+					alert("Cannot toggle visibility: Image not found or has invalid ID.");
 					return;
 				}
 
@@ -775,7 +777,9 @@ export async function initGallery() {
 					}
 				} catch (error) {
 					console.warn("Unable to toggle image visibility.", error);
-					alert("Unable to toggle visibility. Please try again.");
+					alert(
+						`Unable to toggle visibility: ${error.message || "Unknown error"}. Please try again.`,
+					);
 				}
 				return;
 			}
