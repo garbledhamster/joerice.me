@@ -231,6 +231,16 @@ async function openPost(url) {
       if (editPostBtn && isAdminUser()) {
         editPostBtn.hidden = false;
       }
+    } else {
+      const yaml = globalThis.jsyaml;
+      if (!yaml) throw new Error('YAML parser unavailable');
+      const raw = await fetch(url).then((r) => r.text());
+      const data = yaml.load(raw);
+      const content = data.content || '';
+      currentPost = { url, data, content, source: 'yaml' };
+      if (postContentEl) {
+        postContentEl.innerHTML = sanitizeMarkdown(content);
+      }
     }
   } catch (error) {
     console.warn('Unable to load post:', error);
@@ -267,10 +277,49 @@ function setPortfolioStatus(message) {
 }
 
 /**
+ * Load posts from YAML files
+ */
+async function loadYamlPosts() {
+  const yaml = globalThis.jsyaml;
+  if (!yaml) {
+    console.warn('YAML parser not available, skipping YAML posts.');
+    return;
+  }
+  try {
+    const loaderText = await fetch('posts/loader.yaml').then((r) => r.text());
+    const loaderData = yaml.load(loaderText);
+    const count = Number(loaderData.posts) || 0;
+    for (let i = 1; i <= count; i++) {
+      const filePath = `posts/${String(i).padStart(4, '0')}.yaml`;
+      try {
+        const raw = await fetch(filePath).then((r) => {
+          if (!r.ok) throw new Error();
+          return r.text();
+        });
+        const data = yaml.load(raw);
+        const entry = {
+          title: data.title,
+          date: data.date,
+          url: filePath,
+          pinned: data.pinned,
+          tags: data.tags || [],
+          source: 'yaml',
+        };
+        if (entry.pinned) pinned.push(entry);
+        else notes.push(entry);
+      } catch {}
+    }
+  } catch (error) {
+    console.warn('Unable to load YAML posts.', error);
+  }
+}
+
+/**
  * Load all posts
  */
 async function loadPosts() {
   setPortfolioStatus('Loading posts...');
+  await loadYamlPosts();
   await loadFirestorePosts();
 
   pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
