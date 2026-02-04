@@ -45,6 +45,13 @@ export function getCurrentUserId() {
 export function onAuthStateChange(callback) {
 	if (typeof callback !== "function") return () => {};
 	authListeners.add(callback);
+	// Call immediately with current user state to handle late registration
+	const currentUser = getState("user");
+	try {
+		callback(currentUser);
+	} catch (error) {
+		console.warn("Auth listener error:", error);
+	}
 	return () => authListeners.delete(callback);
 }
 
