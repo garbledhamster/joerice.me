@@ -413,7 +413,6 @@ header {
   gap: 0.6rem;
   backface-visibility: hidden;
   -webkit-backface-visibility: hidden;
-  will-change: transform;
 }
 
 .serviceCardFront {
