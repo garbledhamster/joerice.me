@@ -7,18 +7,18 @@
  */
 
 const state = {
-  // Auth state
-  isAdmin: false,
-  userId: null,
-  user: null,
+	// Auth state
+	isAdmin: false,
+	userId: null,
+	user: null,
 
-  // UI state
-  currentPage: null,
-  menuOpen: false,
-  modalOpen: null,
+	// UI state
+	currentPage: null,
+	menuOpen: false,
+	modalOpen: null,
 
-  // Feature flags
-  githubContentEnabled: true,
+	// Feature flags
+	githubContentEnabled: true,
 };
 
 const listeners = new Map();
@@ -29,7 +29,7 @@ const listeners = new Map();
  * @returns {*} Current value for the key
  */
 export function getState(key) {
-  return state[key];
+	return state[key];
 }
 
 /**
@@ -37,7 +37,7 @@ export function getState(key) {
  * @returns {Object} Copy of current state
  */
 export function getAllState() {
-  return { ...state };
+	return { ...state };
 }
 
 /**
@@ -46,11 +46,11 @@ export function getAllState() {
  * @param {*} value - New value
  */
 export function setState(key, value) {
-  const previousValue = state[key];
-  if (previousValue === value) return;
+	const previousValue = state[key];
+	if (previousValue === value) return;
 
-  state[key] = value;
-  notifyListeners(key, value, previousValue);
+	state[key] = value;
+	notifyListeners(key, value, previousValue);
 }
 
 /**
@@ -58,9 +58,9 @@ export function setState(key, value) {
  * @param {Object} updates - Object with key-value pairs to update
  */
 export function setStateMany(updates) {
-  Object.entries(updates).forEach(([key, value]) => {
-    setState(key, value);
-  });
+	Object.entries(updates).forEach(([key, value]) => {
+		setState(key, value);
+	});
 }
 
 /**
@@ -70,20 +70,20 @@ export function setStateMany(updates) {
  * @returns {Function} Unsubscribe function
  */
 export function subscribe(key, callback) {
-  if (typeof callback !== 'function') return () => {};
+	if (typeof callback !== "function") return () => {};
 
-  if (!listeners.has(key)) {
-    listeners.set(key, new Set());
-  }
+	if (!listeners.has(key)) {
+		listeners.set(key, new Set());
+	}
 
-  listeners.get(key).add(callback);
+	listeners.get(key).add(callback);
 
-  return () => {
-    const keyListeners = listeners.get(key);
-    if (keyListeners) {
-      keyListeners.delete(callback);
-    }
-  };
+	return () => {
+		const keyListeners = listeners.get(key);
+		if (keyListeners) {
+			keyListeners.delete(callback);
+		}
+	};
 }
 
 /**
@@ -92,7 +92,7 @@ export function subscribe(key, callback) {
  * @returns {Function} Unsubscribe function
  */
 export function subscribeAll(callback) {
-  return subscribe('*', callback);
+	return subscribe("*", callback);
 }
 
 /**
@@ -102,45 +102,45 @@ export function subscribeAll(callback) {
  * @param {*} previousValue - Previous value
  */
 function notifyListeners(key, value, previousValue) {
-  // Notify specific key listeners
-  const keyListeners = listeners.get(key);
-  if (keyListeners) {
-    keyListeners.forEach(listener => {
-      try {
-        listener(value, previousValue, key);
-      } catch (error) {
-        console.warn(`State listener error for key "${key}":`, error);
-      }
-    });
-  }
+	// Notify specific key listeners
+	const keyListeners = listeners.get(key);
+	if (keyListeners) {
+		keyListeners.forEach((listener) => {
+			try {
+				listener(value, previousValue, key);
+			} catch (error) {
+				console.warn(`State listener error for key "${key}":`, error);
+			}
+		});
+	}
 
-  // Notify global listeners
-  const globalListeners = listeners.get('*');
-  if (globalListeners) {
-    globalListeners.forEach(listener => {
-      try {
-        listener(value, previousValue, key);
-      } catch (error) {
-        console.warn('Global state listener error:', error);
-      }
-    });
-  }
+	// Notify global listeners
+	const globalListeners = listeners.get("*");
+	if (globalListeners) {
+		globalListeners.forEach((listener) => {
+			try {
+				listener(value, previousValue, key);
+			} catch (error) {
+				console.warn("Global state listener error:", error);
+			}
+		});
+	}
 }
 
 /**
  * Reset state to initial values (for testing)
  */
 export function resetState() {
-  Object.keys(state).forEach(key => {
-    delete state[key];
-  });
-  Object.assign(state, {
-    isAdmin: false,
-    userId: null,
-    user: null,
-    currentPage: null,
-    menuOpen: false,
-    modalOpen: null,
-    githubContentEnabled: true,
-  });
+	Object.keys(state).forEach((key) => {
+		delete state[key];
+	});
+	Object.assign(state, {
+		isAdmin: false,
+		userId: null,
+		user: null,
+		currentPage: null,
+		menuOpen: false,
+		modalOpen: null,
+		githubContentEnabled: true,
+	});
 }

@@ -5,20 +5,27 @@
  * Centralizes Firebase setup and provides access to Firebase services
  */
 
-let firebaseApp = null;
+let _firebaseApp = null;
 let auth = null;
 let firestore = null;
 let storage = null;
 let isInitialized = false;
 
-const requiredKeys = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
+const requiredKeys = [
+	"apiKey",
+	"authDomain",
+	"projectId",
+	"storageBucket",
+	"messagingSenderId",
+	"appId",
+];
 
 /**
  * Get Firebase config from window
  * @returns {Object|null} Firebase config or null
  */
 function getConfig() {
-  return window.firebaseConfig ?? window.FIREBASE_CONFIG ?? null;
+	return window.firebaseConfig ?? window.FIREBASE_CONFIG ?? null;
 }
 
 /**
@@ -26,16 +33,16 @@ function getConfig() {
  * @returns {Object} Validation result with isValid and missingKeys
  */
 export function validateConfig() {
-  const config = getConfig();
-  const missingKeys = requiredKeys.filter(
-    key => typeof config?.[key] !== 'string' || !config[key].trim()
-  );
+	const config = getConfig();
+	const missingKeys = requiredKeys.filter(
+		(key) => typeof config?.[key] !== "string" || !config[key].trim(),
+	);
 
-  return {
-    isValid: missingKeys.length === 0,
-    missingKeys,
-    config: missingKeys.length === 0 ? config : null,
-  };
+	return {
+		isValid: missingKeys.length === 0,
+		missingKeys,
+		config: missingKeys.length === 0 ? config : null,
+	};
 }
 
 /**
@@ -43,42 +50,42 @@ export function validateConfig() {
  * @returns {boolean} Whether initialization was successful
  */
 export function initFirebase() {
-  if (isInitialized) return true;
+	if (isInitialized) return true;
 
-  const { isValid, config } = validateConfig();
+	const { isValid, config } = validateConfig();
 
-  if (!isValid || !window.firebase) {
-    console.warn('Firebase not available or config invalid');
-    return false;
-  }
+	if (!isValid || !window.firebase) {
+		console.warn("Firebase not available or config invalid");
+		return false;
+	}
 
-  try {
-    // Initialize Firebase app if not already done
-    if (window.firebase.apps?.length === 0) {
-      firebaseApp = window.firebase.initializeApp(config);
-    } else {
-      firebaseApp = window.firebase.apps[0];
-    }
+	try {
+		// Initialize Firebase app if not already done
+		if (window.firebase.apps?.length === 0) {
+			_firebaseApp = window.firebase.initializeApp(config);
+		} else {
+			_firebaseApp = window.firebase.apps[0];
+		}
 
-    // Initialize services
-    if (window.firebase.auth) {
-      auth = window.firebase.auth();
-    }
+		// Initialize services
+		if (window.firebase.auth) {
+			auth = window.firebase.auth();
+		}
 
-    if (window.firebase.firestore) {
-      firestore = window.firebase.firestore();
-    }
+		if (window.firebase.firestore) {
+			firestore = window.firebase.firestore();
+		}
 
-    if (window.firebase.storage) {
-      storage = window.firebase.storage();
-    }
+		if (window.firebase.storage) {
+			storage = window.firebase.storage();
+		}
 
-    isInitialized = true;
-    return true;
-  } catch (error) {
-    console.error('Firebase initialization failed:', error);
-    return false;
-  }
+		isInitialized = true;
+		return true;
+	} catch (error) {
+		console.error("Firebase initialization failed:", error);
+		return false;
+	}
 }
 
 /**
@@ -86,8 +93,8 @@ export function initFirebase() {
  * @returns {Object|null} Firebase Auth instance
  */
 export function getAuth() {
-  if (!isInitialized) initFirebase();
-  return auth;
+	if (!isInitialized) initFirebase();
+	return auth;
 }
 
 /**
@@ -95,8 +102,8 @@ export function getAuth() {
  * @returns {Object|null} Firestore instance
  */
 export function getFirestore() {
-  if (!isInitialized) initFirebase();
-  return firestore;
+	if (!isInitialized) initFirebase();
+	return firestore;
 }
 
 /**
@@ -104,8 +111,8 @@ export function getFirestore() {
  * @returns {Object|null} Storage instance
  */
 export function getStorage() {
-  if (!isInitialized) initFirebase();
-  return storage;
+	if (!isInitialized) initFirebase();
+	return storage;
 }
 
 /**
@@ -113,7 +120,7 @@ export function getStorage() {
  * @returns {boolean} Whether Firebase is ready
  */
 export function isFirebaseReady() {
-  return isInitialized && auth !== null;
+	return isInitialized && auth !== null;
 }
 
 /**
@@ -121,5 +128,8 @@ export function isFirebaseReady() {
  * @returns {Object} Firestore server timestamp
  */
 export function serverTimestamp() {
-  return window.firebase?.firestore?.FieldValue?.serverTimestamp?.() ?? new Date().toISOString();
+	return (
+		window.firebase?.firestore?.FieldValue?.serverTimestamp?.() ??
+		new Date().toISOString()
+	);
 }

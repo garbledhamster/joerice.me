@@ -6,8 +6,8 @@
  * backdrop clicks, escape key support, and scroll locking
  */
 
-import { $, addListener, lockScroll, unlockScroll } from '../core/dom.js';
-import { setState, getState } from '../core/state.js';
+import { $, addListener, lockScroll, unlockScroll } from "../core/dom.js";
+import { getState, setState } from "../core/state.js";
 
 const openModals = new Set();
 let cleanupFns = [];
@@ -17,27 +17,29 @@ let cleanupFns = [];
  * @param {string} modalId - Modal element ID
  */
 export function openModal(modalId) {
-  const modal = $(`#${modalId}`);
-  if (!modal) {
-    console.warn(`Modal not found: ${modalId}`);
-    return;
-  }
+	const modal = $(`#${modalId}`);
+	if (!modal) {
+		console.warn(`Modal not found: ${modalId}`);
+		return;
+	}
 
-  modal.classList.add('show');
-  modal.setAttribute('aria-hidden', 'false');
-  openModals.add(modalId);
-  setState('modalOpen', modalId);
+	modal.classList.add("show");
+	modal.setAttribute("aria-hidden", "false");
+	openModals.add(modalId);
+	setState("modalOpen", modalId);
 
-  // Lock scroll only for first modal
-  if (openModals.size === 1) {
-    lockScroll();
-  }
+	// Lock scroll only for first modal
+	if (openModals.size === 1) {
+		lockScroll();
+	}
 
-  // Focus first focusable element
-  const focusable = modal.querySelector('input, button, textarea, select, a[href]');
-  if (focusable) {
-    setTimeout(() => focusable.focus(), 0);
-  }
+	// Focus first focusable element
+	const focusable = modal.querySelector(
+		"input, button, textarea, select, a[href]",
+	);
+	if (focusable) {
+		setTimeout(() => focusable.focus(), 0);
+	}
 }
 
 /**
@@ -45,35 +47,39 @@ export function openModal(modalId) {
  * @param {string} modalId - Modal element ID
  */
 export function closeModal(modalId) {
-  const modal = $(`#${modalId}`);
-  if (!modal) return;
+	const modal = $(`#${modalId}`);
+	if (!modal) return;
 
-  modal.classList.remove('show');
-  modal.setAttribute('aria-hidden', 'true');
-  openModals.delete(modalId);
+	modal.classList.remove("show");
+	modal.setAttribute("aria-hidden", "true");
+	openModals.delete(modalId);
 
-  // Update state
-  if (openModals.size === 0) {
-    setState('modalOpen', null);
-    unlockScroll();
-  } else {
-    // Set to last open modal
-    setState('modalOpen', Array.from(openModals).pop());
-  }
+	// Update state
+	if (openModals.size === 0) {
+		setState("modalOpen", null);
+		unlockScroll();
+	} else {
+		// Set to last open modal
+		setState("modalOpen", Array.from(openModals).pop());
+	}
 
-  // Clean up URL hash if it matches this modal
-  if (window.location.hash === `#${modalId}`) {
-    history.replaceState(null, '', window.location.pathname + window.location.search);
-  }
+	// Clean up URL hash if it matches this modal
+	if (window.location.hash === `#${modalId}`) {
+		history.replaceState(
+			null,
+			"",
+			window.location.pathname + window.location.search,
+		);
+	}
 }
 
 /**
  * Close all open modals
  */
 export function closeAllModals() {
-  openModals.forEach(modalId => {
-    closeModal(modalId);
-  });
+	openModals.forEach((modalId) => {
+		closeModal(modalId);
+	});
 }
 
 /**
@@ -82,7 +88,7 @@ export function closeAllModals() {
  * @returns {boolean} Whether the modal is open
  */
 export function isModalOpen(modalId) {
-  return openModals.has(modalId);
+	return openModals.has(modalId);
 }
 
 /**
@@ -90,7 +96,7 @@ export function isModalOpen(modalId) {
  * @returns {string|null} Currently open modal ID or null
  */
 export function getCurrentModal() {
-  return getState('modalOpen');
+	return getState("modalOpen");
 }
 
 /**
@@ -98,10 +104,10 @@ export function getCurrentModal() {
  * @param {KeyboardEvent} e - Keyboard event
  */
 function handleEscapeKey(e) {
-  if (e.key === 'Escape' && openModals.size > 0) {
-    const lastModal = Array.from(openModals).pop();
-    closeModal(lastModal);
-  }
+	if (e.key === "Escape" && openModals.size > 0) {
+		const lastModal = Array.from(openModals).pop();
+		closeModal(lastModal);
+	}
 }
 
 /**
@@ -109,26 +115,26 @@ function handleEscapeKey(e) {
  * @param {MouseEvent} e - Click event
  */
 function handleBackdropClick(e) {
-  const modal = e.target.closest('.modal');
-  if (modal && e.target === modal) {
-    const modalId = modal.id;
-    if (modalId && openModals.has(modalId)) {
-      closeModal(modalId);
-    }
-  }
+	const modal = e.target.closest(".modal");
+	if (modal && e.target === modal) {
+		const modalId = modal.id;
+		if (modalId && openModals.has(modalId)) {
+			closeModal(modalId);
+		}
+	}
 }
 
 /**
  * Handle hash change for modal URLs
  */
 function handleHashModal() {
-  const hash = window.location.hash.slice(1);
-  if (hash && hash.endsWith('Modal')) {
-    const modal = $(`#${hash}`);
-    if (modal && modal.classList.contains('modal')) {
-      openModal(hash);
-    }
-  }
+	const hash = window.location.hash.slice(1);
+	if (hash?.endsWith("Modal")) {
+		const modal = $(`#${hash}`);
+		if (modal?.classList.contains("modal")) {
+			openModal(hash);
+		}
+	}
 }
 
 /**
@@ -136,21 +142,23 @@ function handleHashModal() {
  * Sets up global event listeners for modal handling
  */
 export function initModals() {
-  cleanupFns.push(addListener(document, 'keydown', handleEscapeKey));
-  cleanupFns.push(addListener(document, 'click', handleBackdropClick));
+	cleanupFns.push(addListener(document, "keydown", handleEscapeKey));
+	cleanupFns.push(addListener(document, "click", handleBackdropClick));
 
-  // Handle hash-based modal opening
-  handleHashModal();
-  cleanupFns.push(addListener(window, 'hashchange', handleHashModal));
+	// Handle hash-based modal opening
+	handleHashModal();
+	cleanupFns.push(addListener(window, "hashchange", handleHashModal));
 }
 
 /**
  * Clean up modal system
  */
 export function destroyModals() {
-  closeAllModals();
-  cleanupFns.forEach(fn => fn());
-  cleanupFns = [];
+	closeAllModals();
+	cleanupFns.forEach((fn) => {
+		fn();
+	});
+	cleanupFns = [];
 }
 
 /**
@@ -162,11 +170,11 @@ export function destroyModals() {
  * @param {string} options.className - Additional CSS class
  * @returns {string} Modal HTML
  */
-export function createModalTemplate({ id, title, content, className = '' }) {
-  return `
+export function createModalTemplate({ id, title, content, className = "" }) {
+	return `
     <div class="modal ${className}" id="${id}" aria-hidden="true" role="dialog" aria-modal="true">
       <div class="modalContent">
-        ${title ? `<h3>${title}</h3>` : ''}
+        ${title ? `<h3>${title}</h3>` : ""}
         ${content}
       </div>
     </div>

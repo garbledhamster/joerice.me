@@ -6,11 +6,15 @@
  * Supports Firestore, local storage, and YAML post sources
  */
 
-import { $, $$, lockScroll, unlockScroll, addListener } from '../core/dom.js';
-import { getState } from '../core/state.js';
-import { isAdminUser, ensureAdmin, onAuthStateChange, getFirestore, getCurrentUserId } from '../services/auth.js';
-import { sanitizeMarkdown, sanitizeText, validateLength } from '../services/sanitize.js';
-import { openModal, closeModal } from '../components/modal.js';
+import { closeModal, openModal } from "../components/modal.js";
+import { $, $$, addListener, lockScroll, unlockScroll } from "../core/dom.js";
+import {
+	ensureAdmin,
+	getFirestore,
+	isAdminUser,
+	onAuthStateChange,
+} from "../services/auth.js";
+import { sanitizeMarkdown, sanitizeText } from "../services/sanitize.js";
 
 // State
 const pinned = [];
@@ -18,9 +22,9 @@ const notes = [];
 const pageSize = 10;
 let page = 0;
 let currentPost = null;
-let editingPostId = null;
-let editingPostSource = null;
-let editingPostCreatedDate = null;
+const _editingPostId = null;
+const _editingPostSource = null;
+const _editingPostCreatedDate = null;
 let hasLoadedInitialPosts = false;
 
 // DOM references
@@ -38,7 +42,7 @@ let cleanupFns = [];
  * @returns {string} Portfolio page HTML
  */
 export function getPortfolioTemplate() {
-  return `
+	return `
     <div class="search"><input id="q" type="search" placeholder="Search posts and notes..."/></div>
     <section class="portfolio" id="portfolioSection">
       <div class="sectionHeader">
@@ -71,15 +75,19 @@ export function getPortfolioTemplate() {
  * @returns {string} Entry HTML
  */
 function formatPostEntry(post) {
-  const safeTitle = sanitizeText(post.title);
-  const safeTags = (post.tags || []).map(t => sanitizeText(t)).join('|');
-  const safeUrl = sanitizeText(post.url);
-  const sourceAttr = post.source ? ` data-source="${sanitizeText(post.source)}"` : '';
-  const idAttr = post.id ? ` data-id="${sanitizeText(post.id)}"` : '';
-  const publishedAttr = post.published !== undefined ? ` data-published="${post.published}"` : '';
-  const unpublishedIndicator = post.published === false && isAdminUser() ? ' [DRAFT]' : '';
+	const safeTitle = sanitizeText(post.title);
+	const safeTags = (post.tags || []).map((t) => sanitizeText(t)).join("|");
+	const safeUrl = sanitizeText(post.url);
+	const sourceAttr = post.source
+		? ` data-source="${sanitizeText(post.source)}"`
+		: "";
+	const idAttr = post.id ? ` data-id="${sanitizeText(post.id)}"` : "";
+	const publishedAttr =
+		post.published !== undefined ? ` data-published="${post.published}"` : "";
+	const unpublishedIndicator =
+		post.published === false && isAdminUser() ? " [DRAFT]" : "";
 
-  return `<a class="entry" data-tags="${safeTags}" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr}>${safeTitle}${unpublishedIndicator}</a>`;
+	return `<a class="entry" data-tags="${safeTags}" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr}>${safeTitle}${unpublishedIndicator}</a>`;
 }
 
 /**
@@ -87,8 +95,8 @@ function formatPostEntry(post) {
  * @returns {Object|null} Firestore collection ref
  */
 function getPostsCollectionRef() {
-  const firestore = getFirestore();
-  return firestore ? firestore.collection('Posts') : null;
+	const firestore = getFirestore();
+	return firestore ? firestore.collection("Posts") : null;
 }
 
 /**
@@ -97,99 +105,102 @@ function getPostsCollectionRef() {
  * @returns {boolean} Whether post is published
  */
 function isPostPublished(data) {
-  const publishedLower = data?.published;
-  const publishedUpper = data?.Published;
-  if (publishedLower === false || publishedUpper === false) return false;
-  return true;
+	const publishedLower = data?.published;
+	const publishedUpper = data?.Published;
+	if (publishedLower === false || publishedUpper === false) return false;
+	return true;
 }
 
 /**
  * Load posts from Firestore
  */
 async function loadFirestorePosts() {
-  const postsRef = getPostsCollectionRef();
-  if (!postsRef) return;
+	const postsRef = getPostsCollectionRef();
+	if (!postsRef) return;
 
-  try {
-    let query = postsRef;
-    if (!isAdminUser()) {
-      query = postsRef.where('published', '==', true);
-    }
+	try {
+		let query = postsRef;
+		if (!isAdminUser()) {
+			query = postsRef.where("published", "==", true);
+		}
 
-    const snapshot = await query.get();
-    const firestoreEntries = [];
+		const snapshot = await query.get();
+		const firestoreEntries = [];
 
-    snapshot.forEach(doc => {
-      const data = doc.data() || {};
-      const isPublished = isPostPublished(data);
-      const isPinned = data.pinned === true;
+		snapshot.forEach((doc) => {
+			const data = doc.data() || {};
+			const isPublished = isPostPublished(data);
+			const isPinned = data.pinned === true;
 
-      firestoreEntries.push({
-        title: data.Title || data.title || 'Untitled',
-        date: data['Created Date'] || data.createdDate || new Date().toISOString(),
-        url: `firestore:${doc.id}`,
-        pinned: isPinned,
-        tags: [],
-        id: doc.id,
-        source: 'firestore',
-        published: isPublished,
-      });
-    });
+			firestoreEntries.push({
+				title: data.Title || data.title || "Untitled",
+				date:
+					data["Created Date"] || data.createdDate || new Date().toISOString(),
+				url: `firestore:${doc.id}`,
+				pinned: isPinned,
+				tags: [],
+				id: doc.id,
+				source: "firestore",
+				published: isPublished,
+			});
+		});
 
-    // Clear existing firestore entries
-    const otherPinned = pinned.filter(p => p.source !== 'firestore');
-    const otherNotes = notes.filter(n => n.source !== 'firestore');
+		// Clear existing firestore entries
+		const otherPinned = pinned.filter((p) => p.source !== "firestore");
+		const otherNotes = notes.filter((n) => n.source !== "firestore");
 
-    pinned.length = 0;
-    notes.length = 0;
+		pinned.length = 0;
+		notes.length = 0;
 
-    pinned.push(...otherPinned, ...firestoreEntries.filter(e => e.pinned));
-    notes.push(...otherNotes, ...firestoreEntries.filter(e => !e.pinned));
+		pinned.push(...otherPinned, ...firestoreEntries.filter((e) => e.pinned));
+		notes.push(...otherNotes, ...firestoreEntries.filter((e) => !e.pinned));
 
-    pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
-    notes.sort((a, b) => new Date(b.date) - new Date(a.date));
-  } catch (error) {
-    console.warn('Unable to load Firestore posts:', error);
-  }
+		pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
+		notes.sort((a, b) => new Date(b.date) - new Date(a.date));
+	} catch (error) {
+		console.warn("Unable to load Firestore posts:", error);
+	}
 }
 
 /**
  * Render pinned posts
  */
 function renderPinned() {
-  if (!pinnedGrid) return;
-  pinnedGrid.innerHTML = pinned.map(p => formatPostEntry(p)).join('');
-  attachEntryHandlers();
+	if (!pinnedGrid) return;
+	pinnedGrid.innerHTML = pinned.map((p) => formatPostEntry(p)).join("");
+	attachEntryHandlers();
 }
 
 /**
  * Render current page of posts
  */
 export function renderPage() {
-  if (!entryGrid) return;
+	if (!entryGrid) return;
 
-  const start = page * pageSize;
-  const slice = notes.slice(start, start + pageSize);
+	const start = page * pageSize;
+	const slice = notes.slice(start, start + pageSize);
 
-  entryGrid.innerHTML = slice.map(n => formatPostEntry(n)).join('');
+	entryGrid.innerHTML = slice.map((n) => formatPostEntry(n)).join("");
 
-  if (prevBtn) prevBtn.disabled = page === 0;
-  if (nextBtn) nextBtn.disabled = start + pageSize >= notes.length;
+	if (prevBtn) prevBtn.disabled = page === 0;
+	if (nextBtn) nextBtn.disabled = start + pageSize >= notes.length;
 
-  attachEntryHandlers();
+	attachEntryHandlers();
 }
 
 /**
  * Attach click handlers to entry elements
  */
 function attachEntryHandlers() {
-  $$('.entry').forEach(el => {
-    el.addEventListener('click', async () => {
-      $$('.entry.active').forEach(a => a.classList.remove('active'));
-      el.classList.add('active');
-      await openPost(el.dataset.url);
-    });
-  });
+	$$(".entry").forEach((el) => {
+		el.addEventListener("click", async () => {
+			$$(".entry.active").forEach((a) => {
+				a.classList.remove("active");
+			});
+			el.classList.add("active");
+			await openPost(el.dataset.url);
+		});
+	});
 }
 
 /**
@@ -197,72 +208,74 @@ function attachEntryHandlers() {
  * @param {string} url - Post URL/ID
  */
 async function openPost(url) {
-  currentPost = null;
-  const editPostBtn = $('#editPostBtn');
-  if (editPostBtn) editPostBtn.hidden = true;
+	currentPost = null;
+	const editPostBtn = $("#editPostBtn");
+	if (editPostBtn) editPostBtn.hidden = true;
 
-  try {
-    if (url.startsWith('firestore:')) {
-      const postId = url.replace('firestore:', '');
-      const postsRef = getPostsCollectionRef();
-      if (!postsRef) throw new Error('Firestore unavailable');
+	try {
+		if (url.startsWith("firestore:")) {
+			const postId = url.replace("firestore:", "");
+			const postsRef = getPostsCollectionRef();
+			if (!postsRef) throw new Error("Firestore unavailable");
 
-      const doc = await postsRef.doc(postId).get();
-      if (!doc.exists) throw new Error('Post unavailable');
+			const doc = await postsRef.doc(postId).get();
+			if (!doc.exists) throw new Error("Post unavailable");
 
-      const data = doc.data() || {};
-      const content = data.Body || data.body || '';
+			const data = doc.data() || {};
+			const content = data.Body || data.body || "";
 
-      currentPost = {
-        url,
-        data,
-        content,
-        id: postId,
-        source: 'firestore',
-        createdDate: data['Created Date'] || data.createdDate,
-        published: isPostPublished(data),
-        pinned: data.pinned === true,
-      };
+			currentPost = {
+				url,
+				data,
+				content,
+				id: postId,
+				source: "firestore",
+				createdDate: data["Created Date"] || data.createdDate,
+				published: isPostPublished(data),
+				pinned: data.pinned === true,
+			};
 
-      if (postContentEl) {
-        postContentEl.innerHTML = sanitizeMarkdown(content);
-      }
+			if (postContentEl) {
+				postContentEl.innerHTML = sanitizeMarkdown(content);
+			}
 
-      if (editPostBtn && isAdminUser()) {
-        editPostBtn.hidden = false;
-      }
-    } else {
-      const yaml = globalThis.jsyaml;
-      if (!yaml) throw new Error('YAML parser unavailable');
-      const raw = await fetch(url).then((r) => r.text());
-      const data = yaml.load(raw);
-      const content = data.content || '';
-      currentPost = { url, data, content, source: 'yaml' };
-      if (postContentEl) {
-        postContentEl.innerHTML = sanitizeMarkdown(content);
-      }
-    }
-  } catch (error) {
-    console.warn('Unable to load post:', error);
-    if (postContentEl) {
-      postContentEl.innerHTML = '<p>Unable to load this post.</p>';
-    }
-  }
+			if (editPostBtn && isAdminUser()) {
+				editPostBtn.hidden = false;
+			}
+		} else {
+			const yaml = globalThis.jsyaml;
+			if (!yaml) throw new Error("YAML parser unavailable");
+			const raw = await fetch(url).then((r) => r.text());
+			const data = yaml.load(raw);
+			const content = data.content || "";
+			currentPost = { url, data, content, source: "yaml" };
+			if (postContentEl) {
+				postContentEl.innerHTML = sanitizeMarkdown(content);
+			}
+		}
+	} catch (error) {
+		console.warn("Unable to load post:", error);
+		if (postContentEl) {
+			postContentEl.innerHTML = "<p>Unable to load this post.</p>";
+		}
+	}
 
-  if (postView) {
-    lockScroll();
-    postView.classList.add('show');
-  }
+	if (postView) {
+		lockScroll();
+		postView.classList.add("show");
+	}
 }
 
 /**
  * Close post view
  */
 function closePost() {
-  $$('.entry.active').forEach(a => a.classList.remove('active'));
-  if (postView) postView.classList.remove('show');
-  currentPost = null;
-  unlockScroll();
+	$$(".entry.active").forEach((a) => {
+		a.classList.remove("active");
+	});
+	if (postView) postView.classList.remove("show");
+	currentPost = null;
+	unlockScroll();
 }
 
 /**
@@ -270,172 +283,198 @@ function closePost() {
  * @param {string} message - Status message
  */
 function setPortfolioStatus(message) {
-  const portfolioStatus = $('#portfolioStatus');
-  if (!portfolioStatus) return;
-  portfolioStatus.hidden = !message;
-  portfolioStatus.textContent = message || '';
+	const portfolioStatus = $("#portfolioStatus");
+	if (!portfolioStatus) return;
+	portfolioStatus.hidden = !message;
+	portfolioStatus.textContent = message || "";
 }
 
 /**
  * Load posts from YAML files
  */
 async function loadYamlPosts() {
-  const yaml = globalThis.jsyaml;
-  if (!yaml) {
-    console.warn('YAML parser not available, skipping YAML posts.');
-    return;
-  }
-  try {
-    const loaderText = await fetch('posts/loader.yaml').then((r) => r.text());
-    const loaderData = yaml.load(loaderText);
-    const count = Number(loaderData.posts) || 0;
-    for (let i = 1; i <= count; i++) {
-      const filePath = `posts/${String(i).padStart(4, '0')}.yaml`;
-      try {
-        const raw = await fetch(filePath).then((r) => {
-          if (!r.ok) throw new Error();
-          return r.text();
-        });
-        const data = yaml.load(raw);
-        const entry = {
-          title: data.title,
-          date: data.date,
-          url: filePath,
-          pinned: data.pinned,
-          tags: data.tags || [],
-          source: 'yaml',
-        };
-        if (entry.pinned) pinned.push(entry);
-        else notes.push(entry);
-      } catch {}
-    }
-  } catch (error) {
-    console.warn('Unable to load YAML posts.', error);
-  }
+	const yaml = globalThis.jsyaml;
+	if (!yaml) {
+		console.warn("YAML parser not available, skipping YAML posts.");
+		return;
+	}
+	try {
+		const loaderText = await fetch("posts/loader.yaml").then((r) => r.text());
+		const loaderData = yaml.load(loaderText);
+		const count = Number(loaderData.posts) || 0;
+		for (let i = 1; i <= count; i++) {
+			const filePath = `posts/${String(i).padStart(4, "0")}.yaml`;
+			try {
+				const raw = await fetch(filePath).then((r) => {
+					if (!r.ok) throw new Error();
+					return r.text();
+				});
+				const data = yaml.load(raw);
+				const entry = {
+					title: data.title,
+					date: data.date,
+					url: filePath,
+					pinned: data.pinned,
+					tags: data.tags || [],
+					source: "yaml",
+				};
+				if (entry.pinned) pinned.push(entry);
+				else notes.push(entry);
+			} catch {}
+		}
+	} catch (error) {
+		console.warn("Unable to load YAML posts.", error);
+	}
 }
 
 /**
  * Load all posts
  */
 async function loadPosts() {
-  setPortfolioStatus('Loading posts...');
-  await loadYamlPosts();
-  await loadFirestorePosts();
+	setPortfolioStatus("Loading posts...");
+	await loadYamlPosts();
+	await loadFirestorePosts();
 
-  pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
-  notes.sort((a, b) => new Date(b.date) - new Date(a.date));
+	pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
+	notes.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-  renderPinned();
-  renderPage();
+	renderPinned();
+	renderPage();
 
-  if (!pinned.length && !notes.length) {
-    setPortfolioStatus('No posts available yet.');
-  } else {
-    setPortfolioStatus('');
-  }
+	if (!pinned.length && !notes.length) {
+		setPortfolioStatus("No posts available yet.");
+	} else {
+		setPortfolioStatus("");
+	}
 }
 
 /**
  * Render portfolio page
  */
 export function renderPortfolio() {
-  const mainContent = $('#mainContent');
-  if (!mainContent) return;
+	const mainContent = $("#mainContent");
+	if (!mainContent) return;
 
-  mainContent.innerHTML = getPortfolioTemplate();
-  initPortfolio();
+	mainContent.innerHTML = getPortfolioTemplate();
+	initPortfolio();
 }
 
 /**
  * Initialize portfolio page
  */
 export function initPortfolio() {
-  pinnedGrid = $('#pinnedGrid');
-  entryGrid = $('#entryGrid');
-  prevBtn = $('#prevBtn');
-  nextBtn = $('#nextBtn');
-  postView = $('#postView');
-  postContentEl = $('#postContentInner');
-  searchInput = $('#q');
+	pinnedGrid = $("#pinnedGrid");
+	entryGrid = $("#entryGrid");
+	prevBtn = $("#prevBtn");
+	nextBtn = $("#nextBtn");
+	postView = $("#postView");
+	postContentEl = $("#postContentInner");
+	searchInput = $("#q");
 
-  if (!pinnedGrid || !entryGrid) return;
+	if (!pinnedGrid || !entryGrid) return;
 
-  // Close button
-  const closePostBtn = $('#closePost');
-  if (closePostBtn) {
-    cleanupFns.push(addListener(closePostBtn, 'click', closePost));
-  }
+	// Close button
+	const closePostBtn = $("#closePost");
+	if (closePostBtn) {
+		cleanupFns.push(addListener(closePostBtn, "click", closePost));
+	}
 
-  // Edit button
-  const editPostBtn = $('#editPostBtn');
-  if (editPostBtn) {
-    cleanupFns.push(addListener(editPostBtn, 'click', () => {
-      if (!ensureAdmin('edit post') || !currentPost) return;
-      // Open portfolio editor modal with current post
-      openModal('portfolioModal');
-    }));
-  }
+	// Edit button
+	const editPostBtn = $("#editPostBtn");
+	if (editPostBtn) {
+		cleanupFns.push(
+			addListener(editPostBtn, "click", () => {
+				if (!ensureAdmin("edit post") || !currentPost) return;
+				// Open portfolio editor modal with current post
+				openModal("portfolioModal");
+			}),
+		);
+	}
 
-  // Add post button
-  const addPortfolioBtn = $('#addPortfolioBtn');
-  if (addPortfolioBtn) {
-    addPortfolioBtn.hidden = !isAdminUser();
-    cleanupFns.push(addListener(addPortfolioBtn, 'click', () => {
-      if (!ensureAdmin('add post')) return;
-      openModal('portfolioModal');
-    }));
-  }
+	// Add post button
+	const addPortfolioBtn = $("#addPortfolioBtn");
+	if (addPortfolioBtn) {
+		addPortfolioBtn.hidden = !isAdminUser();
+		cleanupFns.push(
+			addListener(addPortfolioBtn, "click", () => {
+				if (!ensureAdmin("add post")) return;
+				openModal("portfolioModal");
+			}),
+		);
+	}
 
-  // Pagination
-  if (prevBtn) {
-    cleanupFns.push(addListener(prevBtn, 'click', () => {
-      if (page > 0) {
-        page--;
-        renderPage();
-      }
-    }));
-  }
+	// Pagination
+	if (prevBtn) {
+		cleanupFns.push(
+			addListener(prevBtn, "click", () => {
+				if (page > 0) {
+					page--;
+					renderPage();
+				}
+			}),
+		);
+	}
 
-  if (nextBtn) {
-    cleanupFns.push(addListener(nextBtn, 'click', () => {
-      if ((page + 1) * pageSize < notes.length) {
-        page++;
-        renderPage();
-      }
-    }));
-  }
+	if (nextBtn) {
+		cleanupFns.push(
+			addListener(nextBtn, "click", () => {
+				if ((page + 1) * pageSize < notes.length) {
+					page++;
+					renderPage();
+				}
+			}),
+		);
+	}
 
-  // Search
-  if (searchInput) {
-    cleanupFns.push(addListener(searchInput, 'input', e => {
-      const query = e.target.value.toLowerCase();
-      $$('.entry').forEach(el => {
-        el.style.display = el.textContent.toLowerCase().includes(query) ? '' : 'none';
-      });
-    }));
-  }
+	// Search
+	if (searchInput) {
+		cleanupFns.push(
+			addListener(searchInput, "input", (e) => {
+				const query = e.target.value.toLowerCase();
+				$$(".entry").forEach((el) => {
+					el.style.display = el.textContent.toLowerCase().includes(query)
+						? ""
+						: "none";
+				});
+			}),
+		);
+	}
 
-  // Load posts on auth state change
-  cleanupFns.push(onAuthStateChange(async () => {
-    if (!hasLoadedInitialPosts) {
-      hasLoadedInitialPosts = true;
-      await loadPosts();
-    } else {
-      await loadFirestorePosts();
-      renderPinned();
-      renderPage();
-    }
-  }));
+	// Portfolio modal close button
+	const portfolioCloseButton = $("#portfolioCloseButton");
+	if (portfolioCloseButton) {
+		cleanupFns.push(
+			addListener(portfolioCloseButton, "click", () => {
+				closeModal("portfolioModal");
+			}),
+		);
+	}
+
+	// Load posts on auth state change
+	cleanupFns.push(
+		onAuthStateChange(async () => {
+			if (!hasLoadedInitialPosts) {
+				hasLoadedInitialPosts = true;
+				await loadPosts();
+			} else {
+				await loadFirestorePosts();
+				renderPinned();
+				renderPage();
+			}
+		}),
+	);
 }
 
 /**
  * Clean up portfolio page
  */
 export function destroyPortfolio() {
-  cleanupFns.forEach(fn => fn());
-  cleanupFns = [];
-  hasLoadedInitialPosts = false;
-  pinned.length = 0;
-  notes.length = 0;
-  page = 0;
+	cleanupFns.forEach((fn) => {
+		fn();
+	});
+	cleanupFns = [];
+	hasLoadedInitialPosts = false;
+	pinned.length = 0;
+	notes.length = 0;
+	page = 0;
 }

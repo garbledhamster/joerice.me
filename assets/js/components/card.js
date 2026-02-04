@@ -6,7 +6,7 @@
  * including service cards (with flip), entry cards, and info cards
  */
 
-import { sanitizeText } from '../services/sanitize.js';
+import { sanitizeText } from "../services/sanitize.js";
 
 /**
  * Create a service card with flip animation
@@ -17,16 +17,21 @@ import { sanitizeText } from '../services/sanitize.js';
  * @param {string} options.ariaLabel - Aria label for accessibility
  * @returns {string} Service card HTML
  */
-export function createServiceCard({ title, description, highlights = [], ariaLabel }) {
-  const safeTitle = sanitizeText(title);
-  const safeDesc = sanitizeText(description);
-  const safeAriaLabel = sanitizeText(ariaLabel || `Flip ${title} card`);
+export function createServiceCard({
+	title,
+	description,
+	highlights = [],
+	ariaLabel,
+}) {
+	const safeTitle = sanitizeText(title);
+	const safeDesc = sanitizeText(description);
+	const safeAriaLabel = sanitizeText(ariaLabel || `Flip ${title} card`);
 
-  const highlightsList = highlights
-    .map(h => `<li>${sanitizeText(h)}</li>`)
-    .join('');
+	const highlightsList = highlights
+		.map((h) => `<li>${sanitizeText(h)}</li>`)
+		.join("");
 
-  return `
+	return `
     <label class="serviceCard">
       <input class="serviceToggle" type="checkbox" aria-label="${safeAriaLabel}"/>
       <span class="serviceCardInner">
@@ -52,8 +57,8 @@ export function createServiceCard({ title, description, highlights = [], ariaLab
  * @returns {string} Service grid HTML
  */
 export function createServiceGrid(services) {
-  const cards = services.map(service => createServiceCard(service)).join('');
-  return `<div class="serviceGrid">${cards}</div>`;
+	const cards = services.map((service) => createServiceCard(service)).join("");
+	return `<div class="serviceGrid">${cards}</div>`;
 }
 
 /**
@@ -67,16 +72,24 @@ export function createServiceGrid(services) {
  * @param {boolean} options.published - Whether entry is published
  * @returns {string} Entry card HTML
  */
-export function createEntryCard({ title, url, tags = [], source, id, published = true }) {
-  const safeTitle = sanitizeText(title);
-  const safeTags = tags.map(t => sanitizeText(t)).join('|');
-  const safeUrl = sanitizeText(url);
-  const sourceAttr = source ? ` data-source="${sanitizeText(source)}"` : '';
-  const idAttr = id ? ` data-id="${sanitizeText(id)}"` : '';
-  const publishedAttr = published !== undefined ? ` data-published="${published}"` : '';
-  const draftIndicator = published === false ? ' [DRAFT]' : '';
+export function createEntryCard({
+	title,
+	url,
+	tags = [],
+	source,
+	id,
+	published = true,
+}) {
+	const safeTitle = sanitizeText(title);
+	const safeTags = tags.map((t) => sanitizeText(t)).join("|");
+	const safeUrl = sanitizeText(url);
+	const sourceAttr = source ? ` data-source="${sanitizeText(source)}"` : "";
+	const idAttr = id ? ` data-id="${sanitizeText(id)}"` : "";
+	const publishedAttr =
+		published !== undefined ? ` data-published="${published}"` : "";
+	const draftIndicator = published === false ? " [DRAFT]" : "";
 
-  return `<a class="entry" data-tags="${safeTags}" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr}>${safeTitle}${draftIndicator}</a>`;
+	return `<a class="entry" data-tags="${safeTags}" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr}>${safeTitle}${draftIndicator}</a>`;
 }
 
 /**
@@ -85,8 +98,8 @@ export function createEntryCard({ title, url, tags = [], source, id, published =
  * @returns {string} Entry grid HTML
  */
 export function createEntryGrid(entries) {
-  const cards = entries.map(entry => createEntryCard(entry)).join('');
-  return cards;
+	const cards = entries.map((entry) => createEntryCard(entry)).join("");
+	return cards;
 }
 
 /**
@@ -97,10 +110,10 @@ export function createEntryGrid(entries) {
  * @param {string} options.className - Additional CSS class
  * @returns {string} Info card HTML
  */
-export function createInfoCard({ title, content, className = '' }) {
-  const safeTitle = sanitizeText(title);
+export function createInfoCard({ title, content, className = "" }) {
+	const safeTitle = sanitizeText(title);
 
-  return `
+	return `
     <div class="infoCard ${className}">
       <h3>${safeTitle}</h3>
       <div class="infoCardContent">${content}</div>
@@ -117,14 +130,14 @@ export function createInfoCard({ title, content, className = '' }) {
  * @returns {string} Link card HTML
  */
 export function createLinkCard({ title, url, description }) {
-  const safeTitle = sanitizeText(title);
-  const safeUrl = sanitizeText(url);
-  const safeDesc = description ? sanitizeText(description) : '';
+	const safeTitle = sanitizeText(title);
+	const safeUrl = sanitizeText(url);
+	const safeDesc = description ? sanitizeText(description) : "";
 
-  return `
+	return `
     <a class="linkCard" href="${safeUrl}" target="_blank" rel="noopener">
       <span class="linkCardTitle">${safeTitle}</span>
-      ${safeDesc ? `<span class="linkCardDesc">${safeDesc}</span>` : ''}
+      ${safeDesc ? `<span class="linkCardDesc">${safeDesc}</span>` : ""}
     </a>
   `;
 }
