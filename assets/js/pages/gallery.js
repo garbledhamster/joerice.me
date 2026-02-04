@@ -611,61 +611,6 @@ function renderGalleryGrid() {
     `;
 		})
 		.join("");
-
-	// Add click handlers to grid items
-	const gridItems = grid.querySelectorAll(".galleryEditorGridItem");
-	gridItems.forEach((item) => {
-		item.addEventListener("click", (e) => {
-			// Don't trigger selection if clicking visibility button
-			if (e.target.closest(".gallery-visibility-button")) {
-				return;
-			}
-
-			const docId = item.dataset.docId;
-			const index = parseInt(item.dataset.index, 10);
-			const imageDoc = images.find((img) => img.id === docId);
-			if (imageDoc) {
-				selectImage(imageDoc, index);
-			}
-		});
-	});
-
-	// Add click handlers to visibility buttons
-	const visibilityButtons = grid.querySelectorAll(".gallery-visibility-button");
-	visibilityButtons.forEach((button) => {
-		button.addEventListener("click", async (e) => {
-			e.stopPropagation();
-			if (!ensureAdmin("toggle image visibility")) return;
-
-			const docId = button.dataset.docId;
-			const imageDoc = images.find((img) => img.id === docId);
-
-			if (!imageDoc?.id) {
-				alert("Cannot toggle visibility for this image.");
-				return;
-			}
-
-			const currentVisibility = imageDoc.visible !== false;
-
-			try {
-				const newVisibility = await toggleImageVisibility(
-					imageDoc.id,
-					currentVisibility,
-				);
-				imageDoc.visible = newVisibility;
-				renderGalleryGrid();
-
-				// Update slideshow if needed
-				const imageIndex = images.findIndex((img) => img.id === docId);
-				if (currentSlideIndex === imageIndex) {
-					showSlide(currentSlideIndex);
-				}
-			} catch (error) {
-				console.warn("Unable to toggle image visibility.", error);
-				alert("Unable to toggle visibility. Please try again.");
-			}
-		});
-	});
 }
 
 /**
@@ -781,6 +726,62 @@ export async function initGallery() {
 	const nextImageBtn = $("#galleryEditorNextBtn");
 	if (nextImageBtn) {
 		cleanupFns.push(addListener(nextImageBtn, "click", selectNextImage));
+	}
+
+	// Event delegation for gallery grid items and visibility buttons
+	const galleryGrid = $("#galleryEditorGrid");
+	if (galleryGrid) {
+		const gridClickHandler = async (e) => {
+			const gridItem = e.target.closest(".galleryEditorGridItem");
+			const visibilityButton = e.target.closest(".gallery-visibility-button");
+
+			// Handle visibility button click
+			if (visibilityButton) {
+				e.stopPropagation();
+				if (!ensureAdmin("toggle image visibility")) return;
+
+				const docId = visibilityButton.dataset.docId;
+				const imageDoc = images.find((img) => img.id === docId);
+
+				if (!imageDoc?.id) {
+					alert("Cannot toggle visibility for this image.");
+					return;
+				}
+
+				const currentVisibility = imageDoc.visible !== false;
+
+				try {
+					const newVisibility = await toggleImageVisibility(
+						imageDoc.id,
+						currentVisibility,
+					);
+					imageDoc.visible = newVisibility;
+					renderGalleryGrid();
+
+					// Update slideshow if needed
+					const imageIndex = images.findIndex((img) => img.id === docId);
+					if (currentSlideIndex === imageIndex) {
+						showSlide(currentSlideIndex);
+					}
+				} catch (error) {
+					console.warn("Unable to toggle image visibility.", error);
+					alert("Unable to toggle visibility. Please try again.");
+				}
+				return;
+			}
+
+			// Handle grid item click
+			if (gridItem) {
+				const docId = gridItem.dataset.docId;
+				const index = parseInt(gridItem.dataset.index, 10);
+				const imageDoc = images.find((img) => img.id === docId);
+				if (imageDoc) {
+					selectImage(imageDoc, index);
+				}
+			}
+		};
+
+		cleanupFns.push(addListener(galleryGrid, "click", gridClickHandler));
 	}
 }
 
