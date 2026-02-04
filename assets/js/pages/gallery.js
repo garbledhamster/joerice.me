@@ -365,9 +365,10 @@ async function handleUpload() {
 		setEditorStatus("Uploading...");
 
 		// Generate unique image ID
-		const imageId = crypto?.randomUUID
-			? crypto.randomUUID()
-			: `img_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+		const imageId =
+			typeof crypto?.randomUUID === "function"
+				? crypto.randomUUID()
+				: `img_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 		const storagePath = `Images/${userId}/${imageId}`;
 
 		// Upload to Storage
@@ -594,9 +595,10 @@ function renderGalleryGrid() {
 		.map((img, index) => {
 			const safeImgUrl = sanitizeUrl(img.img);
 			const safeCaption = sanitizeText(img.caption || "");
-			const shortCaption = img.caption?.slice(0, 50) || "No caption";
-			const ellipsis = img.caption?.length > 50 ? "…" : "";
-			const safeShortCaption = sanitizeText(shortCaption + ellipsis);
+			const captionText = img.caption || "No caption";
+			const shortCaption =
+				captionText.length > 50 ? `${captionText.slice(0, 50)}…` : captionText;
+			const safeShortCaption = sanitizeText(shortCaption);
 			const isVisible = img.visible !== false;
 			const visibilityClass = !isVisible ? "gallery-image-hidden" : "";
 
