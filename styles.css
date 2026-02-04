@@ -1,4 +1,9 @@
 :root {
+  --fa-style-family-brands: "Font Awesome 6 Brands";
+  --fa-font-brands: normal 400 1em/1 "Font Awesome 6 Brands";
+  --fa-font-regular: normal 400 1em/1 "Font Awesome 6 Free";
+  --fa-style-family-classic: "Font Awesome 6 Free";
+  --fa-font-solid: normal 900 1em/1 "Font Awesome 6 Free";
   --bg: #fff;
   --fg: #111;
   --border: #000;
@@ -376,6 +381,7 @@ header {
   display: block;
   cursor: pointer;
   perspective: 1200px;
+  -webkit-perspective: 1200px;
   min-height: var(--service-card-height);
 }
 
@@ -388,8 +394,9 @@ header {
 
 .serviceCardInner {
   position: relative;
-  min-height: var(--service-card-height);
+  height: var(--service-card-height);
   transform-style: preserve-3d;
+  -webkit-transform-style: preserve-3d;
   transition: transform 0.6s ease;
 }
 
@@ -405,6 +412,18 @@ header {
   justify-content: center;
   gap: 0.6rem;
   backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+.serviceCardFront {
+  transform: rotateY(0deg);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+.serviceToggle:checked + .serviceCardInner .serviceCardFront {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .serviceCardFront p {
@@ -415,6 +434,13 @@ header {
   background: var(--fg);
   color: var(--bg);
   transform: rotateY(180deg);
+  opacity: 0;
+  pointer-events: none;
+}
+
+.serviceToggle:checked + .serviceCardInner .serviceCardBack {
+  opacity: 1;
+  pointer-events: auto;
 }
 
 .serviceCardBack ul {
