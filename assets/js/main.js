@@ -181,13 +181,15 @@ async function initApp() {
 	// Register routes and initialize router
 	registerRoutes(routes);
 	setDefaultRoute("/home");
-	initRouter();
 
 	// Update admin UI and profile description on route change
+	// Register BEFORE initRouter() so it fires on initial page load
 	onRouteChange((route) => {
 		updateAdminUi();
 		updateProfileDescription(route);
 	});
+
+	initRouter();
 
 	// Mark page as loaded
 	requestAnimationFrame(() => {
