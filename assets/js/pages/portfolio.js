@@ -204,8 +204,7 @@ function openPortfolioEditor(post = null) {
 	if (!portfolioModal) return;
 
 	// Only allow editing of local and firestore posts
-	const isReadOnlyPost =
-		!!post && !["local", "firestore"].includes(post?.source ?? "");
+	const isReadOnlyPost = !["local", "firestore"].includes(post?.source ?? "");
 
 	// Set editing state
 	editingPostId = post?.id ?? null;
@@ -225,7 +224,7 @@ function openPortfolioEditor(post = null) {
 
 	// Populate form fields
 	if (portfolioPostTitle) {
-		portfolioPostTitle.value = post?.title || "";
+		portfolioPostTitle.value = post ? getPostTitle(post) : "";
 	}
 
 	if (portfolioPostBody) {
