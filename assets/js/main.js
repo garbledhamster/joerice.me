@@ -6,35 +6,42 @@
  * This is the main orchestrator for the modular architecture
  */
 
-import { ready } from './core/dom.js';
-import { initRouter, registerRoutes, setDefaultRoute, getCurrentRoute, onRouteChange } from './core/router.js';
-import { initHeader, getHeaderTemplate } from './components/header.js';
-import { getProfileTemplate, updateProfileDescription } from './components/profile.js';
-import { initModals } from './components/modal.js';
-import { initAuth, updateAdminUi } from './services/auth.js';
-import { initFirebase } from './services/firebase.js';
-
+import { getHeaderTemplate, initHeader } from "./components/header.js";
+import { initModals } from "./components/modal.js";
+import {
+	getProfileTemplate,
+	updateProfileDescription,
+} from "./components/profile.js";
+import { ready } from "./core/dom.js";
+import {
+	initRouter,
+	onRouteChange,
+	registerRoutes,
+	setDefaultRoute,
+} from "./core/router.js";
+import { destroyContact, renderContact } from "./pages/contact.js";
+import { destroyGallery, renderGallery } from "./pages/gallery.js";
+import { destroyHire, renderHire } from "./pages/hire.js";
 // Page modules
-import { renderHome, initHome, destroyHome } from './pages/home.js';
-import { renderPortfolio, initPortfolio, destroyPortfolio } from './pages/portfolio.js';
-import { renderGallery, initGallery, destroyGallery } from './pages/gallery.js';
-import { renderHire, initHire, destroyHire } from './pages/hire.js';
-import { renderQuotes, initQuotes, destroyQuotes } from './pages/quotes.js';
-import { renderContact, initContact, destroyContact } from './pages/contact.js';
-import { renderLinks, initLinks, destroyLinks } from './pages/links.js';
+import { destroyHome, renderHome } from "./pages/home.js";
+import { destroyLinks, renderLinks } from "./pages/links.js";
+import { destroyPortfolio, renderPortfolio } from "./pages/portfolio.js";
+import { destroyQuotes, renderQuotes } from "./pages/quotes.js";
+import { initAuth, updateAdminUi } from "./services/auth.js";
+import { initFirebase } from "./services/firebase.js";
 
 /**
  * Page cleanup functions map
  * Used to clean up previous page before rendering new one
  */
-const pageCleanup = {
-  '/home': destroyHome,
-  '/portfolio': destroyPortfolio,
-  '/gallery': destroyGallery,
-  '/hire': destroyHire,
-  '/quotes': destroyQuotes,
-  '/contact': destroyContact,
-  '/links': destroyLinks,
+const _pageCleanup = {
+	"/home": destroyHome,
+	"/portfolio": destroyPortfolio,
+	"/gallery": destroyGallery,
+	"/hire": destroyHire,
+	"/quotes": destroyQuotes,
+	"/contact": destroyContact,
+	"/links": destroyLinks,
 };
 
 let currentPageCleanup = null;
@@ -46,21 +53,21 @@ let currentPageCleanup = null;
  * @returns {Function} Wrapped render function
  */
 function createPageRenderer(renderFn, cleanupFn) {
-  return () => {
-    // Clean up previous page
-    if (currentPageCleanup) {
-      currentPageCleanup();
-    }
+	return () => {
+		// Clean up previous page
+		if (currentPageCleanup) {
+			currentPageCleanup();
+		}
 
-    // Render new page
-    renderFn();
+		// Render new page
+		renderFn();
 
-    // Store cleanup for next navigation
-    currentPageCleanup = cleanupFn;
+		// Store cleanup for next navigation
+		currentPageCleanup = cleanupFn;
 
-    // Scroll to top
-    window.scrollTo(0, 0);
-  };
+		// Scroll to top
+		window.scrollTo(0, 0);
+	};
 }
 
 /**
@@ -68,13 +75,13 @@ function createPageRenderer(renderFn, cleanupFn) {
  * Maps route paths to render functions
  */
 const routes = {
-  '/home': createPageRenderer(renderHome, destroyHome),
-  '/portfolio': createPageRenderer(renderPortfolio, destroyPortfolio),
-  '/gallery': createPageRenderer(renderGallery, destroyGallery),
-  '/hire': createPageRenderer(renderHire, destroyHire),
-  '/quotes': createPageRenderer(renderQuotes, destroyQuotes),
-  '/contact': createPageRenderer(renderContact, destroyContact),
-  '/links': createPageRenderer(renderLinks, destroyLinks),
+	"/home": createPageRenderer(renderHome, destroyHome),
+	"/portfolio": createPageRenderer(renderPortfolio, destroyPortfolio),
+	"/gallery": createPageRenderer(renderGallery, destroyGallery),
+	"/hire": createPageRenderer(renderHire, destroyHire),
+	"/quotes": createPageRenderer(renderQuotes, destroyQuotes),
+	"/contact": createPageRenderer(renderContact, destroyContact),
+	"/links": createPageRenderer(renderLinks, destroyLinks),
 };
 
 /**
@@ -82,7 +89,7 @@ const routes = {
  * @returns {string} Login modal HTML
  */
 function getLoginModalTemplate() {
-  return `
+	return `
     <div class="modal loginModal" id="loginModal" aria-hidden="true" role="dialog" aria-modal="true">
       <div class="modalContent">
         <h3>Admin login</h3>
@@ -111,7 +118,7 @@ function getLoginModalTemplate() {
  * @returns {string} Portfolio modal HTML
  */
 function getPortfolioModalTemplate() {
-  return `
+	return `
     <div class="modal portfolioModal" id="portfolioModal" aria-hidden="true" role="dialog" aria-modal="true">
       <div class="modalContent">
         <div class="portfolioModalHeader">
@@ -146,18 +153,18 @@ function getPortfolioModalTemplate() {
  * Initialize the application
  */
 async function initApp() {
-  // Initialize Firebase first
-  initFirebase();
+	// Initialize Firebase first
+	initFirebase();
 
-  // Get app container
-  const app = document.getElementById('app');
-  if (!app) {
-    console.error('App container not found');
-    return;
-  }
+	// Get app container
+	const app = document.getElementById("app");
+	if (!app) {
+		console.error("App container not found");
+		return;
+	}
 
-  // Render app shell (header + profile + main content area + footer + modals)
-  app.innerHTML = `
+	// Render app shell (header + profile + main content area + footer + modals)
+	app.innerHTML = `
     ${getHeaderTemplate()}
     ${getProfileTemplate()}
     <main class="max" id="mainContent"></main>
@@ -166,26 +173,26 @@ async function initApp() {
     ${getPortfolioModalTemplate()}
   `;
 
-  // Initialize core systems
-  initHeader();
-  initModals();
-  initAuth();
+	// Initialize core systems
+	initHeader();
+	initModals();
+	initAuth();
 
-  // Register routes and initialize router
-  registerRoutes(routes);
-  setDefaultRoute('/home');
-  initRouter();
+	// Register routes and initialize router
+	registerRoutes(routes);
+	setDefaultRoute("/home");
+	initRouter();
 
-  // Update admin UI and profile description on route change
-  onRouteChange((route) => {
-    updateAdminUi();
-    updateProfileDescription(route);
-  });
+	// Update admin UI and profile description on route change
+	onRouteChange((route) => {
+		updateAdminUi();
+		updateProfileDescription(route);
+	});
 
-  // Mark page as loaded
-  requestAnimationFrame(() => {
-    document.body.classList.add('loaded');
-  });
+	// Mark page as loaded
+	requestAnimationFrame(() => {
+		document.body.classList.add("loaded");
+	});
 }
 
 // Initialize when DOM is ready

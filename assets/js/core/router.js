@@ -9,7 +9,7 @@
 const routes = new Map();
 const routeListeners = new Set();
 let currentRoute = null;
-let defaultRoute = '/home';
+let defaultRoute = "/home";
 
 /**
  * Register a route with its render function
@@ -17,7 +17,7 @@ let defaultRoute = '/home';
  * @param {Function} render - Function to render the page content
  */
 export function registerRoute(path, render) {
-  routes.set(path, render);
+	routes.set(path, render);
 }
 
 /**
@@ -25,9 +25,9 @@ export function registerRoute(path, render) {
  * @param {Object} routeMap - Object mapping paths to render functions
  */
 export function registerRoutes(routeMap) {
-  Object.entries(routeMap).forEach(([path, render]) => {
-    registerRoute(path, render);
-  });
+	Object.entries(routeMap).forEach(([path, render]) => {
+		registerRoute(path, render);
+	});
 }
 
 /**
@@ -35,7 +35,7 @@ export function registerRoutes(routeMap) {
  * @param {string} path - Default route path
  */
 export function setDefaultRoute(path) {
-  defaultRoute = path;
+	defaultRoute = path;
 }
 
 /**
@@ -43,7 +43,7 @@ export function setDefaultRoute(path) {
  * @param {string} path - Route path to navigate to
  */
 export function navigate(path) {
-  window.location.hash = `#${path}`;
+	window.location.hash = `#${path}`;
 }
 
 /**
@@ -51,7 +51,7 @@ export function navigate(path) {
  * @returns {string} Current route path
  */
 export function getCurrentRoute() {
-  return currentRoute;
+	return currentRoute;
 }
 
 /**
@@ -60,9 +60,9 @@ export function getCurrentRoute() {
  * @returns {Function} Unsubscribe function
  */
 export function onRouteChange(callback) {
-  if (typeof callback !== 'function') return () => {};
-  routeListeners.add(callback);
-  return () => routeListeners.delete(callback);
+	if (typeof callback !== "function") return () => {};
+	routeListeners.add(callback);
+	return () => routeListeners.delete(callback);
 }
 
 /**
@@ -71,40 +71,40 @@ export function onRouteChange(callback) {
  * @param {string} previousRoute - Previous route path
  */
 function notifyListeners(route, previousRoute) {
-  routeListeners.forEach(listener => {
-    try {
-      listener(route, previousRoute);
-    } catch (error) {
-      console.warn('Route listener error:', error);
-    }
-  });
+	routeListeners.forEach((listener) => {
+		try {
+			listener(route, previousRoute);
+		} catch (error) {
+			console.warn("Route listener error:", error);
+		}
+	});
 }
 
 /**
  * Handle hash change and render appropriate page
  */
 function handleHashChange() {
-  const hash = window.location.hash.slice(1) || defaultRoute;
-  const path = hash.startsWith('/') ? hash : `/${hash}`;
+	const hash = window.location.hash.slice(1) || defaultRoute;
+	const path = hash.startsWith("/") ? hash : `/${hash}`;
 
-  const previousRoute = currentRoute;
-  currentRoute = path;
+	const previousRoute = currentRoute;
+	currentRoute = path;
 
-  // Get render function for this route
-  const render = routes.get(path);
+	// Get render function for this route
+	const render = routes.get(path);
 
-  if (render) {
-    render();
-    notifyListeners(path, previousRoute);
-  } else {
-    // Fallback to default route if route not found
-    const defaultRender = routes.get(defaultRoute);
-    if (defaultRender) {
-      defaultRender();
-      currentRoute = defaultRoute;
-      notifyListeners(defaultRoute, previousRoute);
-    }
-  }
+	if (render) {
+		render();
+		notifyListeners(path, previousRoute);
+	} else {
+		// Fallback to default route if route not found
+		const defaultRender = routes.get(defaultRoute);
+		if (defaultRender) {
+			defaultRender();
+			currentRoute = defaultRoute;
+			notifyListeners(defaultRoute, previousRoute);
+		}
+	}
 }
 
 /**
@@ -112,18 +112,18 @@ function handleHashChange() {
  * Sets up hash change listener and handles initial route
  */
 export function initRouter() {
-  window.addEventListener('hashchange', handleHashChange);
+	window.addEventListener("hashchange", handleHashChange);
 
-  // Handle initial route on page load
-  handleHashChange();
+	// Handle initial route on page load
+	handleHashChange();
 }
 
 /**
  * Clean up router (for testing or unmounting)
  */
 export function destroyRouter() {
-  window.removeEventListener('hashchange', handleHashChange);
-  routes.clear();
-  routeListeners.clear();
-  currentRoute = null;
+	window.removeEventListener("hashchange", handleHashChange);
+	routes.clear();
+	routeListeners.clear();
+	currentRoute = null;
 }

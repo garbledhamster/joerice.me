@@ -19,7 +19,8 @@ export const $ = (selector, root = document) => root.querySelector(selector);
  * @param {Element|Document} root - Root element to query from
  * @returns {Element[]} Array of found elements
  */
-export const $$ = (selector, root = document) => Array.from(root.querySelectorAll(selector));
+export const $$ = (selector, root = document) =>
+	Array.from(root.querySelectorAll(selector));
 
 /**
  * Create an element with attributes and children
@@ -29,34 +30,34 @@ export const $$ = (selector, root = document) => Array.from(root.querySelectorAl
  * @returns {Element} Created element
  */
 export function createElement(tag, attrs = {}, children = []) {
-  const el = document.createElement(tag);
+	const el = document.createElement(tag);
 
-  Object.entries(attrs).forEach(([key, value]) => {
-    if (key === 'className') {
-      el.className = value;
-    } else if (key === 'dataset') {
-      Object.entries(value).forEach(([dataKey, dataValue]) => {
-        el.dataset[dataKey] = dataValue;
-      });
-    } else if (key.startsWith('on') && typeof value === 'function') {
-      const event = key.slice(2).toLowerCase();
-      el.addEventListener(event, value);
-    } else if (key === 'style' && typeof value === 'object') {
-      Object.assign(el.style, value);
-    } else {
-      el.setAttribute(key, value);
-    }
-  });
+	Object.entries(attrs).forEach(([key, value]) => {
+		if (key === "className") {
+			el.className = value;
+		} else if (key === "dataset") {
+			Object.entries(value).forEach(([dataKey, dataValue]) => {
+				el.dataset[dataKey] = dataValue;
+			});
+		} else if (key.startsWith("on") && typeof value === "function") {
+			const event = key.slice(2).toLowerCase();
+			el.addEventListener(event, value);
+		} else if (key === "style" && typeof value === "object") {
+			Object.assign(el.style, value);
+		} else {
+			el.setAttribute(key, value);
+		}
+	});
 
-  children.forEach(child => {
-    if (typeof child === 'string') {
-      el.appendChild(document.createTextNode(child));
-    } else if (child instanceof Element) {
-      el.appendChild(child);
-    }
-  });
+	children.forEach((child) => {
+		if (typeof child === "string") {
+			el.appendChild(document.createTextNode(child));
+		} else if (child instanceof Element) {
+			el.appendChild(child);
+		}
+	});
 
-  return el;
+	return el;
 }
 
 /**
@@ -65,9 +66,9 @@ export function createElement(tag, attrs = {}, children = []) {
  * @returns {Element} Created element
  */
 export function htmlToElement(html) {
-  const template = document.createElement('template');
-  template.innerHTML = html.trim();
-  return template.content.firstChild;
+	const template = document.createElement("template");
+	template.innerHTML = html.trim();
+	return template.content.firstChild;
 }
 
 /**
@@ -76,9 +77,9 @@ export function htmlToElement(html) {
  * @param {string} content - Text content
  */
 export function setTextContent(el, content) {
-  if (el) {
-    el.textContent = content;
-  }
+	if (el) {
+		el.textContent = content;
+	}
 }
 
 /**
@@ -87,9 +88,9 @@ export function setTextContent(el, content) {
  * @param {boolean} visible - Whether to show or hide
  */
 export function setVisible(el, visible) {
-  if (el) {
-    el.hidden = !visible;
-  }
+	if (el) {
+		el.hidden = !visible;
+	}
 }
 
 /**
@@ -101,9 +102,9 @@ export function setVisible(el, visible) {
  * @returns {Function} Cleanup function
  */
 export function addListener(el, event, handler, options) {
-  if (!el) return () => {};
-  el.addEventListener(event, handler, options);
-  return () => el.removeEventListener(event, handler, options);
+	if (!el) return () => {};
+	el.addEventListener(event, handler, options);
+	return () => el.removeEventListener(event, handler, options);
 }
 
 /**
@@ -115,17 +116,17 @@ export function addListener(el, event, handler, options) {
  * @returns {Function} Cleanup function
  */
 export function delegate(container, selector, event, handler) {
-  if (!container) return () => {};
+	if (!container) return () => {};
 
-  const delegatedHandler = (e) => {
-    const target = e.target.closest(selector);
-    if (target && container.contains(target)) {
-      handler(e, target);
-    }
-  };
+	const delegatedHandler = (e) => {
+		const target = e.target.closest(selector);
+		if (target && container.contains(target)) {
+			handler(e, target);
+		}
+	};
 
-  container.addEventListener(event, delegatedHandler);
-  return () => container.removeEventListener(event, delegatedHandler);
+	container.addEventListener(event, delegatedHandler);
+	return () => container.removeEventListener(event, delegatedHandler);
 }
 
 /**
@@ -133,13 +134,13 @@ export function delegate(container, selector, event, handler) {
  * @returns {Promise} Resolves when DOM is ready
  */
 export function ready() {
-  return new Promise(resolve => {
-    if (document.readyState !== 'loading') {
-      resolve();
-    } else {
-      document.addEventListener('DOMContentLoaded', resolve, { once: true });
-    }
-  });
+	return new Promise((resolve) => {
+		if (document.readyState !== "loading") {
+			resolve();
+		} else {
+			document.addEventListener("DOMContentLoaded", resolve, { once: true });
+		}
+	});
 }
 
 /**
@@ -148,15 +149,15 @@ export function ready() {
 let scrollY = 0;
 
 export function lockScroll() {
-  scrollY = window.scrollY;
-  document.body.style.position = 'fixed';
-  document.body.style.top = `-${scrollY}px`;
-  document.body.style.width = '100%';
+	scrollY = window.scrollY;
+	document.body.style.position = "fixed";
+	document.body.style.top = `-${scrollY}px`;
+	document.body.style.width = "100%";
 }
 
 export function unlockScroll() {
-  document.body.style.position = '';
-  document.body.style.top = '';
-  document.body.style.width = '';
-  window.scrollTo(0, scrollY);
+	document.body.style.position = "";
+	document.body.style.top = "";
+	document.body.style.width = "";
+	window.scrollTo(0, scrollY);
 }

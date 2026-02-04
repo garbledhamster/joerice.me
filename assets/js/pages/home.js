@@ -7,14 +7,14 @@
  * no additional content to render.
  */
 
-import { $ } from '../core/dom.js';
+import { $ } from "../core/dom.js";
 
 /**
  * Render home page content
  */
 export function renderHome() {
-  const mainContent = $('#mainContent');
-  if (mainContent) mainContent.innerHTML = '';
+	const mainContent = $("#mainContent");
+	if (mainContent) mainContent.innerHTML = "";
 }
 
 /**
