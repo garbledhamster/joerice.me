@@ -487,7 +487,7 @@ ol {
 
 .refreshBtn {
 	border: 1px solid #fff;
-	background: rgba(255, 255, 255, 0.15);
+	background: rgb(255, 255, 255, 0.15);
 	color: #fff;
 	width: 2rem;
 	height: 2rem;
@@ -503,7 +503,7 @@ ol {
 }
 
 .refreshBtn:hover {
-	background: rgba(255, 255, 255, 0.35);
+	background: rgb(255, 255, 255, 0.35);
 	transform: rotate(180deg);
 }
 
