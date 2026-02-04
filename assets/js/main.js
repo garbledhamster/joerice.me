@@ -9,6 +9,7 @@
 import { ready } from './core/dom.js';
 import { initRouter, registerRoutes, setDefaultRoute, getCurrentRoute, onRouteChange } from './core/router.js';
 import { initHeader, getHeaderTemplate } from './components/header.js';
+import { getProfileTemplate, updateProfileDescription } from './components/profile.js';
 import { initModals } from './components/modal.js';
 import { initAuth, updateAdminUi } from './services/auth.js';
 import { initFirebase } from './services/firebase.js';
@@ -155,9 +156,10 @@ async function initApp() {
     return;
   }
 
-  // Render app shell (header + main content area + footer + modals)
+  // Render app shell (header + profile + main content area + footer + modals)
   app.innerHTML = `
     ${getHeaderTemplate()}
+    ${getProfileTemplate()}
     <main class="max" id="mainContent"></main>
     <footer>© <span id="year">${new Date().getFullYear()}</span> Joe Rice. All rights reserved.</footer>
     ${getLoginModalTemplate()}
@@ -174,9 +176,10 @@ async function initApp() {
   setDefaultRoute('/home');
   initRouter();
 
-  // Update admin UI on route change
-  onRouteChange(() => {
+  // Update admin UI and profile description on route change
+  onRouteChange((route) => {
     updateAdminUi();
+    updateProfileDescription(route);
   });
 
   // Mark page as loaded
