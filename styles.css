@@ -366,6 +366,11 @@ ol {
 	color: var(--fg);
 }
 
+.navSection {
+	margin-block: var(--space);
+	padding: calc(var(--space) * 1.2);
+}
+
 .servicesNote {
 	font-size: 0.9rem;
 	font-weight: 600;
