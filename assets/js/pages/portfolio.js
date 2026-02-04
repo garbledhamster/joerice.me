@@ -186,10 +186,11 @@ function setEditorStatus(message) {
 function getPostTitle(post) {
 	if (!post) return "Untitled";
 	// Handle flat structure (when post has title directly)
-	if (post.title) return post.title;
+	if (post.title?.trim()) return post.title;
 	// Handle nested structure (when post has data.title)
 	if (post.data) {
-		return post.data.Title || post.data.title || "Untitled";
+		const title = post.data.Title || post.data.title;
+		if (title?.trim()) return title;
 	}
 	return "Untitled";
 }
