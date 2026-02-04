@@ -369,7 +369,7 @@ async function handleUpload() {
 
 		// Generate unique image ID
 		const imageId =
-			crypto && typeof crypto.randomUUID === "function"
+			typeof crypto?.randomUUID === "function"
 				? crypto.randomUUID()
 				: `img_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 		const storagePath = `Images/${userId}/${imageId}`;
@@ -598,11 +598,14 @@ function renderGalleryGrid() {
 		.map((img, index) => {
 			const safeImgUrl = sanitizeUrl(img.img);
 			const safeCaption = sanitizeText(img.caption || "");
-			const captionText = img.caption || "No caption";
-			const shortCaption =
-				captionText.length > MAX_CAPTION_DISPLAY_LENGTH
-					? `${captionText.slice(0, MAX_CAPTION_DISPLAY_LENGTH)}…`
-					: captionText;
+			// Truncate caption if too long, or use default text if no caption
+			let shortCaption = "No caption";
+			if (img.caption) {
+				shortCaption =
+					img.caption.length > MAX_CAPTION_DISPLAY_LENGTH
+						? `${img.caption.slice(0, MAX_CAPTION_DISPLAY_LENGTH)}…`
+						: img.caption;
+			}
 			const safeShortCaption = sanitizeText(shortCaption);
 			const isVisible = img.visible !== false;
 			const visibilityClass = !isVisible ? "gallery-image-hidden" : "";
