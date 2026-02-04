@@ -3,226 +3,31 @@
   <head>
     <meta charset="UTF-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1"/>
-    <!-- Content Security Policy for XSS protection. For better performance and readability, 
-         consider moving this to an HTTP header if you have server-side control. 
-         See SECURITY.md for details. -->
+    <!-- Content Security Policy for XSS protection -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://www.google.com https://formspree.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https: data: blob:; connect-src 'self' https://formspree.io https://www.google.com https://firebasestorage.googleapis.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src https://www.google.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://formspree.io;"/>
     <title>Joe Rice · Portfolio</title>
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com"/>
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
     <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Bebas+Neue&family=Fira+Code&display=swap" rel="stylesheet"/>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <!-- Styles -->
     <link rel="stylesheet" href="styles.css"/>
+    <!-- Preload external dependencies -->
     <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js"/>
     <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"/>
     <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"/>
-    <style>
-   
-    </style>
   </head>
   <body>
-    <header class="siteHeader">
-      <div class="brand"><a href="https://joerice.me/">joerice.me</a></div>
-      <button class="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
-      <nav id="mainNav">
-        <a href="https://joerice.me/">Home</a>
-        <a href="hire.html">Hire Me</a>
-        <a href="https://joerice.me/#about">Portfolio</a>
-        <a href="https://joerice.me/#contact">Contact Me</a>
-        <a href="https://joerice.me/#quotes">Quotes</a>
-        <a href="https://joerice.me/#links">Useful Links</a>
-        <a class="navButton" id="loginButton" href="#loginModal">Login</a>
-      </nav>
-    </header>
-    <main class="max">
-      <section class="hero">
-        <img class="pic" src="assets/images/pictures/profile.jpg" alt="Joe Rice"/>
-        <div class="intro">
-          <p>I'm a husband, father, IT generalist, and entrepreneur at heart. I love sharing knowledge and have over a decade of experience in IT. If you're looking to connect with someone who's down to earth, open minded yet skeptical, and passionate about self improvement, I’d love to hear from you. To hire me for freelance or full-time work, just fill out the contact form below. I’ll respond within 24 hours.</p>
-                    <div class="social">
-            <a href="https://pin.it/7ikA1HZ4o" target="_blank" aria-label="Pinterest"><i class="fab fa-pinterest"></i></a>
-            <a href="https://www.instagram.com/garbledhamster/" target="_blank" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
-            <a href="https://www.facebook.com/garbledhamster/" target="_blank" aria-label="Facebook"><i class="fab fa-facebook"></i></a>
-            <a href="https://buymeacoffee.com/garbledhamster" target="_blank" aria-label="Buy Me A Coffee"><i class="fas fa-mug-hot"></i></a>
-            <a href="https://github.com/garbledhamster" target="_blank" aria-label="GitHub"><i class="fab fa-github"></i></a>
-            <a href="https://www.upwork.com/freelancers/~016021fb4f5ed4ff13?mp_source=share" target="_blank" aria-label="Upwork"><i class="fab fa-upwork"></i></a>
-            <a href="https://fiverr.com/" target="_blank" aria-label="Fiverr"><i class="fab fa-fiverr"></i></a>
-            <a href="https://www.etsy.com/shop/zettelkastenshop" target="_blank" aria-label="Etsy"><i class="fab fa-etsy"></i></a>
-          </div>
-        </div>
-      </section>
-      <div class="search"><input id="q" type="search" placeholder="Search posts and notes..."/></div>
-      <section class="portfolio" id="about">
-        <div class="sectionHeader">
-          <h2>Portfolio</h2>
-          <button class="editBtn" id="addPortfolioBtn" type="button" data-admin-only>Add Post</button>
-        </div>
-        <div class="portfolioStatus" id="portfolioStatus" hidden></div>
-        <div class="subhead">Pinned</div>
-        <div class="grid" id="pinnedGrid"></div>
-        <div class="subhead">Posts</div>
-        <div class="grid" id="entryGrid"></div>
-        <div class="pageControls"><button id="prevBtn" class="pageBtn">Prev</button><button id="nextBtn" class="pageBtn">Next</button></div>
-        <div id="postView"><div id="postContent"><button id="closePost">close</button><button id="editPostBtn" class="editBtn" data-admin-only hidden>Edit</button><div id="postContentInner"></div></div></div>
-      </section>
-      <section class="gallery">
-        <div class="sectionHeader">
-          <h2>Gallery</h2>
-          <button class="editBtn" id="editGalleryBtn" type="button" data-admin-only data-admin-action="edit gallery">Edit</button>
-        </div>
-        <div class="slideshow" id="slideshow">
-          <figure>
-            <a id="slideLink" href="#" target="_blank">
-              <img id="slideImage" src="" alt=""/>
-              <figcaption id="slideCaption"></figcaption>
-            </a>
-          </figure>
-          <button class="prev" id="prevSlide" aria-label="Previous">&#10094;</button>
-          <button class="next" id="nextSlide" aria-label="Next">&#10095;</button>
-        </div>
-        <div class="galleryEditorContainer" id="galleryEditorContainer" data-admin-only data-skip-admin-ui hidden>
-          <div class="galleryEditorPicker" id="galleryEditorPicker">
-            <div class="galleryEditorUpload" id="galleryEditorUpload">
-              <input type="file" id="galleryEditorFileInput" accept="image/*" aria-label="Select image file"/>
-              <button class="galleryEditorUploadButton" id="galleryEditorUploadButton" type="button">Upload Image</button>
-            </div>
-            <p class="galleryEditorStatus" id="galleryEditorStatus" role="status" aria-live="polite"></p>
-            <div class="galleryEditorGrid" id="galleryEditorGrid"></div>
-          </div>
-          <div class="galleryEditorEdit" id="galleryEditorEdit" hidden>
-            <div class="galleryEditorNav">
-              <button class="galleryEditorNavBtn" id="galleryEditorPrevBtn" type="button" aria-label="Previous image">‹ Prev</button>
-              <span class="galleryEditorNavInfo" id="galleryEditorNavInfo"></span>
-              <button class="galleryEditorNavBtn" id="galleryEditorNextBtn" type="button" aria-label="Next image">Next ›</button>
-            </div>
-            <div class="galleryEditorPreviewWrap">
-              <img id="galleryEditorPreview" src="" alt="Selected image preview"/>
-            </div>
-            <label class="galleryEditorLabel">
-              Caption
-              <textarea id="galleryEditorCaptionInput" rows="3" placeholder="Enter image caption"></textarea>
-            </label>
-            <div class="galleryEditorActions">
-              <button class="galleryEditorBackButton" id="galleryEditorBackButton" type="button">← Back to Gallery</button>
-              <button class="galleryEditorSaveButton" id="galleryEditorSaveButton" type="button">Save</button>
-              <button class="galleryEditorDeleteButton" id="galleryEditorDeleteButton" type="button">Delete</button>
-            </div>
-          </div>
-        </div>
-      </section>
-      <section class="quotes" id="quotes">
-        <div class="sectionHeader">
-          <h2>Quotes</h2>
-          <button class="editBtn" id="editQuotesBtn" type="button" data-admin-only>Edit</button>
-        </div>
-        <div class="quoteBox" id="quoteBox"><blockquote id="quoteText"></blockquote><cite id="quoteCite"></cite></div>
-        <div class="progressWrap"><div class="progressBar" id="quoteProgress"></div></div>
-        <div class="quoteEditor editPanel is-collapsed" id="quoteEditor" data-admin-only>
-          <aside class="quoteList">
-            <div class="quoteListHeader">
-              <span>Quotes</span>
-              <button class="quoteAddButton" type="button">Add</button>
-            </div>
-            <ul id="quoteListItems"></ul>
-          </aside>
-          <div class="quoteEditorPane" id="quoteEditorPane">
-            <div class="quoteEditorHeader">Quote editor</div>
-            <label>Quote
-              <textarea id="quoteEditorText" rows="4" placeholder="Write the quote here"></textarea>
-            </label>
-            <label>Author
-              <input id="quoteEditorAuthor" type="text" placeholder="Quote author"/>
-            </label>
-            <button class="quoteSaveButton" id="quoteSaveButton" type="button">Save</button>
-          </div>
-        </div>
-      </section>
-      <section class="contact" id="contact">
-        <h2>Contact</h2>
-        <form id="contactForm">
-          <label>Name<input type="text" name="name" required/></label>
-          <label>Email<input type="email" name="email" required/></label>
-          <label>Contact Type<select name="project" required><option value="">Select an option...</option><option>Personal Website</option><option>Professional Website</option><option>Recruiter</option><option>Friend</option><option>Family</option><option>Training/Coaching</option><option>Other</option></select></label>
-          <label>Message<textarea name="message" required></textarea></label>
-          <button type="submit">Send</button>
-        </form>
-      </section>
-      <section class="links" id="links">
-        <h2>Useful Links</h2>
-        <ol>
-          <li><a href="https://news.ycombinator.com" target="_blank">Hacker News</a></li>
-          <li><a href="https://zettelkasten.de" target="_blank">Zettelkasten Method</a></li>
-          <li><a href="https://replit.com" target="_blank">Replit</a></li>
-          <li><a href="https://www.notion.so" target="_blank">Notion</a></li>
-          <li><a href="https://www.reddit.com/r/personalfinance/wiki/index" target="_blank">r/PersonalFinance Wiki</a></li>
-          <li><a href="https://www.khanacademy.org/college-careers-more/personal-finance" target="_blank">Khan Academy – Personal Finance</a></li>
-          <li><a href="https://www.nerdwallet.com" target="_blank">NerdWallet</a></li>
-          <li><a href="https://www.daveramsey.com/baby-steps" target="_blank">Dave Ramsey Baby Steps</a></li>
-          <li><a href="https://www.ycombinator.com/library" target="_blank">YC Startup Library</a></li>
-          <li><a href="https://www.indiehackers.com" target="_blank">Indie Hackers</a></li>
-          <li><a href="https://dailystoic.com" target="_blank">Daily Stoic</a></li>
-          <li><a href="https://www.producthunt.com" target="_blank">Product Hunt</a></li>
-          <li><a href="https://developer.mozilla.org" target="_blank">MDN Web Docs</a></li>
-          <li><a href="https://github.com/openai/openai-cookbook" target="_blank">OpenAI Cookbook</a></li>
-          <li><a href="https://obsidian.md" target="_blank">Obsidian</a></li>
-          <li><a href="https://github.com" target="_blank">GitHub</a></li>
-        </ol>
-      </section>
-    </main>
-    <footer>© <span id="year"></span> Joe Rice. All rights reserved.</footer>
-    <div class="modal" id="modal">
-      <div class="modalContent"><p>Thank you! Your message has been sent.</p><button id="closeModal" style="margin-top:1rem; border:1px solid var(--border); padding:.5rem 1rem; background:var(--yellow); font-family:var(--fontHead); cursor:pointer;">close</button></div>
-    </div>
-    <div class="modal loginModal" id="loginModal" aria-hidden="true" role="dialog" aria-modal="true">
-      <div class="modalContent">
-        <h3>Admin login</h3>
-        <p>Enter your email to receive a sign-in link.</p>
-        <form id="loginForm">
-          <label for="loginEmail">Email</label>
-          <input id="loginEmail" type="email" autocomplete="email" required/>
-          <div class="loginActions">
-            <button class="loginSendButton" type="submit">Send login link</button>
-            <a class="loginCancelButton" id="loginCancel" href="#" role="button">Cancel</a>
-          </div>
-        </form>
-        <label class="loginFieldCheckbox" data-admin-only hidden>
-          <input id="showGithubContent" type="checkbox" checked/>
-          <span>Show GitHub Content</span>
-        </label>
-        <button class="loginLogoutButton" id="loginLogoutButton" type="button" data-admin-only hidden>Logout</button>
-        <p class="loginStatus" id="loginStatus" role="status" aria-live="polite"></p>
-      </div>
-    </div>
-    <div class="modal portfolioModal" id="portfolioModal" aria-hidden="true" role="dialog" aria-modal="true">
-      <div class="modalContent">
-        <div class="portfolioModalHeader">
-          <h3 id="portfolioModalTitle">Add Post</h3>
-          <button class="portfolioCloseButton" id="portfolioCloseButton" type="button">Close</button>
-        </div>
-        <label class="portfolioField">Title
-          <input id="portfolioPostTitle" type="text" placeholder="Post title"/>
-        </label>
-        <label class="portfolioField portfolioBodyField">Post
-          <textarea id="portfolioPostBody" placeholder="Write your post here"></textarea>
-        </label>
-        <label class="portfolioFieldCheckbox">
-          <input id="portfolioPostPublished" type="checkbox" checked/>
-          <span>Published</span>
-        </label>
-        <label class="portfolioFieldCheckbox">
-          <input id="portfolioPostPinned" type="checkbox"/>
-          <span>Pinned</span>
-        </label>
-        <div class="portfolioActions">
-          <button class="portfolioSaveButton" id="portfolioSaveButton" type="button">Save</button>
-          <button class="portfolioDeleteButton" id="portfolioDeleteButton" type="button">Delete</button>
-        </div>
-        <p class="portfolioEditorStatus" id="portfolioEditorStatus" role="status" aria-live="polite"></p>
-      </div>
-    </div>
+    <!-- App Container - All content rendered by JavaScript -->
+    <div id="app"></div>
+
+    <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+
+    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
@@ -238,10 +43,11 @@
         measurementId: "G-SS56CMWCR7"
       };
     </script>
+
+    <!-- reCAPTCHA -->
     <script src="https://www.google.com/recaptcha/api.js?render=6LcYpE4sAAAAALOW_7HWe81eUCnFkGFu-e8dAW_S"></script>
+
+    <!-- App Entry Point -->
     <script type="module" src="assets/js/main.js"></script>
-    <script>
-      document.getElementById("year").textContent = new Date().getFullYear();
-    </script>
   </body>
 </html>
