@@ -26,6 +26,9 @@ let isEditorMode = false;
 let selectedImageDoc = null;
 let selectedImageIndex = -1;
 
+// Constants
+const MAX_CAPTION_DISPLAY_LENGTH = 50;
+
 // DOM references
 let slideImage = null;
 let slideCaption = null;
@@ -366,7 +369,7 @@ async function handleUpload() {
 
 		// Generate unique image ID
 		const imageId =
-			typeof crypto?.randomUUID === "function"
+			crypto && typeof crypto.randomUUID === "function"
 				? crypto.randomUUID()
 				: `img_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
 		const storagePath = `Images/${userId}/${imageId}`;
@@ -597,7 +600,9 @@ function renderGalleryGrid() {
 			const safeCaption = sanitizeText(img.caption || "");
 			const captionText = img.caption || "No caption";
 			const shortCaption =
-				captionText.length > 50 ? `${captionText.slice(0, 50)}…` : captionText;
+				captionText.length > MAX_CAPTION_DISPLAY_LENGTH
+					? `${captionText.slice(0, MAX_CAPTION_DISPLAY_LENGTH)}…`
+					: captionText;
 			const safeShortCaption = sanitizeText(shortCaption);
 			const isVisible = img.visible !== false;
 			const visibilityClass = !isVisible ? "gallery-image-hidden" : "";
