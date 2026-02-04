@@ -229,9 +229,11 @@ ol {
   }
 }
 
-/* Hide legacy header */
-header {
-  display: none;
+/* Active nav state */
+#mainNav a.active,
+#mainNav a[aria-current="page"] {
+  background: var(--fg);
+  color: var(--bg);
 }
 
 /* Hero section */
