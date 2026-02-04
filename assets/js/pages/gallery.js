@@ -8,18 +8,23 @@
 import { $, addListener } from "../core/dom.js";
 import {
 	ensureAdmin,
+	getCurrentUserId,
 	getFirestore,
 	getStorage,
 	isAdminUser,
 } from "../services/auth.js";
-import { sanitizeText, sanitizeUrl } from "../services/sanitize.js";
+import {
+	sanitizeText,
+	sanitizeUrl,
+	validateLength,
+} from "../services/sanitize.js";
 
 // State
 let images = [];
 let currentSlideIndex = 0;
 let isEditorMode = false;
-const _selectedImageDoc = null;
-const _selectedImageIndex = -1;
+let selectedImageDoc = null;
+let selectedImageIndex = -1;
 
 // DOM references
 let slideImage = null;
@@ -208,6 +213,115 @@ function navigateSlideshow(direction) {
 }
 
 /**
+ * Set editor status message
+ * @param {string} message - Status message to display
+ */
+function setEditorStatus(message) {
+	const status = $("#galleryEditorStatus");
+	if (status) status.textContent = message || "";
+}
+
+/**
+ * Clear selected image
+ */
+function clearSelection() {
+	selectedImageDoc = null;
+	selectedImageIndex = -1;
+	const preview = $("#galleryEditorPreview");
+	const captionInput = $("#galleryEditorCaptionInput");
+	if (preview) preview.src = "";
+	if (captionInput) captionInput.value = "";
+	updateNavButtons();
+}
+
+/**
+ * Update navigation buttons state
+ */
+function updateNavButtons() {
+	const prevBtn = $("#galleryEditorPrevBtn");
+	const nextBtn = $("#galleryEditorNextBtn");
+	const navInfo = $("#galleryEditorNavInfo");
+
+	if (!prevBtn || !nextBtn || !navInfo) return;
+
+	if (selectedImageIndex === -1 || images.length === 0) {
+		prevBtn.disabled = true;
+		nextBtn.disabled = true;
+		navInfo.textContent = "";
+	} else {
+		prevBtn.disabled = selectedImageIndex === 0;
+		nextBtn.disabled = selectedImageIndex === images.length - 1;
+		navInfo.textContent = `${selectedImageIndex + 1} of ${images.length}`;
+	}
+}
+
+/**
+ * Select an image for editing
+ * @param {Object} imageDoc - Image document to select
+ * @param {number} index - Image index in array
+ */
+function selectImage(imageDoc, index) {
+	selectedImageDoc = imageDoc;
+	selectedImageIndex = index;
+
+	const preview = $("#galleryEditorPreview");
+	const captionInput = $("#galleryEditorCaptionInput");
+	const picker = $("#galleryEditorPicker");
+	const edit = $("#galleryEditorEdit");
+	const grid = $("#galleryEditorGrid");
+
+	if (preview) {
+		preview.src = imageDoc.img;
+	}
+
+	if (captionInput) {
+		captionInput.value = imageDoc.caption || "";
+	}
+
+	updateNavButtons();
+
+	// Show edit view, hide picker
+	if (picker) picker.hidden = true;
+	if (edit) edit.hidden = false;
+
+	// Update selected state in grid
+	const gridItems = grid?.querySelectorAll(".galleryEditorGridItem");
+	gridItems?.forEach((item) => {
+		if (item.dataset.docId === imageDoc.id) {
+			item.classList.add("selected");
+		} else {
+			item.classList.remove("selected");
+		}
+	});
+}
+
+/**
+ * Select previous image in edit view
+ */
+function selectPreviousImage() {
+	if (selectedImageIndex > 0) {
+		const prevIndex = selectedImageIndex - 1;
+		const prevImage = images[prevIndex];
+		if (prevImage) {
+			selectImage(prevImage, prevIndex);
+		}
+	}
+}
+
+/**
+ * Select next image in edit view
+ */
+function selectNextImage() {
+	if (selectedImageIndex < images.length - 1) {
+		const nextIndex = selectedImageIndex + 1;
+		const nextImage = images[nextIndex];
+		if (nextImage) {
+			selectImage(nextImage, nextIndex);
+		}
+	}
+}
+
+/**
  * Show editor picker view
  */
 function showEditorPicker() {
@@ -221,6 +335,240 @@ function showEditorPicker() {
 	if (edit) edit.hidden = true;
 
 	renderGalleryGrid();
+	setEditorStatus("");
+	clearSelection();
+}
+
+/**
+ * Handle image upload
+ */
+async function handleUpload() {
+	if (!ensureAdmin("upload gallery image")) return;
+
+	const fileInput = $("#galleryEditorFileInput");
+	const file = fileInput?.files?.[0];
+	if (!file) {
+		setEditorStatus("Please select an image file first.");
+		return;
+	}
+
+	const storage = getStorage();
+	const firestore = getFirestore();
+	const userId = getCurrentUserId();
+
+	if (!storage || !firestore || !userId) {
+		setEditorStatus("Firebase not configured or not signed in.");
+		return;
+	}
+
+	try {
+		setEditorStatus("Uploading...");
+
+		// Generate unique image ID
+		const imageId = crypto?.randomUUID
+			? crypto.randomUUID()
+			: `img_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+		const storagePath = `Images/${userId}/${imageId}`;
+
+		// Upload to Storage
+		const storageRef = storage.ref(storagePath);
+		const uploadTask = await storageRef.put(file);
+		const downloadURL = await uploadTask.ref.getDownloadURL();
+
+		// Get caption from input and validate
+		const captionInput = $("#galleryEditorCaptionInput");
+		const caption = captionInput?.value?.trim() || "";
+		const validatedCaption = validateLength(caption, 500);
+
+		// Create Firestore document
+		const imagesCollection = firestore.collection("Images");
+		const docRef = await imagesCollection.add({
+			userId: userId,
+			quote: validatedCaption,
+			storagePath: storagePath,
+			downloadURL: downloadURL,
+			visible: true,
+			createdAt: window.firebase.firestore.FieldValue.serverTimestamp(),
+			updatedAt: window.firebase.firestore.FieldValue.serverTimestamp(),
+		});
+
+		setEditorStatus("Image uploaded successfully!");
+
+		// Reload images and update UI
+		images = await loadImagesFromFirestore();
+		renderGalleryGrid();
+		showSlide(0);
+
+		// Select the newly uploaded image and switch to edit view
+		const newImageIndex = images.findIndex((img) => img.id === docRef.id);
+		const newImage = images[newImageIndex];
+		if (newImage && newImageIndex !== -1) {
+			selectImage(newImage, newImageIndex);
+		}
+
+		// Clear file input
+		if (fileInput) fileInput.value = "";
+	} catch (error) {
+		console.error("Error uploading image:", error);
+		setEditorStatus(`Upload failed: ${error.message || "Unknown error"}`);
+	}
+}
+
+/**
+ * Handle save caption
+ */
+async function handleSave() {
+	if (!ensureAdmin("save gallery image")) return;
+	if (!selectedImageDoc) {
+		setEditorStatus("No image selected.");
+		return;
+	}
+
+	if (
+		!confirm("Are you sure you want to save changes to this image caption?")
+	) {
+		return;
+	}
+
+	const firestore = getFirestore();
+	if (!firestore) {
+		setEditorStatus("Firestore not configured.");
+		return;
+	}
+
+	try {
+		setEditorStatus("Saving...");
+
+		const captionInput = $("#galleryEditorCaptionInput");
+		const caption = captionInput?.value?.trim() || "";
+		const validatedCaption = validateLength(caption, 500);
+		const docRef = firestore.collection("Images").doc(selectedImageDoc.id);
+
+		await docRef.update({
+			quote: validatedCaption,
+			updatedAt: window.firebase.firestore.FieldValue.serverTimestamp(),
+		});
+
+		setEditorStatus("Caption saved!");
+
+		// Update local state with validated caption
+		selectedImageDoc.caption = validatedCaption;
+		const imageIndex = images.findIndex(
+			(img) => img.id === selectedImageDoc.id,
+		);
+		if (imageIndex !== -1) {
+			images[imageIndex].caption = validatedCaption;
+
+			// Update slideshow if this is the current slide
+			if (currentSlideIndex === imageIndex) {
+				showSlide(currentSlideIndex);
+			}
+		}
+
+		// Re-render grid to show updated caption
+		renderGalleryGrid();
+	} catch (error) {
+		console.error("Error saving caption:", error);
+		setEditorStatus(`Save failed: ${error.message || "Unknown error"}`);
+	}
+}
+
+/**
+ * Handle delete image
+ */
+async function handleDelete() {
+	if (!ensureAdmin("delete gallery image")) return;
+
+	if (!selectedImageDoc) {
+		setEditorStatus("No image selected.");
+		return;
+	}
+
+	if (
+		!confirm(
+			"Are you sure you want to delete this image? This cannot be undone.",
+		)
+	) {
+		return;
+	}
+
+	const firestore = getFirestore();
+	const storage = getStorage();
+
+	if (!firestore || !storage) {
+		setEditorStatus("Firebase not configured.");
+		return;
+	}
+
+	try {
+		setEditorStatus("Deleting...");
+
+		// Delete from Storage
+		if (selectedImageDoc.storagePath) {
+			try {
+				const storageRef = storage.ref(selectedImageDoc.storagePath);
+				await storageRef.delete();
+			} catch (error) {
+				console.warn("Error deleting from storage:", error);
+			}
+		}
+
+		// Delete from Firestore
+		const docRef = firestore.collection("Images").doc(selectedImageDoc.id);
+		await docRef.delete();
+
+		setEditorStatus("Image deleted successfully!");
+
+		// Remove from local state
+		images = images.filter((img) => img.id !== selectedImageDoc.id);
+
+		// Clear selection
+		clearSelection();
+
+		// Update UI
+		renderGalleryGrid();
+
+		// Update slideshow
+		if (images.length > 0) {
+			currentSlideIndex = Math.min(currentSlideIndex, images.length - 1);
+			showSlide(currentSlideIndex);
+		}
+
+		// Return to picker view after deletion
+		const picker = $("#galleryEditorPicker");
+		const edit = $("#galleryEditorEdit");
+		if (picker) picker.hidden = false;
+		if (edit) edit.hidden = true;
+
+		// Clear status after a short delay
+		setTimeout(() => setEditorStatus(""), 2000);
+	} catch (error) {
+		console.error("Error deleting image:", error);
+		setEditorStatus(`Delete failed: ${error.message || "Unknown error"}`);
+	}
+}
+
+/**
+ * Toggle image visibility
+ * @param {string} imageId - Image document ID
+ * @param {boolean} currentVisibility - Current visibility state
+ * @returns {boolean} New visibility state
+ */
+async function toggleImageVisibility(imageId, currentVisibility) {
+	const firestore = getFirestore();
+	if (!firestore || !imageId) {
+		console.warn("Cannot toggle visibility: Firestore not configured.");
+		return currentVisibility;
+	}
+
+	const newVisibility = !currentVisibility;
+	const docRef = firestore.collection("Images").doc(imageId);
+	await docRef.update({
+		visible: newVisibility,
+		updatedAt: window.firebase.firestore.FieldValue.serverTimestamp(),
+	});
+
+	return newVisibility;
 }
 
 /**
@@ -247,13 +595,15 @@ function renderGalleryGrid() {
 			const safeImgUrl = sanitizeUrl(img.img);
 			const safeCaption = sanitizeText(img.caption || "");
 			const shortCaption = img.caption?.slice(0, 50) || "No caption";
+			const ellipsis = img.caption?.length > 50 ? "…" : "";
+			const safeShortCaption = sanitizeText(shortCaption + ellipsis);
 			const isVisible = img.visible !== false;
 			const visibilityClass = !isVisible ? "gallery-image-hidden" : "";
 
 			return `
       <div class="galleryEditorGridItem ${visibilityClass}" data-doc-id="${sanitizeText(img.id)}" data-index="${index}">
         <img src="${safeImgUrl || "#"}" alt="${safeCaption}" loading="lazy"/>
-        <div class="galleryEditorGridItemCaption">${sanitizeText(shortCaption)}</div>
+        <div class="galleryEditorGridItemCaption">${safeShortCaption}</div>
         <button class="gallery-visibility-button" type="button" data-doc-id="${sanitizeText(img.id)}" title="${isVisible ? "Hide" : "Show"}">
           <i class="fas fa-eye${isVisible ? "" : "-slash"}"></i>
         </button>
@@ -261,6 +611,61 @@ function renderGalleryGrid() {
     `;
 		})
 		.join("");
+
+	// Add click handlers to grid items
+	const gridItems = grid.querySelectorAll(".galleryEditorGridItem");
+	gridItems.forEach((item) => {
+		item.addEventListener("click", (e) => {
+			// Don't trigger selection if clicking visibility button
+			if (e.target.closest(".gallery-visibility-button")) {
+				return;
+			}
+
+			const docId = item.dataset.docId;
+			const index = parseInt(item.dataset.index, 10);
+			const imageDoc = images.find((img) => img.id === docId);
+			if (imageDoc) {
+				selectImage(imageDoc, index);
+			}
+		});
+	});
+
+	// Add click handlers to visibility buttons
+	const visibilityButtons = grid.querySelectorAll(".gallery-visibility-button");
+	visibilityButtons.forEach((button) => {
+		button.addEventListener("click", async (e) => {
+			e.stopPropagation();
+			if (!ensureAdmin("toggle image visibility")) return;
+
+			const docId = button.dataset.docId;
+			const imageDoc = images.find((img) => img.id === docId);
+
+			if (!imageDoc?.id) {
+				alert("Cannot toggle visibility for this image.");
+				return;
+			}
+
+			const currentVisibility = imageDoc.visible !== false;
+
+			try {
+				const newVisibility = await toggleImageVisibility(
+					imageDoc.id,
+					currentVisibility,
+				);
+				imageDoc.visible = newVisibility;
+				renderGalleryGrid();
+
+				// Update slideshow if needed
+				const imageIndex = images.findIndex((img) => img.id === docId);
+				if (currentSlideIndex === imageIndex) {
+					showSlide(currentSlideIndex);
+				}
+			} catch (error) {
+				console.warn("Unable to toggle image visibility.", error);
+				alert("Unable to toggle visibility. Please try again.");
+			}
+		});
+	});
 }
 
 /**
@@ -339,11 +744,43 @@ export async function initGallery() {
 				if (edit && !edit.hidden) {
 					if (picker) picker.hidden = false;
 					edit.hidden = true;
+					clearSelection();
+					setEditorStatus("");
 				} else {
 					hideEditor();
 				}
 			}),
 		);
+	}
+
+	// Upload button
+	const uploadButton = $("#galleryEditorUploadButton");
+	if (uploadButton) {
+		cleanupFns.push(addListener(uploadButton, "click", handleUpload));
+	}
+
+	// Save button
+	const saveButton = $("#galleryEditorSaveButton");
+	if (saveButton) {
+		cleanupFns.push(addListener(saveButton, "click", handleSave));
+	}
+
+	// Delete button
+	const deleteButton = $("#galleryEditorDeleteButton");
+	if (deleteButton) {
+		cleanupFns.push(addListener(deleteButton, "click", handleDelete));
+	}
+
+	// Previous image button in edit view
+	const prevImageBtn = $("#galleryEditorPrevBtn");
+	if (prevImageBtn) {
+		cleanupFns.push(addListener(prevImageBtn, "click", selectPreviousImage));
+	}
+
+	// Next image button in edit view
+	const nextImageBtn = $("#galleryEditorNextBtn");
+	if (nextImageBtn) {
+		cleanupFns.push(addListener(nextImageBtn, "click", selectNextImage));
 	}
 }
 
@@ -358,4 +795,6 @@ export function destroyGallery() {
 	images = [];
 	currentSlideIndex = 0;
 	isEditorMode = false;
+	selectedImageDoc = null;
+	selectedImageIndex = -1;
 }
