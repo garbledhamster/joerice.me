@@ -22,9 +22,9 @@ const notes = [];
 const pageSize = 10;
 let page = 0;
 let currentPost = null;
-const _editingPostId = null;
-const _editingPostSource = null;
-const _editingPostCreatedDate = null;
+let editingPostId = null;
+let editingPostSource = null;
+let editingPostCreatedDate = null;
 let hasLoadedInitialPosts = false;
 
 // DOM references
@@ -165,6 +165,112 @@ async function loadFirestorePosts() {
 	} catch (error) {
 		console.warn("Unable to load Firestore posts:", error);
 	}
+}
+
+/**
+ * Set editor status message
+ * @param {string} message - Status message
+ */
+function setEditorStatus(message) {
+	const editorStatus = $("#portfolioEditorStatus");
+	if (editorStatus) {
+		editorStatus.textContent = message || "";
+	}
+}
+
+/**
+ * Get post title from post object
+ * @param {Object} post - Post object
+ * @returns {string} Post title
+ */
+function getPostTitle(post) {
+	if (!post || !post.data) return "Untitled";
+	return post.data.Title || post.data.title || "Untitled";
+}
+
+/**
+ * Populate and open the portfolio editor modal
+ * @param {Object|null} post - Post to edit, or null for new post
+ */
+function openPortfolioEditor(post = null) {
+	const portfolioModal = $("#portfolioModal");
+	const portfolioModalTitle = $("#portfolioModalTitle");
+	const portfolioPostTitle = $("#portfolioPostTitle");
+	const portfolioPostBody = $("#portfolioPostBody");
+	const portfolioPostPublished = $("#portfolioPostPublished");
+	const portfolioPostPinned = $("#portfolioPostPinned");
+	const portfolioDeleteButton = $("#portfolioDeleteButton");
+
+	if (!portfolioModal) return;
+
+	// Only allow editing of local and firestore posts
+	const isReadOnlyPost =
+		!!post && !["local", "firestore"].includes(post?.source ?? "");
+
+	// Set editing state
+	editingPostId = post?.id ?? null;
+	editingPostSource = post?.source ?? null;
+	editingPostCreatedDate = post?.createdDate ?? null;
+
+	if (isReadOnlyPost) {
+		editingPostId = null;
+		editingPostSource = null;
+		editingPostCreatedDate = null;
+	}
+
+	// Update modal title
+	if (portfolioModalTitle) {
+		portfolioModalTitle.textContent = editingPostId ? "Edit Post" : "Add Post";
+	}
+
+	// Populate form fields
+	if (portfolioPostTitle) {
+		portfolioPostTitle.value = post?.title || "";
+	}
+
+	if (portfolioPostBody) {
+		portfolioPostBody.value = post?.content || "";
+	}
+
+	if (portfolioPostPublished) {
+		// Default to checked (published) for new posts, use existing value for edits
+		portfolioPostPublished.checked = post?.published !== false;
+	}
+
+	if (portfolioPostPinned) {
+		// Default to unchecked (not pinned) for new posts, use existing value for edits
+		portfolioPostPinned.checked = post?.pinned === true;
+	}
+
+	// Configure delete button
+	if (portfolioDeleteButton) {
+		portfolioDeleteButton.disabled = !editingPostId || isReadOnlyPost;
+	}
+
+	// Set read-only state
+	if (isReadOnlyPost) {
+		if (portfolioPostTitle) portfolioPostTitle.readOnly = true;
+		if (portfolioPostBody) portfolioPostBody.readOnly = true;
+		if (portfolioPostPublished) portfolioPostPublished.disabled = true;
+		if (portfolioPostPinned) portfolioPostPinned.disabled = true;
+		const saveButton = $("#portfolioSaveButton");
+		if (saveButton) saveButton.disabled = true;
+		setEditorStatus("Preloaded posts are read-only.");
+	} else {
+		if (portfolioPostTitle) portfolioPostTitle.readOnly = false;
+		if (portfolioPostBody) portfolioPostBody.readOnly = false;
+		if (portfolioPostPublished) portfolioPostPublished.disabled = false;
+		if (portfolioPostPinned) portfolioPostPinned.disabled = false;
+		const saveButton = $("#portfolioSaveButton");
+		if (saveButton) saveButton.disabled = false;
+		setEditorStatus("");
+	}
+
+	// Open modal
+	openModal("portfolioModal");
+
+	// Focus title field
+	setTimeout(() => portfolioPostTitle?.focus(), 0);
 }
 
 /**
@@ -390,8 +496,23 @@ export function initPortfolio() {
 		cleanupFns.push(
 			addListener(editPostBtn, "click", () => {
 				if (!ensureAdmin("edit post") || !currentPost) return;
-				// Open portfolio editor modal with current post
-				openModal("portfolioModal");
+
+				// Only allow editing of local and firestore posts
+				if (
+					currentPost.source === "local" ||
+					currentPost.source === "firestore"
+				) {
+					const postToEdit = {
+						id: currentPost.id,
+						title: getPostTitle(currentPost),
+						content: currentPost.content || "",
+						source: currentPost.source,
+						createdDate: currentPost.createdDate,
+						published: currentPost.published !== false, // Default to true if not set
+						pinned: currentPost.pinned === true, // Default to false if not set
+					};
+					openPortfolioEditor(postToEdit);
+				}
 			}),
 		);
 	}
@@ -403,7 +524,7 @@ export function initPortfolio() {
 		cleanupFns.push(
 			addListener(addPortfolioBtn, "click", () => {
 				if (!ensureAdmin("add post")) return;
-				openModal("portfolioModal");
+				openPortfolioEditor(null);
 			}),
 		);
 	}
@@ -418,6 +539,131 @@ export function initPortfolio() {
 				notes.length = 0;
 				// Reload all posts
 				await loadPosts();
+			}),
+		);
+	}
+
+	// Portfolio modal save button
+	const portfolioSaveButton = $("#portfolioSaveButton");
+	if (portfolioSaveButton) {
+		cleanupFns.push(
+			addListener(portfolioSaveButton, "click", async () => {
+				if (!ensureAdmin("save portfolio post")) return;
+
+				const portfolioPostTitle = $("#portfolioPostTitle");
+				const portfolioPostBody = $("#portfolioPostBody");
+				const portfolioPostPublished = $("#portfolioPostPublished");
+				const portfolioPostPinned = $("#portfolioPostPinned");
+
+				const title = portfolioPostTitle?.value.trim();
+				const content = portfolioPostBody?.value.trim();
+
+				if (!title || !content) {
+					setEditorStatus("Title and post content are required.");
+					return;
+				}
+
+				if (!confirm("Are you sure you want to save this post?")) {
+					return;
+				}
+
+				const now = new Date().toISOString();
+				const published = portfolioPostPublished?.checked ?? true;
+				const pinned = portfolioPostPinned?.checked ?? false;
+				const postsRef = getPostsCollectionRef();
+
+				if (!postsRef) {
+					setEditorStatus("Firestore is not available.");
+					return;
+				}
+
+				try {
+					const isEditing = editingPostId && editingPostSource === "firestore";
+					const docRef = isEditing
+						? postsRef.doc(editingPostId)
+						: postsRef.doc();
+					const createdDate = editingPostCreatedDate ?? now;
+
+					await docRef.set(
+						{
+							title: title,
+							body: content,
+							createdDate: createdDate,
+							lastEditedDate: now,
+							published: published,
+							pinned: pinned,
+						},
+						{ merge: true },
+					);
+
+					// Update state
+					editingPostId = docRef.id;
+					editingPostSource = "firestore";
+					editingPostCreatedDate = createdDate;
+
+					// Reload posts and re-render
+					await loadFirestorePosts();
+					renderPinned();
+					renderPage();
+					setPortfolioStatus("");
+					closeModal("portfolioModal");
+
+					// Clear editing state
+					editingPostId = null;
+					editingPostSource = null;
+					editingPostCreatedDate = null;
+				} catch (error) {
+					console.warn("Unable to save post.", error);
+					setEditorStatus("Unable to save this post right now.");
+				}
+			}),
+		);
+	}
+
+	// Portfolio modal delete button
+	const portfolioDeleteButton = $("#portfolioDeleteButton");
+	if (portfolioDeleteButton) {
+		cleanupFns.push(
+			addListener(portfolioDeleteButton, "click", async () => {
+				if (!ensureAdmin("delete portfolio post")) return;
+
+				if (!editingPostId) {
+					setEditorStatus("There is no post to delete.");
+					return;
+				}
+
+				if (
+					!confirm(
+						"Are you sure you want to delete this post? This cannot be undone.",
+					)
+				) {
+					return;
+				}
+
+				const postsRef = getPostsCollectionRef();
+				if (!postsRef || editingPostSource !== "firestore") {
+					setEditorStatus("Unable to delete this post.");
+					return;
+				}
+
+				try {
+					await postsRef.doc(editingPostId).delete();
+
+					// Clear editing state
+					editingPostId = null;
+					editingPostSource = null;
+					editingPostCreatedDate = null;
+
+					// Reload posts and re-render
+					await loadFirestorePosts();
+					renderPinned();
+					renderPage();
+					setPortfolioStatus("");
+					closeModal("portfolioModal");
+				} catch (error) {
+					console.warn("Unable to delete post.", error);
+					setEditorStatus("Unable to delete this post right now.");
+				}
 			}),
 		);
 	}
