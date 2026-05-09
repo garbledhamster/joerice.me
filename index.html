@@ -189,8 +189,45 @@ input {
   font:inherit;
   font-family:var(--mono);
   font-variant-ligatures:none;
+  width:100%;
+  padding:0;
+  caret-color:transparent;
+}
+
+.input-text-wrap {
   flex:1;
-  caret-color:var(--prompt);
+  position:relative;
+  display:flex;
+  align-items:center;
+  overflow:hidden;
+}
+
+.input-sizer {
+  visibility:hidden;
+  position:absolute;
+  pointer-events:none;
+  white-space:pre;
+  font:inherit;
+  font-family:var(--mono);
+  font-variant-ligatures:none;
+  left:0;
+}
+
+.cursor-block {
+  display:inline-block;
+  width:0.6em;
+  height:1em;
+  background:var(--prompt);
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  pointer-events:none;
+  animation:blink-cursor 1s step-end infinite;
+}
+
+@keyframes blink-cursor {
+  0%, 100% { opacity:1; }
+  50% { opacity:0; }
 }
 
 .dim { color:var(--muted); }
@@ -231,7 +268,11 @@ input {
         <div class="suggestions" id="suggestions"></div>
         <form class="input-row" id="inputRow">
           <span class="prompt" id="prompt">joe@home:/$</span>
-          <input id="commandInput" autocomplete="off" spellcheck="false" autofocus />
+          <div class="input-text-wrap">
+            <span class="input-sizer" id="inputSizer" aria-hidden="true"></span>
+            <input id="commandInput" autocomplete="off" spellcheck="false" autofocus />
+            <span class="cursor-block" id="fakeCursor" aria-hidden="true"></span>
+          </div>
         </form>
       </div>
     </div>
@@ -272,6 +313,8 @@ const inputRow = document.getElementById("inputRow");
 const commandInput = document.getElementById("commandInput");
 const promptEl = document.getElementById("prompt");
 const suggestionsEl = document.getElementById("suggestions");
+const inputSizer = document.getElementById("inputSizer");
+const fakeCursor = document.getElementById("fakeCursor");
 const barDots = document.getElementById("barDots");
 
 const state = {
@@ -461,6 +504,12 @@ function sleep(ms) {
   return new Promise(resolve => setTimeout(resolve, ms));
 }
 
+function updateCursorPosition() {
+  inputSizer.textContent = commandInput.value;
+  const maxLeft = commandInput.offsetWidth - (fakeCursor.offsetWidth || 9);
+  fakeCursor.style.left = Math.min(inputSizer.offsetWidth, Math.max(0, maxLeft)) + "px";
+}
+
 function escapeHtml(str) {
   return String(str)
     .replaceAll("&", "&amp;")
@@ -572,6 +621,7 @@ async function resetHome(animated = true) {
   updatePrompt();
   suggestionsEl.style.display = "none";
   commandInput.value = "";
+  updateCursorPosition();
   screen.textContent = "";
   commandInput.focus();
 
@@ -1150,9 +1200,11 @@ inputRow.addEventListener("submit", e => {
 
   commandInput.value = "";
   suggestionsEl.style.display = "none";
+  updateCursorPosition();
 
   if (commandNeedsArgument(completed)) {
     commandInput.value = completed + " ";
+    updateCursorPosition();
     showSuggestions();
     return;
   }
@@ -1164,6 +1216,7 @@ commandInput.addEventListener("input", () => {
   if (state.booting) finishBoot(false);
   state.selectedSuggestion = 0;
   showSuggestions();
+  updateCursorPosition();
 });
 
 commandInput.addEventListener("keydown", e => {
@@ -1188,6 +1241,7 @@ commandInput.addEventListener("keydown", e => {
     const completed = acceptSuggestion();
     if (completed) {
       commandInput.value = completed + (commandNeedsArgument(completed) ? " " : "");
+      updateCursorPosition();
       showSuggestions();
     }
   }
@@ -1243,9 +1297,11 @@ suggestionsEl.addEventListener("mousedown", e => {
 
   if (commandNeedsArgument(completed)) {
     commandInput.value = completed + " ";
+    updateCursorPosition();
     showSuggestions();
   } else {
     commandInput.value = "";
+    updateCursorPosition();
     suggestionsEl.style.display = "none";
     run(completed);
   }
@@ -1254,6 +1310,22 @@ suggestionsEl.addEventListener("mousedown", e => {
 });
 
 barDots.addEventListener("click", () => resetHome(true));
+
+// Redirect printable keypresses to the input so the user can always type
+document.addEventListener("keydown", e => {
+  if (document.activeElement !== commandInput && !e.ctrlKey && !e.metaKey && !e.altKey &&
+      (e.key.length === 1 || e.key === "Backspace" || e.key === "Delete")) {
+    commandInput.focus();
+  }
+});
+
+// Refocus input on any click outside interactive elements
+document.addEventListener("click", e => {
+  const interactive = e.target.closest("[data-command],[data-external],a,button,.suggestion,.bar-dot,input,textarea");
+  if (!interactive) commandInput.focus();
+});
+
+updateCursorPosition();
 
 function tickClock() {
   document.getElementById("clock").textContent = new Date().toLocaleTimeString();
