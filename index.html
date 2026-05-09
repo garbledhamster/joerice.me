@@ -171,6 +171,8 @@ They enter commands.` },
   "/Contact": { type:"page", title:"CONTACT", body:"Contact placeholder.\n\nLater: email, LinkedIn, GitHub, inquiry form." }
 };
 
+const ARG_CMDS = ["/open", "/cat", "/cd"];
+
 const commandMeta = [
   { cmd:"/help", desc:"show command menu" },
   { cmd:"/?", desc:"show command menu" },
@@ -500,7 +502,7 @@ inputRow.addEventListener("submit", e => {
   commandInput.value = "";
   suggestionsEl.style.display = "none";
 
-  const needsArg = ["/open", "/cat", "/cd"].includes(completed);
+  const needsArg = ARG_CMDS.includes(completed);
 
   if (needsArg) {
     commandInput.value = completed + " ";
@@ -538,7 +540,7 @@ commandInput.addEventListener("keydown", e => {
     e.preventDefault();
     const completed = acceptSuggestion();
     if (completed) {
-      commandInput.value = completed + (["/open","/cat","/cd"].includes(completed) ? " " : "");
+      commandInput.value = completed + (ARG_CMDS.includes(completed) ? " " : "");
       showSuggestions();
     }
   }
@@ -565,7 +567,7 @@ suggestionsEl.addEventListener("mousedown", e => {
   const completed = acceptSuggestion();
   if (!completed) return;
 
-  const needsArg = ["/open", "/cat", "/cd"].includes(completed);
+  const needsArg = ARG_CMDS.includes(completed);
   if (needsArg) {
     commandInput.value = completed + " ";
     showSuggestions();
