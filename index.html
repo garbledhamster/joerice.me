@@ -8,13 +8,13 @@
 /*
   LLM MAINTENANCE CONTRACT — READ BEFORE EDITING
 
-  This project is intentionally a plaintext terminal portfolio.
+  This project is a plaintext interactive portfolio for joerice.me.
 
   Do not convert the interface into a normal website.
   Do not add cards, panels, grids, app chrome, modal previews, visual dashboards,
-  embedded media galleries, buttons inside the terminal output, or rich UI sections.
+  embedded media galleries, or buttons inside the output.
 
-  The terminal output should remain plain text with optional clickable text links.
+  The output should remain plain text with optional clickable text links.
   The command line should remain the primary interaction model.
 
   Safe edits:
@@ -24,13 +24,13 @@
   - Improve command parsing, autocomplete, accessibility, and bug fixes.
 
   Unsafe edits:
-  - Replacing terminal output with visual layout components.
-  - Adding image previews inside the terminal.
-  - Adding non-terminal navigation UI.
+  - Replacing output with visual layout components.
+  - Adding image previews inline.
+  - Adding non-command navigation UI.
   - Changing the app into a card/grid/portfolio template.
 
   If asked to expand this site, expand the content tree and the text areas.
-  Preserve the plaintext terminal style.
+  Preserve the plaintext style.
 */
 :root {
   --bg:#0d0d0d;
@@ -258,7 +258,7 @@ input {
         <span class="bar-dot yel"></span>
         <span class="bar-dot grn"></span>
       </div>
-      <div>joerice.me — terminal shell</div>
+      <div>joerice.me</div>
       <div id="clock">--:--:--</div>
     </header>
 
@@ -267,7 +267,7 @@ input {
       <div class="input-zone">
         <div class="suggestions" id="suggestions"></div>
         <form class="input-row" id="inputRow">
-          <span class="prompt" id="prompt">joe@home:/$</span>
+          <span class="prompt" id="prompt">joerice.me:/></span>
           <div class="input-text-wrap">
             <span class="input-sizer" id="inputSizer" aria-hidden="true"></span>
             <input id="commandInput" autocomplete="off" spellcheck="false" autofocus />
@@ -283,15 +283,15 @@ input {
 /*
   LLM MAINTENANCE CONTRACT — READ BEFORE EDITING
 
-  This file is a plaintext terminal portfolio, not a visual portfolio template.
+  This file is a plaintext interactive portfolio for joerice.me, not a visual portfolio template.
 
-  Keep the UI exactly in the terminal style:
+  Keep the UI exactly in the plaintext style:
   - Plain text output.
   - Optional inline text links.
   - Command-line navigation.
   - Autocomplete suggestions only.
 
-  Do not add cards, panels, grids, embedded media previews, buttons in terminal output,
+  Do not add cards, panels, grids, embedded media previews, buttons in output,
   dashboards, app sections, or visual navigation systems.
 
   When adding content, edit the fs object below:
@@ -331,7 +331,7 @@ const fs = {
   "/": {
     type:"dir",
     title:"HOME",
-    guide:"This is the starting point. Read it like a small trail: identity, work, ability, interests, proof, contact.",
+    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
     children:["About","Projects","Skills","Posts","Phases","Interests","Services","Media","Gallery","Contact"]
   },
 
@@ -340,9 +340,11 @@ const fs = {
     title:"ABOUT",
     body:`Joe Rice
 
-Systems administrator. Builder. Father. Learner.
+Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
 
-This site is a terminal-style portfolio. It is meant to feel like opening a small machine instead of scrolling a normal page.
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
 
 The clean path is:
 About -> Projects -> Skills -> Posts -> Contact`
@@ -351,133 +353,155 @@ About -> Projects -> Skills -> Posts -> Contact`
   "/Projects": {
     type:"dir",
     title:"PROJECTS",
-    guide:"This is the workbench. These paths point to systems, dashboards, automations, and practical builds.",
+    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.",
     children:["fortigate-blocklist","it-dashboard","site-shell"]
   },
   "/Projects/fortigate-blocklist": {
     type:"page",
     title:"PROJECT // FORTIGATE BLOCKLIST",
-    body:"Security automation concept for blocking malicious traffic through structured feeds."
+    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.`
   },
   "/Projects/it-dashboard": {
     type:"page",
     title:"PROJECT // IT DASHBOARD",
-    body:"Internal single-pane dashboard concept for tickets, SLA, security, network, and systems status."
+    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.`
   },
   "/Projects/site-shell": {
     type:"page",
-    title:"PROJECT // SITE SHELL",
-    body:"A plaintext terminal interface for navigating identity, work, learning, services, media, and life phases."
+    title:"PROJECT // PORTFOLIO SITE",
+    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint.`
   },
 
   "/Skills": {
     type:"list",
     title:"SKILLS",
-    guide:"This is the capability index.",
+    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut labore et dolore magnam aliquam quaerat voluptatem.",
     items:["PowerShell","Azure","Cloud","Networking","Security","SQL","Automation","Dashboards","ASPX","Documentation"]
   },
 
   "/Posts": {
     type:"dir",
     title:"POSTS",
-    guide:"These are short entries. Each one is a small thought, note, or working idea.",
+    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
     children:["productive-procrastination.txt","terminal-website-concept.txt"]
   },
   "/Posts/productive-procrastination.txt": {
     type:"post",
     title:"PRODUCTIVE PROCRASTINATION",
-    body:`Sometimes avoiding one kind of work creates energy for another kind of work.
+    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
 
-The danger is pretending movement is progress.
-The opportunity is using restlessness to build structure.`
+Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+
+Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`
   },
   "/Posts/terminal-website-concept.txt": {
     type:"post",
-    title:"TERMINAL WEBSITE CONCEPT",
-    body:`A website that opens like a command line.
+    title:"INTERACTIVE SITE CONCEPT",
+    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
-The visitor does not scroll first.
-They enter commands.
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 
-The trick is to make the terminal feel discoverable without turning it into a normal website.`
+Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.`
   },
 
   "/Phases": {
     type:"dir",
     title:"PHASES",
-    guide:"This area treats life and work as chapters. Open a phase to see the current operating frame.",
+    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam libero tempore cum soluta nobis est eligendi optio cumque nihil impedit quo minus.",
     children:["Phase-01","Phase-02","Phase-03"]
   },
   "/Phases/Phase-01": {
     type:"page",
     title:"PHASE 01",
-    body:"Early formation. Curiosity. Raw ambition. Unstructured learning."
+    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`
   },
   "/Phases/Phase-02": {
     type:"page",
     title:"PHASE 02",
-    body:"System building. Technical growth. Pattern recognition."
+    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti.`
   },
   "/Phases/Phase-03": {
     type:"page",
-    title:"PHASE 03 // CONFIDENT / STEADY",
-    body:`Current phase:
-more confident, more steady, less dependent on AI to form the words.
+    title:"PHASE 03",
+    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
-Operating problem:
-translate learning into real visible work.`
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet.`
   },
 
   "/Interests": {
     type:"list",
     title:"INTERESTS",
-    guide:"This area shows the topics that keep showing up behind the work.",
+    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Itaque earum rerum hic tenetur a sapiente delectus ut aut reiciendis voluptatibus maiores.",
     items:["Great Conversation","Machiavelli","Learning","Visual Thinking","AI","Somatics","Parenting","Neuroscience"]
   },
 
   "/Services": {
     type:"list",
     title:"SERVICES",
-    guide:"This area translates the work into things someone could actually ask for.",
+    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur vel illum qui dolorem.",
     items:["IT automation","PowerShell scripting","internal dashboards","security log analysis","network documentation"]
   },
 
   "/Media": {
     type:"dir",
     title:"MEDIA",
-    guide:"This area contains image records. Opening one prints a note and gives a new-tab image link.",
+    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut labore et dolore magnam aliquam quaerat voluptatem. Opening one prints a note and gives a new-tab image link.",
     children:["desk-setup.jpg","network-diagram.jpg","field-notes.jpg"]
   },
   "/Media/desk-setup.jpg": {
     type:"image",
     title:"MEDIA // DESK SETUP",
     url:"https://picsum.photos/id/26/1200/800",
-    body:"Image placeholder for desk setup / workspace media."
+    body:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut labore et dolore magnam aliquam quaerat voluptatem."
   },
   "/Media/network-diagram.jpg": {
     type:"image",
     title:"MEDIA // NETWORK DIAGRAM",
     url:"https://picsum.photos/id/180/1200/800",
-    body:"Image placeholder for network diagram / technical media."
+    body:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit."
   },
   "/Media/field-notes.jpg": {
     type:"image",
     title:"MEDIA // FIELD NOTES",
     url:"https://picsum.photos/id/1060/1200/800",
-    body:"Image placeholder for field notes / observational media."
+    body:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse."
   },
 
   "/Gallery": {
     type:"list",
     title:"GALLERY",
-    guide:"A small visual index. Open an image to launch the source in a new tab.",
+    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut labore et dolore magnam aliquam quaerat voluptatem. Open an image to launch the source in a new tab.",
     items:["desk-setup.jpg","network-diagram.jpg","field-notes.jpg"]
   },
 
   "/Contact": {
     type:"page",
     title:"CONTACT",
-    body:"Contact placeholder.\n\nLater: email, LinkedIn, GitHub, inquiry form."
+    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+
+Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+
+Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
   }
 };
 
@@ -486,8 +510,8 @@ const ARG_COMMANDS = new Set(["/open","/cat","/cd"]);
 const commandMeta = [
   { label:"help", value:"help", desc:"show command menu", aliases:["/help"] },
   { label:"?", value:"?", desc:"show command menu", aliases:["/?"] },
-  { label:"clear", value:"clear", desc:"reset terminal home", aliases:["/clear"] },
-  { label:"cls", value:"cls", desc:"reset terminal home", aliases:[] },
+  { label:"clear", value:"clear", desc:"reset to home", aliases:["/clear"] },
+  { label:"cls", value:"cls", desc:"reset to home", aliases:[] },
   { label:"pwd", value:"pwd", desc:"show current location", aliases:["/pwd"] },
   { label:"ls", value:"ls", desc:"show current options", aliases:["/ls"] },
   { label:"cd", value:"cd", desc:"move into a section", aliases:["/cd"] },
@@ -590,7 +614,6 @@ function dashboardHTML() {
   return `${areaHeader("Home")}
 
 JOERICE.ME
-version 0.7.2 plaintext trail
 
 ${escapeHtml(root.guide)}
 
@@ -681,7 +704,6 @@ async function finishBoot(animated = false) {
 
 async function boot() {
   await typeLine("JOERICE.ME", 20);
-  await typeLine("version 0.7.2 plaintext trail", 10, "dim");
   await sleep(250);
   await loadingLine("mounting /identity");
   await loadingLine("mounting /work");
@@ -689,7 +711,7 @@ async function boot() {
   await loadingLine("mounting /projects");
   await loadingLine("mounting /media");
   await loadingLine("loading command index");
-  await loadingLine("starting shell");
+  await loadingLine("ready");
 
   if (!state.bootSkipped) await finishBoot(true);
 }
@@ -938,7 +960,7 @@ ${links.join("\n")}`;
 }
 
 function updatePrompt() {
-  promptEl.textContent = `joe@home:${state.path}$`;
+  promptEl.textContent = `joerice.me:${state.path}>`;
 }
 
 function helpHTML() {
@@ -948,8 +970,8 @@ AVAILABLE COMMANDS
 
 ${shellLink("help", "help")}              show this menu
 ${shellLink("?", "?")}                 show this menu
-${shellLink("clear", "clear")}             reset terminal home
-${shellLink("cls", "cls")}               reset terminal home
+${shellLink("clear", "clear")}             reset to home
+${shellLink("cls", "cls")}               reset to home
 ${shellLink("pwd", "pwd")}               show current location
 ${shellLink("ls", "ls")}                show current options
 ${shellLink("cd [section]", "cd")}       move into a section
@@ -1154,7 +1176,7 @@ async function run(raw, echo = true) {
     state.animating = false;
   }
 
-  if (echo) print(`joe@home:${state.path}$ ${input}\n`, "cmd-echo");
+  if (echo) print(`joerice.me:${state.path}> ${input}\n`, "cmd-echo");
 
   const [rawCmd, ...args] = input.split(/\s+/);
   const cmd = canonicalCommand(rawCmd);
