@@ -171,6 +171,8 @@ They enter commands.` },
   "/Contact": { type:"page", title:"CONTACT", body:"Contact placeholder.\n\nLater: email, LinkedIn, GitHub, inquiry form." }
 };
 
+const ARG_CMDS = ["/open", "/cat", "/cd"];
+
 const commandMeta = [
   { cmd:"/help", desc:"show command menu" },
   { cmd:"/?", desc:"show command menu" },
@@ -500,7 +502,7 @@ inputRow.addEventListener("submit", e => {
   commandInput.value = "";
   suggestionsEl.style.display = "none";
 
-  const needsArg = ["/open", "/cat", "/cd"].includes(completed);
+  const needsArg = ARG_CMDS.includes(completed);
 
   if (needsArg) {
     commandInput.value = completed + " ";
@@ -538,7 +540,7 @@ commandInput.addEventListener("keydown", e => {
     e.preventDefault();
     const completed = acceptSuggestion();
     if (completed) {
-      commandInput.value = completed + (["/open","/cat","/cd"].includes(completed) ? " " : "");
+      commandInput.value = completed + (ARG_CMDS.includes(completed) ? " " : "");
       showSuggestions();
     }
   }
@@ -548,22 +550,33 @@ screen.addEventListener("click", e => {
   const link = e.target.closest("[data-command]");
   if (!link) return;
 
-  commandInput.value = link.dataset.command;
+  const cmd = link.dataset.command;
+  commandInput.value = "";
+  suggestionsEl.style.display = "none";
+  run(cmd);
   commandInput.focus();
-  showSuggestions();
 });
 
 suggestionsEl.addEventListener("mousedown", e => {
   const item = e.target.closest(".suggestion");
   if (!item) return;
 
+  e.preventDefault(); // keep input focused so the mobile keyboard stays open
+
   state.selectedSuggestion = Number(item.dataset.index);
   const completed = acceptSuggestion();
-  if (completed) {
-    commandInput.value = completed;
+  if (!completed) return;
+
+  const needsArg = ARG_CMDS.includes(completed);
+  if (needsArg) {
+    commandInput.value = completed + " ";
+    showSuggestions();
+  } else {
+    commandInput.value = "";
     suggestionsEl.style.display = "none";
-    commandInput.focus();
+    run(completed);
   }
+  commandInput.focus();
 });
 
 function tickClock(){ document.getElementById("clock").textContent = new Date().toLocaleTimeString(); }
