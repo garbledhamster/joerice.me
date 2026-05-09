@@ -1193,6 +1193,11 @@ async function run(raw, echo = true) {
 inputRow.addEventListener("submit", e => {
   e.preventDefault();
 
+  if (state.animating) {
+    state.skipAnimation = true;
+    return;
+  }
+
   const suggestions = getSuggestions(commandInput.value);
   const completed = suggestions.length ? acceptSuggestion() : commandInput.value.trim();
 
