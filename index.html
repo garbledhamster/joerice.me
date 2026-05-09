@@ -559,7 +559,6 @@ function syncViewportHeight() {
 window.addEventListener("resize", syncViewportHeight);
 window.addEventListener("orientationchange", syncViewportHeight);
 window.visualViewport?.addEventListener("resize", syncViewportHeight);
-window.visualViewport?.addEventListener("scroll", syncViewportHeight);
 syncViewportHeight();
 
 boot();
