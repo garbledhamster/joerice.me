@@ -6,8 +6,9 @@
 <title>joerice.me // terminal os</title>
 <style>
   :root {
-    --bg:#f2f2ed; --fg:#050505; --muted:#666; --panel:#fff; --line:#050505;
-    --warn:#9b0000; --link:#0645ad; --mono:"Courier New", Courier, monospace;
+    --bg:#0d0d0d; --fg:#d4d4d4; --muted:#555; --panel:#111; --bar:#1a1a1a;
+    --line:#333; --warn:#f48771; --link:#4fc1ff; --prompt:#4ec9b0;
+    --mono:"Courier New", Courier, monospace;
     --app-vh: 100vh;
   }
 
@@ -22,58 +23,70 @@
 
   .shell {
     width:min(980px,100%); height:min(720px,calc(var(--app-vh) - 36px));
-    border:3px solid var(--line); background:var(--panel);
-    display:grid; grid-template-rows:auto 1fr auto; box-shadow:8px 8px 0 var(--fg);
+    border:1px solid var(--line); background:var(--panel);
+    display:grid; grid-template-rows:auto 1fr; box-shadow:4px 4px 0 #222;
   }
 
   .bar {
-    border-bottom:2px solid var(--line); padding:8px 10px;
-    display:flex; justify-content:space-between; text-transform:uppercase; font-weight:bold;
+    border-bottom:1px solid var(--line); padding:7px 12px; background:var(--bar);
+    display:flex; align-items:center; justify-content:space-between;
+    text-transform:uppercase; font-size:11px; color:#777; letter-spacing:.08em;
   }
 
-  .screen { padding:14px; overflow-y:auto; white-space:pre-wrap; }
+  .bar-dots { display:flex; gap:6px; }
 
-  .shell-link {
-    color:var(--link); text-decoration:underline; cursor:pointer; font-weight:bold;
+  .bar-dot {
+    width:12px; height:12px; border-radius:50%; border:1px solid rgba(255,255,255,.1);
   }
 
-  .shell-link:hover { background:var(--link); color:#fff; }
+  .bar-dot.red   { background:#ff5f57; }
+  .bar-dot.yel   { background:#febc2e; }
+  .bar-dot.grn   { background:#28c840; }
 
-  .input-zone { border-top:2px solid var(--line); position:relative; }
+  /* terminal body: screen + input in one scrollable column */
+  .terminal { display:flex; flex-direction:column; overflow:hidden; min-height:0; }
+
+  .screen { flex:1; padding:14px 14px 4px; overflow-y:auto; white-space:pre-wrap; }
+
+  .shell-link { color:var(--link); text-decoration:none; cursor:pointer; }
+  .shell-link:hover { text-decoration:underline; opacity:.8; }
+
+  /* input zone sits seamlessly at the bottom of the terminal */
+  .input-zone { padding:2px 14px 10px; }
 
   .suggestions {
-    display:none; max-height:180px; overflow-y:auto; border-bottom:2px solid var(--line);
-    background:var(--panel);
+    display:none; max-height:160px; overflow-y:auto;
+    border:1px solid var(--line); margin-bottom:4px; background:var(--bar);
   }
 
   .suggestion {
     display:grid; grid-template-columns:160px 1fr; gap:10px;
-    padding:7px 10px; border-bottom:1px solid var(--line); cursor:pointer;
+    padding:6px 10px; border-bottom:1px solid var(--line); cursor:pointer;
   }
 
   .suggestion:last-child { border-bottom:0; }
+  .suggestion.active, .suggestion:hover { background:var(--line); color:var(--fg); }
+  .suggestion .desc { opacity:.65; }
 
-  .suggestion.active, .suggestion:hover { background:var(--fg); color:var(--bg); }
+  /* inline prompt + bare input */
+  .input-row { display:flex; align-items:center; }
 
-  .suggestion .desc { color:inherit; opacity:.72; }
-
-  .input-row { display:grid; grid-template-columns:auto 1fr; }
-
-  .prompt { background:var(--fg); color:var(--bg); padding:10px; }
+  .prompt { color:var(--prompt); white-space:nowrap; flex-shrink:0; padding-right:4px; }
 
   input {
-    border:0; outline:0; background:var(--panel); color:var(--fg);
-    font:inherit; padding:10px; width:100%;
+    border:0; outline:0; background:transparent; color:var(--fg);
+    font:inherit; flex:1; caret-color:var(--prompt);
   }
 
   .dim { color:var(--muted); }
   .error { color:var(--warn); }
+  .cmd-echo { color:var(--prompt); }
 
   @media (max-width:700px) {
     body { font-size:12px; }
-    .shell { height:calc(var(--app-vh) - 24px); box-shadow:4px 4px 0 var(--fg); }
-    .shell-wrap { padding:12px; }
-    .suggestion { grid-template-columns:120px 1fr; }
+    .shell { height:calc(var(--app-vh) - 24px); box-shadow:2px 2px 0 #222; }
+    .shell-wrap { padding:10px; }
+    .suggestion { grid-template-columns:110px 1fr; }
   }
 </style>
 </head>
@@ -81,19 +94,26 @@
 <div class="shell-wrap">
   <main class="shell">
     <header class="bar">
-      <div>JOERICE.ME // PERSONAL OS</div>
+      <div class="bar-dots">
+        <span class="bar-dot red"></span>
+        <span class="bar-dot yel"></span>
+        <span class="bar-dot grn"></span>
+      </div>
+      <div>joerice.me — personal os</div>
       <div id="clock">--:--:--</div>
     </header>
 
-    <section class="screen" id="screen"></section>
+    <div class="terminal">
+      <section class="screen" id="screen"></section>
 
-    <section class="input-zone">
-      <div class="suggestions" id="suggestions"></div>
-      <form class="input-row" id="inputRow">
-        <div class="prompt" id="prompt">joe@home:/$</div>
-        <input id="commandInput" autocomplete="off" spellcheck="false" autofocus />
-      </form>
-    </section>
+      <div class="input-zone">
+        <div class="suggestions" id="suggestions"></div>
+        <form class="input-row" id="inputRow">
+          <span class="prompt" id="prompt">joe@home:/$</span>
+          <input id="commandInput" autocomplete="off" spellcheck="false" autofocus />
+        </form>
+      </div>
+    </div>
   </main>
 </div>
 
@@ -437,7 +457,7 @@ async function run(raw) {
   const input = raw.trim();
   if (!input) return;
 
-  print(`joe@home:${state.path}$ ${input}`);
+  print(`joe@home:${state.path}$ ${input}`, "cmd-echo");
 
   const [cmd, ...args] = input.split(/\s+/);
   const arg = args.join(" ");
