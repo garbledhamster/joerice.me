@@ -975,7 +975,7 @@ ${relatedLinks(state.path)}</span>`;
 }
 
 function canonicalCommand(raw = "") {
-  const key = String(raw).trim().toLowerCase().replace(/^\/+/,");
+  const key = String(raw).trim().toLowerCase().replace(/^\/+/ , "");
   const aliases = {
     "?":"/?",
     help:"/help",
@@ -1017,7 +1017,7 @@ function getSuggestions(value) {
   const arg = hasTrailingSpace && parts.length === 1 ? "" : parts.slice(1).join(" ").toLowerCase();
 
   if (parts.length === 1 && !hasTrailingSpace && !ARG_COMMANDS.has(cmd)) {
-    const query = rawCmd.toLowerCase().replace(/^\/+/,");
+    const query = rawCmd.toLowerCase().replace(/^\/+/ , "");
     const commandSuggestions = commandMeta
       .filter(x => {
         const label = x.label.toLowerCase();
