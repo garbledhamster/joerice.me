@@ -3,109 +3,230 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>joerice.me // terminal os</title>
+<title>joerice.me // terminal shell</title>
 <style>
-  :root {
-    --bg:#0d0d0d; --fg:#d4d4d4; --muted:#555; --panel:#111; --bar:#1a1a1a;
-    --line:#333; --warn:#f48771; --link:#4fc1ff; --prompt:#4ec9b0;
-    --mono:"Courier New", Courier, monospace;
-    --app-vh: 100vh;
-  }
+/*
+  LLM MAINTENANCE CONTRACT — READ BEFORE EDITING
 
-  * { box-sizing:border-box; }
+  This project is intentionally a plaintext terminal portfolio.
 
-  body {
-    margin:0; min-height:var(--app-vh); background:var(--bg); color:var(--fg);
-    font-family:var(--mono); font-size:14px; line-height:1.45;
-  }
+  Do not convert the interface into a normal website.
+  Do not add cards, panels, grids, app chrome, modal previews, visual dashboards,
+  embedded media galleries, buttons inside the terminal output, or rich UI sections.
 
-  .shell-wrap { min-height:var(--app-vh); display:grid; place-items:center; padding:18px; }
+  The terminal output should remain plain text with optional clickable text links.
+  The command line should remain the primary interaction model.
 
+  Safe edits:
+  - Add or revise content inside the fs object.
+  - Add new paths, sections, guide text, body text, image URL records, and map entries.
+  - Add simple commands that print plaintext output.
+  - Improve command parsing, autocomplete, accessibility, and bug fixes.
+
+  Unsafe edits:
+  - Replacing terminal output with visual layout components.
+  - Adding image previews inside the terminal.
+  - Adding non-terminal navigation UI.
+  - Changing the app into a card/grid/portfolio template.
+
+  If asked to expand this site, expand the content tree and the text areas.
+  Preserve the plaintext terminal style.
+*/
+:root {
+  --bg:#0d0d0d;
+  --fg:#d4d4d4;
+  --muted:#555;
+  --panel:#111;
+  --bar:#1a1a1a;
+  --line:#333;
+  --warn:#f48771;
+  --link:#4fc1ff;
+  --prompt:#4ec9b0;
+  --mono:"Cascadia Mono","Cascadia Code","JetBrains Mono","SFMono-Regular","Menlo","Consolas","Liberation Mono",monospace;
+  --app-vh:100vh;
+}
+
+* { box-sizing:border-box; }
+
+body {
+  margin:0;
+  min-height:var(--app-vh);
+  background:var(--bg);
+  color:var(--fg);
+  font-family:var(--mono);
+  font-variant-ligatures:none;
+  text-rendering:geometricPrecision;
+  font-size:14px;
+  line-height:1.45;
+}
+
+.shell-wrap {
+  min-height:var(--app-vh);
+  display:grid;
+  place-items:center;
+  padding:18px;
+}
+
+.shell {
+  width:min(980px,100%);
+  height:min(720px,calc(var(--app-vh) - 36px));
+  border:1px solid var(--line);
+  background:var(--panel);
+  display:grid;
+  grid-template-rows:auto 1fr;
+  box-shadow:4px 4px 0 #222;
+}
+
+.bar {
+  border-bottom:1px solid var(--line);
+  padding:7px 12px;
+  background:var(--bar);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  text-transform:uppercase;
+  font-size:11px;
+  color:#777;
+  letter-spacing:.08em;
+}
+
+.bar-dots {
+  display:flex;
+  gap:6px;
+  cursor:pointer;
+}
+
+.bar-dot {
+  width:12px;
+  height:12px;
+  border-radius:50%;
+  border:1px solid rgba(255,255,255,.1);
+}
+
+.bar-dot.red { background:#ff5f57; }
+.bar-dot.yel { background:#febc2e; }
+.bar-dot.grn { background:#28c840; }
+
+.terminal {
+  display:flex;
+  flex-direction:column;
+  overflow:hidden;
+  min-height:0;
+}
+
+.screen {
+  flex:1;
+  padding:14px 14px 4px;
+  overflow-y:auto;
+  white-space:pre-wrap;
+  tab-size:2;
+}
+
+.shell-link {
+  color:var(--link);
+  text-decoration:underline;
+  cursor:pointer;
+  display:inline;
+}
+
+.shell-link:hover { opacity:.8; }
+
+.map-block {
+  font-family:var(--mono);
+  font-variant-ligatures:none;
+  letter-spacing:0;
+  white-space:pre-wrap;
+}
+
+.input-zone { padding:2px 14px 10px; }
+
+.suggestions {
+  display:none;
+  max-height:160px;
+  overflow-y:auto;
+  border:1px solid var(--line);
+  margin-bottom:4px;
+  background:var(--bar);
+  font-family:var(--mono);
+  font-variant-ligatures:none;
+}
+
+.suggestion {
+  display:grid;
+  grid-template-columns:160px 1fr;
+  gap:10px;
+  padding:6px 10px;
+  border-bottom:1px solid var(--line);
+  cursor:pointer;
+}
+
+.suggestion:last-child { border-bottom:0; }
+.suggestion.active,
+.suggestion:hover {
+  background:var(--line);
+  color:var(--fg);
+}
+
+.suggestion .desc { opacity:.65; }
+
+.input-row {
+  display:flex;
+  align-items:center;
+}
+
+.prompt {
+  color:var(--prompt);
+  white-space:nowrap;
+  flex-shrink:0;
+  padding-right:4px;
+}
+
+input {
+  border:0;
+  outline:0;
+  background:transparent;
+  color:var(--fg);
+  font:inherit;
+  font-family:var(--mono);
+  font-variant-ligatures:none;
+  flex:1;
+  caret-color:var(--prompt);
+}
+
+.dim { color:var(--muted); }
+.error { color:var(--warn); }
+.cmd-echo {
+  color:var(--prompt);
+  display:block;
+  margin-bottom:10px;
+}
+
+@media (max-width:700px) {
+  body { font-size:12px; }
   .shell {
-    width:min(980px,100%); height:min(720px,calc(var(--app-vh) - 36px));
-    border:1px solid var(--line); background:var(--panel);
-    display:grid; grid-template-rows:auto 1fr; box-shadow:4px 4px 0 #222;
+    height:calc(var(--app-vh) - 24px);
+    box-shadow:2px 2px 0 #222;
   }
-
-  .bar {
-    border-bottom:1px solid var(--line); padding:7px 12px; background:var(--bar);
-    display:flex; align-items:center; justify-content:space-between;
-    text-transform:uppercase; font-size:11px; color:#777; letter-spacing:.08em;
-  }
-
-  .bar-dots { display:flex; gap:6px; }
-
-  .bar-dot {
-    width:12px; height:12px; border-radius:50%; border:1px solid rgba(255,255,255,.1);
-  }
-
-  .bar-dot.red   { background:#ff5f57; }
-  .bar-dot.yel   { background:#febc2e; }
-  .bar-dot.grn   { background:#28c840; }
-
-  /* terminal body: screen + input in one scrollable column */
-  .terminal { display:flex; flex-direction:column; overflow:hidden; min-height:0; }
-
-  .screen { flex:1; padding:14px 14px 4px; overflow-y:auto; white-space:pre-wrap; }
-
-  .shell-link { color:var(--link); text-decoration:none; cursor:pointer; }
-  .shell-link:hover { text-decoration:underline; opacity:.8; }
-
-  /* input zone sits seamlessly at the bottom of the terminal */
-  .input-zone { padding:2px 14px 10px; }
-
-  .suggestions {
-    display:none; max-height:160px; overflow-y:auto;
-    border:1px solid var(--line); margin-bottom:4px; background:var(--bar);
-  }
-
-  .suggestion {
-    display:grid; grid-template-columns:160px 1fr; gap:10px;
-    padding:6px 10px; border-bottom:1px solid var(--line); cursor:pointer;
-  }
-
-  .suggestion:last-child { border-bottom:0; }
-  .suggestion.active, .suggestion:hover { background:var(--line); color:var(--fg); }
-  .suggestion .desc { opacity:.65; }
-
-  /* inline prompt + bare input */
-  .input-row { display:flex; align-items:center; }
-
-  .prompt { color:var(--prompt); white-space:nowrap; flex-shrink:0; padding-right:4px; }
-
-  input {
-    border:0; outline:0; background:transparent; color:var(--fg);
-    font:inherit; flex:1; caret-color:var(--prompt);
-  }
-
-  .dim { color:var(--muted); }
-  .error { color:var(--warn); }
-  .cmd-echo { color:var(--prompt); }
-
-  @media (max-width:700px) {
-    body { font-size:12px; }
-    .shell { height:calc(var(--app-vh) - 24px); box-shadow:2px 2px 0 #222; }
-    .shell-wrap { padding:10px; }
-    .suggestion { grid-template-columns:110px 1fr; }
-  }
+  .shell-wrap { padding:10px; }
+  .suggestion { grid-template-columns:110px 1fr; }
+}
 </style>
 </head>
 <body>
 <div class="shell-wrap">
   <main class="shell">
     <header class="bar">
-      <div class="bar-dots">
+      <div class="bar-dots" id="barDots" title="reset terminal">
         <span class="bar-dot red"></span>
         <span class="bar-dot yel"></span>
         <span class="bar-dot grn"></span>
       </div>
-      <div>joerice.me — personal os</div>
+      <div>joerice.me — terminal shell</div>
       <div id="clock">--:--:--</div>
     </header>
 
     <div class="terminal">
       <section class="screen" id="screen"></section>
-
       <div class="input-zone">
         <div class="suggestions" id="suggestions"></div>
         <form class="input-row" id="inputRow">
@@ -118,79 +239,244 @@
 </div>
 
 <script>
+/*
+  LLM MAINTENANCE CONTRACT — READ BEFORE EDITING
+
+  This file is a plaintext terminal portfolio, not a visual portfolio template.
+
+  Keep the UI exactly in the terminal style:
+  - Plain text output.
+  - Optional inline text links.
+  - Command-line navigation.
+  - Autocomplete suggestions only.
+
+  Do not add cards, panels, grids, embedded media previews, buttons in terminal output,
+  dashboards, app sections, or visual navigation systems.
+
+  When adding content, edit the fs object below:
+  - Add new paths like "/Projects/example".
+  - Add guide text, body text, items, children, and image URL records.
+  - Update mapHTML() only when the content tree changes.
+
+  The goal is for future LLMs to add content, not redesign the interface.
+*/
+
+/* PUBLISHING TOGGLE: set ENABLE_LINKS:false to make this command-line only. */
+const CONFIG = {
+  ENABLE_LINKS: true,
+  ENABLE_EXTERNAL_LINKS: true
+};
+
 const screen = document.getElementById("screen");
 const inputRow = document.getElementById("inputRow");
 const commandInput = document.getElementById("commandInput");
 const promptEl = document.getElementById("prompt");
 const suggestionsEl = document.getElementById("suggestions");
+const barDots = document.getElementById("barDots");
 
 const state = {
   path: "/",
   selectedSuggestion: 0,
   booting: true,
-  bootSkipped: false
+  bootSkipped: false,
+  animating: false,
+  skipAnimation: false,
+  animationId: 0
 };
 
 const fs = {
-  "/": { type:"dir", children:["About","Phases","Posts","Projects","Skills","Interests","Services","Media","Gallery","Contact"] },
-  "/About": { type:"page", title:"ABOUT", body:`Joe Rice
+  "/": {
+    type:"dir",
+    title:"HOME",
+    guide:"This is the starting point. Read it like a small trail: identity, work, ability, interests, proof, contact.",
+    children:["About","Projects","Skills","Posts","Phases","Interests","Services","Media","Gallery","Contact"]
+  },
+
+  "/About": {
+    type:"page",
+    title:"ABOUT",
+    body:`Joe Rice
 
 Systems administrator. Builder. Father. Learner.
 
-This site is not only a portfolio.
-It is a personal operating system for tracking work, learning, phases of life, and useful output.` },
-  "/Phases": { type:"dir", children:["Phase-01","Phase-02","Phase-03"] },
-  "/Phases/Phase-01": { type:"page", title:"PHASE 01", body:"Early formation. Curiosity. Raw ambition. Unstructured learning." },
-  "/Phases/Phase-02": { type:"page", title:"PHASE 02", body:"System building. Technical growth. Pattern recognition." },
-  "/Phases/Phase-03": { type:"page", title:"PHASE 03 // CONFIDENT / STEADY", body:`Current phase:
+This site is a terminal-style portfolio. It is meant to feel like opening a small machine instead of scrolling a normal page.
+
+The clean path is:
+About -> Projects -> Skills -> Posts -> Contact`
+  },
+
+  "/Projects": {
+    type:"dir",
+    title:"PROJECTS",
+    guide:"This is the workbench. These paths point to systems, dashboards, automations, and practical builds.",
+    children:["fortigate-blocklist","it-dashboard","site-shell"]
+  },
+  "/Projects/fortigate-blocklist": {
+    type:"page",
+    title:"PROJECT // FORTIGATE BLOCKLIST",
+    body:"Security automation concept for blocking malicious traffic through structured feeds."
+  },
+  "/Projects/it-dashboard": {
+    type:"page",
+    title:"PROJECT // IT DASHBOARD",
+    body:"Internal single-pane dashboard concept for tickets, SLA, security, network, and systems status."
+  },
+  "/Projects/site-shell": {
+    type:"page",
+    title:"PROJECT // SITE SHELL",
+    body:"A plaintext terminal interface for navigating identity, work, learning, services, media, and life phases."
+  },
+
+  "/Skills": {
+    type:"list",
+    title:"SKILLS",
+    guide:"This is the capability index.",
+    items:["PowerShell","Azure","Cloud","Networking","Security","SQL","Automation","Dashboards","ASPX","Documentation"]
+  },
+
+  "/Posts": {
+    type:"dir",
+    title:"POSTS",
+    guide:"These are short entries. Each one is a small thought, note, or working idea.",
+    children:["productive-procrastination.txt","terminal-website-concept.txt"]
+  },
+  "/Posts/productive-procrastination.txt": {
+    type:"post",
+    title:"PRODUCTIVE PROCRASTINATION",
+    body:`Sometimes avoiding one kind of work creates energy for another kind of work.
+
+The danger is pretending movement is progress.
+The opportunity is using restlessness to build structure.`
+  },
+  "/Posts/terminal-website-concept.txt": {
+    type:"post",
+    title:"TERMINAL WEBSITE CONCEPT",
+    body:`A website that opens like a command line.
+
+The visitor does not scroll first.
+They enter commands.
+
+The trick is to make the terminal feel discoverable without turning it into a normal website.`
+  },
+
+  "/Phases": {
+    type:"dir",
+    title:"PHASES",
+    guide:"This area treats life and work as chapters. Open a phase to see the current operating frame.",
+    children:["Phase-01","Phase-02","Phase-03"]
+  },
+  "/Phases/Phase-01": {
+    type:"page",
+    title:"PHASE 01",
+    body:"Early formation. Curiosity. Raw ambition. Unstructured learning."
+  },
+  "/Phases/Phase-02": {
+    type:"page",
+    title:"PHASE 02",
+    body:"System building. Technical growth. Pattern recognition."
+  },
+  "/Phases/Phase-03": {
+    type:"page",
+    title:"PHASE 03 // CONFIDENT / STEADY",
+    body:`Current phase:
 more confident, more steady, less dependent on AI to form the words.
 
 Operating problem:
-translate learning into real visible work.` },
-  "/Posts": { type:"dir", children:["productive-procrastination.txt","terminal-website-concept.txt"] },
-  "/Posts/productive-procrastination.txt": { type:"post", title:"PRODUCTIVE PROCRASTINATION", body:`Sometimes avoiding one kind of work creates energy for another kind of work.
+translate learning into real visible work.`
+  },
 
-The danger is pretending movement is progress.
-The opportunity is using restlessness to build structure.` },
-  "/Posts/terminal-website-concept.txt": { type:"post", title:"TERMINAL WEBSITE CONCEPT", body:`A website that opens like an operating system.
+  "/Interests": {
+    type:"list",
+    title:"INTERESTS",
+    guide:"This area shows the topics that keep showing up behind the work.",
+    items:["Great Conversation","Machiavelli","Learning","Visual Thinking","AI","Somatics","Parenting","Neuroscience"]
+  },
 
-The visitor does not scroll first.
-They enter commands.` },
-  "/Projects": { type:"dir", children:["fortigate-blocklist","it-dashboard","personal-os"] },
-  "/Projects/fortigate-blocklist": { type:"page", title:"PROJECT // FORTIGATE BLOCKLIST", body:"Security automation concept for blocking malicious traffic through structured feeds." },
-  "/Projects/it-dashboard": { type:"page", title:"PROJECT // IT DASHBOARD", body:"Internal single-pane dashboard concept for tickets, SLA, security, network, and systems status." },
-  "/Projects/personal-os": { type:"page", title:"PROJECT // PERSONAL OS", body:"A brutal plaintext interface for navigating identity, work, learning, services, and life phases." },
-  "/Skills": { type:"list", title:"SKILLS", items:["PowerShell","Azure","Cloud","Networking","Security","SQL","Automation","Dashboards","ASPX","Documentation"] },
-  "/Interests": { type:"list", title:"INTERESTS", items:["Great Conversation","Machiavelli","Learning","Visual Thinking","AI","Somatics","Parenting","Neuroscience"] },
-  "/Services": { type:"list", title:"SERVICES", items:["IT automation","PowerShell scripting","internal dashboards","security log analysis","network documentation"] },
-  "/Media": { type:"dir", children:["desk-setup.img","network-diagram.img","field-notes.img"] },
-  "/Media/desk-setup.img": { type:"media", title:"MEDIA // DESK SETUP", body:"[image placeholder]\n\nLater this can open a brutal lightbox/modal." },
-  "/Media/network-diagram.img": { type:"media", title:"MEDIA // NETWORK DIAGRAM", body:"[image placeholder]\n\nA clean media record connected to work/project notes." },
-  "/Media/field-notes.img": { type:"media", title:"MEDIA // FIELD NOTES", body:"[image placeholder]\n\nMedia treated as evidence, not decoration." },
-  "/Gallery": { type:"list", title:"GALLERY", items:["▧ desk-setup.img","▧ network-diagram.img","▧ field-notes.img"] },
-  "/Contact": { type:"page", title:"CONTACT", body:"Contact placeholder.\n\nLater: email, LinkedIn, GitHub, inquiry form." }
+  "/Services": {
+    type:"list",
+    title:"SERVICES",
+    guide:"This area translates the work into things someone could actually ask for.",
+    items:["IT automation","PowerShell scripting","internal dashboards","security log analysis","network documentation"]
+  },
+
+  "/Media": {
+    type:"dir",
+    title:"MEDIA",
+    guide:"This area contains image records. Opening one prints a note and gives a new-tab image link.",
+    children:["desk-setup.jpg","network-diagram.jpg","field-notes.jpg"]
+  },
+  "/Media/desk-setup.jpg": {
+    type:"image",
+    title:"MEDIA // DESK SETUP",
+    url:"https://picsum.photos/id/26/1200/800",
+    body:"Image placeholder for desk setup / workspace media."
+  },
+  "/Media/network-diagram.jpg": {
+    type:"image",
+    title:"MEDIA // NETWORK DIAGRAM",
+    url:"https://picsum.photos/id/180/1200/800",
+    body:"Image placeholder for network diagram / technical media."
+  },
+  "/Media/field-notes.jpg": {
+    type:"image",
+    title:"MEDIA // FIELD NOTES",
+    url:"https://picsum.photos/id/1060/1200/800",
+    body:"Image placeholder for field notes / observational media."
+  },
+
+  "/Gallery": {
+    type:"list",
+    title:"GALLERY",
+    guide:"A small visual index. Open an image to launch the source in a new tab.",
+    items:["desk-setup.jpg","network-diagram.jpg","field-notes.jpg"]
+  },
+
+  "/Contact": {
+    type:"page",
+    title:"CONTACT",
+    body:"Contact placeholder.\n\nLater: email, LinkedIn, GitHub, inquiry form."
+  }
 };
 
-const ARG_CMDS = ["/open", "/cat", "/cd"];
+const ARG_COMMANDS = new Set(["/open","/cat","/cd"]);
 
 const commandMeta = [
-  { cmd:"/help", desc:"show command menu" },
-  { cmd:"/?", desc:"show command menu" },
-  { cmd:"/clear", desc:"clear terminal" },
-  { cmd:"/pwd", desc:"show current location" },
-  { cmd:"/ls", desc:"list current directory" },
-  { cmd:"/cd", desc:"change directory" },
-  { cmd:"/open", desc:"open file, page, list, or folder" },
-  { cmd:"/cat", desc:"read file or page" },
-  { cmd:"/home", desc:"return to root" },
-  { cmd:"/map", desc:"show site structure" },
-  { cmd:"/about", desc:"open about" },
-  { cmd:"/contact", desc:"open contact" }
+  { label:"help", value:"help", desc:"show command menu", aliases:["/help"] },
+  { label:"?", value:"?", desc:"show command menu", aliases:["/?"] },
+  { label:"clear", value:"clear", desc:"reset terminal home", aliases:["/clear"] },
+  { label:"cls", value:"cls", desc:"reset terminal home", aliases:[] },
+  { label:"pwd", value:"pwd", desc:"show current location", aliases:["/pwd"] },
+  { label:"ls", value:"ls", desc:"show current options", aliases:["/ls"] },
+  { label:"cd", value:"cd", desc:"move into a section", aliases:["/cd"] },
+  { label:"open", value:"open", desc:"open a section or item", aliases:["/open"] },
+  { label:"cat", value:"cat", desc:"read a section or item", aliases:["/cat"] },
+  { label:"home", value:"home", desc:"return to root", aliases:["/home"] },
+  { label:"back", value:"back", desc:"go up one level", aliases:["/back"] },
+  { label:"map", value:"map", desc:"show site structure", aliases:["/map"] },
+  { label:"about", value:"about", desc:"open about", aliases:["/about"] },
+  { label:"contact", value:"contact", desc:"open contact", aliases:["/contact"] }
 ];
 
-function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
 
-function print(text="", className="") {
+function escapeHtml(str) {
+  return String(str)
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function areaHeader(title) {
+  const clean = String(title || "AREA").toUpperCase();
+  const line = "=".repeat(Math.max(22, clean.length + 8));
+  return `${line}\n${clean}\n${line}`;
+}
+
+function print(text = "", className = "") {
   const span = document.createElement("span");
   if (className) span.className = className;
   span.textContent = text + "\n";
@@ -198,25 +484,108 @@ function print(text="", className="") {
   screen.scrollTop = screen.scrollHeight;
 }
 
-function printLinks() {
-  const wrap = document.createElement("div");
-  wrap.innerHTML =
-`QUICK START:
-<span class="shell-link" data-command="/open About">About</span>  /  
-<span class="shell-link" data-command="/open Projects">Projects</span>  /  
-<span class="shell-link" data-command="/open Posts">Posts</span>  /  
-<span class="shell-link" data-command="/open Phases">Phases</span>  /  
-<span class="shell-link" data-command="/open Media">Media</span>  /  
-<span class="shell-link" data-command="/open Services">Hire</span>  /  
-<span class="shell-link" data-command="/help">Commands</span>
+async function animateHTML(html = "", speed = 8) {
+  const id = ++state.animationId;
+  state.animating = true;
+  state.skipAnimation = false;
 
-`;
+  const wrap = document.createElement("div");
   screen.appendChild(wrap);
-  screen.scrollTop = screen.scrollHeight;
+
+  const temp = document.createElement("div");
+  temp.innerHTML = html;
+  const plainText = temp.textContent || temp.innerText || "";
+
+  let output = "";
+
+  for (let i = 0; i < plainText.length; i++) {
+    if (state.skipAnimation || id !== state.animationId) break;
+
+    output += plainText[i];
+    wrap.textContent = output;
+    screen.scrollTop = screen.scrollHeight;
+
+    if (plainText[i] === "\n") await sleep(24);
+    else await sleep(speed);
+  }
+
+  if (id === state.animationId) {
+    wrap.innerHTML = html;
+    screen.scrollTop = screen.scrollHeight;
+    state.animating = false;
+    state.skipAnimation = false;
+  }
 }
 
-async function typeLine(text="", delay=12, className="") {
+function shellLink(label, command) {
+  if (!CONFIG.ENABLE_LINKS) return escapeHtml(label);
+  return `<span class="shell-link" data-command="${escapeHtml(command)}">${escapeHtml(label)}</span>`;
+}
+
+function externalLink(label, url) {
+  if (!CONFIG.ENABLE_LINKS || !CONFIG.ENABLE_EXTERNAL_LINKS) {
+    return `${escapeHtml(label)}: ${escapeHtml(url)}`;
+  }
+  return `<span class="shell-link" data-external="${escapeHtml(url)}">${escapeHtml(label)} ↗</span>`;
+}
+
+function navLine(index, label, command) {
+  const number = String(index + 1).padStart(2, "0");
+  return `${number}  ${shellLink(label, command)}\n    command: ${escapeHtml(command)}`;
+}
+
+function dashboardHTML() {
+  const root = fs["/"];
+  const lines = root.children.map((item, index) => navLine(index, item, `open ${item}`)).join("\n\n");
+
+  return `${areaHeader("Home")}
+
+JOERICE.ME
+version 0.7.2 plaintext trail
+
+${escapeHtml(root.guide)}
+
+Suggested path:
+01 About
+02 Projects
+03 Skills
+04 Posts
+05 Contact
+
+Select a path to begin.
+
+${lines}
+
+Useful commands:
+${shellLink("help", "help")}     command: help
+${shellLink("map", "map")}      command: map
+${shellLink("clear", "clear")}    command: clear
+
+`;
+}
+
+async function resetHome(animated = true) {
+  state.animationId++;
+  state.animating = false;
+  state.skipAnimation = false;
+  state.path = "/";
+  updatePrompt();
+  suggestionsEl.style.display = "none";
+  commandInput.value = "";
+  screen.textContent = "";
+  commandInput.focus();
+
+  if (animated) await animateHTML(dashboardHTML(), 5);
+  else {
+    const wrap = document.createElement("div");
+    wrap.innerHTML = dashboardHTML();
+    screen.appendChild(wrap);
+  }
+}
+
+async function typeLine(text = "", delay = 12, className = "") {
   if (state.bootSkipped) return;
+
   const span = document.createElement("span");
   if (className) span.className = className;
   screen.appendChild(span);
@@ -231,83 +600,135 @@ async function typeLine(text="", delay=12, className="") {
   span.textContent += "\n";
 }
 
-async function loadingLine(label, cycles=2) {
+async function loadingLine(label, cycles = 2) {
   if (state.bootSkipped) return;
+
   const span = document.createElement("span");
   screen.appendChild(span);
 
-  for (let i=0; i<cycles; i++) {
+  for (let i = 0; i < cycles; i++) {
     if (state.bootSkipped) return;
-    span.textContent = `${label}.`; await sleep(220);
+    span.textContent = `${label}.`;
+    await sleep(200);
+
     if (state.bootSkipped) return;
-    span.textContent = `${label}..`; await sleep(220);
+    span.textContent = `${label}..`;
+    await sleep(200);
+
     if (state.bootSkipped) return;
-    span.textContent = `${label}...`; await sleep(220);
+    span.textContent = `${label}...`;
+    await sleep(200);
   }
 
   span.textContent = `${label}... OK\n`;
 }
 
-function finishBoot() {
+async function finishBoot(animated = false) {
   state.booting = false;
   state.bootSkipped = true;
-  screen.textContent =
-`JOERICE.ME PERSONAL OS
-version 0.4.0 shell-links
-
-BOOT COMPLETE.
-
-Type / to enter command mode.
-Type /help or /? to see available commands.
-
-`;
-  printLinks();
-  commandInput.focus();
+  await resetHome(animated);
 }
 
 async function boot() {
-  await typeLine("JOERICE.ME PERSONAL OS", 20);
-  await typeLine("version 0.4.0 shell-links", 10, "dim");
+  await typeLine("JOERICE.ME", 20);
+  await typeLine("version 0.7.2 plaintext trail", 10, "dim");
   await sleep(250);
-
   await loadingLine("mounting /identity");
   await loadingLine("mounting /work");
   await loadingLine("mounting /learning");
-  await loadingLine("mounting /phases");
+  await loadingLine("mounting /projects");
   await loadingLine("mounting /media");
-  await loadingLine("loading autocomplete");
+  await loadingLine("loading command index");
   await loadingLine("starting shell");
 
-  if (!state.bootSkipped) finishBoot();
+  if (!state.bootSkipped) await finishBoot(true);
 }
 
-function normalizePath(path){ return path.replace(/\/+/g, "/").replace(/\/$/, "") || "/"; }
+function normalizeSlashes(path) {
+  return path.replace(/\/+/g, "/").replace(/\/$/, "") || "/";
+}
+
+function findPathCaseInsensitive(path) {
+  const normalized = normalizeSlashes(path);
+  if (fs[normalized]) return normalized;
+
+  const lower = normalized.toLowerCase();
+  return Object.keys(fs).find(key => key.toLowerCase() === lower) || normalized;
+}
+
+function currentNode() {
+  return fs[state.path];
+}
+
+function parentPath(path = state.path) {
+  if (path === "/") return "/";
+  const parts = path.split("/").filter(Boolean);
+  parts.pop();
+  return "/" + parts.join("/") || "/";
+}
+
+function findByLeafName(input) {
+  const clean = String(input || "").trim().toLowerCase();
+  if (!clean) return null;
+
+  const matches = Object.keys(fs).filter(path => {
+    const leaf = path.split("/").filter(Boolean).pop();
+    return leaf && leaf.toLowerCase() === clean;
+  });
+
+  if (matches.length === 1) return matches[0];
+  return null;
+}
 
 function resolvePath(input) {
-  if (!input || input === ".") return state.path;
-  if (input === "/") return "/";
-  if (input.startsWith("/")) return normalizePath(input);
+  const cleanInput = String(input || "").trim();
 
-  if (input === "..") {
+  if (!cleanInput || cleanInput === ".") return state.path;
+  if (cleanInput === "/") return "/";
+  if (cleanInput.startsWith("/")) return findPathCaseInsensitive(cleanInput);
+
+  if (cleanInput === "..") {
     if (state.path === "/") return "/";
     const parts = state.path.split("/").filter(Boolean);
     parts.pop();
-    return "/" + parts.join("/");
+    return "/" + parts.join("/") || "/";
   }
 
-  return normalizePath(state.path === "/" ? `/${input}` : `${state.path}/${input}`);
+  const rootCandidate = findPathCaseInsensitive(`/${cleanInput}`);
+  if (fs[rootCandidate]) return rootCandidate;
+
+  const current = currentNode();
+  if (current && current.type === "dir") {
+    const localCandidate = findPathCaseInsensitive(`${state.path}/${cleanInput}`);
+    if (fs[localCandidate]) return localCandidate;
+  }
+
+  const parent = parentPath(state.path);
+  if (parent !== "/") {
+    const siblingCandidate = findPathCaseInsensitive(`${parent}/${cleanInput}`);
+    if (fs[siblingCandidate]) return siblingCandidate;
+  }
+
+  const leafCandidate = findByLeafName(cleanInput);
+  if (leafCandidate) return leafCandidate;
+
+  return findPathCaseInsensitive(state.path === "/" ? `/${cleanInput}` : `${state.path}/${cleanInput}`);
 }
 
-function currentNode(){ return fs[state.path]; }
-
-function getCurrentChildren(typeFilter=null) {
+function getCurrentChildren(typeFilter = null) {
   const node = currentNode();
   if (!node || node.type !== "dir") return [];
 
   let children = node.children.map(name => {
     const path = resolvePath(name);
     const child = fs[path];
-    return { label:name, value:name, path, type:child?.type || "unknown", desc:child?.type === "dir" ? "directory" : "file/page" };
+    return {
+      label:name,
+      value:name,
+      path,
+      type:child?.type || "unknown",
+      desc:child?.type === "dir" ? "section" : child?.type || "item"
+    };
   });
 
   if (typeFilter) children = children.filter(x => typeFilter.includes(x.type));
@@ -322,96 +743,314 @@ function getAllOpenable() {
   });
 }
 
-function listCurrent() {
-  const node = currentNode();
-  if (!node) return "Invalid location.";
-  if (node.type !== "dir") return "Current location is not a directory.";
-
-  return node.children.map(item => {
-    const full = resolvePath(item);
-    const target = fs[full];
-    const type = target?.type === "dir" ? "<DIR>" : "     ";
-    return `${type} ${item}`;
-  }).join("\n");
+function getRootOpenable() {
+  return fs["/"].children.map(label => {
+    const path = `/${label}`;
+    const node = fs[path];
+    return { label, value:path, path, type:node?.type || "unknown", desc:"root path" };
+  });
 }
 
-function renderNode(path) {
+function getNavigationSuggestions(query) {
+  const q = String(query || "").toLowerCase();
+  const candidates = [
+    { label:"home", value:"home", path:"/", desc:"return to root", mode:"command" },
+    { label:"back", value:"back", path:parentPath(state.path), desc:"go up one level", mode:"command" },
+    ...getCurrentChildren(),
+    ...getRootOpenable(),
+    ...getAllOpenable()
+  ];
+
+  const seen = new Set();
+
+  return candidates
+    .filter(item => {
+      const key = `${item.mode || "path"}:${item.path || item.value}`;
+      if (seen.has(key)) return false;
+      seen.add(key);
+
+      const label = String(item.label || "").toLowerCase();
+      const value = String(item.value || "").toLowerCase();
+      const path = String(item.path || "").toLowerCase();
+
+      return label.includes(q) || value.includes(q) || path.includes(q);
+    })
+    .slice(0, 12)
+    .map(item => {
+      if (item.mode === "command") {
+        return { label:item.label, value:item.value, desc:item.desc, mode:"command" };
+      }
+      return {
+        label:item.label,
+        value:`open ${item.path}`,
+        desc:item.desc || item.path,
+        mode:"command"
+      };
+    });
+}
+
+function listCurrentHTML() {
+  const node = currentNode();
+  if (!node) return "Invalid location.";
+  if (node.type !== "dir") return "Nothing to select here.";
+
+  const heading = state.path === "/" ? "SELECT A PATH FROM HOME" : "SELECT ANOTHER PATH";
+  const rows = node.children.map((item, index) => navLine(index, item, `open ${resolvePath(item)}`)).join("\n\n");
+
+  return `${areaHeader(node.title || heading)}
+
+${heading}
+
+${escapeHtml(node.guide || "Choose where to go next.")}
+
+${rows}
+${relatedLinks(state.path)}`;
+}
+
+function renderNodeHTML(path) {
   const node = fs[path];
-  if (!node) return `Not found: ${path}`;
+
+  if (!node) {
+    return `${areaHeader("Not Found")}
+
+${escapeHtml(`Not found: ${path}`)}
+${relatedLinks(state.path)}`;
+  }
 
   if (node.type === "dir") {
     state.path = path;
     updatePrompt();
-    return `Entered ${path}\n\n${listCurrent()}`;
+    return listCurrentHTML();
   }
 
-  if (node.type === "list") return `${node.title}\n\n` + node.items.map(x => `- ${x}`).join("\n");
+  if (node.type === "list") {
+    state.path = path;
+    updatePrompt();
 
-  return `${node.title}\n\n${node.body}`;
+    const lines = node.items.map((item, index) => {
+      const clean = item.replace(/^▧\s*/, "");
+      const possibleLocalPath = resolvePath(clean);
+      const possibleMediaPath = `/Media/${clean}`;
+      const targetPath = fs[possibleLocalPath] ? possibleLocalPath : fs[possibleMediaPath] ? possibleMediaPath : null;
+
+      if (targetPath) return navLine(index, item, `open ${targetPath}`);
+
+      const number = String(index + 1).padStart(2, "0");
+      return `${number}  ${escapeHtml(item)}`;
+    }).join("\n\n");
+
+    return `${areaHeader(node.title)}
+
+${escapeHtml(node.guide || "Choose where to go next.")}
+
+${lines}
+${relatedLinks(path)}`;
+  }
+
+  if (node.type === "image") {
+    state.path = path;
+    updatePrompt();
+
+    return `${areaHeader(node.title)}
+
+${escapeHtml(node.body)}
+
+source:
+${escapeHtml(node.url)}
+
+${externalLink("open image in new tab", node.url)}
+${relatedLinks(path)}`;
+  }
+
+  state.path = path;
+  updatePrompt();
+
+  return `${areaHeader(node.title)}
+
+${escapeHtml(node.body)}
+${relatedLinks(path)}`;
 }
 
-function updatePrompt(){ promptEl.textContent = `joe@home:${state.path}$`; }
+function relatedLinks(path) {
+  const parent = parentPath(path);
+  const links = [];
 
-function helpText() {
-  return `AVAILABLE COMMANDS
+  if (path !== "/" && parent !== path && fs[parent]) {
+    links.push(`${shellLink("Back", `open ${parent}`)}     command: open ${parent}`);
+  }
 
-/help              show this menu
-/?                 show this menu
-/clear             clear terminal
-/pwd               show current location
-/ls                list current directory
-/cd [folder]       move into folder
-/cd ..             move up one folder
-/open [item]       open page, post, list, or folder
-/cat [item]        read page or post
-/home              return to root
-/map               show site structure
-/about             open About
-/contact           open Contact`;
+  links.push(`${shellLink("Home", "home")}     command: home`);
+
+  return `
+
+NEXT:
+${links.join("\n")}`;
 }
 
-function mapText() {
-  return `/
-├── About
-├── Phases
-├── Posts
-├── Projects
-├── Skills
-├── Interests
-├── Services
-├── Media
-├── Gallery
-└── Contact`;
+function updatePrompt() {
+  promptEl.textContent = `joe@home:${state.path}$`;
+}
+
+function helpHTML() {
+  return `${areaHeader("Help")}
+
+AVAILABLE COMMANDS
+
+${shellLink("help", "help")}              show this menu
+${shellLink("?", "?")}                 show this menu
+${shellLink("clear", "clear")}             reset terminal home
+${shellLink("cls", "cls")}               reset terminal home
+${shellLink("pwd", "pwd")}               show current location
+${shellLink("ls", "ls")}                show current options
+${shellLink("cd [section]", "cd")}       move into a section
+${shellLink("cd ..", "cd ..")}            move up one level
+${shellLink("back", "back")}              go up one level
+${shellLink("open [item]", "open")}      open a section or item
+${shellLink("cat [item]", "cat")}        read a section or item
+${shellLink("home", "home")}              return to root
+${shellLink("map", "map")}               show site structure
+
+FAST INPUT
+
+You can type full commands:
+open Projects
+open /Projects/it-dashboard
+home
+
+You can also type a path name directly:
+Projects
+it-dashboard
+Contact
+
+The autocomplete box is clickable. Start typing a section name, then click the suggestion.
+
+HOW TO READ THIS SITE
+
+The home screen is the front door.
+Each section is part of a trail.
+The suggested trail is:
+
+About -> Projects -> Skills -> Posts -> Contact
+
+To publish as command-line only:
+set CONFIG.ENABLE_LINKS = false near the top of the script.`;
+}
+
+function mapHTML() {
+  return `<span class="map-block">${areaHeader("Site Map")}
+
+/
+├─ ${shellLink("About", "open About")}
+├─ ${shellLink("Projects", "open Projects")}
+│  ├─ ${shellLink("fortigate-blocklist", "open /Projects/fortigate-blocklist")}
+│  ├─ ${shellLink("it-dashboard", "open /Projects/it-dashboard")}
+│  └─ ${shellLink("site-shell", "open /Projects/site-shell")}
+├─ ${shellLink("Skills", "open Skills")}
+├─ ${shellLink("Posts", "open Posts")}
+│  ├─ ${shellLink("productive-procrastination.txt", "open /Posts/productive-procrastination.txt")}
+│  └─ ${shellLink("terminal-website-concept.txt", "open /Posts/terminal-website-concept.txt")}
+├─ ${shellLink("Phases", "open Phases")}
+│  ├─ ${shellLink("Phase-01", "open /Phases/Phase-01")}
+│  ├─ ${shellLink("Phase-02", "open /Phases/Phase-02")}
+│  └─ ${shellLink("Phase-03", "open /Phases/Phase-03")}
+├─ ${shellLink("Interests", "open Interests")}
+├─ ${shellLink("Services", "open Services")}
+├─ ${shellLink("Media", "open Media")}
+│  ├─ ${shellLink("desk-setup.jpg", "open /Media/desk-setup.jpg")}
+│  ├─ ${shellLink("network-diagram.jpg", "open /Media/network-diagram.jpg")}
+│  └─ ${shellLink("field-notes.jpg", "open /Media/field-notes.jpg")}
+├─ ${shellLink("Gallery", "open Gallery")}
+└─ ${shellLink("Contact", "open Contact")}
+
+COMMAND EXAMPLES
+
+open About
+open Projects
+open /Projects/it-dashboard
+open Media
+open /Media/desk-setup.jpg
+home
+back
+${relatedLinks(state.path)}</span>`;
+}
+
+function canonicalCommand(raw = "") {
+  const key = String(raw).trim().toLowerCase().replace(/^\/+/,");
+  const aliases = {
+    "?":"/?",
+    help:"/help",
+    clear:"/clear",
+    cls:"/clear",
+    pwd:"/pwd",
+    ls:"/ls",
+    cd:"/cd",
+    open:"/open",
+    cat:"/cat",
+    home:"/home",
+    back:"/back",
+    map:"/map",
+    about:"/about",
+    contact:"/contact"
+  };
+  return aliases[key] || key;
+}
+
+function commandNeedsArgument(line = "") {
+  const parts = String(line).trim().split(/\s+/).filter(Boolean);
+  return parts.length === 1 && ARG_COMMANDS.has(canonicalCommand(parts[0]));
+}
+
+function commandDisplayName(rawCmd, canonical) {
+  return String(rawCmd || "").startsWith("/") ? canonical : canonical.replace("/", "");
 }
 
 function getSuggestions(value) {
-  const trimmed = value.trim();
-  if (!trimmed.startsWith("/")) return [];
+  const raw = String(value || "");
+  const trimmed = raw.trim();
+  const hasTrailingSpace = /\s$/.test(raw);
+
+  if (!trimmed) return [];
 
   const parts = trimmed.split(/\s+/);
-  const cmd = parts[0];
-  const arg = parts.slice(1).join(" ").toLowerCase();
+  const rawCmd = parts[0];
+  const cmd = canonicalCommand(rawCmd);
+  const arg = hasTrailingSpace && parts.length === 1 ? "" : parts.slice(1).join(" ").toLowerCase();
 
-  if (parts.length === 1 && !["/cd","/open","/cat"].includes(trimmed)) {
-    return commandMeta
-      .filter(x => x.cmd.startsWith(cmd))
-      .map(x => ({ label:x.cmd, value:x.cmd, desc:x.desc, mode:"command" }));
+  if (parts.length === 1 && !hasTrailingSpace && !ARG_COMMANDS.has(cmd)) {
+    const query = rawCmd.toLowerCase().replace(/^\/+/,");
+    const commandSuggestions = commandMeta
+      .filter(x => {
+        const label = x.label.toLowerCase();
+        const slashLabel = `/${label}`;
+        const aliases = (x.aliases || []).map(a => a.toLowerCase());
+        return label.startsWith(query) || slashLabel.startsWith(rawCmd.toLowerCase()) || aliases.some(a => a.startsWith(rawCmd.toLowerCase()));
+      })
+      .map(x => ({ label:x.label, value:x.value, desc:x.desc, mode:"command" }));
+
+    const navSuggestions = getNavigationSuggestions(query);
+    const seen = new Set();
+    return [...commandSuggestions, ...navSuggestions].filter(item => {
+      const key = item.value;
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    }).slice(0, 12);
   }
 
   if (cmd === "/cd") {
     const dirs = [
-      { label:"..", value:"..", desc:"parent directory", mode:"arg" },
-      { label:"/", value:"/", desc:"root directory", mode:"arg" },
+      { label:"..", value:"..", desc:"previous level", mode:"arg" },
+      { label:"/", value:"/", desc:"home", mode:"arg" },
       ...getCurrentChildren(["dir"])
     ];
 
     return dirs
       .filter(x => x.label.toLowerCase().includes(arg) || x.value.toLowerCase().includes(arg))
-      .map(x => ({ ...x, mode:"arg", command:"/cd" }));
+      .map(x => ({ ...x, mode:"arg", command:commandDisplayName(rawCmd, cmd) }));
   }
 
   if (cmd === "/open" || cmd === "/cat") {
-    const openable = [...getCurrentChildren(), ...getAllOpenable()];
+    const openable = [...getCurrentChildren(), ...getRootOpenable(), ...getAllOpenable()];
     const seen = new Set();
 
     return openable
@@ -421,7 +1060,7 @@ function getSuggestions(value) {
         return x.label.toLowerCase().includes(arg) || x.path.toLowerCase().includes(arg);
       })
       .slice(0, 12)
-      .map(x => ({ ...x, mode:"arg", command:cmd }));
+      .map(x => ({ ...x, mode:"arg", command:commandDisplayName(rawCmd, cmd) }));
   }
 
   return [];
@@ -440,8 +1079,8 @@ function showSuggestions() {
   suggestionsEl.style.display = "block";
   suggestionsEl.innerHTML = suggestions.map((item, index) => `
     <div class="suggestion ${index === state.selectedSuggestion ? "active" : ""}" data-index="${index}">
-      <div>${item.label}</div>
-      <div class="desc">${item.desc || ""}</div>
+      <div>${escapeHtml(item.label)}</div>
+      <div class="desc">${escapeHtml(item.desc || "")}</div>
     </div>
   `).join("");
 }
@@ -455,38 +1094,48 @@ function acceptSuggestion() {
   return `${selected.command} ${selected.value}`;
 }
 
-async function run(raw) {
-  const input = raw.trim();
+async function run(raw, echo = true) {
+  const input = String(raw || "").trim();
   if (!input) return;
 
-  print(`joe@home:${state.path}$ ${input}`, "cmd-echo");
+  if (state.animating) {
+    state.skipAnimation = true;
+    state.animationId++;
+    state.animating = false;
+  }
 
-  const [cmd, ...args] = input.split(/\s+/);
+  if (echo) print(`joe@home:${state.path}$ ${input}\n`, "cmd-echo");
+
+  const [rawCmd, ...args] = input.split(/\s+/);
+  const cmd = canonicalCommand(rawCmd);
   const arg = args.join(" ");
 
-  if (cmd === "/help" || cmd === "/?") print(helpText());
-  else if (cmd === "/clear") screen.textContent = "";
-  else if (cmd === "/pwd") print(state.path);
-  else if (cmd === "/ls") print(listCurrent());
-  else if (cmd === "/home") { state.path = "/"; updatePrompt(); print("Returned to /"); }
-  else if (cmd === "/map") print(mapText());
-  else if (cmd === "/about") print(renderNode("/About"));
-  else if (cmd === "/contact") print(renderNode("/Contact"));
+  if (cmd === "/help" || cmd === "/?") await animateHTML(helpHTML());
+  else if (cmd === "/clear") await resetHome(true);
+  else if (cmd === "/pwd") await animateHTML(escapeHtml(state.path));
+  else if (cmd === "/ls") await animateHTML(listCurrentHTML());
+  else if (cmd === "/home") await resetHome(true);
+  else if (cmd === "/back") await animateHTML(renderNodeHTML(parentPath(state.path)));
+  else if (cmd === "/map") await animateHTML(mapHTML());
+  else if (cmd === "/about") await animateHTML(renderNodeHTML("/About"));
+  else if (cmd === "/contact") await animateHTML(renderNodeHTML("/Contact"));
   else if (cmd === "/cd") {
-    if (!arg) return print("Usage: /cd [folder]", "error");
+    if (!arg) return print("Usage: cd [section]", "error");
     const targetPath = resolvePath(arg);
     const target = fs[targetPath];
-    if (!target) return print(`Directory not found: ${arg}`, "error");
-    if (target.type !== "dir") return print(`Not a directory: ${arg}`, "error");
-    state.path = targetPath;
-    updatePrompt();
-    print(`Entered ${state.path}`);
+    if (!target) return print(`Section not found: ${arg}`, "error");
+    if (target.type !== "dir") return print(`Cannot move into: ${arg}`, "error");
+    await animateHTML(renderNodeHTML(targetPath));
   }
   else if (cmd === "/open" || cmd === "/cat") {
-    if (!arg) return print(`Usage: ${cmd} [item]`, "error");
-    print(renderNode(resolvePath(arg)));
+    if (!arg) return print(`Usage: ${rawCmd} [item]`, "error");
+    await animateHTML(renderNodeHTML(resolvePath(arg)));
   }
-  else print(`Unknown command: ${cmd}\nType /help or /?`, "error");
+  else {
+    const targetPath = resolvePath(input);
+    if (fs[targetPath]) await animateHTML(renderNodeHTML(targetPath));
+    else print(`Unknown command or path: ${rawCmd}\nType help or ?`, "error");
+  }
 
   suggestionsEl.style.display = "none";
 }
@@ -502,9 +1151,7 @@ inputRow.addEventListener("submit", e => {
   commandInput.value = "";
   suggestionsEl.style.display = "none";
 
-  const needsArg = ARG_CMDS.includes(completed);
-
-  if (needsArg) {
+  if (commandNeedsArgument(completed)) {
     commandInput.value = completed + " ";
     showSuggestions();
     return;
@@ -514,13 +1161,13 @@ inputRow.addEventListener("submit", e => {
 });
 
 commandInput.addEventListener("input", () => {
-  if (state.booting) finishBoot();
+  if (state.booting) finishBoot(false);
   state.selectedSuggestion = 0;
   showSuggestions();
 });
 
 commandInput.addEventListener("keydown", e => {
-  if (state.booting) finishBoot();
+  if (state.booting) finishBoot(false);
 
   const suggestions = getSuggestions(commandInput.value);
 
@@ -540,35 +1187,61 @@ commandInput.addEventListener("keydown", e => {
     e.preventDefault();
     const completed = acceptSuggestion();
     if (completed) {
-      commandInput.value = completed + (ARG_CMDS.includes(completed) ? " " : "");
+      commandInput.value = completed + (commandNeedsArgument(completed) ? " " : "");
       showSuggestions();
     }
   }
 });
 
 screen.addEventListener("click", e => {
+  if (!CONFIG.ENABLE_LINKS) return;
+
+  const external = e.target.closest("[data-external]");
+  if (external) {
+    e.preventDefault();
+    window.open(external.dataset.external, "_blank", "noopener,noreferrer");
+    return;
+  }
+
   const link = e.target.closest("[data-command]");
+
+  if (state.booting) {
+    finishBoot(false);
+    return;
+  }
+
+  if (state.animating && !link) {
+    state.skipAnimation = true;
+    return;
+  }
+
   if (!link) return;
 
-  const cmd = link.dataset.command;
-  commandInput.value = "";
-  suggestionsEl.style.display = "none";
-  run(cmd);
-  commandInput.focus();
+  e.preventDefault();
+  run(link.dataset.command, true);
 });
+
+screen.addEventListener("touchstart", e => {
+  if (!CONFIG.ENABLE_LINKS) return;
+
+  const link = e.target.closest("[data-command], [data-external]");
+  if (link) return;
+
+  if (state.booting) finishBoot(false);
+  else if (state.animating) state.skipAnimation = true;
+}, { passive:true });
 
 suggestionsEl.addEventListener("mousedown", e => {
   const item = e.target.closest(".suggestion");
   if (!item) return;
 
-  e.preventDefault(); // keep input focused so the mobile keyboard stays open
+  e.preventDefault();
 
   state.selectedSuggestion = Number(item.dataset.index);
   const completed = acceptSuggestion();
   if (!completed) return;
 
-  const needsArg = ARG_CMDS.includes(completed);
-  if (needsArg) {
+  if (commandNeedsArgument(completed)) {
     commandInput.value = completed + " ";
     showSuggestions();
   } else {
@@ -576,10 +1249,15 @@ suggestionsEl.addEventListener("mousedown", e => {
     suggestionsEl.style.display = "none";
     run(completed);
   }
+
   commandInput.focus();
 });
 
-function tickClock(){ document.getElementById("clock").textContent = new Date().toLocaleTimeString(); }
+barDots.addEventListener("click", () => resetHome(true));
+
+function tickClock() {
+  document.getElementById("clock").textContent = new Date().toLocaleTimeString();
+}
 
 setInterval(tickClock, 1000);
 tickClock();
@@ -603,7 +1281,6 @@ window.addEventListener("resize", scheduleViewportSync);
 window.addEventListener("orientationchange", scheduleViewportSync);
 window.visualViewport?.addEventListener("resize", scheduleViewportSync);
 syncViewportHeight();
-
 boot();
 </script>
 </body>
