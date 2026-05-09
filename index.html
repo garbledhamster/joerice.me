@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>joerice.me // terminal os</title>
+<style>
+  :root {
+    --bg:#f2f2ed; --fg:#050505; --muted:#666; --panel:#fff; --line:#050505;
+    --warn:#9b0000; --link:#0645ad; --mono:"Courier New", Courier, monospace;
+  }
+
+  * { box-sizing:border-box; }
+
+  body {
+    margin:0; min-height:100vh; background:var(--bg); color:var(--fg);
+    font-family:var(--mono); font-size:14px; line-height:1.45;
+  }
+
+  .shell-wrap { min-height:100vh; display:grid; place-items:center; padding:18px; }
+
+  .shell {
+    width:min(980px,100%); height:min(720px,calc(100vh - 36px));
+    border:3px solid var(--line); background:var(--panel);
+    display:grid; grid-template-rows:auto 1fr auto; box-shadow:8px 8px 0 var(--fg);
+  }
+
+  .bar {
+    border-bottom:2px solid var(--line); padding:8px 10px;
+    display:flex; justify-content:space-between; text-transform:uppercase; font-weight:bold;
+  }
+
+  .screen { padding:14px; overflow-y:auto; white-space:pre-wrap; }
+
+  .shell-link {
+    color:var(--link); text-decoration:underline; cursor:pointer; font-weight:bold;
+  }
+
+  .shell-link:hover { background:var(--link); color:#fff; }
+
+  .input-zone { border-top:2px solid var(--line); position:relative; }
+
+  .suggestions {
+    display:none; max-height:180px; overflow-y:auto; border-bottom:2px solid var(--line);
+    background:var(--panel);
+  }
+
+  .suggestion {
+    display:grid; grid-template-columns:160px 1fr; gap:10px;
+    padding:7px 10px; border-bottom:1px solid var(--line); cursor:pointer;
+  }
+
+  .suggestion:last-child { border-bottom:0; }
+
+  .suggestion.active, .suggestion:hover { background:var(--fg); color:var(--bg); }
+
+  .suggestion .desc { color:inherit; opacity:.72; }
+
+  .input-row { display:grid; grid-template-columns:auto 1fr; }
+
+  .prompt { background:var(--fg); color:var(--bg); padding:10px; }
+
+  input {
+    border:0; outline:0; background:var(--panel); color:var(--fg);
+    font:inherit; padding:10px; width:100%;
+  }
+
+  .dim { color:var(--muted); }
+  .error { color:var(--warn); }
+
+  @media (max-width:700px) {
+    body { font-size:12px; }
+    .shell { height:calc(100vh - 24px); box-shadow:4px 4px 0 var(--fg); }
+    .shell-wrap { padding:12px; }
+    .suggestion { grid-template-columns:120px 1fr; }
+  }
+</style>
+</head>
+<body>
+<div class="shell-wrap">
+  <main class="shell">
+    <header class="bar">
+      <div>JOERICE.ME // PERSONAL OS</div>
+      <div id="clock">--:--:--</div>
+    </header>
+
+    <section class="screen" id="screen"></section>
+
+    <section class="input-zone">
+      <div class="suggestions" id="suggestions"></div>
+      <form class="input-row" id="inputRow">
+        <div class="prompt" id="prompt">joe@home:/$</div>
+        <input id="commandInput" autocomplete="off" spellcheck="false" autofocus />
+      </form>
+    </section>
+  </main>
+</div>
+
+<script>
+const screen = document.getElementById("screen");
+const inputRow = document.getElementById("inputRow");
+const commandInput = document.getElementById("commandInput");
+const promptEl = document.getElementById("prompt");
+const suggestionsEl = document.getElementById("suggestions");
+
+const state = {
+  path: "/",
+  selectedSuggestion: 0,
+  booting: true,
+  bootSkipped: false
+};
+
+const fs = {
+  "/": { type:"dir", children:["About","Phases","Posts","Projects","Skills","Interests","Services","Media","Gallery","Contact"] },
+  "/About": { type:"page", title:"ABOUT", body:`Joe Rice
+
+Systems administrator. Builder. Father. Learner.
+
+This site is not only a portfolio.
+It is a personal operating system for tracking work, learning, phases of life, and useful output.` },
+  "/Phases": { type:"dir", children:["Phase-01","Phase-02","Phase-03"] },
+  "/Phases/Phase-01": { type:"page", title:"PHASE 01", body:"Early formation. Curiosity. Raw ambition. Unstructured learning." },
+  "/Phases/Phase-02": { type:"page", title:"PHASE 02", body:"System building. Technical growth. Pattern recognition." },
+  "/Phases/Phase-03": { type:"page", title:"PHASE 03 // CONFIDENT / STEADY", body:`Current phase:
+more confident, more steady, less dependent on AI to form the words.
+
+Operating problem:
+translate learning into real visible work.` },
+  "/Posts": { type:"dir", children:["productive-procrastination.txt","terminal-website-concept.txt"] },
+  "/Posts/productive-procrastination.txt": { type:"post", title:"PRODUCTIVE PROCRASTINATION", body:`Sometimes avoiding one kind of work creates energy for another kind of work.
+
+The danger is pretending movement is progress.
+The opportunity is using restlessness to build structure.` },
+  "/Posts/terminal-website-concept.txt": { type:"post", title:"TERMINAL WEBSITE CONCEPT", body:`A website that opens like an operating system.
+
+The visitor does not scroll first.
+They enter commands.` },
+  "/Projects": { type:"dir", children:["fortigate-blocklist","it-dashboard","personal-os"] },
+  "/Projects/fortigate-blocklist": { type:"page", title:"PROJECT // FORTIGATE BLOCKLIST", body:"Security automation concept for blocking malicious traffic through structured feeds." },
+  "/Projects/it-dashboard": { type:"page", title:"PROJECT // IT DASHBOARD", body:"Internal single-pane dashboard concept for tickets, SLA, security, network, and systems status." },
+  "/Projects/personal-os": { type:"page", title:"PROJECT // PERSONAL OS", body:"A brutal plaintext interface for navigating identity, work, learning, services, and life phases." },
+  "/Skills": { type:"list", title:"SKILLS", items:["PowerShell","Azure","Cloud","Networking","Security","SQL","Automation","Dashboards","ASPX","Documentation"] },
+  "/Interests": { type:"list", title:"INTERESTS", items:["Great Conversation","Machiavelli","Learning","Visual Thinking","AI","Somatics","Parenting","Neuroscience"] },
+  "/Services": { type:"list", title:"SERVICES", items:["IT automation","PowerShell scripting","internal dashboards","security log analysis","network documentation"] },
+  "/Media": { type:"dir", children:["desk-setup.img","network-diagram.img","field-notes.img"] },
+  "/Media/desk-setup.img": { type:"media", title:"MEDIA // DESK SETUP", body:"[image placeholder]\n\nLater this can open a brutal lightbox/modal." },
+  "/Media/network-diagram.img": { type:"media", title:"MEDIA // NETWORK DIAGRAM", body:"[image placeholder]\n\nA clean media record connected to work/project notes." },
+  "/Media/field-notes.img": { type:"media", title:"MEDIA // FIELD NOTES", body:"[image placeholder]\n\nMedia treated as evidence, not decoration." },
+  "/Gallery": { type:"list", title:"GALLERY", items:["▧ desk-setup.img","▧ network-diagram.img","▧ field-notes.img"] },
+  "/Contact": { type:"page", title:"CONTACT", body:"Contact placeholder.\n\nLater: email, LinkedIn, GitHub, inquiry form." }
+};
+
+const commandMeta = [
+  { cmd:"/help", desc:"show command menu" },
+  { cmd:"/?", desc:"show command menu" },
+  { cmd:"/clear", desc:"clear terminal" },
+  { cmd:"/pwd", desc:"show current location" },
+  { cmd:"/ls", desc:"list current directory" },
+  { cmd:"/cd", desc:"change directory" },
+  { cmd:"/open", desc:"open file, page, list, or folder" },
+  { cmd:"/cat", desc:"read file or page" },
+  { cmd:"/home", desc:"return to root" },
+  { cmd:"/map", desc:"show site structure" },
+  { cmd:"/about", desc:"open about" },
+  { cmd:"/contact", desc:"open contact" }
+];
+
+function sleep(ms){ return new Promise(r => setTimeout(r, ms)); }
+
+function print(text="", className="") {
+  const span = document.createElement("span");
+  if (className) span.className = className;
+  span.textContent = text + "\n";
+  screen.appendChild(span);
+  screen.scrollTop = screen.scrollHeight;
+}
+
+function printLinks() {
+  const wrap = document.createElement("div");
+  wrap.innerHTML =
+`QUICK START:
+<span class="shell-link" data-command="/open About">About</span>  /  
+<span class="shell-link" data-command="/open Projects">Projects</span>  /  
+<span class="shell-link" data-command="/open Posts">Posts</span>  /  
+<span class="shell-link" data-command="/open Phases">Phases</span>  /  
+<span class="shell-link" data-command="/open Media">Media</span>  /  
+<span class="shell-link" data-command="/open Services">Hire</span>  /  
+<span class="shell-link" data-command="/help">Commands</span>
+
+`;
+  screen.appendChild(wrap);
+  screen.scrollTop = screen.scrollHeight;
+}
+
+async function typeLine(text="", delay=12, className="") {
+  if (state.bootSkipped) return;
+  const span = document.createElement("span");
+  if (className) span.className = className;
+  screen.appendChild(span);
+
+  for (const char of text) {
+    if (state.bootSkipped) return;
+    span.textContent += char;
+    screen.scrollTop = screen.scrollHeight;
+    await sleep(delay);
+  }
+
+  span.textContent += "\n";
+}
+
+async function loadingLine(label, cycles=2) {
+  if (state.bootSkipped) return;
+  const span = document.createElement("span");
+  screen.appendChild(span);
+
+  for (let i=0; i<cycles; i++) {
+    if (state.bootSkipped) return;
+    span.textContent = `${label}.`; await sleep(220);
+    if (state.bootSkipped) return;
+    span.textContent = `${label}..`; await sleep(220);
+    if (state.bootSkipped) return;
+    span.textContent = `${label}...`; await sleep(220);
+  }
+
+  span.textContent = `${label}... OK\n`;
+}
+
+function finishBoot() {
+  state.booting = false;
+  state.bootSkipped = true;
+  screen.textContent =
+`JOERICE.ME PERSONAL OS
+version 0.4.0 shell-links
+
+BOOT COMPLETE.
+
+Type / to enter command mode.
+Type /help or /? to see available commands.
+
+`;
+  printLinks();
+  commandInput.focus();
+}
+
+async function boot() {
+  await typeLine("JOERICE.ME PERSONAL OS", 20);
+  await typeLine("version 0.4.0 shell-links", 10, "dim");
+  await sleep(250);
+
+  await loadingLine("mounting /identity");
+  await loadingLine("mounting /work");
+  await loadingLine("mounting /learning");
+  await loadingLine("mounting /phases");
+  await loadingLine("mounting /media");
+  await loadingLine("loading autocomplete");
+  await loadingLine("starting shell");
+
+  if (!state.bootSkipped) finishBoot();
+}
+
+function normalizePath(path){ return path.replace(/\/+/g, "/").replace(/\/$/, "") || "/"; }
+
+function resolvePath(input) {
+  if (!input || input === ".") return state.path;
+  if (input === "/") return "/";
+  if (input.startsWith("/")) return normalizePath(input);
+
+  if (input === "..") {
+    if (state.path === "/") return "/";
+    const parts = state.path.split("/").filter(Boolean);
+    parts.pop();
+    return "/" + parts.join("/");
+  }
+
+  return normalizePath(state.path === "/" ? `/${input}` : `${state.path}/${input}`);
+}
+
+function currentNode(){ return fs[state.path]; }
+
+function getCurrentChildren(typeFilter=null) {
+  const node = currentNode();
+  if (!node || node.type !== "dir") return [];
+
+  let children = node.children.map(name => {
+    const path = resolvePath(name);
+    const child = fs[path];
+    return { label:name, value:name, path, type:child?.type || "unknown", desc:child?.type === "dir" ? "directory" : "file/page" };
+  });
+
+  if (typeFilter) children = children.filter(x => typeFilter.includes(x.type));
+  return children;
+}
+
+function getAllOpenable() {
+  return Object.keys(fs).filter(path => path !== "/").map(path => {
+    const node = fs[path];
+    const label = path.split("/").pop();
+    return { label, value:path, path, type:node.type, desc:path };
+  });
+}
+
+function listCurrent() {
+  const node = currentNode();
+  if (!node) return "Invalid location.";
+  if (node.type !== "dir") return "Current location is not a directory.";
+
+  return node.children.map(item => {
+    const full = resolvePath(item);
+    const target = fs[full];
+    const type = target?.type === "dir" ? "<DIR>" : "     ";
+    return `${type} ${item}`;
+  }).join("\n");
+}
+
+function renderNode(path) {
+  const node = fs[path];
+  if (!node) return `Not found: ${path}`;
+
+  if (node.type === "dir") {
+    state.path = path;
+    updatePrompt();
+    return `Entered ${path}\n\n${listCurrent()}`;
+  }
+
+  if (node.type === "list") return `${node.title}\n\n` + node.items.map(x => `- ${x}`).join("\n");
+
+  return `${node.title}\n\n${node.body}`;
+}
+
+function updatePrompt(){ promptEl.textContent = `joe@home:${state.path}$`; }
+
+function helpText() {
+  return `AVAILABLE COMMANDS
+
+/help              show this menu
+/?                 show this menu
+/clear             clear terminal
+/pwd               show current location
+/ls                list current directory
+/cd [folder]       move into folder
+/cd ..             move up one folder
+/open [item]       open page, post, list, or folder
+/cat [item]        read page or post
+/home              return to root
+/map               show site structure
+/about             open About
+/contact           open Contact`;
+}
+
+function mapText() {
+  return `/
+├── About
+├── Phases
+├── Posts
+├── Projects
+├── Skills
+├── Interests
+├── Services
+├── Media
+├── Gallery
+└── Contact`;
+}
+
+function getSuggestions(value) {
+  const trimmed = value.trim();
+  if (!trimmed.startsWith("/")) return [];
+
+  const parts = trimmed.split(/\s+/);
+  const cmd = parts[0];
+  const arg = parts.slice(1).join(" ").toLowerCase();
+
+  if (parts.length === 1 && !["/cd","/open","/cat"].includes(trimmed)) {
+    return commandMeta
+      .filter(x => x.cmd.startsWith(cmd))
+      .map(x => ({ label:x.cmd, value:x.cmd, desc:x.desc, mode:"command" }));
+  }
+
+  if (cmd === "/cd") {
+    const dirs = [
+      { label:"..", value:"..", desc:"parent directory", mode:"arg" },
+      { label:"/", value:"/", desc:"root directory", mode:"arg" },
+      ...getCurrentChildren(["dir"])
+    ];
+
+    return dirs
+      .filter(x => x.label.toLowerCase().includes(arg) || x.value.toLowerCase().includes(arg))
+      .map(x => ({ ...x, mode:"arg", command:"/cd" }));
+  }
+
+  if (cmd === "/open" || cmd === "/cat") {
+    const openable = [...getCurrentChildren(), ...getAllOpenable()];
+    const seen = new Set();
+
+    return openable
+      .filter(x => {
+        if (seen.has(x.path)) return false;
+        seen.add(x.path);
+        return x.label.toLowerCase().includes(arg) || x.path.toLowerCase().includes(arg);
+      })
+      .slice(0, 12)
+      .map(x => ({ ...x, mode:"arg", command:cmd }));
+  }
+
+  return [];
+}
+
+function showSuggestions() {
+  const suggestions = getSuggestions(commandInput.value);
+  state.selectedSuggestion = Math.min(state.selectedSuggestion, Math.max(suggestions.length - 1, 0));
+
+  if (!suggestions.length) {
+    suggestionsEl.style.display = "none";
+    suggestionsEl.innerHTML = "";
+    return;
+  }
+
+  suggestionsEl.style.display = "block";
+  suggestionsEl.innerHTML = suggestions.map((item, index) => `
+    <div class="suggestion ${index === state.selectedSuggestion ? "active" : ""}" data-index="${index}">
+      <div>${item.label}</div>
+      <div class="desc">${item.desc || ""}</div>
+    </div>
+  `).join("");
+}
+
+function acceptSuggestion() {
+  const suggestions = getSuggestions(commandInput.value);
+  const selected = suggestions[state.selectedSuggestion];
+  if (!selected) return null;
+
+  if (selected.mode === "command") return selected.value;
+  return `${selected.command} ${selected.value}`;
+}
+
+async function run(raw) {
+  const input = raw.trim();
+  if (!input) return;
+
+  print(`joe@home:${state.path}$ ${input}`);
+
+  const [cmd, ...args] = input.split(/\s+/);
+  const arg = args.join(" ");
+
+  if (cmd === "/help" || cmd === "/?") print(helpText());
+  else if (cmd === "/clear") screen.textContent = "";
+  else if (cmd === "/pwd") print(state.path);
+  else if (cmd === "/ls") print(listCurrent());
+  else if (cmd === "/home") { state.path = "/"; updatePrompt(); print("Returned to /"); }
+  else if (cmd === "/map") print(mapText());
+  else if (cmd === "/about") print(renderNode("/About"));
+  else if (cmd === "/contact") print(renderNode("/Contact"));
+  else if (cmd === "/cd") {
+    if (!arg) return print("Usage: /cd [folder]", "error");
+    const targetPath = resolvePath(arg);
+    const target = fs[targetPath];
+    if (!target) return print(`Directory not found: ${arg}`, "error");
+    if (target.type !== "dir") return print(`Not a directory: ${arg}`, "error");
+    state.path = targetPath;
+    updatePrompt();
+    print(`Entered ${state.path}`);
+  }
+  else if (cmd === "/open" || cmd === "/cat") {
+    if (!arg) return print(`Usage: ${cmd} [item]`, "error");
+    print(renderNode(resolvePath(arg)));
+  }
+  else print(`Unknown command: ${cmd}\nType /help or /?`, "error");
+
+  suggestionsEl.style.display = "none";
+}
+
+inputRow.addEventListener("submit", e => {
+  e.preventDefault();
+
+  const suggestions = getSuggestions(commandInput.value);
+  const completed = suggestions.length ? acceptSuggestion() : commandInput.value.trim();
+
+  if (!completed) return;
+
+  commandInput.value = "";
+  suggestionsEl.style.display = "none";
+
+  const needsArg = ["/open", "/cat", "/cd"].includes(completed);
+
+  if (needsArg) {
+    commandInput.value = completed + " ";
+    showSuggestions();
+    return;
+  }
+
+  run(completed);
+});
+
+commandInput.addEventListener("input", () => {
+  if (state.booting) finishBoot();
+  state.selectedSuggestion = 0;
+  showSuggestions();
+});
+
+commandInput.addEventListener("keydown", e => {
+  if (state.booting) finishBoot();
+
+  const suggestions = getSuggestions(commandInput.value);
+
+  if (e.key === "ArrowDown" && suggestions.length) {
+    e.preventDefault();
+    state.selectedSuggestion = (state.selectedSuggestion + 1) % suggestions.length;
+    showSuggestions();
+  }
+
+  if (e.key === "ArrowUp" && suggestions.length) {
+    e.preventDefault();
+    state.selectedSuggestion = (state.selectedSuggestion - 1 + suggestions.length) % suggestions.length;
+    showSuggestions();
+  }
+
+  if (e.key === "Tab" && suggestions.length) {
+    e.preventDefault();
+    const completed = acceptSuggestion();
+    if (completed) {
+      commandInput.value = completed + (["/open","/cat","/cd"].includes(completed) ? " " : "");
+      showSuggestions();
+    }
+  }
+});
+
+screen.addEventListener("click", e => {
+  const link = e.target.closest("[data-command]");
+  if (!link) return;
+
+  commandInput.value = link.dataset.command;
+  commandInput.focus();
+  showSuggestions();
+});
+
+suggestionsEl.addEventListener("mousedown", e => {
+  const item = e.target.closest(".suggestion");
+  if (!item) return;
+
+  state.selectedSuggestion = Number(item.dataset.index);
+  const completed = acceptSuggestion();
+  if (completed) {
+    commandInput.value = completed;
+    suggestionsEl.style.display = "none";
+    commandInput.focus();
+  }
+});
+
+function tickClock(){ document.getElementById("clock").textContent = new Date().toLocaleTimeString(); }
+
+setInterval(tickClock, 1000);
+tickClock();
+boot();
+</script>
+</body>
+</html>
