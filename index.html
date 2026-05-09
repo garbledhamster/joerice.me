@@ -548,22 +548,33 @@ screen.addEventListener("click", e => {
   const link = e.target.closest("[data-command]");
   if (!link) return;
 
-  commandInput.value = link.dataset.command;
+  const cmd = link.dataset.command;
+  commandInput.value = "";
+  suggestionsEl.style.display = "none";
+  run(cmd);
   commandInput.focus();
-  showSuggestions();
 });
 
 suggestionsEl.addEventListener("mousedown", e => {
   const item = e.target.closest(".suggestion");
   if (!item) return;
 
+  e.preventDefault(); // keep input focused so the mobile keyboard stays open
+
   state.selectedSuggestion = Number(item.dataset.index);
   const completed = acceptSuggestion();
-  if (completed) {
-    commandInput.value = completed;
+  if (!completed) return;
+
+  const needsArg = ["/open", "/cat", "/cd"].includes(completed);
+  if (needsArg) {
+    commandInput.value = completed + " ";
+    showSuggestions();
+  } else {
+    commandInput.value = "";
     suggestionsEl.style.display = "none";
-    commandInput.focus();
+    run(completed);
   }
+  commandInput.focus();
 });
 
 function tickClock(){ document.getElementById("clock").textContent = new Date().toLocaleTimeString(); }
