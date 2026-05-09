@@ -215,6 +215,17 @@ function printLinks() {
   screen.scrollTop = screen.scrollHeight;
 }
 
+function printBackHomeLinks() {
+  const wrap = document.createElement("div");
+  wrap.innerHTML =
+`<span class="shell-link" data-command="/cd ..">Back</span>  /  
+<span class="shell-link" data-command="/home">Home</span>
+
+`;
+  screen.appendChild(wrap);
+  screen.scrollTop = screen.scrollHeight;
+}
+
 async function typeLine(text="", delay=12, className="") {
   if (state.bootSkipped) return;
   const span = document.createElement("span");
@@ -350,6 +361,12 @@ function renderNode(path) {
   return `${node.title}\n\n${node.body}`;
 }
 
+function printNodeWithNav(path) {
+  const node = fs[path];
+  print(renderNode(path));
+  if (node) printBackHomeLinks();
+}
+
 function updatePrompt(){ promptEl.textContent = `joe@home:${state.path}$`; }
 
 function helpText() {
@@ -470,8 +487,8 @@ async function run(raw) {
   else if (cmd === "/ls") print(listCurrent());
   else if (cmd === "/home") { state.path = "/"; updatePrompt(); print("Returned to /"); }
   else if (cmd === "/map") print(mapText());
-  else if (cmd === "/about") print(renderNode("/About"));
-  else if (cmd === "/contact") print(renderNode("/Contact"));
+  else if (cmd === "/about") printNodeWithNav("/About");
+  else if (cmd === "/contact") printNodeWithNav("/Contact");
   else if (cmd === "/cd") {
     if (!arg) return print("Usage: /cd [folder]", "error");
     const targetPath = resolvePath(arg);
@@ -484,7 +501,7 @@ async function run(raw) {
   }
   else if (cmd === "/open" || cmd === "/cat") {
     if (!arg) return print(`Usage: ${cmd} [item]`, "error");
-    print(renderNode(resolvePath(arg)));
+    printNodeWithNav(resolvePath(arg));
   }
   else print(`Unknown command: ${cmd}\nType /help or /?`, "error");
 
