@@ -551,14 +551,24 @@ function tickClock(){ document.getElementById("clock").textContent = new Date().
 setInterval(tickClock, 1000);
 tickClock();
 
+let viewportSyncRaf = null;
+
 function syncViewportHeight() {
-  const viewportHeight = window.visualViewport?.height || window.innerHeight;
+  const viewportHeight = window.visualViewport?.height || document.documentElement.clientHeight;
   document.documentElement.style.setProperty("--app-vh", `${viewportHeight}px`);
 }
 
-window.addEventListener("resize", syncViewportHeight);
-window.addEventListener("orientationchange", syncViewportHeight);
-window.visualViewport?.addEventListener("resize", syncViewportHeight);
+function scheduleViewportSync() {
+  if (viewportSyncRaf !== null) return;
+  viewportSyncRaf = requestAnimationFrame(() => {
+    viewportSyncRaf = null;
+    syncViewportHeight();
+  });
+}
+
+window.addEventListener("resize", scheduleViewportSync);
+window.addEventListener("orientationchange", scheduleViewportSync);
+window.visualViewport?.addEventListener("resize", scheduleViewportSync);
 syncViewportHeight();
 
 boot();
