@@ -43,14 +43,11 @@
   --link:#4fc1ff;
   --prompt:#4ec9b0;
   --mono:"Cascadia Mono","Cascadia Code","JetBrains Mono","SFMono-Regular","Menlo","Consolas","Liberation Mono",monospace;
-<<<<<<< Updated upstream
-=======
   --read-mono:"Courier New","IBM Plex Mono","Cascadia Mono","Consolas",monospace;
   --read-fg:#e8dfcf;
   --read-muted:#9f9686;
   --read-strong:#fff3c4;
   --read-code:#9ff0d1;
->>>>>>> Stashed changes
   --app-vh:100vh;
 }
 
@@ -98,8 +95,6 @@ body {
   letter-spacing:.08em;
 }
 
-<<<<<<< Updated upstream
-=======
 .bar-title {
   border:0;
   padding:0;
@@ -118,7 +113,6 @@ body {
   text-decoration:underline;
 }
 
->>>>>>> Stashed changes
 .bar-dots {
   display:flex;
   gap:6px;
@@ -167,8 +161,6 @@ body {
   white-space:pre-wrap;
 }
 
-<<<<<<< Updated upstream
-=======
 .reading-text {
   display:block;
   color:var(--read-fg);
@@ -223,7 +215,6 @@ body {
   color:#8fd7ff;
 }
 
->>>>>>> Stashed changes
 .input-zone { padding:2px 14px 10px; }
 
 .suggestions {
@@ -344,11 +335,7 @@ input {
         <span class="bar-dot yel"></span>
         <span class="bar-dot grn"></span>
       </div>
-<<<<<<< Updated upstream
-      <div>joerice.me</div>
-=======
       <button class="bar-title" id="barTitle" type="button" title="send a contact message">joerice.me</button>
->>>>>>> Stashed changes
       <div id="clock">--:--:--</div>
     </header>
 
@@ -384,17 +371,11 @@ input {
   Do not add cards, panels, grids, embedded media previews, buttons in output,
   dashboards, app sections, or visual navigation systems.
 
-<<<<<<< Updated upstream
-  When adding content, edit the fs object below:
-  - Add new paths like "/Projects/example".
-  - Add guide text, body text, items, children, and image URL records.
-=======
   When editing section text, edit the Markdown files in /content.
   The fs object below should stay mostly structural:
   - Add new paths like "/Projects/example".
   - Point each path at a content/*.md file.
   - Keep children and image URL records here.
->>>>>>> Stashed changes
   - Update mapHTML() only when the content tree changes.
 
   The goal is for future LLMs to add content, not redesign the interface.
@@ -414,10 +395,7 @@ const suggestionsEl = document.getElementById("suggestions");
 const inputSizer = document.getElementById("inputSizer");
 const fakeCursor = document.getElementById("fakeCursor");
 const barDots = document.getElementById("barDots");
-<<<<<<< Updated upstream
-=======
 const barTitle = document.getElementById("barTitle");
->>>>>>> Stashed changes
 
 const state = {
   path: "/",
@@ -426,11 +404,6 @@ const state = {
   bootSkipped: false,
   animating: false,
   skipAnimation: false,
-<<<<<<< Updated upstream
-  animationId: 0
-};
-
-=======
   animationId: 0,
   contactPrompt: {
     active: false,
@@ -457,92 +430,39 @@ const CONTACT_CONFIRM_OPTIONS = [
   { label:"cancel", value:"cancel", desc:"discard this contact prompt" }
 ];
 
->>>>>>> Stashed changes
 const fs = {
   "/": {
     type:"dir",
     title:"HOME",
-<<<<<<< Updated upstream
-    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
-    children:["About","Projects","Skills","Posts","Phases","Interests","Services","Media","Gallery","Contact"]
-=======
     content:"content/home.md",
     children:["About","Projects","Skills","Posts","Interests","Services","Media","Gallery","Contact"]
->>>>>>> Stashed changes
   },
 
   "/About": {
     type:"page",
     title:"ABOUT",
-<<<<<<< Updated upstream
-    body:`Joe Rice
-
-Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.
-
-The clean path is:
-About -> Projects -> Skills -> Posts -> Contact`
-=======
     content:"content/about.md"
->>>>>>> Stashed changes
   },
 
   "/Projects": {
     type:"dir",
     title:"PROJECTS",
-<<<<<<< Updated upstream
-    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.",
-=======
     content:"content/projects.md",
->>>>>>> Stashed changes
     children:["fortigate-blocklist","it-dashboard","site-shell"]
   },
   "/Projects/fortigate-blocklist": {
     type:"page",
     title:"PROJECT // FORTIGATE BLOCKLIST",
-<<<<<<< Updated upstream
-    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.`
-=======
     content:"content/projects/fortigate-blocklist.md"
->>>>>>> Stashed changes
   },
   "/Projects/it-dashboard": {
     type:"page",
     title:"PROJECT // IT DASHBOARD",
-<<<<<<< Updated upstream
-    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
-Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.`
-=======
     content:"content/projects/it-dashboard.md"
->>>>>>> Stashed changes
   },
   "/Projects/site-shell": {
     type:"page",
     title:"PROJECT // PORTFOLIO SITE",
-<<<<<<< Updated upstream
-    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
-At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti quos dolores et quas molestias excepturi sint.`
-  },
-
-  "/Skills": {
-    type:"list",
-    title:"SKILLS",
-    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut labore et dolore magnam aliquam quaerat voluptatem.",
-    items:["PowerShell","Azure","Cloud","Networking","Security","SQL","Automation","Dashboards","ASPX","Documentation"]
-=======
     content:"content/projects/site-shell.md"
   },
 
@@ -550,88 +470,22 @@ At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praese
     type:"page",
     title:"SKILLS",
     content:"content/skills.md"
->>>>>>> Stashed changes
   },
 
   "/Posts": {
     type:"dir",
     title:"POSTS",
-<<<<<<< Updated upstream
-    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
-=======
     content:"content/posts.md",
->>>>>>> Stashed changes
     children:["productive-procrastination.txt","terminal-website-concept.txt"]
   },
   "/Posts/productive-procrastination.txt": {
     type:"post",
     title:"PRODUCTIVE PROCRASTINATION",
-<<<<<<< Updated upstream
-    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
-
-Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
-
-Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`
-=======
     content:"content/posts/productive-procrastination.md"
->>>>>>> Stashed changes
   },
   "/Posts/terminal-website-concept.txt": {
     type:"post",
     title:"INTERACTIVE SITE CONCEPT",
-<<<<<<< Updated upstream
-    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
-Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.`
-  },
-
-  "/Phases": {
-    type:"dir",
-    title:"PHASES",
-    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam libero tempore cum soluta nobis est eligendi optio cumque nihil impedit quo minus.",
-    children:["Phase-01","Phase-02","Phase-03"]
-  },
-  "/Phases/Phase-01": {
-    type:"page",
-    title:"PHASE 01",
-    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.`
-  },
-  "/Phases/Phase-02": {
-    type:"page",
-    title:"PHASE 02",
-    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
-At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praesentium voluptatum deleniti atque corrupti.`
-  },
-  "/Phases/Phase-03": {
-    type:"page",
-    title:"PHASE 03",
-    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Temporibus autem quibusdam et aut officiis debitis aut rerum necessitatibus saepe eveniet.`
-  },
-
-  "/Interests": {
-    type:"list",
-    title:"INTERESTS",
-    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Itaque earum rerum hic tenetur a sapiente delectus ut aut reiciendis voluptatibus maiores.",
-    items:["Great Conversation","Machiavelli","Learning","Visual Thinking","AI","Somatics","Parenting","Neuroscience"]
-  },
-
-  "/Services": {
-    type:"list",
-    title:"SERVICES",
-    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur vel illum qui dolorem.",
-    items:["IT automation","PowerShell scripting","internal dashboards","security log analysis","network documentation"]
-=======
     content:"content/posts/terminal-website-concept.md"
   },
 
@@ -645,53 +499,30 @@ Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deseru
     type:"page",
     title:"SERVICES",
     content:"content/services.md"
->>>>>>> Stashed changes
   },
 
   "/Media": {
     type:"dir",
     title:"MEDIA",
-<<<<<<< Updated upstream
-    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut labore et dolore magnam aliquam quaerat voluptatem. Opening one prints a note and gives a new-tab image link.",
-=======
     content:"content/media.md",
->>>>>>> Stashed changes
     children:["desk-setup.jpg","network-diagram.jpg","field-notes.jpg"]
   },
   "/Media/desk-setup.jpg": {
     type:"image",
     title:"MEDIA // DESK SETUP",
     url:"https://picsum.photos/id/26/1200/800",
-<<<<<<< Updated upstream
-    body:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut labore et dolore magnam aliquam quaerat voluptatem."
-=======
     content:"content/media/desk-setup.md"
->>>>>>> Stashed changes
   },
   "/Media/network-diagram.jpg": {
     type:"image",
     title:"MEDIA // NETWORK DIAGRAM",
     url:"https://picsum.photos/id/180/1200/800",
-<<<<<<< Updated upstream
-    body:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit."
-=======
     content:"content/media/network-diagram.md"
->>>>>>> Stashed changes
   },
   "/Media/field-notes.jpg": {
     type:"image",
     title:"MEDIA // FIELD NOTES",
     url:"https://picsum.photos/id/1060/1200/800",
-<<<<<<< Updated upstream
-    body:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse."
-  },
-
-  "/Gallery": {
-    type:"list",
-    title:"GALLERY",
-    guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut labore et dolore magnam aliquam quaerat voluptatem. Open an image to launch the source in a new tab.",
-    items:["desk-setup.jpg","network-diagram.jpg","field-notes.jpg"]
-=======
     content:"content/media/field-notes.md"
   },
 
@@ -699,21 +530,12 @@ Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deseru
     type:"page",
     title:"GALLERY",
     content:"content/gallery.md"
->>>>>>> Stashed changes
   },
 
   "/Contact": {
     type:"page",
     title:"CONTACT",
-<<<<<<< Updated upstream
-    body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
-
-Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-
-Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
-=======
     content:"content/contact.md"
->>>>>>> Stashed changes
   }
 };
 
@@ -755,8 +577,6 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
-<<<<<<< Updated upstream
-=======
 function stripInlineMarkdown(str) {
   return String(str || "")
     .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
@@ -1009,7 +829,6 @@ async function contentHTML(path, fallback = "") {
   return renderMarkdownContent(markdown);
 }
 
->>>>>>> Stashed changes
 function areaHeader(title) {
   const clean = String(title || "AREA").toUpperCase();
   const line = "=".repeat(Math.max(22, clean.length + 8));
@@ -1066,11 +885,7 @@ function externalLink(label, url) {
   if (!CONFIG.ENABLE_LINKS || !CONFIG.ENABLE_EXTERNAL_LINKS) {
     return `${escapeHtml(label)}: ${escapeHtml(url)}`;
   }
-<<<<<<< Updated upstream
-  return `<span class="shell-link" data-external="${escapeHtml(url)}">${escapeHtml(label)} ↗</span>`;
-=======
   return `<span class="shell-link" data-external="${escapeHtml(url)}">${escapeHtml(label)} [external]</span>`;
->>>>>>> Stashed changes
 }
 
 function navLine(index, label, command) {
@@ -1078,17 +893,6 @@ function navLine(index, label, command) {
   return `${number}  ${shellLink(label, command)}\n    command: ${escapeHtml(command)}`;
 }
 
-<<<<<<< Updated upstream
-function dashboardHTML() {
-  const root = fs["/"];
-  const lines = root.children.map((item, index) => navLine(index, item, `open ${item}`)).join("\n\n");
-
-  return `${areaHeader("Home")}
-
-JOERICE.ME
-
-${escapeHtml(root.guide)}
-=======
 async function dashboardHTML() {
   const root = fs["/"];
   const lines = root.children.map((item, index) => navLine(index, item, `open ${item}`)).join("\n\n");
@@ -1097,7 +901,6 @@ async function dashboardHTML() {
   return `${areaHeader("Home")}
 
 ${body}
->>>>>>> Stashed changes
 
 Suggested path:
 01 About
@@ -1122,10 +925,7 @@ async function resetHome(animated = true) {
   state.animationId++;
   state.animating = false;
   state.skipAnimation = false;
-<<<<<<< Updated upstream
-=======
   resetContactPrompt();
->>>>>>> Stashed changes
   state.path = "/";
   updatePrompt();
   suggestionsEl.style.display = "none";
@@ -1134,19 +934,12 @@ async function resetHome(animated = true) {
   screen.textContent = "";
   commandInput.focus();
 
-<<<<<<< Updated upstream
-  if (animated) await animateHTML(dashboardHTML(), 5);
-  else {
-    const wrap = document.createElement("div");
-    wrap.innerHTML = dashboardHTML();
-=======
   const homeHTML = await dashboardHTML();
 
   if (animated) await animateHTML(homeHTML, 5);
   else {
     const wrap = document.createElement("div");
     wrap.innerHTML = homeHTML;
->>>>>>> Stashed changes
     screen.appendChild(wrap);
   }
 }
@@ -1356,21 +1149,6 @@ function getNavigationSuggestions(query) {
     });
 }
 
-<<<<<<< Updated upstream
-function listCurrentHTML() {
-  const node = currentNode();
-  if (!node) return "Invalid location.";
-  if (node.type !== "dir") return "Nothing to select here.";
-
-  const heading = state.path === "/" ? "SELECT A PATH FROM HOME" : "SELECT ANOTHER PATH";
-  const rows = node.children.map((item, index) => navLine(index, item, `open ${resolvePath(item)}`)).join("\n\n");
-
-  return `${areaHeader(node.title || heading)}
-
-${heading}
-
-${escapeHtml(node.guide || "Choose where to go next.")}
-=======
 async function listCurrentHTML(path = state.path) {
   const node = fs[path];
   if (!node) return "Invalid location.";
@@ -1385,17 +1163,12 @@ async function listCurrentHTML(path = state.path) {
 ${body}
 
 ${heading}
->>>>>>> Stashed changes
 
 ${rows}
 ${relatedLinks(state.path)}`;
 }
 
-<<<<<<< Updated upstream
-function renderNodeHTML(path) {
-=======
 async function renderNodeHTML(path) {
->>>>>>> Stashed changes
   const node = fs[path];
 
   if (!node) {
@@ -1408,24 +1181,15 @@ ${relatedLinks(state.path)}`;
   if (node.type === "dir") {
     state.path = path;
     updatePrompt();
-<<<<<<< Updated upstream
-    return listCurrentHTML();
-=======
     return await listCurrentHTML(path);
->>>>>>> Stashed changes
   }
 
   if (node.type === "list") {
     state.path = path;
     updatePrompt();
-<<<<<<< Updated upstream
-
-    const lines = node.items.map((item, index) => {
-=======
     const body = await contentHTML(path, node.guide || "Choose where to go next.");
 
     const lines = (node.items || []).map((item, index) => {
->>>>>>> Stashed changes
       const clean = item.replace(/^▧\s*/, "");
       const possibleLocalPath = resolvePath(clean);
       const possibleMediaPath = `/Media/${clean}`;
@@ -1439,11 +1203,7 @@ ${relatedLinks(state.path)}`;
 
     return `${areaHeader(node.title)}
 
-<<<<<<< Updated upstream
-${escapeHtml(node.guide || "Choose where to go next.")}
-=======
 ${body}
->>>>>>> Stashed changes
 
 ${lines}
 ${relatedLinks(path)}`;
@@ -1452,18 +1212,11 @@ ${relatedLinks(path)}`;
   if (node.type === "image") {
     state.path = path;
     updatePrompt();
-<<<<<<< Updated upstream
-
-    return `${areaHeader(node.title)}
-
-${escapeHtml(node.body)}
-=======
     const body = await contentHTML(path);
 
     return `${areaHeader(node.title)}
 
 ${body}
->>>>>>> Stashed changes
 
 source:
 ${escapeHtml(node.url)}
@@ -1474,18 +1227,11 @@ ${relatedLinks(path)}`;
 
   state.path = path;
   updatePrompt();
-<<<<<<< Updated upstream
-
-  return `${areaHeader(node.title)}
-
-${escapeHtml(node.body)}
-=======
   const body = await contentHTML(path);
 
   return `${areaHeader(node.title)}
 
 ${body}
->>>>>>> Stashed changes
 ${relatedLinks(path)}`;
 }
 
@@ -1506,11 +1252,6 @@ ${links.join("\n")}`;
 }
 
 function updatePrompt() {
-<<<<<<< Updated upstream
-  promptEl.textContent = `joerice.me:${state.path}>`;
-}
-
-=======
   if (state.contactPrompt.active) {
     promptEl.textContent = `contact:${state.contactPrompt.step}>`;
     return;
@@ -1720,7 +1461,6 @@ If your email app does not open, send the draft manually to ${CONTACT_TO}.`);
   }
 }
 
->>>>>>> Stashed changes
 function helpHTML() {
   return `${areaHeader("Help")}
 
@@ -1779,13 +1519,6 @@ function mapHTML() {
 ├─ ${shellLink("Posts", "open Posts")}
 │  ├─ ${shellLink("productive-procrastination.txt", "open /Posts/productive-procrastination.txt")}
 │  └─ ${shellLink("terminal-website-concept.txt", "open /Posts/terminal-website-concept.txt")}
-<<<<<<< Updated upstream
-├─ ${shellLink("Phases", "open Phases")}
-│  ├─ ${shellLink("Phase-01", "open /Phases/Phase-01")}
-│  ├─ ${shellLink("Phase-02", "open /Phases/Phase-02")}
-│  └─ ${shellLink("Phase-03", "open /Phases/Phase-03")}
-=======
->>>>>>> Stashed changes
 ├─ ${shellLink("Interests", "open Interests")}
 ├─ ${shellLink("Services", "open Services")}
 ├─ ${shellLink("Media", "open Media")}
@@ -1838,11 +1571,8 @@ function commandDisplayName(rawCmd, canonical) {
 }
 
 function getSuggestions(value) {
-<<<<<<< Updated upstream
-=======
   if (state.contactPrompt.active) return getContactSuggestions(value);
 
->>>>>>> Stashed changes
   const raw = String(value || "");
   const trimmed = raw.trim();
   const hasTrailingSpace = /\s$/.test(raw);
@@ -1928,10 +1658,7 @@ function acceptSuggestion() {
   const selected = suggestions[state.selectedSuggestion];
   if (!selected) return null;
 
-<<<<<<< Updated upstream
-=======
   if (selected.mode === "contact") return selected.value || selected.label;
->>>>>>> Stashed changes
   if (selected.mode === "command") return selected.value;
   return `${selected.command} ${selected.value}`;
 }
@@ -1955,38 +1682,18 @@ async function run(raw, echo = true) {
   if (cmd === "/help" || cmd === "/?") await animateHTML(helpHTML());
   else if (cmd === "/clear") await resetHome(true);
   else if (cmd === "/pwd") await animateHTML(escapeHtml(state.path));
-<<<<<<< Updated upstream
-  else if (cmd === "/ls") await animateHTML(listCurrentHTML());
-  else if (cmd === "/home") await resetHome(true);
-  else if (cmd === "/back") await animateHTML(renderNodeHTML(parentPath(state.path)));
-  else if (cmd === "/map") await animateHTML(mapHTML());
-  else if (cmd === "/about") await animateHTML(renderNodeHTML("/About"));
-  else if (cmd === "/contact") await animateHTML(renderNodeHTML("/Contact"));
-=======
   else if (cmd === "/ls") await animateHTML(await listCurrentHTML());
   else if (cmd === "/home") await resetHome(true);
   else if (cmd === "/back") await animateHTML(await renderNodeHTML(parentPath(state.path)));
   else if (cmd === "/map") await animateHTML(mapHTML());
   else if (cmd === "/about") await animateHTML(await renderNodeHTML("/About"));
   else if (cmd === "/contact") await animateHTML(await renderNodeHTML("/Contact"));
->>>>>>> Stashed changes
   else if (cmd === "/cd") {
     if (!arg) return print("Usage: cd [section]", "error");
     const targetPath = resolvePath(arg);
     const target = fs[targetPath];
     if (!target) return print(`Section not found: ${arg}`, "error");
     if (target.type !== "dir") return print(`Cannot move into: ${arg}`, "error");
-<<<<<<< Updated upstream
-    await animateHTML(renderNodeHTML(targetPath));
-  }
-  else if (cmd === "/open" || cmd === "/cat") {
-    if (!arg) return print(`Usage: ${rawCmd} [item]`, "error");
-    await animateHTML(renderNodeHTML(resolvePath(arg)));
-  }
-  else {
-    const targetPath = resolvePath(input);
-    if (fs[targetPath]) await animateHTML(renderNodeHTML(targetPath));
-=======
     await animateHTML(await renderNodeHTML(targetPath));
   }
   else if (cmd === "/open" || cmd === "/cat") {
@@ -1996,20 +1703,13 @@ async function run(raw, echo = true) {
   else {
     const targetPath = resolvePath(input);
     if (fs[targetPath]) await animateHTML(await renderNodeHTML(targetPath));
->>>>>>> Stashed changes
     else print(`Unknown command or path: ${rawCmd}\nType help or ?`, "error");
   }
 
   suggestionsEl.style.display = "none";
 }
 
-<<<<<<< Updated upstream
-inputRow.addEventListener("submit", e => {
-  e.preventDefault();
-
-=======
 function submitCommandInput() {
->>>>>>> Stashed changes
   if (state.animating) {
     state.skipAnimation = true;
     return;
@@ -2024,14 +1724,11 @@ function submitCommandInput() {
   suggestionsEl.style.display = "none";
   updateCursorPosition();
 
-<<<<<<< Updated upstream
-=======
   if (state.contactPrompt.active) {
     handleContactInput(completed);
     return;
   }
 
->>>>>>> Stashed changes
   if (commandNeedsArgument(completed)) {
     commandInput.value = completed + " ";
     updateCursorPosition();
@@ -2040,14 +1737,11 @@ function submitCommandInput() {
   }
 
   run(completed);
-<<<<<<< Updated upstream
-=======
 }
 
 inputRow.addEventListener("submit", e => {
   e.preventDefault();
   submitCommandInput();
->>>>>>> Stashed changes
 });
 
 commandInput.addEventListener("input", () => {
@@ -2062,8 +1756,6 @@ commandInput.addEventListener("keydown", e => {
 
   const suggestions = getSuggestions(commandInput.value);
 
-<<<<<<< Updated upstream
-=======
   if (e.key === "Enter") {
     e.preventDefault();
     submitCommandInput();
@@ -2076,7 +1768,6 @@ commandInput.addEventListener("keydown", e => {
     return;
   }
 
->>>>>>> Stashed changes
   if (e.key === "ArrowDown" && suggestions.length) {
     e.preventDefault();
     state.selectedSuggestion = (state.selectedSuggestion + 1) % suggestions.length;
@@ -2152,14 +1843,11 @@ suggestionsEl.addEventListener("mousedown", e => {
     commandInput.value = completed + " ";
     updateCursorPosition();
     showSuggestions();
-<<<<<<< Updated upstream
-=======
   } else if (state.contactPrompt.active) {
     commandInput.value = "";
     updateCursorPosition();
     suggestionsEl.style.display = "none";
     handleContactInput(completed);
->>>>>>> Stashed changes
   } else {
     commandInput.value = "";
     updateCursorPosition();
@@ -2171,10 +1859,7 @@ suggestionsEl.addEventListener("mousedown", e => {
 });
 
 barDots.addEventListener("click", () => resetHome(true));
-<<<<<<< Updated upstream
-=======
 barTitle.addEventListener("click", () => startContactPrompt());
->>>>>>> Stashed changes
 
 // Redirect printable keypresses to the input so the user can always type
 document.addEventListener("keydown", e => {
