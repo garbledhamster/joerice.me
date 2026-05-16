@@ -43,6 +43,14 @@
   --link:#4fc1ff;
   --prompt:#4ec9b0;
   --mono:"Cascadia Mono","Cascadia Code","JetBrains Mono","SFMono-Regular","Menlo","Consolas","Liberation Mono",monospace;
+<<<<<<< Updated upstream
+=======
+  --read-mono:"Courier New","IBM Plex Mono","Cascadia Mono","Consolas",monospace;
+  --read-fg:#e8dfcf;
+  --read-muted:#9f9686;
+  --read-strong:#fff3c4;
+  --read-code:#9ff0d1;
+>>>>>>> Stashed changes
   --app-vh:100vh;
 }
 
@@ -90,6 +98,27 @@ body {
   letter-spacing:.08em;
 }
 
+<<<<<<< Updated upstream
+=======
+.bar-title {
+  border:0;
+  padding:0;
+  background:transparent;
+  color:inherit;
+  font:inherit;
+  letter-spacing:inherit;
+  text-transform:inherit;
+  cursor:pointer;
+}
+
+.bar-title:hover,
+.bar-title:focus-visible {
+  color:var(--fg);
+  outline:0;
+  text-decoration:underline;
+}
+
+>>>>>>> Stashed changes
 .bar-dots {
   display:flex;
   gap:6px;
@@ -138,6 +167,63 @@ body {
   white-space:pre-wrap;
 }
 
+<<<<<<< Updated upstream
+=======
+.reading-text {
+  display:block;
+  color:var(--read-fg);
+  font-family:var(--read-mono);
+  font-variant-ligatures:none;
+  letter-spacing:0;
+  white-space:pre-wrap;
+}
+
+.reading-text .md-heading {
+  color:var(--read-strong);
+  font-weight:700;
+}
+
+.reading-text .md-heading-rule,
+.reading-text .md-quote {
+  color:var(--read-muted);
+}
+
+.reading-text .md-bold {
+  color:var(--read-strong);
+  font-weight:700;
+}
+
+.reading-text .md-italic {
+  color:#d9cdbb;
+  font-style:italic;
+}
+
+.reading-text .md-inline-code,
+.reading-text .md-code-block,
+.reading-text .md-table {
+  color:var(--read-code);
+}
+
+.reading-text .md-inline-code {
+  background:#081613;
+  padding:0 0.25ch;
+}
+
+.reading-text .md-code-block,
+.reading-text .md-table {
+  display:block;
+  white-space:pre;
+}
+
+.reading-text .md-list-marker {
+  color:var(--read-muted);
+}
+
+.reading-text .md-link {
+  color:#8fd7ff;
+}
+
+>>>>>>> Stashed changes
 .input-zone { padding:2px 14px 10px; }
 
 .suggestions {
@@ -258,7 +344,11 @@ input {
         <span class="bar-dot yel"></span>
         <span class="bar-dot grn"></span>
       </div>
+<<<<<<< Updated upstream
       <div>joerice.me</div>
+=======
+      <button class="bar-title" id="barTitle" type="button" title="send a contact message">joerice.me</button>
+>>>>>>> Stashed changes
       <div id="clock">--:--:--</div>
     </header>
 
@@ -294,9 +384,17 @@ input {
   Do not add cards, panels, grids, embedded media previews, buttons in output,
   dashboards, app sections, or visual navigation systems.
 
+<<<<<<< Updated upstream
   When adding content, edit the fs object below:
   - Add new paths like "/Projects/example".
   - Add guide text, body text, items, children, and image URL records.
+=======
+  When editing section text, edit the Markdown files in /content.
+  The fs object below should stay mostly structural:
+  - Add new paths like "/Projects/example".
+  - Point each path at a content/*.md file.
+  - Keep children and image URL records here.
+>>>>>>> Stashed changes
   - Update mapHTML() only when the content tree changes.
 
   The goal is for future LLMs to add content, not redesign the interface.
@@ -316,6 +414,10 @@ const suggestionsEl = document.getElementById("suggestions");
 const inputSizer = document.getElementById("inputSizer");
 const fakeCursor = document.getElementById("fakeCursor");
 const barDots = document.getElementById("barDots");
+<<<<<<< Updated upstream
+=======
+const barTitle = document.getElementById("barTitle");
+>>>>>>> Stashed changes
 
 const state = {
   path: "/",
@@ -324,20 +426,55 @@ const state = {
   bootSkipped: false,
   animating: false,
   skipAnimation: false,
+<<<<<<< Updated upstream
   animationId: 0
 };
 
+=======
+  animationId: 0,
+  contactPrompt: {
+    active: false,
+    step: "reason",
+    data: {}
+  }
+};
+
+const CONTACT_TO = "joe@joerice.me";
+
+const CONTACT_REASONS = [
+  { label:"Project / website", value:"project", desc:"new site, app, or build idea", aliases:["website","project"] },
+  { label:"Hiring / recruiting", value:"hiring", desc:"job, contract, or recruiter contact", aliases:["hire","recruiter","recruiting"] },
+  { label:"IT automation", value:"automation", desc:"PowerShell, cloud, dashboards, or ops", aliases:["it","powershell","cloud"] },
+  { label:"Security / networking", value:"security", desc:"firewalls, logging, hardening, network work", aliases:["network","networking"] },
+  { label:"Training / coaching", value:"training", desc:"training, coaching, or accountability", aliases:["coaching","trainer"] },
+  { label:"Personal", value:"personal", desc:"friends, family, or direct note", aliases:["friend","family"] },
+  { label:"Other", value:"other", desc:"anything else", aliases:["misc"] }
+];
+
+const CONTACT_CONFIRM_OPTIONS = [
+  { label:"send", value:"send", desc:"open a prefilled email draft" },
+  { label:"review", value:"review", desc:"print the message summary again" },
+  { label:"cancel", value:"cancel", desc:"discard this contact prompt" }
+];
+
+>>>>>>> Stashed changes
 const fs = {
   "/": {
     type:"dir",
     title:"HOME",
+<<<<<<< Updated upstream
     guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation.",
     children:["About","Projects","Skills","Posts","Phases","Interests","Services","Media","Gallery","Contact"]
+=======
+    content:"content/home.md",
+    children:["About","Projects","Skills","Posts","Interests","Services","Media","Gallery","Contact"]
+>>>>>>> Stashed changes
   },
 
   "/About": {
     type:"page",
     title:"ABOUT",
+<<<<<<< Updated upstream
     body:`Joe Rice
 
 Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
@@ -348,35 +485,51 @@ Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium dolor
 
 The clean path is:
 About -> Projects -> Skills -> Posts -> Contact`
+=======
+    content:"content/about.md"
+>>>>>>> Stashed changes
   },
 
   "/Projects": {
     type:"dir",
     title:"PROJECTS",
+<<<<<<< Updated upstream
     guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores.",
+=======
+    content:"content/projects.md",
+>>>>>>> Stashed changes
     children:["fortigate-blocklist","it-dashboard","site-shell"]
   },
   "/Projects/fortigate-blocklist": {
     type:"page",
     title:"PROJECT // FORTIGATE BLOCKLIST",
+<<<<<<< Updated upstream
     body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 
 Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium.`
+=======
+    content:"content/projects/fortigate-blocklist.md"
+>>>>>>> Stashed changes
   },
   "/Projects/it-dashboard": {
     type:"page",
     title:"PROJECT // IT DASHBOARD",
+<<<<<<< Updated upstream
     body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 
 Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt.`
+=======
+    content:"content/projects/it-dashboard.md"
+>>>>>>> Stashed changes
   },
   "/Projects/site-shell": {
     type:"page",
     title:"PROJECT // PORTFOLIO SITE",
+<<<<<<< Updated upstream
     body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
@@ -389,26 +542,44 @@ At vero eos et accusamus et iusto odio dignissimos ducimus qui blanditiis praese
     title:"SKILLS",
     guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut labore et dolore magnam aliquam quaerat voluptatem.",
     items:["PowerShell","Azure","Cloud","Networking","Security","SQL","Automation","Dashboards","ASPX","Documentation"]
+=======
+    content:"content/projects/site-shell.md"
+  },
+
+  "/Skills": {
+    type:"page",
+    title:"SKILLS",
+    content:"content/skills.md"
+>>>>>>> Stashed changes
   },
 
   "/Posts": {
     type:"dir",
     title:"POSTS",
+<<<<<<< Updated upstream
     guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur.",
+=======
+    content:"content/posts.md",
+>>>>>>> Stashed changes
     children:["productive-procrastination.txt","terminal-website-concept.txt"]
   },
   "/Posts/productive-procrastination.txt": {
     type:"post",
     title:"PRODUCTIVE PROCRASTINATION",
+<<<<<<< Updated upstream
     body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris.
 
 Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
 
 Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo.`
+=======
+    content:"content/posts/productive-procrastination.md"
+>>>>>>> Stashed changes
   },
   "/Posts/terminal-website-concept.txt": {
     type:"post",
     title:"INTERACTIVE SITE CONCEPT",
+<<<<<<< Updated upstream
     body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
@@ -460,30 +631,58 @@ Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deseru
     title:"SERVICES",
     guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur vel illum qui dolorem.",
     items:["IT automation","PowerShell scripting","internal dashboards","security log analysis","network documentation"]
+=======
+    content:"content/posts/terminal-website-concept.md"
+  },
+
+  "/Interests": {
+    type:"page",
+    title:"INTERESTS",
+    content:"content/interests.md"
+  },
+
+  "/Services": {
+    type:"page",
+    title:"SERVICES",
+    content:"content/services.md"
+>>>>>>> Stashed changes
   },
 
   "/Media": {
     type:"dir",
     title:"MEDIA",
+<<<<<<< Updated upstream
     guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut labore et dolore magnam aliquam quaerat voluptatem. Opening one prints a note and gives a new-tab image link.",
+=======
+    content:"content/media.md",
+>>>>>>> Stashed changes
     children:["desk-setup.jpg","network-diagram.jpg","field-notes.jpg"]
   },
   "/Media/desk-setup.jpg": {
     type:"image",
     title:"MEDIA // DESK SETUP",
     url:"https://picsum.photos/id/26/1200/800",
+<<<<<<< Updated upstream
     body:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut labore et dolore magnam aliquam quaerat voluptatem."
+=======
+    content:"content/media/desk-setup.md"
+>>>>>>> Stashed changes
   },
   "/Media/network-diagram.jpg": {
     type:"image",
     title:"MEDIA // NETWORK DIAGRAM",
     url:"https://picsum.photos/id/180/1200/800",
+<<<<<<< Updated upstream
     body:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit."
+=======
+    content:"content/media/network-diagram.md"
+>>>>>>> Stashed changes
   },
   "/Media/field-notes.jpg": {
     type:"image",
     title:"MEDIA // FIELD NOTES",
     url:"https://picsum.photos/id/1060/1200/800",
+<<<<<<< Updated upstream
     body:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse."
   },
 
@@ -492,16 +691,29 @@ Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deseru
     title:"GALLERY",
     guide:"Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut labore et dolore magnam aliquam quaerat voluptatem. Open an image to launch the source in a new tab.",
     items:["desk-setup.jpg","network-diagram.jpg","field-notes.jpg"]
+=======
+    content:"content/media/field-notes.md"
+  },
+
+  "/Gallery": {
+    type:"page",
+    title:"GALLERY",
+    content:"content/gallery.md"
+>>>>>>> Stashed changes
   },
 
   "/Contact": {
     type:"page",
     title:"CONTACT",
+<<<<<<< Updated upstream
     body:`Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
 
 Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
 
 Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.`
+=======
+    content:"content/contact.md"
+>>>>>>> Stashed changes
   }
 };
 
@@ -543,6 +755,261 @@ function escapeHtml(str) {
     .replaceAll("'", "&#039;");
 }
 
+<<<<<<< Updated upstream
+=======
+function stripInlineMarkdown(str) {
+  return String(str || "")
+    .replace(/\[([^\]]+)\]\([^)]+\)/g, "$1")
+    .replace(/`([^`]+)`/g, "$1")
+    .replace(/\*\*([^*]+)\*\*/g, "$1")
+    .replace(/\*([^*]+)\*/g, "$1")
+    .trim();
+}
+
+function splitTableRow(line = "") {
+  let clean = String(line).trim();
+  if (clean.startsWith("|")) clean = clean.slice(1);
+  if (clean.endsWith("|")) clean = clean.slice(0, -1);
+  return clean.split("|").map(cell => stripInlineMarkdown(cell));
+}
+
+function isTableSeparator(line = "") {
+  const cells = splitTableRow(line);
+  return cells.length > 1 && cells.every(cell => /^:?-{3,}:?$/.test(cell.trim()));
+}
+
+function isTableStart(lines, index) {
+  return lines[index] &&
+    lines[index].includes("|") &&
+    lines[index + 1] &&
+    isTableSeparator(lines[index + 1]);
+}
+
+function formatAsciiRow(cells, widths) {
+  return "|" + widths.map((width, index) => {
+    const value = cells[index] || "";
+    return ` ${value.padEnd(width, " ")} `;
+  }).join("|") + "|";
+}
+
+function renderAsciiTable(lines, startIndex) {
+  const rows = [splitTableRow(lines[startIndex])];
+  let index = startIndex + 2;
+
+  while (index < lines.length && lines[index].trim() && lines[index].includes("|")) {
+    rows.push(splitTableRow(lines[index]));
+    index++;
+  }
+
+  const columnCount = Math.max(...rows.map(row => row.length));
+  const widths = Array.from({ length:columnCount }, (_, column) => {
+    return Math.max(...rows.map(row => String(row[column] || "").length), 3);
+  });
+  const border = "+" + widths.map(width => "-".repeat(width + 2)).join("+") + "+";
+  const output = [
+    border,
+    formatAsciiRow(rows[0], widths),
+    border,
+    ...rows.slice(1).map(row => formatAsciiRow(row, widths)),
+    border
+  ].join("\n");
+
+  return {
+    html:`<span class="md-table">${escapeHtml(output)}</span>`,
+    nextIndex:index
+  };
+}
+
+function markdownLinkHTML(label, target) {
+  const cleanLabel = escapeHtml(label || target);
+  const cleanTarget = String(target || "").trim();
+
+  if (!cleanTarget) return cleanLabel;
+
+  if (cleanTarget.toLowerCase().startsWith("command:")) {
+    return shellLink(label, cleanTarget.slice(8).trim());
+  }
+
+  if (cleanTarget.startsWith("/")) {
+    return shellLink(label, `open ${cleanTarget}`);
+  }
+
+  if (/^open\s+/i.test(cleanTarget)) {
+    return shellLink(label, cleanTarget);
+  }
+
+  if (/^(https?:|mailto:)/i.test(cleanTarget)) {
+    if (!CONFIG.ENABLE_LINKS || !CONFIG.ENABLE_EXTERNAL_LINKS) {
+      return `${cleanLabel}: ${escapeHtml(cleanTarget)}`;
+    }
+
+    return `<span class="shell-link md-link" data-external="${escapeHtml(cleanTarget)}">${cleanLabel}</span>`;
+  }
+
+  return `${cleanLabel} (${escapeHtml(cleanTarget)})`;
+}
+
+function renderInlineMarkdown(line = "") {
+  const text = String(line);
+  let output = "";
+
+  for (let index = 0; index < text.length;) {
+    if (text.startsWith("**", index)) {
+      const end = text.indexOf("**", index + 2);
+      if (end !== -1) {
+        output += `<span class="md-bold">${escapeHtml(text.slice(index + 2, end))}</span>`;
+        index = end + 2;
+        continue;
+      }
+    }
+
+    if (text[index] === "`") {
+      const end = text.indexOf("`", index + 1);
+      if (end !== -1) {
+        output += `<span class="md-inline-code">${escapeHtml(text.slice(index + 1, end))}</span>`;
+        index = end + 1;
+        continue;
+      }
+    }
+
+    if (text[index] === "[") {
+      const labelEnd = text.indexOf("]", index + 1);
+      const targetStart = labelEnd === -1 ? -1 : text.indexOf("(", labelEnd);
+      const targetEnd = targetStart === -1 ? -1 : text.indexOf(")", targetStart);
+
+      if (labelEnd !== -1 && targetStart === labelEnd + 1 && targetEnd !== -1) {
+        output += markdownLinkHTML(text.slice(index + 1, labelEnd), text.slice(targetStart + 1, targetEnd));
+        index = targetEnd + 1;
+        continue;
+      }
+    }
+
+    if (text[index] === "*" && text[index + 1] !== " " && text[index - 1] !== "*") {
+      const end = text.indexOf("*", index + 1);
+      if (end !== -1) {
+        output += `<span class="md-italic">${escapeHtml(text.slice(index + 1, end))}</span>`;
+        index = end + 1;
+        continue;
+      }
+    }
+
+    output += escapeHtml(text[index]);
+    index++;
+  }
+
+  return output;
+}
+
+function renderCodeBlock(lines, language = "") {
+  const label = language ? `[${language}]\n` : "";
+  return `<span class="md-code-block">${escapeHtml(label + lines.join("\n"))}</span>`;
+}
+
+function renderMarkdown(markdown = "") {
+  const lines = String(markdown || "").replace(/\r\n/g, "\n").replace(/\r/g, "\n").split("\n");
+  const output = [];
+  let codeLines = [];
+  let codeLanguage = "";
+  let inCode = false;
+
+  for (let index = 0; index < lines.length; index++) {
+    const line = lines[index];
+    const trimmed = line.trim();
+
+    if (trimmed.startsWith("```")) {
+      if (inCode) {
+        output.push(renderCodeBlock(codeLines, codeLanguage));
+        codeLines = [];
+        codeLanguage = "";
+        inCode = false;
+      } else {
+        inCode = true;
+        codeLanguage = trimmed.slice(3).trim();
+      }
+      continue;
+    }
+
+    if (inCode) {
+      codeLines.push(line);
+      continue;
+    }
+
+    if (isTableStart(lines, index)) {
+      const table = renderAsciiTable(lines, index);
+      output.push(table.html);
+      index = table.nextIndex - 1;
+      continue;
+    }
+
+    if (!trimmed) {
+      output.push("");
+      continue;
+    }
+
+    const heading = /^(#{1,6})\s+(.+)$/.exec(line);
+    if (heading) {
+      const text = stripInlineMarkdown(heading[2]).toUpperCase();
+      output.push(`<span class="md-heading">${escapeHtml(text)}</span>`);
+      if (heading[1].length <= 2) {
+        output.push(`<span class="md-heading-rule">${"-".repeat(Math.max(8, text.length))}</span>`);
+      }
+      continue;
+    }
+
+    if (/^\s*[-*]\s+/.test(line)) {
+      const item = line.replace(/^\s*[-*]\s+/, "");
+      output.push(`<span class="md-list-marker">-</span> ${renderInlineMarkdown(item)}`);
+      continue;
+    }
+
+    const orderedItem = /^(\s*)(\d+)\.\s+(.+)$/.exec(line);
+    if (orderedItem) {
+      output.push(`<span class="md-list-marker">${orderedItem[2]}.</span> ${renderInlineMarkdown(orderedItem[3])}`);
+      continue;
+    }
+
+    if (/^>\s?/.test(line)) {
+      output.push(`<span class="md-quote">|</span> ${renderInlineMarkdown(line.replace(/^>\s?/, ""))}`);
+      continue;
+    }
+
+    if (/^\s*(-{3,}|\*{3,}|_{3,})\s*$/.test(line)) {
+      output.push(`<span class="md-heading-rule">${"-".repeat(32)}</span>`);
+      continue;
+    }
+
+    output.push(renderInlineMarkdown(line));
+  }
+
+  if (inCode) output.push(renderCodeBlock(codeLines, codeLanguage));
+
+  return output.join("\n");
+}
+
+function renderMarkdownContent(markdown = "") {
+  return `<div class="reading-text">${renderMarkdown(markdown)}</div>`;
+}
+
+async function loadContentFile(path, fallback = "") {
+  const node = fs[path];
+  if (!node?.content) return fallback;
+
+  try {
+    const response = await fetch(node.content, { cache:"no-store" });
+    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    return await response.text();
+  } catch (error) {
+    const message = `[content file unavailable: ${node.content}]`;
+    return fallback ? `${fallback}\n\n${message}` : message;
+  }
+}
+
+async function contentHTML(path, fallback = "") {
+  const markdown = await loadContentFile(path, fallback);
+  return renderMarkdownContent(markdown);
+}
+
+>>>>>>> Stashed changes
 function areaHeader(title) {
   const clean = String(title || "AREA").toUpperCase();
   const line = "=".repeat(Math.max(22, clean.length + 8));
@@ -599,7 +1066,11 @@ function externalLink(label, url) {
   if (!CONFIG.ENABLE_LINKS || !CONFIG.ENABLE_EXTERNAL_LINKS) {
     return `${escapeHtml(label)}: ${escapeHtml(url)}`;
   }
+<<<<<<< Updated upstream
   return `<span class="shell-link" data-external="${escapeHtml(url)}">${escapeHtml(label)} ↗</span>`;
+=======
+  return `<span class="shell-link" data-external="${escapeHtml(url)}">${escapeHtml(label)} [external]</span>`;
+>>>>>>> Stashed changes
 }
 
 function navLine(index, label, command) {
@@ -607,6 +1078,7 @@ function navLine(index, label, command) {
   return `${number}  ${shellLink(label, command)}\n    command: ${escapeHtml(command)}`;
 }
 
+<<<<<<< Updated upstream
 function dashboardHTML() {
   const root = fs["/"];
   const lines = root.children.map((item, index) => navLine(index, item, `open ${item}`)).join("\n\n");
@@ -616,6 +1088,16 @@ function dashboardHTML() {
 JOERICE.ME
 
 ${escapeHtml(root.guide)}
+=======
+async function dashboardHTML() {
+  const root = fs["/"];
+  const lines = root.children.map((item, index) => navLine(index, item, `open ${item}`)).join("\n\n");
+  const body = await contentHTML("/");
+
+  return `${areaHeader("Home")}
+
+${body}
+>>>>>>> Stashed changes
 
 Suggested path:
 01 About
@@ -640,6 +1122,10 @@ async function resetHome(animated = true) {
   state.animationId++;
   state.animating = false;
   state.skipAnimation = false;
+<<<<<<< Updated upstream
+=======
+  resetContactPrompt();
+>>>>>>> Stashed changes
   state.path = "/";
   updatePrompt();
   suggestionsEl.style.display = "none";
@@ -648,10 +1134,19 @@ async function resetHome(animated = true) {
   screen.textContent = "";
   commandInput.focus();
 
+<<<<<<< Updated upstream
   if (animated) await animateHTML(dashboardHTML(), 5);
   else {
     const wrap = document.createElement("div");
     wrap.innerHTML = dashboardHTML();
+=======
+  const homeHTML = await dashboardHTML();
+
+  if (animated) await animateHTML(homeHTML, 5);
+  else {
+    const wrap = document.createElement("div");
+    wrap.innerHTML = homeHTML;
+>>>>>>> Stashed changes
     screen.appendChild(wrap);
   }
 }
@@ -861,6 +1356,7 @@ function getNavigationSuggestions(query) {
     });
 }
 
+<<<<<<< Updated upstream
 function listCurrentHTML() {
   const node = currentNode();
   if (!node) return "Invalid location.";
@@ -874,12 +1370,32 @@ function listCurrentHTML() {
 ${heading}
 
 ${escapeHtml(node.guide || "Choose where to go next.")}
+=======
+async function listCurrentHTML(path = state.path) {
+  const node = fs[path];
+  if (!node) return "Invalid location.";
+  if (node.type !== "dir") return "Nothing to select here.";
+
+  const heading = path === "/" ? "SELECT A PATH FROM HOME" : "SELECT ANOTHER PATH";
+  const rows = node.children.map((item, index) => navLine(index, item, `open ${resolvePath(item)}`)).join("\n\n");
+  const body = await contentHTML(path, "Choose where to go next.");
+
+  return `${areaHeader(node.title || heading)}
+
+${body}
+
+${heading}
+>>>>>>> Stashed changes
 
 ${rows}
 ${relatedLinks(state.path)}`;
 }
 
+<<<<<<< Updated upstream
 function renderNodeHTML(path) {
+=======
+async function renderNodeHTML(path) {
+>>>>>>> Stashed changes
   const node = fs[path];
 
   if (!node) {
@@ -892,14 +1408,24 @@ ${relatedLinks(state.path)}`;
   if (node.type === "dir") {
     state.path = path;
     updatePrompt();
+<<<<<<< Updated upstream
     return listCurrentHTML();
+=======
+    return await listCurrentHTML(path);
+>>>>>>> Stashed changes
   }
 
   if (node.type === "list") {
     state.path = path;
     updatePrompt();
+<<<<<<< Updated upstream
 
     const lines = node.items.map((item, index) => {
+=======
+    const body = await contentHTML(path, node.guide || "Choose where to go next.");
+
+    const lines = (node.items || []).map((item, index) => {
+>>>>>>> Stashed changes
       const clean = item.replace(/^▧\s*/, "");
       const possibleLocalPath = resolvePath(clean);
       const possibleMediaPath = `/Media/${clean}`;
@@ -913,7 +1439,11 @@ ${relatedLinks(state.path)}`;
 
     return `${areaHeader(node.title)}
 
+<<<<<<< Updated upstream
 ${escapeHtml(node.guide || "Choose where to go next.")}
+=======
+${body}
+>>>>>>> Stashed changes
 
 ${lines}
 ${relatedLinks(path)}`;
@@ -922,10 +1452,18 @@ ${relatedLinks(path)}`;
   if (node.type === "image") {
     state.path = path;
     updatePrompt();
+<<<<<<< Updated upstream
 
     return `${areaHeader(node.title)}
 
 ${escapeHtml(node.body)}
+=======
+    const body = await contentHTML(path);
+
+    return `${areaHeader(node.title)}
+
+${body}
+>>>>>>> Stashed changes
 
 source:
 ${escapeHtml(node.url)}
@@ -936,10 +1474,18 @@ ${relatedLinks(path)}`;
 
   state.path = path;
   updatePrompt();
+<<<<<<< Updated upstream
 
   return `${areaHeader(node.title)}
 
 ${escapeHtml(node.body)}
+=======
+  const body = await contentHTML(path);
+
+  return `${areaHeader(node.title)}
+
+${body}
+>>>>>>> Stashed changes
 ${relatedLinks(path)}`;
 }
 
@@ -960,9 +1506,221 @@ ${links.join("\n")}`;
 }
 
 function updatePrompt() {
+<<<<<<< Updated upstream
   promptEl.textContent = `joerice.me:${state.path}>`;
 }
 
+=======
+  if (state.contactPrompt.active) {
+    promptEl.textContent = `contact:${state.contactPrompt.step}>`;
+    return;
+  }
+
+  promptEl.textContent = `joerice.me:${state.path}>`;
+}
+
+function resetContactPrompt() {
+  state.contactPrompt = {
+    active: false,
+    step: "reason",
+    data: {}
+  };
+}
+
+function contactStepHelp(step = state.contactPrompt.step) {
+  const labels = {
+    reason: "Select a reason, or type one.",
+    name: "Enter your name.",
+    email: "Enter your email so Joe can reply.",
+    message: "Type your message in one line.",
+    confirm: "Type send, review, or cancel."
+  };
+
+  return labels[step] || "Continue the contact prompt.";
+}
+
+async function startContactPrompt() {
+  if (state.booting) await finishBoot(false);
+
+  if (state.animating) {
+    state.skipAnimation = true;
+    state.animationId++;
+    state.animating = false;
+  }
+
+  state.contactPrompt.active = true;
+  state.contactPrompt.step = "reason";
+  state.contactPrompt.data = {};
+  state.selectedSuggestion = 0;
+  commandInput.value = "";
+  updatePrompt();
+  updateCursorPosition();
+
+  print(`
+${areaHeader("Contact Message")}
+
+Read-Host style contact prompt started.
+Reason for contacting?
+
+Use ArrowUp / ArrowDown and Enter, or click a reason in the selector.
+Type cancel anytime to stop.`);
+
+  showSuggestions();
+  commandInput.focus();
+}
+
+function getContactSuggestions(value) {
+  const q = String(value || "").trim().toLowerCase();
+
+  if (state.contactPrompt.step === "reason") {
+    return CONTACT_REASONS
+      .filter(item => {
+        const haystack = [item.label, item.value, item.desc, ...(item.aliases || [])].join(" ").toLowerCase();
+        return !q || haystack.includes(q);
+      })
+      .map(item => ({ ...item, mode:"contact" }));
+  }
+
+  if (state.contactPrompt.step === "confirm") {
+    return CONTACT_CONFIRM_OPTIONS
+      .filter(item => item.label.startsWith(q) || item.value.startsWith(q))
+      .map(item => ({ ...item, mode:"contact" }));
+  }
+
+  return [];
+}
+
+function findContactReason(value) {
+  const q = String(value || "").trim().toLowerCase();
+  return CONTACT_REASONS.find(item => {
+    return item.value === q ||
+      item.label.toLowerCase() === q ||
+      (item.aliases || []).some(alias => alias.toLowerCase() === q);
+  }) || { label:String(value || "").trim(), value:"custom", desc:"custom reason" };
+}
+
+function contactSummaryHTML() {
+  const data = state.contactPrompt.data;
+
+  return `${areaHeader("Contact Draft")}
+
+reason: ${escapeHtml(data.reason || "")}
+name: ${escapeHtml(data.name || "")}
+email: ${escapeHtml(data.email || "")}
+
+message:
+${escapeHtml(data.message || "")}`;
+}
+
+function contactMailtoURL() {
+  const data = state.contactPrompt.data;
+  const subject = `[joerice.me] ${data.reason || "Contact message"} from ${data.name || "Website visitor"}`;
+  const body = [
+    `Reason: ${data.reason || ""}`,
+    `Name: ${data.name || ""}`,
+    `Email: ${data.email || ""}`,
+    "",
+    "Message:",
+    data.message || ""
+  ].join("\n");
+
+  return `mailto:${CONTACT_TO}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`;
+}
+
+function finishContactPrompt(message) {
+  resetContactPrompt();
+  updatePrompt();
+  suggestionsEl.style.display = "none";
+  commandInput.value = "";
+  updateCursorPosition();
+  print(message);
+  commandInput.focus();
+}
+
+async function handleContactInput(raw) {
+  const value = String(raw || "").trim();
+
+  if (!value) {
+    print(contactStepHelp(), "error");
+    showSuggestions();
+    return;
+  }
+
+  if (value.toLowerCase() === "cancel") {
+    finishContactPrompt("Contact prompt canceled.");
+    return;
+  }
+
+  const prompt = state.contactPrompt;
+
+  if (prompt.step === "reason") {
+    const reason = findContactReason(value);
+    prompt.data.reason = reason.label;
+    prompt.step = "name";
+    updatePrompt();
+    print(`reason: ${reason.label}\nname?`);
+    return;
+  }
+
+  if (prompt.step === "name") {
+    prompt.data.name = value;
+    prompt.step = "email";
+    updatePrompt();
+    print(`name: ${value}\nemail?`);
+    return;
+  }
+
+  if (prompt.step === "email") {
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      print("Enter a valid email address, or type cancel.", "error");
+      return;
+    }
+
+    prompt.data.email = value;
+    prompt.step = "message";
+    updatePrompt();
+    print("message?");
+    return;
+  }
+
+  if (prompt.step === "message") {
+    prompt.data.message = value;
+    prompt.step = "confirm";
+    updatePrompt();
+    await animateHTML(`${contactSummaryHTML()}
+
+send this message?
+Type send, review, or cancel.`, 5);
+    showSuggestions();
+    return;
+  }
+
+  if (prompt.step === "confirm") {
+    const action = value.toLowerCase();
+
+    if (action === "review") {
+      await animateHTML(`${contactSummaryHTML()}
+
+send this message?
+Type send, review, or cancel.`, 5);
+      showSuggestions();
+      return;
+    }
+
+    if (action !== "send") {
+      print("Type send, review, or cancel.", "error");
+      showSuggestions();
+      return;
+    }
+
+    const href = contactMailtoURL();
+    finishContactPrompt(`Opening email draft to ${CONTACT_TO}.
+If your email app does not open, send the draft manually to ${CONTACT_TO}.`);
+    window.location.href = href;
+  }
+}
+
+>>>>>>> Stashed changes
 function helpHTML() {
   return `${areaHeader("Help")}
 
@@ -1021,10 +1779,13 @@ function mapHTML() {
 ├─ ${shellLink("Posts", "open Posts")}
 │  ├─ ${shellLink("productive-procrastination.txt", "open /Posts/productive-procrastination.txt")}
 │  └─ ${shellLink("terminal-website-concept.txt", "open /Posts/terminal-website-concept.txt")}
+<<<<<<< Updated upstream
 ├─ ${shellLink("Phases", "open Phases")}
 │  ├─ ${shellLink("Phase-01", "open /Phases/Phase-01")}
 │  ├─ ${shellLink("Phase-02", "open /Phases/Phase-02")}
 │  └─ ${shellLink("Phase-03", "open /Phases/Phase-03")}
+=======
+>>>>>>> Stashed changes
 ├─ ${shellLink("Interests", "open Interests")}
 ├─ ${shellLink("Services", "open Services")}
 ├─ ${shellLink("Media", "open Media")}
@@ -1077,6 +1838,11 @@ function commandDisplayName(rawCmd, canonical) {
 }
 
 function getSuggestions(value) {
+<<<<<<< Updated upstream
+=======
+  if (state.contactPrompt.active) return getContactSuggestions(value);
+
+>>>>>>> Stashed changes
   const raw = String(value || "");
   const trimmed = raw.trim();
   const hasTrailingSpace = /\s$/.test(raw);
@@ -1162,6 +1928,10 @@ function acceptSuggestion() {
   const selected = suggestions[state.selectedSuggestion];
   if (!selected) return null;
 
+<<<<<<< Updated upstream
+=======
+  if (selected.mode === "contact") return selected.value || selected.label;
+>>>>>>> Stashed changes
   if (selected.mode === "command") return selected.value;
   return `${selected.command} ${selected.value}`;
 }
@@ -1185,18 +1955,28 @@ async function run(raw, echo = true) {
   if (cmd === "/help" || cmd === "/?") await animateHTML(helpHTML());
   else if (cmd === "/clear") await resetHome(true);
   else if (cmd === "/pwd") await animateHTML(escapeHtml(state.path));
+<<<<<<< Updated upstream
   else if (cmd === "/ls") await animateHTML(listCurrentHTML());
   else if (cmd === "/home") await resetHome(true);
   else if (cmd === "/back") await animateHTML(renderNodeHTML(parentPath(state.path)));
   else if (cmd === "/map") await animateHTML(mapHTML());
   else if (cmd === "/about") await animateHTML(renderNodeHTML("/About"));
   else if (cmd === "/contact") await animateHTML(renderNodeHTML("/Contact"));
+=======
+  else if (cmd === "/ls") await animateHTML(await listCurrentHTML());
+  else if (cmd === "/home") await resetHome(true);
+  else if (cmd === "/back") await animateHTML(await renderNodeHTML(parentPath(state.path)));
+  else if (cmd === "/map") await animateHTML(mapHTML());
+  else if (cmd === "/about") await animateHTML(await renderNodeHTML("/About"));
+  else if (cmd === "/contact") await animateHTML(await renderNodeHTML("/Contact"));
+>>>>>>> Stashed changes
   else if (cmd === "/cd") {
     if (!arg) return print("Usage: cd [section]", "error");
     const targetPath = resolvePath(arg);
     const target = fs[targetPath];
     if (!target) return print(`Section not found: ${arg}`, "error");
     if (target.type !== "dir") return print(`Cannot move into: ${arg}`, "error");
+<<<<<<< Updated upstream
     await animateHTML(renderNodeHTML(targetPath));
   }
   else if (cmd === "/open" || cmd === "/cat") {
@@ -1206,15 +1986,30 @@ async function run(raw, echo = true) {
   else {
     const targetPath = resolvePath(input);
     if (fs[targetPath]) await animateHTML(renderNodeHTML(targetPath));
+=======
+    await animateHTML(await renderNodeHTML(targetPath));
+  }
+  else if (cmd === "/open" || cmd === "/cat") {
+    if (!arg) return print(`Usage: ${rawCmd} [item]`, "error");
+    await animateHTML(await renderNodeHTML(resolvePath(arg)));
+  }
+  else {
+    const targetPath = resolvePath(input);
+    if (fs[targetPath]) await animateHTML(await renderNodeHTML(targetPath));
+>>>>>>> Stashed changes
     else print(`Unknown command or path: ${rawCmd}\nType help or ?`, "error");
   }
 
   suggestionsEl.style.display = "none";
 }
 
+<<<<<<< Updated upstream
 inputRow.addEventListener("submit", e => {
   e.preventDefault();
 
+=======
+function submitCommandInput() {
+>>>>>>> Stashed changes
   if (state.animating) {
     state.skipAnimation = true;
     return;
@@ -1229,6 +2024,14 @@ inputRow.addEventListener("submit", e => {
   suggestionsEl.style.display = "none";
   updateCursorPosition();
 
+<<<<<<< Updated upstream
+=======
+  if (state.contactPrompt.active) {
+    handleContactInput(completed);
+    return;
+  }
+
+>>>>>>> Stashed changes
   if (commandNeedsArgument(completed)) {
     commandInput.value = completed + " ";
     updateCursorPosition();
@@ -1237,6 +2040,14 @@ inputRow.addEventListener("submit", e => {
   }
 
   run(completed);
+<<<<<<< Updated upstream
+=======
+}
+
+inputRow.addEventListener("submit", e => {
+  e.preventDefault();
+  submitCommandInput();
+>>>>>>> Stashed changes
 });
 
 commandInput.addEventListener("input", () => {
@@ -1251,6 +2062,21 @@ commandInput.addEventListener("keydown", e => {
 
   const suggestions = getSuggestions(commandInput.value);
 
+<<<<<<< Updated upstream
+=======
+  if (e.key === "Enter") {
+    e.preventDefault();
+    submitCommandInput();
+    return;
+  }
+
+  if (e.key === "Escape" && state.contactPrompt.active) {
+    e.preventDefault();
+    finishContactPrompt("Contact prompt canceled.");
+    return;
+  }
+
+>>>>>>> Stashed changes
   if (e.key === "ArrowDown" && suggestions.length) {
     e.preventDefault();
     state.selectedSuggestion = (state.selectedSuggestion + 1) % suggestions.length;
@@ -1326,6 +2152,14 @@ suggestionsEl.addEventListener("mousedown", e => {
     commandInput.value = completed + " ";
     updateCursorPosition();
     showSuggestions();
+<<<<<<< Updated upstream
+=======
+  } else if (state.contactPrompt.active) {
+    commandInput.value = "";
+    updateCursorPosition();
+    suggestionsEl.style.display = "none";
+    handleContactInput(completed);
+>>>>>>> Stashed changes
   } else {
     commandInput.value = "";
     updateCursorPosition();
@@ -1337,6 +2171,10 @@ suggestionsEl.addEventListener("mousedown", e => {
 });
 
 barDots.addEventListener("click", () => resetHome(true));
+<<<<<<< Updated upstream
+=======
+barTitle.addEventListener("click", () => startContactPrompt());
+>>>>>>> Stashed changes
 
 // Redirect printable keypresses to the input so the user can always type
 document.addEventListener("keydown", e => {
