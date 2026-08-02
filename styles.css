@@ -56,6 +56,61 @@ main {
   text-decoration: none;
 }
 
+.section-picker {
+  position: fixed;
+  z-index: 10;
+  top: 4.75rem;
+  right: max(1rem, calc((100vw - 70rem) / 2));
+  width: min(calc(100% - 2rem), 19rem);
+  margin: 0;
+  border: 1px solid var(--line);
+  border-radius: 0.35rem;
+  background: rgb(255 253 248 / 97%);
+  box-shadow: var(--shadow);
+}
+
+.section-picker summary {
+  padding: 0.7rem 0.9rem;
+  cursor: pointer;
+  color: var(--accent-dark);
+  font-size: 0.75rem;
+  font-weight: 900;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.section-picker nav {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1px;
+  border-top: 1px solid var(--line);
+  background: var(--line);
+}
+
+.section-picker a {
+  padding: 0.7rem;
+  background: var(--surface);
+  color: var(--ink);
+  font-size: 0.72rem;
+  font-weight: 800;
+  line-height: 1.2;
+  text-decoration: none;
+}
+
+.section-picker a:hover {
+  background: rgb(24 33 29 / 8%);
+}
+
+.section-picker a:focus-visible,
+.section-picker summary:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 3px;
+}
+
+[id] {
+  scroll-margin-top: 5.5rem;
+}
+
 .site-header span {
   color: var(--muted);
 }
