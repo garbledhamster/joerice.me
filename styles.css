@@ -491,6 +491,89 @@ h1 {
   background: var(--surface);
 }
 
+.engagement-timeline {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin: 2.5rem 0 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--line);
+  list-style: none;
+}
+
+.engagement-timeline li {
+  min-width: 0;
+  padding: clamp(0.55rem, 2.8vw, 1.35rem);
+  background: var(--surface);
+}
+
+.engagement-timeline h3 {
+  margin: 0.6rem 0 0.5rem;
+  font-size: clamp(0.85rem, 2.25vw, 1.15rem);
+  overflow-wrap: anywhere;
+}
+
+.engagement-timeline p,
+.engagement-example-grid p,
+.fit-question-group li {
+  color: var(--muted);
+}
+
+.engagement-timeline p {
+  margin: 0;
+  font-size: clamp(0.72rem, 1.9vw, 0.95rem);
+  overflow-wrap: anywhere;
+}
+
+.engagement-example-grid,
+.fit-question-grid {
+  display: grid;
+  gap: 1px;
+  margin-top: 2.5rem;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.engagement-example-grid article,
+.fit-question-group {
+  padding: clamp(1rem, 3vw, 1.35rem);
+  border: 0;
+  background: var(--surface);
+}
+
+.engagement-example-grid h3 {
+  margin-top: 0;
+}
+
+.engagement-example-grid p + p {
+  margin-top: 1rem;
+}
+
+.engagement-example-grid strong {
+  color: var(--ink);
+}
+
+.no-fit-note {
+  padding-top: 1rem;
+  border-top: 1px solid var(--line);
+}
+
+.fit-question-group summary {
+  cursor: pointer;
+  color: var(--ink);
+  font-weight: 750;
+}
+
+.fit-question-group ol {
+  margin: 1rem 0 0;
+  padding-left: 1.4rem;
+}
+
+.fit-question + .fit-question {
+  margin-top: 0.75rem;
+}
+
 .boundary-grid,
 .offer-details {
   display: grid;
@@ -669,6 +752,14 @@ textarea {
   }
 
   .deliverable-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .engagement-example-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .fit-question-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
