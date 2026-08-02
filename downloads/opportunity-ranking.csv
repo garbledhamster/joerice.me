@@ -1,0 +1,3 @@
+opportunity,problem_evidence,value,feasibility,risk,readiness,score_reason,owner,decision
+Example candidate,Replace with observed evidence,low|medium|high,low|medium|high,low|medium|high,low|medium|high,Explain each score,Name one owner,wait|experiment|stop
+
