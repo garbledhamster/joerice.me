@@ -394,6 +394,38 @@ h1 {
   color: var(--muted);
 }
 
+.technology-choice-section {
+  padding: clamp(1.25rem, 5vw, 3rem);
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, rgb(255 253 248 / 94%), rgb(233 240 232 / 82%));
+}
+
+.technology-choice-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 2rem 0 0;
+  padding: 0;
+  border: 1px solid var(--line);
+  background: var(--line);
+  list-style: none;
+}
+
+.technology-choice-list li {
+  min-width: 0;
+  padding: clamp(0.48rem, 2.5vw, 1.2rem);
+  background: var(--surface);
+  font-size: clamp(0.64rem, 2.2vw, 0.98rem);
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+.technology-choice-boundary {
+  margin: 1rem 0 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
 .method-list {
   margin: 2.5rem 0 0;
   counter-reset: foundation-method;
@@ -800,6 +832,20 @@ textarea {
     grid-template-columns: 0.8fr 1.15fr 1fr;
   }
 
+  .technology-choice-section {
+    display: grid;
+    grid-template-columns: minmax(14rem, 0.72fr) minmax(0, 1.28fr);
+    gap: 0 clamp(3rem, 7vw, 6rem);
+  }
+
+  .technology-choice-list {
+    margin-top: 0;
+  }
+
+  .technology-choice-boundary {
+    grid-column: 2;
+  }
+
   .decision-lens {
     grid-column: 1 / -1;
   }
@@ -1192,6 +1238,7 @@ textarea {
   }
 
   .value-path li,
+  .technology-choice-list li,
   .value-bridge-header span,
   .value-bridge-row > *,
   .field-path li,
