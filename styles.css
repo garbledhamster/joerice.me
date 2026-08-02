@@ -394,13 +394,19 @@ h1 {
   color: var(--muted);
 }
 
-.technology-choice-section {
+.technology-choice-section,
+.human-empowerment-section {
   padding: clamp(1.25rem, 5vw, 3rem);
   border: 1px solid var(--line);
   background: linear-gradient(135deg, rgb(255 253 248 / 94%), rgb(233 240 232 / 82%));
 }
 
-.technology-choice-list {
+.human-empowerment-section {
+  background: linear-gradient(135deg, rgb(255 253 248 / 94%), rgb(242 228 219 / 82%));
+}
+
+.technology-choice-list,
+.human-empowerment-list {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 1px;
@@ -411,7 +417,8 @@ h1 {
   list-style: none;
 }
 
-.technology-choice-list li {
+.technology-choice-list li,
+.human-empowerment-list li {
   min-width: 0;
   padding: clamp(0.48rem, 2.5vw, 1.2rem);
   background: var(--surface);
@@ -420,7 +427,8 @@ h1 {
   overflow-wrap: anywhere;
 }
 
-.technology-choice-boundary {
+.technology-choice-boundary,
+.human-empowerment-boundary {
   margin: 1rem 0 0;
   color: var(--muted);
   font-size: 0.9rem;
@@ -832,17 +840,20 @@ textarea {
     grid-template-columns: 0.8fr 1.15fr 1fr;
   }
 
-  .technology-choice-section {
+  .technology-choice-section,
+  .human-empowerment-section {
     display: grid;
     grid-template-columns: minmax(14rem, 0.72fr) minmax(0, 1.28fr);
     gap: 0 clamp(3rem, 7vw, 6rem);
   }
 
-  .technology-choice-list {
+  .technology-choice-list,
+  .human-empowerment-list {
     margin-top: 0;
   }
 
-  .technology-choice-boundary {
+  .technology-choice-boundary,
+  .human-empowerment-boundary {
     grid-column: 2;
   }
 
@@ -1239,6 +1250,7 @@ textarea {
 
   .value-path li,
   .technology-choice-list li,
+  .human-empowerment-list li,
   .value-bridge-header span,
   .value-bridge-row > *,
   .field-path li,
