@@ -247,6 +247,24 @@ ol {
 	padding-block: clamp(16px, 3vw, 28px);
 }
 
+.singlePageSection {
+	scroll-margin-top: calc(var(--header-h) + 16px);
+}
+
+.singlePage > .singlePageSection {
+	padding-top: clamp(16px, 3vw, 30px);
+}
+
+.profileTitle {
+	max-width: 720px;
+	margin: 0;
+	font-family: var(--fontHead);
+	font-size: clamp(2.2rem, 6vw, 4.4rem);
+	font-weight: 400;
+	line-height: 0.95;
+	text-align: center;
+}
+
 .pic {
 	width: 140px;
 	height: 140px;
@@ -551,13 +569,21 @@ ol {
 }
 
 .entry {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 1rem;
+	width: 100%;
 	border: 1px solid var(--border);
 	padding: 1rem;
 	background: var(--bg);
 	color: var(--fg);
 	cursor: pointer;
-	transition: background 0.2s;
+	transition:
+		background 0.2s,
+		color 0.2s;
 	font-size: 1rem;
+	text-align: left;
 }
 
 .entry:hover,
@@ -567,74 +593,63 @@ ol {
 
 .entry.active {
 	background-color: rgb(255, 235, 59, 0.2);
-	border-radius: 4px;
 }
 
-/* Pagination */
-.pageControls {
-	display: flex;
-	justify-content: center;
-	gap: 1rem;
-	margin-top: var(--space);
+/* Inline post reader */
+.postAccordion {
+	scroll-margin-top: calc(var(--header-h) + 16px);
 }
 
-.pageBtn {
-	cursor: pointer;
-	padding: 0.4rem 0.8rem;
-	border: 1px solid var(--border);
-	background: var(--bg);
-}
-
-.pageBtn[disabled] {
-	opacity: 0.4;
-	cursor: not-allowed;
-}
-
-/* Modal / Post view */
-#postView {
-	position: fixed;
-	top: var(--header-h);
-	left: 0;
-	width: 100%;
-	height: calc(100% - var(--header-h));
-	background: rgb(0, 0, 0, 0.6);
-	display: none;
-	align-items: center;
-	justify-content: center;
-	opacity: 0;
-	transition: opacity 0.25s ease-out;
-	z-index: 20;
-}
-
-#postView.show {
-	display: flex;
-	opacity: 1;
-}
-
-#closePost {
-	position: absolute;
-	top: 12px;
-	right: 12px;
-	z-index: 10;
-	border: 1px solid var(--border);
-	background: var(--green);
-	color: #fff;
-	padding: 0.3rem 0.6rem;
-	font-size: 0.8rem;
-	cursor: pointer;
+.postToggleIcon {
 	font-family: var(--fontHead);
+	font-size: 1.6rem;
+	line-height: 1;
+	transition: transform 0.35s ease;
 }
 
-#closePost:hover {
-	background: #fff;
-	color: var(--green);
+.postAccordion.is-open .postToggleIcon {
+	transform: rotate(45deg);
 }
 
-#editPostBtn {
-	position: absolute;
-	top: 12px;
-	right: 90px;
-	z-index: 10;
+.postInlineViewer {
+	display: grid;
+	grid-template-rows: 0fr;
+	visibility: hidden;
+	background: var(--bg);
+	color: var(--fg);
+	transition:
+		grid-template-rows 0.46s cubic-bezier(0.2, 0.8, 0.2, 1),
+		visibility 0s linear 0.46s;
+}
+
+.postAccordion.is-open .postInlineViewer {
+	grid-template-rows: 1fr;
+	visibility: visible;
+	transition:
+		grid-template-rows 0.46s cubic-bezier(0.2, 0.8, 0.2, 1),
+		visibility 0s;
+}
+
+.postInlineClip {
+	min-height: 0;
+	overflow: hidden;
+}
+
+.postInlineReader {
+	padding: clamp(1.25rem, 4vw, 2.4rem);
+	border: 1px solid var(--border);
+	border-top: 0;
+}
+
+.postInlineActions {
+	display: flex;
+	justify-content: flex-end;
+	gap: 0.6rem;
+	margin-bottom: 1rem;
+}
+
+.closePostButton,
+.inlineEditPostButton {
 	border: 1px solid var(--border);
 	background: var(--green);
 	color: #fff;
@@ -646,32 +661,10 @@ ol {
 	letter-spacing: 0.08em;
 }
 
-#editPostBtn:hover {
+.closePostButton:hover,
+.inlineEditPostButton:hover {
 	background: #fff;
 	color: var(--green);
-}
-
-#postContent {
-	position: relative;
-	background: var(--bg);
-	color: var(--fg);
-	max-width: 90%;
-	max-height: 90%;
-	min-width: min(600px, 85vw);
-	min-height: min(400px, 70vh);
-	overflow: auto;
-	padding: 2rem;
-	border-radius: 6px;
-	transform: scale(0.9);
-	transition: transform 0.25s ease-out;
-}
-
-#postView.show #postContent {
-	transform: scale(1);
-}
-
-#postView.editorMode #postContent {
-	max-width: min(920px, 94vw);
 }
 
 .postEditor {
@@ -709,36 +702,36 @@ ol {
 }
 
 /* Post content styling */
-#postContent p,
-#postContent ul,
-#postContent ol,
-#postContent blockquote {
+.postInlineBody p,
+.postInlineBody ul,
+.postInlineBody ol,
+.postInlineBody blockquote {
 	margin: 0.6rem 0;
 }
 
-#postContent h1,
-#postContent h2,
-#postContent h3 {
+.postInlineBody h1,
+.postInlineBody h2,
+.postInlineBody h3 {
 	margin: 1.2rem 0 0.6rem;
 }
 
-#postContent blockquote {
+.postInlineBody blockquote {
 	border-left: 4px solid var(--blue);
 	padding-left: 0.8rem;
 	font-style: italic;
 }
 
-#postContent ul {
+.postInlineBody ul {
 	list-style: disc;
 	margin-left: 1.2rem;
 }
 
-#postContent ol {
+.postInlineBody ol {
 	list-style: decimal;
 	margin-left: 1.2rem;
 }
 
-#postContent code {
+.postInlineBody code {
 	background: #f3f3f3;
 	border: 1px solid #ddd;
 	padding: 0 0.2rem;
@@ -746,38 +739,38 @@ ol {
 	font-size: 0.9rem;
 }
 
-#postContent pre {
+.postInlineBody pre {
 	background: #f3f3f3;
 	border: 1px solid #ddd;
 	padding: 1rem;
 	overflow: auto;
 }
 
-#postContent table {
+.postInlineBody table {
 	width: 100%;
 	border-collapse: collapse;
 	margin: 1rem 0;
 }
 
-#postContent th,
-#postContent td {
+.postInlineBody th,
+.postInlineBody td {
 	border: 1px solid var(--border);
 	padding: 0.5rem 0.7rem;
 	text-align: left;
 	font-size: 0.9rem;
 }
 
-#postContent th {
+.postInlineBody th {
 	background: var(--blue);
 	color: #fff;
 	font-family: var(--fontHead);
 }
 
-#postContent tr:nth-child(even) {
+.postInlineBody tr:nth-child(even) {
 	background: #fafafa;
 }
 
-#postContent img {
+.postInlineBody img {
 	max-width: 100%;
 	height: auto;
 	display: block;
@@ -1878,8 +1871,8 @@ footer {
 }
 
 /* Enhanced code block styling */
-#postContent pre,
-#postContent code {
+.postInlineBody pre,
+.postInlineBody code {
 	background: #1e1e1e;
 	color: #dcdcdc;
 	font-family: "Fira Code", "Courier New", monospace;
@@ -1892,7 +1885,7 @@ footer {
 	font-size: 0.95rem;
 }
 
-#postContent code {
+.postInlineBody code {
 	display: inline-block;
 	padding: 0.2rem 0.4rem;
 	font-size: 0.9rem;
@@ -1902,7 +1895,7 @@ footer {
 	box-shadow: inset 0 0 0 1px rgb(255, 255, 255, 0.1);
 }
 
-#postContent pre::before {
+.postInlineBody pre::before {
 	content: "code";
 	display: block;
 	text-transform: uppercase;

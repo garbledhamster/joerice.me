@@ -2,12 +2,12 @@
  * @file pages/portfolio.js
  * @description Portfolio page module
  *
- * Displays portfolio entries with search, pagination, and post viewing
+ * Displays all portfolio entries with search and inline post viewing.
  * Supports Firestore, local storage, and YAML post sources
  */
 
 import { closeModal, openModal } from "../components/modal.js";
-import { $, $$, addListener, lockScroll, unlockScroll } from "../core/dom.js";
+import { $, $$, addListener } from "../core/dom.js";
 import {
 	ensureAdmin,
 	getFirestore,
@@ -19,9 +19,9 @@ import { sanitizeMarkdown, sanitizeText } from "../services/sanitize.js";
 // State
 const pinned = [];
 const notes = [];
-const pageSize = 10;
-let page = 0;
 let currentPost = null;
+let openAccordion = null;
+let postOpenRequestId = 0;
 let editingPostId = null;
 let editingPostSource = null;
 let editingPostCreatedDate = null;
@@ -30,10 +30,6 @@ let hasLoadedInitialPosts = false;
 // DOM references
 let pinnedGrid = null;
 let entryGrid = null;
-let prevBtn = null;
-let nextBtn = null;
-let postView = null;
-let postContentEl = null;
 let searchInput = null;
 let cleanupFns = [];
 
@@ -59,27 +55,18 @@ export function getPortfolioTemplate() {
       <div class="grid" id="pinnedGrid"></div>
       <div class="subhead">Posts</div>
       <div class="grid" id="entryGrid"></div>
-      <div class="pageControls">
-        <button id="prevBtn" class="pageBtn">Prev</button>
-        <button id="nextBtn" class="pageBtn">Next</button>
-      </div>
     </section>
-    <div id="postView">
-      <div id="postContent">
-        <button id="closePost">close</button>
-        <button id="editPostBtn" class="editBtn" data-admin-only hidden>Edit</button>
-        <div id="postContentInner"></div>
-      </div>
-    </div>
   `;
 }
 
 /**
  * Format a post entry for display
  * @param {Object} post - Post data
+ * @param {number} index - Entry index within its collection
+ * @param {string} group - Collection name used to create a unique DOM ID
  * @returns {string} Entry HTML
  */
-function formatPostEntry(post) {
+function formatPostEntry(post, index, group) {
 	const safeTitle = sanitizeText(post.title);
 	const safeTags = (post.tags || []).map((t) => sanitizeText(t)).join("|");
 	const safeUrl = sanitizeText(post.url);
@@ -91,8 +78,27 @@ function formatPostEntry(post) {
 		post.published !== undefined ? ` data-published="${post.published}"` : "";
 	const unpublishedIndicator =
 		post.published === false && isAdminUser() ? " [DRAFT]" : "";
+	const readerId = `post-reader-${group}-${index}`;
 
-	return `<a class="entry" data-tags="${safeTags}" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr}>${safeTitle}${unpublishedIndicator}</a>`;
+	return `
+    <article class="postAccordion" data-tags="${safeTags}">
+      <button class="entry postTitleButton" type="button" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr} aria-expanded="false" aria-controls="${readerId}">
+        <span>${safeTitle}${unpublishedIndicator}</span>
+        <span class="postToggleIcon" aria-hidden="true">+</span>
+      </button>
+      <div class="postInlineViewer" id="${readerId}" aria-hidden="true">
+        <div class="postInlineClip">
+          <div class="postInlineReader">
+            <div class="postInlineActions">
+              <button class="inlineEditPostButton editBtn" type="button" data-admin-only data-skip-admin-ui hidden>Edit</button>
+              <button class="closePostButton" type="button">close</button>
+            </div>
+            <div class="postInlineBody"></div>
+          </div>
+        </div>
+      </div>
+    </article>
+  `;
 }
 
 /**
@@ -284,50 +290,99 @@ function openPortfolioEditor(post = null) {
  */
 function renderPinned() {
 	if (!pinnedGrid) return;
-	pinnedGrid.innerHTML = pinned.map((p) => formatPostEntry(p)).join("");
-	attachEntryHandlers();
+	if (openAccordion && pinnedGrid.contains(openAccordion))
+		closePost(openAccordion);
+	pinnedGrid.innerHTML = pinned
+		.map((post, index) => formatPostEntry(post, index, "pinned"))
+		.join("");
 }
 
 /**
- * Render current page of posts
+ * Render every non-pinned post.
  */
 export function renderPage() {
 	if (!entryGrid) return;
-
-	const start = page * pageSize;
-	const slice = notes.slice(start, start + pageSize);
-
-	entryGrid.innerHTML = slice.map((n) => formatPostEntry(n)).join("");
-
-	if (prevBtn) prevBtn.disabled = page === 0;
-	if (nextBtn) nextBtn.disabled = start + pageSize >= notes.length;
-
-	attachEntryHandlers();
+	if (openAccordion && entryGrid.contains(openAccordion))
+		closePost(openAccordion);
+	entryGrid.innerHTML = notes
+		.map((post, index) => formatPostEntry(post, index, "post"))
+		.join("");
 }
 
 /**
- * Attach click handlers to entry elements
+ * Handle post controls through the stable grid container so Firestore refreshes
+ * can replace entries without dropping their interactions.
+ * @param {Event} event - Grid click event
  */
-function attachEntryHandlers() {
-	$$(".entry").forEach((el) => {
-		el.addEventListener("click", async () => {
-			$$(".entry.active").forEach((a) => {
-				a.classList.remove("active");
-			});
-			el.classList.add("active");
-			await openPost(el.dataset.url);
-		});
+function handlePostGridClick(event) {
+	const accordion = event.target.closest(".postAccordion");
+	if (!accordion) return;
+
+	if (event.target.closest(".closePostButton")) {
+		closePost(accordion);
+		return;
+	}
+
+	if (event.target.closest(".inlineEditPostButton")) {
+		openCurrentPostEditor();
+		return;
+	}
+
+	const titleButton = event.target.closest(".postTitleButton");
+	if (!titleButton) return;
+
+	if (openAccordion === accordion) {
+		closePost(accordion);
+		return;
+	}
+
+	closePost(openAccordion);
+	void openPost(titleButton.dataset.url, accordion);
+}
+
+/**
+ * Open the active post in the portfolio editor.
+ */
+function openCurrentPostEditor() {
+	if (!ensureAdmin("edit post") || !currentPost) return;
+	if (!["local", "firestore"].includes(currentPost.source)) return;
+
+	openPortfolioEditor({
+		id: currentPost.id,
+		title: getPostTitle(currentPost),
+		content: currentPost.content || "",
+		source: currentPost.source,
+		createdDate: currentPost.createdDate,
+		published: currentPost.published !== false,
+		pinned: currentPost.pinned === true,
 	});
 }
 
 /**
- * Open a post for viewing
+ * Open a post inside its accordion.
  * @param {string} url - Post URL/ID
+ * @param {Element} accordion - Accordion that owns the inline reader
  */
-async function openPost(url) {
+async function openPost(url, accordion) {
+	const requestId = ++postOpenRequestId;
 	currentPost = null;
-	const editPostBtn = $("#editPostBtn");
-	if (editPostBtn) editPostBtn.hidden = true;
+	openAccordion = accordion;
+
+	const titleButton = $(".postTitleButton", accordion);
+	const viewer = $(".postInlineViewer", accordion);
+	const postBody = $(".postInlineBody", accordion);
+	const editButton = $(".inlineEditPostButton", accordion);
+
+	titleButton?.classList.add("active");
+	titleButton?.setAttribute("aria-expanded", "false");
+	viewer?.setAttribute("aria-hidden", "true");
+	accordion.classList.add("is-loading");
+	if (postBody) postBody.innerHTML = "<p>Loading post…</p>";
+	if (editButton) editButton.hidden = true;
+
+	let loadedPost = null;
+	let renderedContent = "";
+	let canEdit = false;
 
 	try {
 		if (url.startsWith("firestore:")) {
@@ -341,7 +396,7 @@ async function openPost(url) {
 			const data = doc.data() || {};
 			const content = data.Body || data.body || "";
 
-			currentPost = {
+			loadedPost = {
 				url,
 				data,
 				content,
@@ -351,48 +406,59 @@ async function openPost(url) {
 				published: isPostPublished(data),
 				pinned: data.pinned === true,
 			};
-
-			if (postContentEl) {
-				postContentEl.innerHTML = sanitizeMarkdown(content);
-			}
-
-			if (editPostBtn && isAdminUser()) {
-				editPostBtn.hidden = false;
-			}
+			renderedContent = sanitizeMarkdown(content);
+			canEdit = isAdminUser();
 		} else {
 			const yaml = globalThis.jsyaml;
 			if (!yaml) throw new Error("YAML parser unavailable");
 			const raw = await fetch(url).then((r) => r.text());
 			const data = yaml.load(raw);
 			const content = data.content || "";
-			currentPost = { url, data, content, source: "yaml" };
-			if (postContentEl) {
-				postContentEl.innerHTML = sanitizeMarkdown(content);
-			}
+			loadedPost = { url, data, content, source: "yaml" };
+			renderedContent = sanitizeMarkdown(content);
 		}
 	} catch (error) {
+		if (requestId !== postOpenRequestId || openAccordion !== accordion) return;
 		console.warn("Unable to load post:", error);
-		if (postContentEl) {
-			postContentEl.innerHTML = "<p>Unable to load this post.</p>";
-		}
+		renderedContent = "<p>Unable to load this post.</p>";
 	}
 
-	if (postView) {
-		lockScroll();
-		postView.classList.add("show");
-	}
+	if (requestId !== postOpenRequestId || openAccordion !== accordion) return;
+
+	currentPost = loadedPost;
+	if (postBody) postBody.innerHTML = renderedContent;
+	if (editButton) editButton.hidden = !canEdit;
+	accordion.classList.remove("is-loading");
+	accordion.classList.add("is-open");
+	titleButton?.setAttribute("aria-expanded", "true");
+	viewer?.setAttribute("aria-hidden", "false");
+
+	setTimeout(() => {
+		if (requestId === postOpenRequestId && openAccordion === accordion) {
+			accordion.scrollIntoView({ behavior: "smooth", block: "start" });
+		}
+	}, 220);
 }
 
 /**
- * Close post view
+ * Close an inline post reader.
+ * @param {Element|null} accordion - Accordion to close
  */
-function closePost() {
-	$$(".entry.active").forEach((a) => {
-		a.classList.remove("active");
-	});
-	if (postView) postView.classList.remove("show");
-	currentPost = null;
-	unlockScroll();
+function closePost(accordion) {
+	if (!accordion) return;
+	const isActive = openAccordion === accordion;
+	const titleButton = $(".postTitleButton", accordion);
+	const viewer = $(".postInlineViewer", accordion);
+	titleButton?.classList.remove("active");
+	titleButton?.setAttribute("aria-expanded", "false");
+	viewer?.setAttribute("aria-hidden", "true");
+	accordion.classList.remove("is-loading");
+	accordion.classList.remove("is-open");
+	if (isActive) {
+		postOpenRequestId += 1;
+		openAccordion = null;
+		currentPost = null;
+	}
 }
 
 /**
@@ -482,46 +548,12 @@ export function renderPortfolio() {
 export function initPortfolio() {
 	pinnedGrid = $("#pinnedGrid");
 	entryGrid = $("#entryGrid");
-	prevBtn = $("#prevBtn");
-	nextBtn = $("#nextBtn");
-	postView = $("#postView");
-	postContentEl = $("#postContentInner");
 	searchInput = $("#q");
 
 	if (!pinnedGrid || !entryGrid) return;
 
-	// Close button
-	const closePostBtn = $("#closePost");
-	if (closePostBtn) {
-		cleanupFns.push(addListener(closePostBtn, "click", closePost));
-	}
-
-	// Edit button
-	const editPostBtn = $("#editPostBtn");
-	if (editPostBtn) {
-		cleanupFns.push(
-			addListener(editPostBtn, "click", () => {
-				if (!ensureAdmin("edit post") || !currentPost) return;
-
-				// Only allow editing of local and firestore posts
-				if (
-					currentPost.source === "local" ||
-					currentPost.source === "firestore"
-				) {
-					const postToEdit = {
-						id: currentPost.id,
-						title: getPostTitle(currentPost),
-						content: currentPost.content || "",
-						source: currentPost.source,
-						createdDate: currentPost.createdDate,
-						published: currentPost.published !== false, // Default to true if not set
-						pinned: currentPost.pinned === true, // Default to false if not set
-					};
-					openPortfolioEditor(postToEdit);
-				}
-			}),
-		);
-	}
+	cleanupFns.push(addListener(pinnedGrid, "click", handlePostGridClick));
+	cleanupFns.push(addListener(entryGrid, "click", handlePostGridClick));
 
 	// Add post button
 	const addPortfolioBtn = $("#addPortfolioBtn");
@@ -674,36 +706,15 @@ export function initPortfolio() {
 		);
 	}
 
-	// Pagination
-	if (prevBtn) {
-		cleanupFns.push(
-			addListener(prevBtn, "click", () => {
-				if (page > 0) {
-					page--;
-					renderPage();
-				}
-			}),
-		);
-	}
-
-	if (nextBtn) {
-		cleanupFns.push(
-			addListener(nextBtn, "click", () => {
-				if ((page + 1) * pageSize < notes.length) {
-					page++;
-					renderPage();
-				}
-			}),
-		);
-	}
-
 	// Search
 	if (searchInput) {
 		cleanupFns.push(
 			addListener(searchInput, "input", (e) => {
 				const query = e.target.value.toLowerCase();
-				$$(".entry").forEach((el) => {
-					el.style.display = el.textContent.toLowerCase().includes(query)
+				$$(".postAccordion").forEach((accordion) => {
+					accordion.style.display = accordion.textContent
+						.toLowerCase()
+						.includes(query)
 						? ""
 						: "none";
 				});
@@ -747,5 +758,7 @@ export function destroyPortfolio() {
 	hasLoadedInitialPosts = false;
 	pinned.length = 0;
 	notes.length = 0;
-	page = 0;
+	openAccordion = null;
+	currentPost = null;
+	postOpenRequestId += 1;
 }

@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <base href="../">
+    <title>Single-page browser test</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+      #testResults {
+        position: fixed;
+        z-index: 9999;
+        right: 12px;
+        bottom: 12px;
+        max-width: min(520px, calc(100vw - 24px));
+        max-height: 45vh;
+        overflow: auto;
+        padding: 16px;
+        border: 2px solid currentColor;
+        color: #111;
+        background: #fff;
+        font: 13px/1.5 monospace;
+        white-space: pre-wrap;
+      }
+
+      body[data-test-status="passed"] #testResults {
+        color: #064b23;
+        background: #dff8e8;
+      }
+
+      body[data-test-status="failed"] #testResults {
+        color: #791515;
+        background: #ffe4e4;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="app"></div>
+    <pre id="testResults" role="status">Running single-page browser tests…</pre>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
+    <script>
+      const nativeFetch = window.fetch.bind(window);
+      window.fetch = (input, init) => {
+        const requestUrl = String(input);
+        const response = nativeFetch(input, init);
+        if (!requestUrl.endsWith("posts/0001.yaml")) return response;
+
+        return new Promise((resolve, reject) => {
+          setTimeout(() => response.then(resolve, reject), 300);
+        });
+      };
+
+      window.testScrollTargets = [];
+      Element.prototype.scrollIntoView = function scrollIntoView() {
+        window.testScrollTargets.push(
+          this.querySelector?.(".postTitleButton")?.dataset.url || this.id || "unknown",
+        );
+      };
+
+      document.addEventListener(
+        "click",
+        (event) => {
+          if (event.target.closest?.("#mainNav [data-section]")) event.preventDefault();
+        },
+        true,
+      );
+    </script>
+    <script type="module" src="assets/js/main.js"></script>
+    <script type="module">
+      const results = document.getElementById("testResults");
+      const failures = [];
+
+      function assert(condition, message) {
+        if (!condition) failures.push(message);
+      }
+
+      async function waitFor(check, timeout = 5000) {
+        const started = performance.now();
+        while (performance.now() - started < timeout) {
+          const value = check();
+          if (value) return value;
+          await new Promise((resolve) => setTimeout(resolve, 50));
+        }
+        return null;
+      }
+
+      await waitFor(() => document.body.classList.contains("loaded"));
+
+      const expectedAnchors = [
+        "#about",
+        "#portfolio",
+        "#gallery",
+        "#services",
+        "#quotes",
+        "#contact",
+        "#links",
+      ];
+      const navHrefs = [...document.querySelectorAll("#mainNav a[data-section]")].map(
+        (link) => link.getAttribute("href"),
+      );
+
+      assert(
+        JSON.stringify(navHrefs) === JSON.stringify(expectedAnchors),
+        `sticky navigation should expose ${expectedAnchors.join(", ")}`,
+      );
+
+      expectedAnchors.forEach((anchor) => {
+        assert(document.querySelector(anchor), `${anchor} should render on the initial page`);
+      });
+
+      assert(
+        !document.querySelector(".pageControls"),
+        "portfolio should render every post without pagination controls",
+      );
+
+      const firstPost = await waitFor(() => document.querySelector(".postTitleButton"));
+      assert(firstPost, "portfolio should render post titles as expandable buttons");
+
+      if (firstPost) {
+        firstPost.click();
+        const openPost = await waitFor(() => {
+          const body = document.querySelector(".postAccordion.is-open .postInlineBody");
+          return body?.textContent.trim().length > 40 ? body : null;
+        });
+        assert(firstPost.getAttribute("aria-expanded") === "true", "clicked post title should become expanded");
+        assert(openPost?.textContent.trim().length > 40, "expanded post reader should contain the post body");
+      }
+
+      const delayedPost = document.querySelector('[data-url="posts/0001.yaml"]');
+      const fasterPost = document.querySelector('[data-url="posts/0002.yaml"]');
+
+      if (delayedPost && fasterPost) {
+        delayedPost.closest(".postAccordion")?.classList.contains("is-open") && delayedPost.click();
+        await new Promise((resolve) => setTimeout(resolve, 300));
+        window.testScrollTargets.length = 0;
+
+        delayedPost.click();
+        fasterPost.click();
+        await new Promise((resolve) => setTimeout(resolve, 650));
+
+        assert(delayedPost.getAttribute("aria-expanded") === "false", "switching posts should close the older reader");
+        assert(fasterPost.getAttribute("aria-expanded") === "true", "switching posts should keep the newest reader open");
+        assert(
+          JSON.stringify(window.testScrollTargets) === JSON.stringify(["posts/0002.yaml"]),
+          "a stale post request should not scroll after a newer post opens",
+        );
+      } else {
+        assert(false, "race-condition fixtures should be available");
+      }
+
+      const linksNav = document.querySelector('#mainNav [data-section="links"]');
+      linksNav?.click();
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      assert(linksNav?.getAttribute("aria-current") === "true", "clicking Links should activate the final nav item");
+
+      const aboutCopy = document.getElementById("about")?.textContent.toLowerCase() || "";
+      assert(aboutCopy.includes("career"), "About section should focus on Joe's professional career");
+      assert(aboutCopy.includes("help themselves"), "About section should explain the self-service purpose");
+
+      if (failures.length) {
+        document.body.dataset.testStatus = "failed";
+        results.textContent = `FAIL (${failures.length})\n\n${failures.map((failure) => `• ${failure}`).join("\n")}`;
+      } else {
+        document.body.dataset.testStatus = "passed";
+        results.textContent = "PASS (all single-page behaviors verified)";
+      }
+    </script>
+  </body>
+</html>

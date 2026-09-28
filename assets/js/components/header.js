@@ -2,30 +2,29 @@
  * @file components/header.js
  * @description Site header component with navigation
  *
- * Renders the fixed header with brand logo and navigation links
- * Handles mobile menu toggle and active nav state
+ * Renders the fixed header with anchor navigation and scroll-aware state.
  */
 
 import { $, $$, addListener } from "../core/dom.js";
-import { getCurrentRoute, navigate, onRouteChange } from "../core/router.js";
 import { getState, subscribe } from "../core/state.js";
 
 let menuToggle = null;
 let mainNav = null;
+let sectionScrollFrame = null;
 let cleanupFns = [];
 
 /**
  * Navigation items configuration
- * Each item maps to a route or special action
+ * Each item maps to a section or special action.
  */
 const navItems = [
-	{ label: "Home", route: "/home" },
-	{ label: "Portfolio", route: "/portfolio" },
-	{ label: "Gallery", route: "/gallery" },
-	{ label: "Hire Me", route: "/hire" },
-	{ label: "Quotes", route: "/quotes" },
-	{ label: "Contact", route: "/contact" },
-	{ label: "Links", route: "/links" },
+	{ label: "About", section: "about" },
+	{ label: "Portfolio", section: "portfolio" },
+	{ label: "Gallery", section: "gallery" },
+	{ label: "Services", section: "services" },
+	{ label: "Quotes", section: "quotes" },
+	{ label: "Contact", section: "contact" },
+	{ label: "Links", section: "links" },
 	{
 		label: "Login",
 		route: null,
@@ -45,8 +44,8 @@ export function getHeaderTemplate() {
 			const className = item.className ? ` class="${item.className}"` : "";
 			const id = item.id ? ` id="${item.id}"` : "";
 
-			if (item.route) {
-				return `<a href="#${item.route}"${className}${id} data-route="${item.route}">${item.label}</a>`;
+			if (item.section) {
+				return `<a href="#${item.section}"${className}${id} data-section="${item.section}">${item.label}</a>`;
 			} else if (item.action === "login") {
 				return `<a href="#loginModal"${className}${id}>${item.label}</a>`;
 			}
@@ -56,7 +55,7 @@ export function getHeaderTemplate() {
 
 	return `
     <header class="siteHeader">
-      <div class="brand"><a href="#/home">joerice.me</a></div>
+      <div class="brand"><a href="#about">joerice.me</a></div>
       <button class="menuToggle" aria-label="Menu"><span></span><span></span><span></span></button>
       <nav id="mainNav">
         ${navLinksHtml}
@@ -66,21 +65,68 @@ export function getHeaderTemplate() {
 }
 
 /**
- * Update navigation active states based on current route
+ * Update navigation active states based on the visible section.
+ * @param {string} sectionId - Active section ID
  */
-function updateActiveNav() {
-	const currentRoute = getCurrentRoute();
-	const navLinks = $$("[data-route]", mainNav);
+function updateActiveNav(sectionId) {
+	const navLinks = $$("[data-section]", mainNav);
 
 	navLinks.forEach((link) => {
-		const isActive = link.dataset.route === currentRoute;
+		const isActive = link.dataset.section === sectionId;
 		link.classList.toggle("active", isActive);
 		if (isActive) {
-			link.setAttribute("aria-current", "page");
+			link.setAttribute("aria-current", "true");
 		} else {
 			link.removeAttribute("aria-current");
 		}
 	});
+}
+
+/**
+ * Track page sections and highlight the anchor nearest the sticky header.
+ */
+function initSectionObserver() {
+	const sections = $$(".singlePageSection[data-section]");
+	if (!sections.length) {
+		updateActiveNav("about");
+		return;
+	}
+
+	const updateFromScroll = () => {
+		sectionScrollFrame = null;
+		const pageBottom = window.scrollY + window.innerHeight;
+		const documentBottom = document.documentElement.scrollHeight;
+
+		if (pageBottom >= documentBottom - 2) {
+			updateActiveNav(sections.at(-1).dataset.section);
+			return;
+		}
+
+		const headerHeight = Number.parseFloat(
+			getComputedStyle(document.documentElement).getPropertyValue("--header-h"),
+		);
+		const headerMarker = (Number.isNaN(headerHeight) ? 0 : headerHeight) + 24;
+		const marker = Math.max(
+			headerMarker,
+			Math.min(window.innerHeight * 0.25, 220),
+		);
+		let activeSection = sections[0];
+
+		for (const section of sections) {
+			if (section.getBoundingClientRect().top > marker) break;
+			activeSection = section;
+		}
+
+		updateActiveNav(activeSection.dataset.section);
+	};
+
+	const scheduleUpdate = () => {
+		if (sectionScrollFrame !== null) return;
+		sectionScrollFrame = requestAnimationFrame(updateFromScroll);
+	};
+
+	cleanupFns.push(addListener(window, "scroll", scheduleUpdate));
+	updateActiveNav(window.location.hash.slice(1) || "about");
 }
 
 /**
@@ -95,15 +141,13 @@ function updateLoginButton() {
 }
 
 /**
- * Handle navigation link clicks
+ * Close the mobile menu after an anchor is selected.
  * @param {Event} e - Click event
  */
 function handleNavClick(e) {
-	const link = e.target.closest("[data-route]");
+	const link = e.target.closest("[data-section]");
 	if (link) {
-		e.preventDefault();
-		const route = link.dataset.route;
-		navigate(route);
+		updateActiveNav(link.dataset.section);
 		closeMenu();
 	}
 }
@@ -155,16 +199,19 @@ export function initHeader() {
 
 	// Update header height on resize
 	updateHeaderHeight();
-	cleanupFns.push(addListener(window, "resize", updateHeaderHeight));
+	cleanupFns.push(
+		addListener(window, "resize", () => {
+			updateHeaderHeight();
+			window.dispatchEvent(new Event("scroll"));
+		}),
+	);
 
-	// Listen for route changes
-	cleanupFns.push(onRouteChange(updateActiveNav));
+	initSectionObserver();
 
 	// Listen for auth state changes
 	cleanupFns.push(subscribe("isAdmin", updateLoginButton));
 
 	// Initial state
-	updateActiveNav();
 	updateLoginButton();
 }
 
@@ -176,6 +223,8 @@ export function destroyHeader() {
 		fn();
 	});
 	cleanupFns = [];
+	if (sectionScrollFrame !== null) cancelAnimationFrame(sectionScrollFrame);
+	sectionScrollFrame = null;
 	menuToggle = null;
 	mainNav = null;
 }

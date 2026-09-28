@@ -2,87 +2,21 @@
  * @file main.js
  * @description Application entry point
  *
- * Initializes the SPA router, components, and services
- * This is the main orchestrator for the modular architecture
+ * Initializes the single-page portfolio, components, and services.
  */
 
 import { getHeaderTemplate, initHeader } from "./components/header.js";
 import { initModals } from "./components/modal.js";
-import {
-	getProfileTemplate,
-	updateProfileDescription,
-} from "./components/profile.js";
+import { getProfileTemplate } from "./components/profile.js";
 import { ready } from "./core/dom.js";
-import {
-	initRouter,
-	onRouteChange,
-	registerRoutes,
-	setDefaultRoute,
-} from "./core/router.js";
-import { destroyContact, renderContact } from "./pages/contact.js";
-import { destroyGallery, renderGallery } from "./pages/gallery.js";
-import { destroyHire, renderHire } from "./pages/hire.js";
-// Page modules
-import { destroyHome, renderHome } from "./pages/home.js";
-import { destroyLinks, renderLinks } from "./pages/links.js";
-import { destroyPortfolio, renderPortfolio } from "./pages/portfolio.js";
-import { destroyQuotes, renderQuotes } from "./pages/quotes.js";
+import { getContactTemplate, initContact } from "./pages/contact.js";
+import { getGalleryTemplate, initGallery } from "./pages/gallery.js";
+import { getHireTemplate, initHire } from "./pages/hire.js";
+import { getLinksTemplate, initLinks } from "./pages/links.js";
+import { getPortfolioTemplate, initPortfolio } from "./pages/portfolio.js";
+import { getQuotesTemplate, initQuotes } from "./pages/quotes.js";
 import { initAuth, updateAdminUi } from "./services/auth.js";
 import { initFirebase } from "./services/firebase.js";
-
-/**
- * Page cleanup functions map
- * Used to clean up previous page before rendering new one
- */
-const _pageCleanup = {
-	"/home": destroyHome,
-	"/portfolio": destroyPortfolio,
-	"/gallery": destroyGallery,
-	"/hire": destroyHire,
-	"/quotes": destroyQuotes,
-	"/contact": destroyContact,
-	"/links": destroyLinks,
-};
-
-let currentPageCleanup = null;
-
-/**
- * Create a page renderer with cleanup
- * @param {Function} renderFn - Page render function
- * @param {Function} cleanupFn - Page cleanup function
- * @returns {Function} Wrapped render function
- */
-function createPageRenderer(renderFn, cleanupFn) {
-	return () => {
-		// Clean up previous page
-		if (currentPageCleanup) {
-			currentPageCleanup();
-		}
-
-		// Render new page
-		renderFn();
-
-		// Store cleanup for next navigation
-		currentPageCleanup = cleanupFn;
-
-		// Scroll to top
-		window.scrollTo(0, 0);
-	};
-}
-
-/**
- * Route configuration
- * Maps route paths to render functions
- */
-const routes = {
-	"/home": createPageRenderer(renderHome, destroyHome),
-	"/portfolio": createPageRenderer(renderPortfolio, destroyPortfolio),
-	"/gallery": createPageRenderer(renderGallery, destroyGallery),
-	"/hire": createPageRenderer(renderHire, destroyHire),
-	"/quotes": createPageRenderer(renderQuotes, destroyQuotes),
-	"/contact": createPageRenderer(renderContact, destroyContact),
-	"/links": createPageRenderer(renderLinks, destroyLinks),
-};
 
 /**
  * Get the login modal template
@@ -163,11 +97,30 @@ async function initApp() {
 		return;
 	}
 
-	// Render app shell (header + profile + main content area + footer + modals)
+	// Render every public section once so navigation can use page anchors.
 	app.innerHTML = `
     ${getHeaderTemplate()}
     ${getProfileTemplate()}
-    <main class="max" id="mainContent"></main>
+    <main class="max singlePage" id="mainContent">
+      <div class="singlePageSection" id="portfolio" data-section="portfolio">
+        ${getPortfolioTemplate()}
+      </div>
+      <div class="singlePageSection" id="gallery" data-section="gallery">
+        ${getGalleryTemplate()}
+      </div>
+      <div class="singlePageSection" id="services" data-section="services">
+        ${getHireTemplate()}
+      </div>
+      <div class="singlePageSection" id="quotes" data-section="quotes">
+        ${getQuotesTemplate()}
+      </div>
+      <div class="singlePageSection" id="contact" data-section="contact">
+        ${getContactTemplate()}
+      </div>
+      <div class="singlePageSection" id="links" data-section="links">
+        ${getLinksTemplate()}
+      </div>
+    </main>
     <footer>© <span id="year">${new Date().getFullYear()}</span> Joe Rice. All rights reserved.</footer>
     ${getLoginModalTemplate()}
     ${getPortfolioModalTemplate()}
@@ -177,19 +130,13 @@ async function initApp() {
 	initHeader();
 	initModals();
 	initAuth();
-
-	// Register routes and initialize router
-	registerRoutes(routes);
-	setDefaultRoute("/home");
-
-	// Update admin UI and profile description on route change
-	// Register BEFORE initRouter() so it fires on initial page load
-	onRouteChange((route) => {
-		updateAdminUi();
-		updateProfileDescription(route);
-	});
-
-	initRouter();
+	initPortfolio();
+	initGallery();
+	initHire();
+	initQuotes();
+	initContact();
+	initLinks();
+	updateAdminUi();
 
 	// Mark page as loaded
 	requestAnimationFrame(() => {
