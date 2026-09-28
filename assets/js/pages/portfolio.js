@@ -14,11 +14,18 @@ import {
 	isAdminUser,
 	onAuthStateChange,
 } from "../services/auth.js";
+import {
+	relatedServices,
+	selectService,
+	servicePicker,
+} from "../services/catalog.js";
+import { importedPostId, savePost } from "../services/post-storage.js";
 import { sanitizeMarkdown, sanitizeText } from "../services/sanitize.js";
 
 // State
 const pinned = [];
 const notes = [];
+const yamlEntries = [];
 let currentPost = null;
 let openAccordion = null;
 let postOpenRequestId = 0;
@@ -26,6 +33,17 @@ let editingPostId = null;
 let editingPostSource = null;
 let editingPostCreatedDate = null;
 let hasLoadedInitialPosts = false;
+let relatedPostsStatus = "loading";
+
+export function getRelatedPosts(serviceId) {
+	return {
+		status: relatedPostsStatus,
+		posts: [...pinned, ...notes].filter(
+			(post) =>
+				post.published !== false && post.serviceIds?.includes(serviceId),
+		),
+	};
+}
 
 // DOM references
 let pinnedGrid = null;
@@ -79,13 +97,12 @@ function formatPostEntry(post, index, group) {
 	const unpublishedIndicator =
 		post.published === false && isAdminUser() ? " [DRAFT]" : "";
 	const readerId = `post-reader-${group}-${index}`;
-	const canManage =
-		isAdminUser() && post.source === "firestore" && Boolean(post.id);
+	const canManage = isAdminUser();
 	const managementControls = canManage
 		? `
         <div class="postTitleActions" data-admin-only>
           <button class="postTitleEditButton" type="button" data-admin-action="edit post" aria-label="Edit ${safeTitle}">Edit</button>
-          <button class="postTitleDeleteButton" type="button" data-admin-action="delete post" aria-label="Delete ${safeTitle}">Delete</button>
+          ${post.source === "firestore" ? `<button class="postTitleDeleteButton" type="button" data-admin-action="delete post" aria-label="Delete ${safeTitle}">Delete</button>` : ""}
         </div>
       `
 		: "";
@@ -139,9 +156,11 @@ function isPostPublished(data) {
  */
 async function loadFirestorePosts() {
 	const postsRef = getPostsCollectionRef();
-	if (!postsRef) return;
+	relatedPostsStatus = "loading";
+	window.dispatchEvent(new Event("portfolio-posts-change"));
 
 	try {
+		if (!postsRef) throw new Error("Posts are not connected.");
 		let query = postsRef;
 		if (!isAdminUser()) {
 			query = postsRef.where("published", "==", true);
@@ -149,14 +168,17 @@ async function loadFirestorePosts() {
 
 		const snapshot = await query.get();
 		const firestoreEntries = [];
+		const overriddenSources = new Set();
 
 		snapshot.forEach((doc) => {
 			const data = doc.data() || {};
+			if (data.sourceUrl) overriddenSources.add(data.sourceUrl);
+			if (data.kind === "source-override" || data.kind === "service") return;
 			const isPublished = isPostPublished(data);
 			const isPinned = data.pinned === true;
 
 			firestoreEntries.push({
-				title: data.Title || data.title || "Untitled",
+				title: data.title ?? data.Title ?? "Untitled",
 				date:
 					data["Created Date"] || data.createdDate || new Date().toISOString(),
 				url: `firestore:${doc.id}`,
@@ -165,12 +187,16 @@ async function loadFirestorePosts() {
 				id: doc.id,
 				source: "firestore",
 				published: isPublished,
+				serviceIds: Array.isArray(data.serviceIds) ? data.serviceIds : [],
 			});
 		});
 
 		// Clear existing firestore entries
-		const otherPinned = pinned.filter((p) => p.source !== "firestore");
-		const otherNotes = notes.filter((n) => n.source !== "firestore");
+		const fallbackEntries = yamlEntries.filter(
+			(post) => !overriddenSources.has(post.url),
+		);
+		const otherPinned = fallbackEntries.filter((post) => post.pinned);
+		const otherNotes = fallbackEntries.filter((post) => !post.pinned);
 
 		pinned.length = 0;
 		notes.length = 0;
@@ -180,8 +206,12 @@ async function loadFirestorePosts() {
 
 		pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
 		notes.sort((a, b) => new Date(b.date) - new Date(a.date));
+		relatedPostsStatus = "ready";
 	} catch (error) {
+		relatedPostsStatus = "error";
 		console.warn("Unable to load Firestore posts:", error);
+	} finally {
+		window.dispatchEvent(new Event("portfolio-posts-change"));
 	}
 }
 
@@ -207,7 +237,7 @@ function getPostTitle(post) {
 	if (post.title?.trim()) return post.title;
 	// Handle nested structure (when post has data.title)
 	if (post.data) {
-		const title = post.data.Title || post.data.title;
+		const title = post.data.title ?? post.data.Title;
 		if (title?.trim()) return title;
 	}
 	return "Untitled";
@@ -292,6 +322,9 @@ function openPortfolioEditor(post = null) {
 	}
 
 	// Open modal
+	$("#portfolioServicePicker").innerHTML = servicePicker(
+		post?.serviceIds || [],
+	);
 	openModal("portfolioModal");
 
 	// Focus title field
@@ -385,6 +418,7 @@ function renderInlinePostEditor(accordion) {
         <label><input name="published" type="checkbox"${currentPost.published !== false ? " checked" : ""}/> Published</label>
         <label><input name="pinned" type="checkbox"${currentPost.pinned === true ? " checked" : ""}/> Pinned</label>
       </div>
+      ${servicePicker(currentPost.serviceIds || [])}
       <div class="editorControls">
         <button class="postInlineCancelButton cancelBtn" type="button">Cancel</button>
         <button class="postInlineSaveButton saveBtn" type="submit">Save</button>
@@ -403,11 +437,11 @@ function renderInlinePostEditor(accordion) {
 async function openInlinePostEditor(accordion) {
 	if (!ensureAdmin("edit post")) return;
 	const titleButton = $(".postTitleButton", accordion);
-	if (titleButton?.dataset.source !== "firestore") return;
+	if (!titleButton) return;
 
 	if (
 		openAccordion !== accordion ||
-		currentPost?.id !== titleButton.dataset.id
+		currentPost?.url !== titleButton.dataset.url
 	) {
 		closePost(openAccordion);
 		const loadedPost = await openPost(titleButton.dataset.url, accordion);
@@ -424,7 +458,9 @@ async function openInlinePostEditor(accordion) {
 function renderCurrentPost(accordion) {
 	const postBody = $(".postInlineBody", accordion);
 	if (!postBody || !currentPost) return;
-	postBody.innerHTML = sanitizeMarkdown(currentPost.content || "");
+	postBody.innerHTML =
+		sanitizeMarkdown(currentPost.content || "") +
+		relatedServices(currentPost.serviceIds || []);
 	accordion.classList.remove("is-editing");
 }
 
@@ -484,24 +520,26 @@ async function handlePostGridSubmit(event) {
 	}
 
 	const saveButton = $(".postInlineSaveButton", form);
+	if (saveButton?.disabled) return;
 	if (saveButton) saveButton.disabled = true;
+	const savedPost = currentPost;
 
 	try {
-		const now = new Date().toISOString();
-		await postsRef.doc(postId).set(
-			{
-				title,
-				body: content,
-				createdDate: currentPost.createdDate || now,
-				lastEditedDate: now,
-				published: form.elements.published.checked,
-				pinned: form.elements.pinned.checked,
-			},
-			{ merge: true },
-		);
+		await savePost(savedPost, {
+			title,
+			body: content,
+			published: form.elements.published.checked,
+			pinned: form.elements.pinned.checked,
+			serviceIds: Array.from(
+				form.querySelectorAll('[name="serviceIds"]:checked'),
+				(input) => input.value,
+			),
+		});
 		await loadFirestorePosts();
-		renderPinned();
-		renderPage();
+		if (openAccordion === accordion && currentPost === savedPost) {
+			renderPinned();
+			renderPage();
+		}
 	} catch (error) {
 		console.warn("Unable to save post.", error);
 		if (status) status.textContent = "Unable to save this post right now.";
@@ -542,7 +580,7 @@ async function openPost(url, accordion) {
 			if (!doc.exists) throw new Error("Post unavailable");
 
 			const data = doc.data() || {};
-			const content = data.Body || data.body || "";
+			const content = data.body ?? data.Body ?? "";
 
 			loadedPost = {
 				url,
@@ -553,15 +591,28 @@ async function openPost(url, accordion) {
 				createdDate: data["Created Date"] || data.createdDate,
 				published: isPostPublished(data),
 				pinned: data.pinned === true,
+				serviceIds: Array.isArray(data.serviceIds) ? data.serviceIds : [],
 			};
-			renderedContent = sanitizeMarkdown(content);
+			renderedContent =
+				sanitizeMarkdown(content) + relatedServices(loadedPost.serviceIds);
 		} else {
 			const yaml = globalThis.jsyaml;
 			if (!yaml) throw new Error("YAML parser unavailable");
 			const raw = await fetch(url).then((r) => r.text());
 			const data = yaml.load(raw);
 			const content = data.content || "";
-			loadedPost = { url, data, content, source: "yaml" };
+			loadedPost = {
+				url,
+				data,
+				content,
+				source: "yaml",
+				id: importedPostId(url),
+				createdDate:
+					data.date instanceof Date ? data.date.toISOString() : data.date,
+				published: true,
+				pinned: data.pinned === true,
+				serviceIds: [],
+			};
 			renderedContent = sanitizeMarkdown(content);
 		}
 	} catch (error) {
@@ -627,6 +678,7 @@ function setPortfolioStatus(message) {
  * Load posts from YAML files
  */
 async function loadYamlPosts() {
+	yamlEntries.length = 0;
 	const yaml = globalThis.jsyaml;
 	if (!yaml) {
 		console.warn("YAML parser not available, skipping YAML posts.");
@@ -652,6 +704,7 @@ async function loadYamlPosts() {
 					tags: data.tags || [],
 					source: "yaml",
 				};
+				yamlEntries.push(entry);
 				if (entry.pinned) pinned.push(entry);
 				else notes.push(entry);
 			} catch {}
@@ -707,6 +760,65 @@ export function initPortfolio() {
 	cleanupFns.push(addListener(entryGrid, "click", handlePostGridClick));
 	cleanupFns.push(addListener(pinnedGrid, "submit", handlePostGridSubmit));
 	cleanupFns.push(addListener(entryGrid, "submit", handlePostGridSubmit));
+	cleanupFns.push(
+		addListener($("#portfolioSection"), "change", (event) => {
+			if (event.target.matches(".relatedServiceSelect"))
+				selectService(event.target.value, event.target.checked);
+		}),
+	);
+	cleanupFns.push(
+		addListener(window, "service-catalog-change", () => {
+			document
+				.querySelectorAll(
+					".postInlineEditor .servicePicker, #portfolioServicePicker .servicePicker",
+				)
+				.forEach((picker) => {
+					const checked = Array.from(
+						picker.querySelectorAll("input:checked"),
+						(input) => input.value,
+					);
+					picker.outerHTML = servicePicker(checked);
+				});
+			if (openAccordion && !openAccordion.classList.contains("is-editing"))
+				renderCurrentPost(openAccordion);
+		}),
+	);
+	cleanupFns.push(
+		addListener(window, "open-related-post", (event) => {
+			const url = event.detail?.url;
+			if (
+				![...pinned, ...notes].some(
+					(post) => post.url === url && post.published !== false,
+				)
+			)
+				return;
+			const findTitle = () =>
+				Array.from(document.querySelectorAll(".postTitleButton")).find(
+					(button) => button.dataset.url === url,
+				);
+			let title = findTitle();
+			// A background YAML save may have created a new Firestore URL while
+			// leaving another active reader untouched. Reconcile when navigating.
+			if (!title) {
+				renderPinned();
+				renderPage();
+				title = findTitle();
+			}
+			if (!title) return;
+			if (searchInput) {
+				searchInput.value = "";
+				searchInput.dispatchEvent(new Event("input"));
+			}
+			const accordion = title.closest(".postAccordion");
+			if (accordion !== openAccordion) {
+				closePost(openAccordion);
+				void openPost(title.dataset.url, accordion);
+			} else {
+				accordion.scrollIntoView({ block: "start", behavior: "smooth" });
+			}
+			title.focus({ preventScroll: true });
+		}),
+	);
 
 	// Add post button
 	const addPortfolioBtn = $("#addPortfolioBtn");
@@ -769,13 +881,14 @@ export function initPortfolio() {
 				}
 
 				try {
-					const isEditing = editingPostId && editingPostSource === "firestore";
-					const docRef = isEditing
-						? postsRef.doc(editingPostId)
-						: postsRef.doc();
+					if (portfolioSaveButton.disabled) return;
+					portfolioSaveButton.disabled = true;
 					const createdDate = editingPostCreatedDate ?? now;
 
-					await docRef.set(
+					const savedId = await savePost(
+						editingPostId
+							? { id: editingPostId, source: editingPostSource, createdDate }
+							: null,
 						{
 							title: title,
 							body: content,
@@ -783,12 +896,17 @@ export function initPortfolio() {
 							lastEditedDate: now,
 							published: published,
 							pinned: pinned,
+							serviceIds: Array.from(
+								$("#portfolioServicePicker").querySelectorAll(
+									'[name="serviceIds"]:checked',
+								),
+								(input) => input.value,
+							),
 						},
-						{ merge: true },
 					);
 
 					// Update state
-					editingPostId = docRef.id;
+					editingPostId = savedId;
 					editingPostSource = "firestore";
 					editingPostCreatedDate = createdDate;
 
@@ -806,6 +924,8 @@ export function initPortfolio() {
 				} catch (error) {
 					console.warn("Unable to save post.", error);
 					setEditorStatus("Unable to save this post right now.");
+				} finally {
+					portfolioSaveButton.disabled = false;
 				}
 			}),
 		);

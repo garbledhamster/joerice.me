@@ -6,6 +6,7 @@
     <base href="../">
     <title>Single-page browser test</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&amp;family=Bebas+Neue&amp;family=Fira+Code&amp;display=swap" rel="stylesheet">
     <style>
       #testResults {
         position: fixed;
@@ -48,6 +49,7 @@
         createdDate: "2026-01-01T00:00:00.000Z",
         published: true,
         pinned: false,
+        serviceIds: ["web-site"],
       };
 	  const secondTestPost = {
 		title: "Second editable post",
@@ -59,9 +61,13 @@
 	  const testPosts = {
 		"editable-test-post": testPost,
 		"second-editable-test-post": secondTestPost,
+		"draft-related-post": { ...testPost, title: "Private draft", published: false },
 	  };
 	  window.testWrittenPostId = null;
       let testPostDeleted = false;
+      const testServices = {};
+      window.testFailWrites = false;
+      window.testFailPostReads = false;
 
       const emptySnapshot = {
         docs: [],
@@ -85,28 +91,41 @@
         },
       };
       const makeCollection = (name) => {
+        const records = name === "Services" ? testServices : testPosts;
         const collection = {
-          where() {
-            return collection;
+          where(field, op, value) {
+            return {
+              async get() {
+                if (window.testFailPostReads && name === "Posts") throw new Error("Test read failure");
+                return {
+                  forEach(callback) {
+                    Object.entries(records).filter(([, data]) => data[field] === value).forEach(([id, data]) => callback({ id, data: () => ({ ...data }) }));
+                  }
+                };
+              }
+            };
           },
           orderBy() {
             return collection;
           },
           async get() {
-            return name === "Posts" ? postSnapshot : emptySnapshot;
+            if (window.testFailPostReads && name === "Posts") throw new Error("Test read failure");
+            return name === "Posts" ? postSnapshot : name === "Services" ? { forEach(callback) { Object.entries(testServices).forEach(([id, data]) => callback({ id, data: () => ({ ...data }) })); } } : emptySnapshot;
           },
           doc(id = "new-test-post") {
             return {
               id,
+              collectionName: name,
               async get() {
                 return {
-				  exists: !testPostDeleted && Boolean(testPosts[id]),
-				  data: () => ({ ...testPosts[id] }),
+				  exists: !testPostDeleted && Boolean(records[id]),
+				  data: () => ({ ...records[id] }),
                 };
               },
               async set(data) {
+				if (window.testFailWrites) throw new Error("Test permission denied");
 				window.testWrittenPostId = id;
-				Object.assign(testPosts[id], data);
+				records[id] = { ...records[id], ...data };
               },
               async delete() {
                 testPostDeleted = true;
@@ -119,7 +138,13 @@
         };
         return collection;
       };
-      const testFirestore = { collection: makeCollection };
+      const testFirestore = { collection: makeCollection, batch() {
+        const writes = [];
+        return { set(ref, data) { writes.push([ref, data]); }, async commit() {
+          if (window.testFailWrites) throw new Error("Test permission denied");
+          for (const [ref, data] of writes) await ref.set(data);
+        } };
+      } };
       const testAuth = {
         isSignInWithEmailLink: () => false,
         onAuthStateChanged(callback) {
@@ -161,11 +186,13 @@
       };
 
       window.testScrollTargets = [];
+      if (!new URLSearchParams(location.search).has("manual")) {
       Element.prototype.scrollIntoView = function scrollIntoView() {
         window.testScrollTargets.push(
           this.querySelector?.(".postTitleButton")?.dataset.url || this.id || "unknown",
         );
       };
+      }
 
       document.addEventListener(
         "click",
@@ -177,6 +204,7 @@
     </script>
     <script type="module" src="assets/js/main.js"></script>
     <script type="module">
+      if (!new URLSearchParams(location.search).has("manual")) {
       const results = document.getElementById("testResults");
       const failures = [];
 
@@ -237,6 +265,11 @@
         );
         serviceSelect.click();
         const attachment = await waitFor(() => document.querySelector(".selectedServiceAttachment"));
+        assert(!document.getElementById("serviceSelectionBanner").hidden, "selecting a service should show the bottom banner");
+        assert(document.getElementById("serviceSelectionCount").textContent === "1 service selected", "banner should show the selected count");
+        document.getElementById("jumpToContact").click();
+        assert(document.activeElement?.name === "name", "contact jump should focus the contact form");
+        assert(window.testScrollTargets.includes("contactSection"), "contact jump should scroll to the form");
         const messageField = document.querySelector('#contactForm textarea[name="message"]');
         const attachments = document.getElementById("selectedServices");
         assert(firstService.classList.contains("is-flipped"), "checking a service should leave its card flipped");
@@ -255,6 +288,7 @@
         );
 
         serviceSelect.click();
+        assert(document.getElementById("serviceSelectionBanner").hidden, "clearing services should hide the banner");
         assert(
           !document.querySelector(".selectedServiceAttachment"),
           "unchecking a service should remove its contact attachment",
@@ -266,8 +300,34 @@
         "portfolio should render every post without pagination controls",
       );
 
+      await waitFor(() => document.getElementById("portfolioStatus").hidden);
       const editablePost = await waitFor(() => document.querySelector('[data-id="editable-test-post"]'));
       const editableRow = editablePost?.closest(".postAccordion");
+      const relatedCard = document.querySelector('.serviceCard[data-service="Web Site"]');
+      const relatedButton = relatedCard?.querySelector('.servicePostsToggle');
+      assert(relatedButton, "flipped services should offer related posts");
+      relatedButton?.click();
+      const relatedLinks = relatedCard?.querySelectorAll('.servicePostLink');
+      assert(relatedLinks?.length === 1 && relatedLinks[0].textContent === "Editable test post", "related lists should include only posts tagged with this service");
+      assert(relatedCard?.querySelector('.serviceToggle').checked, "related posts must not unflip the service card");
+      relatedLinks?.[0]?.click();
+      await waitFor(() => editablePost?.getAttribute('aria-expanded') === 'true');
+      assert(editableRow?.classList.contains('is-open'), "related titles should open the matching inline reader");
+      relatedCard?.querySelector('.serviceDetailsButton')?.click();
+      assert(!relatedCard?.classList.contains('show-related-posts'), "back to details should restore service highlights");
+      assert(relatedCard?.querySelector('.serviceDetailsButton')?.getAttribute('aria-pressed') === 'true', "the card should clearly identify its active detail view");
+      relatedCard?.querySelector('.serviceDetails')?.click();
+      assert(relatedCard?.querySelector('.serviceToggle').checked, "reading card details should not accidentally flip the card");
+      relatedCard?.querySelector('.serviceCloseButton')?.click();
+      assert(!relatedCard?.querySelector('.serviceToggle').checked, "Close should explicitly return to the card front");
+      relatedCard?.querySelector('.serviceOpenButton')?.click();
+      assert(relatedCard?.querySelector('.serviceToggle').checked, "View details should reopen the card");
+      const emptyCard = document.querySelector('.serviceCard[data-service="Web App"]');
+      emptyCard.querySelector('.serviceCardFlip').click();
+      emptyCard.querySelector('.servicePostsToggle')?.click();
+      assert(emptyCard.querySelector('.servicePosts')?.textContent.includes("No published posts"), "services without tagged posts should explain the empty list");
+      emptyCard.querySelector('.serviceCloseButton')?.click();
+      assert(emptyCard.querySelector('.serviceCardBack').inert, "unflipped related controls should not be keyboard accessible");
       assert(
         editableRow?.querySelector(".postTitleEditButton") && editableRow?.querySelector(".postTitleDeleteButton"),
         "editable posts should expose title-level edit and delete controls to the admin",
@@ -284,6 +344,11 @@
         inlineEditor?.querySelector('input[name="title"]')?.value === "Editable test post",
         "the inline editor should preload the post title",
       );
+      const { saveService } = await import("./assets/js/services/catalog.js");
+      await saveService("test-new-service", { title: "New service", description: "New offering", highlights: [], available: true });
+      assert(inlineEditor?.querySelector('[name="serviceIds"][value="test-new-service"]'), "an open post editor should offer newly available services");
+      assert(inlineEditor?.querySelector('[name="serviceIds"][value="web-site"]')?.checked, "refreshing service choices must preserve checked tags");
+      window.testWrittenPostId = null;
 
 	  const staleEditor = inlineEditor;
 	  const secondEditablePost = await waitFor(() =>
@@ -344,12 +409,103 @@
       assert(aboutCopy.includes("career"), "About section should focus on Joe's professional career");
       assert(aboutCopy.includes("help themselves"), "About section should explain the self-service purpose");
 
+      // Exercise actual editor forms with only the Firebase boundary replaced.
+      document.querySelector('.serviceEditButton[data-service-id="web-site"]').click();
+      const serviceEditor = document.querySelector(".serviceEditor");
+      serviceEditor.elements.title.value = "Custom websites";
+      serviceEditor.requestSubmit();
+      await waitFor(() => !serviceEditor.isConnected);
+      assert(testPosts["service-web-site"]?.title === "Custom websites", "service edits should persist as Firebase service records");
+      assert(document.querySelector('.serviceCard[data-service="Custom websites"]'), "saved services should refresh their cards");
+
+      const aboutPost = document.querySelector('[data-url="posts/0001.yaml"]')?.closest(".postAccordion");
+      aboutPost?.querySelector(".postTitleEditButton")?.click();
+      const aboutEditor = await waitFor(() => aboutPost?.querySelector(".postInlineEditor"));
+      assert(aboutEditor, "bundled About Me post should have an inline editor");
+      if (aboutEditor) {
+        aboutEditor.elements.title.value = "About my career";
+        aboutEditor.elements.body.value = "Updated on my phone and saved in Firebase.";
+        aboutEditor.querySelector('[name="serviceIds"][value="web-site"]').checked = true;
+        window.testFailWrites = true;
+        aboutEditor.requestSubmit();
+        await waitFor(() => aboutEditor.querySelector('[role="status"]').textContent.includes("Unable"));
+        assert(aboutEditor.isConnected && aboutEditor.elements.body.value.includes("phone"), "failed post saves should preserve edits");
+        assert(!testPosts["imported-0001"], "failed migration should not partially save");
+        window.testFailWrites = false;
+        aboutEditor.requestSubmit();
+        document.querySelector('.postTitleButton[data-id="second-editable-test-post"]').click();
+        await waitFor(() => testPosts["imported-0001"]);
+        const savedCard = document.querySelector('.serviceCard[data-service="Custom websites"]');
+        savedCard?.querySelector('.servicePostsToggle')?.click();
+        const savedLink = await waitFor(() => [...savedCard.querySelectorAll('.servicePostLink')].find(link => link.textContent === "About my career"));
+        savedLink?.click();
+        await waitFor(() => document.querySelector('.postTitleButton[data-id="imported-0001"]'));
+        assert(testPosts["imported-0001"]?.body.includes("phone"), "bundled edits should persist to Firebase Posts");
+        assert(testPosts["imported-0001"]?.serviceIds.includes("web-site"), "related services should persist with the post");
+        const updatedCard = document.querySelector('.serviceCard[data-service="Custom websites"]');
+        assert([...updatedCard.querySelectorAll('.servicePostLink')].some(link => link.textContent === "About my career"), "saving tags should immediately update the service's related posts");
+        assert(!document.querySelector('[data-url="posts/0001.yaml"]'), "saved Firebase posts should replace bundled originals");
+        const importedTitle = document.querySelector('.postTitleButton[data-id="imported-0001"]');
+        if (importedTitle?.getAttribute('aria-expanded') !== 'true') importedTitle?.click();
+        const related = await waitFor(() => importedTitle?.closest(".postAccordion").querySelector(".relatedServiceSelect"));
+        assert(related, "post reader should offer its related service");
+        related?.click();
+        assert(document.getElementById("serviceSelectionCount").textContent === "1 service selected", "post service selection should update the shared banner");
+
+        // Simulate a return visit as a public reader with an unpublished override.
+        testPosts["imported-0001"].published = false;
+        testPosts["imported-0001"].Published = false;
+        const { setState } = await import("./assets/js/core/state.js");
+        const { destroyPortfolio, initPortfolio } = await import("./assets/js/pages/portfolio.js");
+        setState("isAdmin", false);
+        destroyPortfolio();
+        initPortfolio();
+        await waitFor(() => document.getElementById("portfolioStatus").hidden);
+        assert(!document.querySelector('[data-id="imported-0001"]') && !document.querySelector('[data-url="posts/0001.yaml"]'), "unpublished Firebase overrides must not reveal bundled originals on a return visit");
+        assert(![...document.querySelectorAll('.servicePostLink')].some(link => link.textContent === "About my career" || link.textContent === "Private draft"), "unpublished posts must disappear from related service lists");
+        window.testFailPostReads = true;
+        document.getElementById("refreshPostsBtn").click();
+        await waitFor(() => updatedCard.querySelector('.servicePosts')?.textContent.includes("could not load"));
+        assert(updatedCard.querySelector('.servicePosts')?.textContent.includes("could not load"), "failed reads should show an error instead of an empty related list");
+        window.testFailPostReads = false;
+        document.getElementById("refreshPostsBtn").click();
+        await waitFor(() => updatedCard.querySelector('.servicePostLink'));
+        assert(updatedCard.querySelector('.servicePostLink')?.textContent === "Editable test post", "refreshing should recover related posts after a failed read");
+      }
+
       if (failures.length) {
         document.body.dataset.testStatus = "failed";
         results.textContent = `FAIL (${failures.length})\n\n${failures.map((failure) => `• ${failure}`).join("\n")}`;
       } else {
         document.body.dataset.testStatus = "passed";
         results.textContent = "PASS (all single-page behaviors verified)";
+      }
+      } else {
+        document.getElementById("testResults").hidden = true;
+        const mode = new URLSearchParams(location.search).get("manual");
+        const selector = mode === "post"
+          ? '[data-url="posts/0001.yaml"]'
+          : mode === "related" ? '.postTitleButton[data-id="editable-test-post"]'
+          : '.serviceEditButton[data-service-id="web-site"]';
+        for (let attempt = 0; attempt < 100; attempt += 1) {
+          const target = document.querySelector(selector);
+          if (target) {
+            if (mode === "related") {
+              if (!document.getElementById("portfolioStatus").hidden) {
+                await new Promise((resolve) => setTimeout(resolve, 50));
+                continue;
+              }
+              const card = document.querySelector('.serviceCard[data-service="Web Site"]');
+              card.querySelector('.serviceCardFlip').click();
+              card.querySelector('.servicePostsToggle').click();
+              document.getElementById("servicesSection").scrollIntoView({block: "start"});
+              break;
+            }
+            (mode === "post" ? target.closest(".postAccordion").querySelector(".postTitleEditButton") : target)?.click();
+            break;
+          }
+          await new Promise((resolve) => setTimeout(resolve, 50));
+        }
       }
     </script>
   </body>

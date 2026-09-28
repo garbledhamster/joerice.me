@@ -18,6 +18,8 @@ import { sanitizeText } from "../services/sanitize.js";
  * @returns {string} Service card HTML
  */
 export function createServiceCard({
+	id,
+	available = true,
 	title,
 	description,
 	highlights = [],
@@ -26,7 +28,7 @@ export function createServiceCard({
 	const safeTitle = sanitizeText(title);
 	const safeDesc = sanitizeText(description);
 	const safeAriaLabel = sanitizeText(ariaLabel || `Flip ${title} card`);
-	const serviceId = String(title)
+	const serviceId = String(id || title)
 		.toLowerCase()
 		.trim()
 		.replace(/[^a-z0-9]+/g, "-")
@@ -38,25 +40,30 @@ export function createServiceCard({
 		.join("");
 
 	return `
-    <article class="serviceCard" data-service="${safeTitle}">
-      <input class="serviceToggle" id="${flipId}" type="checkbox" aria-label="${safeAriaLabel}"/>
-      <label class="serviceCardFlip" for="${flipId}">
-        <span class="serviceCardInner">
-          <span class="serviceCardFace serviceCardFront">
+    <article class="serviceCard" data-service="${safeTitle}" data-service-id="${sanitizeText(id || serviceId)}">
+      <input class="serviceToggle" id="${flipId}" type="checkbox" tabindex="-1" aria-hidden="true" aria-label="${safeAriaLabel}"/>
+      <div class="serviceCardFlip">
+        <div class="serviceCardInner">
+          <div class="serviceCardFace serviceCardFront">
             <h3>${safeTitle}</h3>
             <p>${safeDesc}</p>
-            <span class="serviceCardHint">Tap to flip</span>
-          </span>
-          <span class="serviceCardFace serviceCardBack">
-            <h3>${safeTitle}</h3>
-            <ul>
+            <button class="serviceOpenButton" type="button" aria-label="View ${safeTitle} details">View details</button>
+          </div>
+          <div class="serviceCardFace serviceCardBack" inert>
+            <div class="serviceCardHeader"><h3>${safeTitle}</h3><button class="serviceCloseButton" type="button" aria-label="Close ${safeTitle} details">Close</button></div>
+            <div class="serviceViews" role="group" aria-label="${safeTitle} view">
+              <button class="serviceDetailsButton" type="button" aria-pressed="true" aria-controls="${flipId}-details">Details</button>
+              <button class="servicePostsToggle" type="button" aria-pressed="false" aria-expanded="false" aria-controls="${flipId}-posts">Related posts</button>
+            </div>
+            <ul class="serviceDetails" id="${flipId}-details">
               ${highlightsList}
             </ul>
-          </span>
-        </span>
-      </label>
+            <div class="servicePosts" id="${flipId}-posts" hidden aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
       <label class="serviceChoice">
-        <input class="serviceSelect" type="checkbox" value="${safeTitle}"/>
+        <input class="serviceSelect" type="checkbox" value="${sanitizeText(id || serviceId)}"${available ? "" : " disabled"}/>
         <span>Select this service</span>
       </label>
     </article>

@@ -73,6 +73,7 @@ function getPortfolioModalTemplate() {
           <input id="portfolioPostPinned" type="checkbox"/>
           <span>Pinned</span>
         </label>
+        <div id="portfolioServicePicker"></div>
         <div class="portfolioActions">
           <button class="portfolioSaveButton" id="portfolioSaveButton" type="button">Save</button>
           <button class="portfolioDeleteButton" id="portfolioDeleteButton" type="button">Delete</button>

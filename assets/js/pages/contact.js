@@ -7,6 +7,10 @@
 
 import { closeModal, openModal } from "../components/modal.js";
 import { $, addListener } from "../core/dom.js";
+import {
+	clearSelectedServices,
+	getSelectedServices,
+} from "../services/catalog.js";
 import { sanitizeText } from "../services/sanitize.js";
 
 let contactForm = null;
@@ -41,6 +45,10 @@ export function getContactTemplate() {
         <button type="submit">Send</button>
       </form>
     </section>
+    <aside class="serviceSelectionBanner" id="serviceSelectionBanner" aria-label="Selected services" hidden>
+      <span id="serviceSelectionCount" role="status" aria-live="polite"></span>
+      <button type="button" id="jumpToContact">Go to contact</button>
+    </aside>
     <div class="modal" id="contactModal">
       <div class="modalContent">
         <p>Thank you! Your message has been sent.</p>
@@ -54,21 +62,30 @@ export function getContactTemplate() {
  * Render selected services as contact-form attachments.
  */
 function renderSelectedServices() {
+	const selections = getSelectedServices();
+	const banner = $("#serviceSelectionBanner");
+	if (banner) banner.hidden = selections.length === 0;
+	document.body.classList.toggle("hasServiceSelection", selections.length > 0);
+	const count = $("#serviceSelectionCount");
+	if (count)
+		count.textContent = `${selections.length} service${selections.length === 1 ? "" : "s"} selected`;
 	const container = $("#selectedServices");
 	if (!container) return;
 
 	container.hidden = selectedServices.size === 0;
-	container.innerHTML = Array.from(selectedServices, ([service, details]) => {
-		const safeService = sanitizeText(service);
-		const safeDetails = sanitizeText(details);
-		const serviceId = String(service)
-			.toLowerCase()
-			.trim()
-			.replace(/[^a-z0-9]+/g, "-")
-			.replace(/^-|-$/g, "");
-		const helpId = `service-help-${serviceId}`;
+	container.innerHTML = selections
+		.map(({ id, title }) => {
+			const details = selectedServices.get(id) || "";
+			const safeService = sanitizeText(title);
+			const safeDetails = sanitizeText(details);
+			const serviceId = String(id)
+				.toLowerCase()
+				.trim()
+				.replace(/[^a-z0-9]+/g, "-")
+				.replace(/^-|-$/g, "");
+			const helpId = `service-help-${serviceId}`;
 
-		return `
+			return `
       <section class="selectedServiceAttachment" data-service="${safeService}">
         <div class="selectedServiceHeading">
           <span class="selectedServiceIcon" aria-hidden="true">✓</span>
@@ -76,24 +93,26 @@ function renderSelectedServices() {
         </div>
         <input type="hidden" name="services" value="${safeService}"/>
         <label for="service-details-${serviceId}">Project details</label>
-        <textarea id="service-details-${serviceId}" name="serviceDetails" data-service="${safeService}" aria-describedby="${helpId}" required>${safeDetails}</textarea>
+        <textarea id="service-details-${serviceId}" name="serviceDetails" data-service="${sanitizeText(id)}" aria-describedby="${helpId}" required>${safeDetails}</textarea>
         <small class="selectedServiceHelp" id="${helpId}">Fill in details about what you need for this selected service.</small>
       </section>
     `;
-	}).join("");
+		})
+		.join("");
 }
 
 /**
  * Sync a service card selection into the contact form.
  * @param {CustomEvent} event - Service selection event
  */
-function handleServiceSelection(event) {
-	const { service, selected } = event.detail || {};
-	if (!service) return;
-
-	if (selected)
-		selectedServices.set(service, selectedServices.get(service) || "");
-	else selectedServices.delete(service);
+function handleServiceSelection() {
+	const ids = new Set(getSelectedServices().map((service) => service.id));
+	for (const id of selectedServices.keys()) {
+		if (!ids.has(id)) selectedServices.delete(id);
+	}
+	for (const id of ids) {
+		if (!selectedServices.has(id)) selectedServices.set(id, "");
+	}
 	renderSelectedServices();
 }
 
@@ -133,15 +152,17 @@ async function handleSubmit(e) {
 			fd.append("g-recaptcha-response", token);
 		}
 
-		await fetch("https://formspree.io/f/xovqpvdv", {
+		const response = await fetch("https://formspree.io/f/xovqpvdv", {
 			method: "POST",
 			body: fd,
 			headers: { Accept: "application/json" },
 		});
+		if (!response.ok) throw new Error("Message could not be sent.");
 
 		// Reset form and show success
 		form.reset();
 		selectedServices.clear();
+		clearSelectedServices();
 		document.querySelectorAll(".serviceSelect").forEach((checkbox) => {
 			checkbox.checked = false;
 		});
@@ -175,6 +196,20 @@ export function renderContact() {
  */
 export function initContact() {
 	contactForm = $("#contactForm");
+	cleanupFns.push(
+		addListener($("#jumpToContact"), "click", () => {
+			$("#contactSection")?.scrollIntoView({
+				behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+					? "instant"
+					: "smooth",
+				block: "start",
+			});
+			contactForm
+				?.querySelector('[name="name"]')
+				?.focus({ preventScroll: true });
+		}),
+	);
+	handleServiceSelection();
 
 	if (contactForm) {
 		cleanupFns.push(addListener(contactForm, "submit", handleSubmit));
