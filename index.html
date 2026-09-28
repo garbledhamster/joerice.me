@@ -1,202 +1,53 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <meta name="description" content="Find where AI can genuinely help your team—and what to do next.">
-
-    <link rel="canonical" href="https://joerice.me/">
-    <link rel="alternate" type="application/rss+xml" title="Joe Rice Field Guide" href="/feed.xml">
-    <title>AI Enablement Foundation | Joe Rice</title>
-    <link rel="stylesheet" href="/styles.css?v=20260802-human-empowerment">
-    <script type="module" src="/navigation.js"></script>
-
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <!-- Content Security Policy for XSS protection -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://www.google.com https://formspree.io; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https: data: blob:; connect-src 'self' https://formspree.io https://www.google.com https://firebasestorage.googleapis.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src https://www.google.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://formspree.io;"/>
+    <title>Joe Rice · Portfolio</title>
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com"/>
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=Bebas+Neue&family=Fira+Code&display=swap" rel="stylesheet"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+    <!-- Styles -->
+    <link rel="stylesheet" href="styles.css"/>
+    <!-- Preload external dependencies -->
+    <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js"/>
+    <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"/>
+    <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"/>
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
-    <header class="site-header">
-      <a class="site-brand" href="/">Joe Rice</a>
-      <button class="nav-toggle" type="button" aria-expanded="true" aria-controls="site-navigation" data-nav-toggle>Menu</button>
-      <nav id="site-navigation" class="site-navigation" aria-label="Primary" data-site-navigation>
-        <a aria-current="page" href="/#foundation">Foundation</a>
-        <a href="/#method">Process</a>
-        <a href="/field-guide/">Field Guide</a>
-        <a href="/faqs/" class="nav-faq">FAQs</a>
-      </nav>
-    </header>
-    <details class="section-picker" open>
-    <summary>Jump to a section</summary>
-    <nav aria-label="Foundation sections"><a href="#foundation">Start</a><a href="#situation">Fit</a><a href="#technology-choice">Technology choice</a><a href="#human-empowerment">Human role</a><a href="#method">Decision path</a><a href="#engagement-examples">Engagement</a><a href="#fit-options-heading">Fit options</a><a href="#deliverables-heading">Handoff</a><a href="#guide-preview-heading">Field Guide</a><a href="#offer-heading">Price & scope</a><a href="#faq-preview-heading">FAQs</a><a href="#request">Request</a></nav>
-  </details>
-    <main id="main">
-      <section class="hero" id="foundation" aria-labelledby="foundation-heading">
-        <div>
-          <p class="eyebrow">AI Enablement Foundation</p>
-          <h1 id="foundation-heading">Find where AI can genuinely help your team—and what to do next.</h1>
-          <p class="audience">A focused engagement for one small business or operating department of roughly 5–20 people.</p>
-          <a class="primary-action" data-primary-action href="mailto:joe@joerice.me?subject=AI+Enablement+Foundation+request&amp;body=Organization+or+team%3A%0A%0AWhat+are+you+trying+to+improve%3F%0A%0AApproximate+team+size%3A%0A%0ACurrent+AI+situation%3A%0A%0APreferred+way+to+reply%3A">Tell me what you&#39;re trying to improve</a>
-        </div>
-        <aside class="offer-card" aria-label="Founding engagement price">
-          <p class="label">Founding engagement</p><p class="price">$2,500</p><p class="price-note">Founding price for each of the first two external engagements, subject to a one-page proposal.</p>
-        </aside>
-        <figure class="site-image hero-image"><img src="/assets/foundation-discovery-workshop.jpg" width="1536" height="1024" alt="Illustration of hands arranging observations into a structured planning board."></figure>
-      </section>
-      <section class="content-section situation" aria-labelledby="situation-heading">
-        <div class="section-heading"><p class="eyebrow">The situation</p><h2 id="situation-heading">When the Foundation may fit</h2><p>The Foundation may fit a team with uneven AI use, scattered experimentation, uncertainty about responsible use, or recurring work friction.</p></div>
-        <ul class="signal-list"><li>AI use is uneven across the team.</li><li>AI experimentation is scattered across the team.</li><li>The team is uncertain about responsible use.</li><li>Repeated work friction creates delay, rework, risk, frustration, or avoidable cost.</li></ul>
-      </section>
-      <section class="content-section value-path-section" aria-labelledby="value-path-heading">
-        <div class="section-heading"><p class="eyebrow">The value path</p><h2 id="value-path-heading">From scattered signals to one bounded next-step decision</h2><p>The Foundation makes the decision path visible without assuming that every pain point should become an AI or automation project.</p></div>
-        <ol class="value-path" aria-label="Foundation value path">
-          <li><span class="path-number">01</span><h3>See reality</h3><p>Uneven use, scattered tests, and recurring friction.</p></li>
-          <li><span class="path-number">02</span><h3>Map the team</h3><p>Team map, AI-use baseline, and potential AI Champions.</p></li>
-          <li><span class="path-number">03</span><h3>Rank the options</h3><p>Value, feasibility, risk, and readiness.</p></li>
-          <li><span class="path-number">04</span><h3>Choose one next step</h3><p>One bounded 90-day experiment and editable handoff.</p></li>
-        </ol>
-        <figure class="value-bridge">
-          <figcaption>See how each buyer question connects to relevant Foundation work and a concrete decision aid.</figcaption>
-          <div class="value-bridge-grid" role="table" aria-label="Foundation value proposition">
-            <div class="value-bridge-header" role="row"><span role="columnheader">Question</span><span role="columnheader">Foundation work</span><span role="columnheader">Decision aid</span></div>
-            <div class="value-bridge-row" role="row"><strong role="cell">Where are we now?</strong><span role="cell">Map the team and establish the current AI-use baseline.</span><span role="cell">Team-and-role map + AI-use baseline</span></div>
-            <div class="value-bridge-row" role="row"><strong role="cell">Which ideas deserve attention?</strong><span role="cell">Surface pain points and rank possible responses.</span><span role="cell">Ranked opportunity backlog</span></div>
-            <div class="value-bridge-row" role="row"><strong role="cell">What should we do next?</strong><span role="cell">Choose one bounded experiment and hand off the materials.</span><span role="cell">90-day experiment + leadership brief</span></div>
-          </div>
-          <p class="chart-note">This path supports a decision; it does not guarantee adoption, savings, or return.</p>
-        </figure>
-      </section>
-      <section class="content-section technology-choice-section" id="technology-choice" aria-labelledby="technology-choice-heading">
-        <div class="section-heading"><p class="eyebrow">Technology choice</p><h2 id="technology-choice-heading">Use AI to help build the answer—not force AI into the answer</h2><p>My principle is to use AI where it helps with discovery, prototyping, or a separately scoped build—without making it a required production dependency unless the work justifies it.</p></div>
-        <ul class="technology-choice-list"><li>Start with the simplest workable response: a process change, template, deterministic automation, or conventional software.</li><li>Add runtime AI only when ongoing model calls, token usage, variable output, data exposure, and operational dependency are justified by the work.</li><li>If a non-AI solution meets the need more simply, it remains a valid recommendation.</li></ul>
-        <p class="technology-choice-boundary">The Foundation compares the options and recommends a bounded next step; it does not include implementation. Any later build requires a separate evaluation and proposal.</p>
-      </section>
-      <section class="content-section human-empowerment-section" id="human-empowerment" aria-labelledby="human-empowerment-heading">
-        <div class="section-heading"><p class="eyebrow">The human role</p><h2 id="human-empowerment-heading">AI should empower people—not replace them</h2><p>My principle is to use AI to support human judgment, agency, and ownership—not as a predetermined case for making people disposable.</p></div>
-        <ul class="human-empowerment-list"><li>People retain clear decision rights for sensitive, consequential, or irreversible work.</li><li>Consider AI as support for research, drafting, retrieval, and repeatable work while keeping human ownership and accountability visible.</li><li>A staff-reduction goal is a clean no-fit for the Foundation.</li></ul>
-        <p class="human-empowerment-boundary">The Foundation can identify where people need better tools, clearer processes, or guarded AI assistance. It does not promise job protection, workforce outcomes, or implementation.</p>
-      </section>
-      <section class="content-section method-section" id="method" aria-labelledby="method-heading">
-        <div class="section-heading"><p class="eyebrow">The engagement</p><h2 id="method-heading">Listen, map, rank, choose, and hand off</h2><p>I learn how the team is organized, establish a current AI-use baseline, identify potential AI Champions, and surface repeated pain points.</p></div>
-        <ol class="method-list"><li><h3>Listen</h3><p>Learn how the team is organized and where repeated pain points create delay, rework, risk, frustration, or avoidable cost.</p></li><li><h3>Map</h3><p>Establish the current AI-use baseline and identify potential AI Champions—department-aware employees interested in helping discover, evaluate, and eventually support useful practices, not a certification or formal title.</p></li><li><h3>Rank</h3><p>Together, rank opportunities by value, feasibility, risk, and readiness. A pain point is not automatically an AI or automation opportunity.</p></li><li><h3>Choose</h3><p>Select one bounded 90-day experiment as the recommended next step.</p></li><li><h3>Hand off</h3><p>Receive editable materials designed for your team to continue without ongoing dependence on me.</p></li></ol>
-        <figure class="decision-lens"><figcaption>Rank opportunities by value, feasibility, risk, and readiness.</figcaption><div class="decision-matrix" role="img" aria-label="Illustrative opportunity matrix showing several options and one selected next experiment. It contains no client data or outcome prediction."><span class="axis-label value-label">Higher value</span><span class="axis-label feasibility-label">Higher feasibility</span><span class="opportunity-marker marker-one"></span><span class="opportunity-marker marker-two"></span><span class="opportunity-marker marker-three"></span><span class="opportunity-marker selected-marker"></span></div><p class="chart-note">Illustrative decision aid—not client data.</p></figure>
-      </section>
-      <section class="content-section engagement-examples" aria-labelledby="engagement-examples-heading">
-        <div class="section-heading"><p class="eyebrow">What you are buying</p><h2 id="engagement-examples-heading">What an engagement looks like</h2><p>A fixed, bounded discovery-and-planning engagement—not an implementation project. It is designed to organize shared evidence and support a sponsor and team as they decide whether a 90-day AI experiment is worth pursuing.</p></div>
-        <ol class="engagement-timeline" aria-label="Foundation engagement timeline"><li><span class="path-number">01</span><h3>Sponsor intake</h3><p>Clarify the team, the decision to make, the available access, and the questions that would make the work a no-fit.</p></li><li><span class="path-number">02</span><h3>One six-hour discovery day</h3><p>Observe the work with the relevant people, map current AI use, and surface repeated friction without assuming AI is the answer.</p></li><li><span class="path-number">03</span><h3>Synthesis and ranking</h3><p>Rank possible responses by value, feasibility, risk, and readiness, then identify one bounded next-step decision.</p></li><li><span class="path-number">04</span><h3>Leadership readout and handoff</h3><p>Review the evidence, recommended experiment, open specialist questions, and editable materials the team can own.</p></li></ol>
-        <p class="chart-note">Illustrative composite examples—not clients, case studies, or outcome evidence.</p>
-        <div class="engagement-example-grid"><article>
-      <h3>The service team that keeps rebuilding the same answer</h3>
-      <p><strong>Starting situation:</strong> A customer-facing team answers recurring questions from email, past documents, and one experienced person&#39;s memory. Responses vary, review takes time, and nobody agrees which problem to address first.</p>
-      <p><strong>Decision to make:</strong> Decide whether a shared drafting or knowledge-retrieval practice is worth a bounded experiment before anyone buys or builds a system.</p>
-      <p><strong>Foundation focus:</strong> Map the request-to-response workflow, identify data and quality boundaries, rank the options, and hand off one experiment brief if the evidence supports it.</p>
-      <p class="no-fit-note"><strong>Clean no-fit:</strong> Not a fit if the immediate need is a production knowledge base, CRM integration, customer-data assessment, or custom software.</p>
-    </article><article>
-      <h3>The operations team with scattered AI experiments</h3>
-      <p><strong>Starting situation:</strong> Several people use different AI tools for notes, drafts, and spreadsheets while others avoid them. The sponsor cannot see the useful practices, the risky ones, or the work that should remain unchanged.</p>
-      <p><strong>Decision to make:</strong> Decide which current practice deserves a shared test, what guardrails are needed, and whether there is a potential AI Champion to help the team evaluate it.</p>
-      <p><strong>Foundation focus:</strong> Establish an AI-use baseline, map team roles, surface boundaries, rank opportunities, and recommend one team-owned 90-day experiment only when it is plausible.</p>
-      <p class="no-fit-note"><strong>Clean no-fit:</strong> Not a fit if the team needs an enterprise AI rollout, formal training program, compliance approval, or managed support immediately.</p>
-    </article><article>
-      <h3>The sponsor deciding whether AI belongs in the next quarter</h3>
-      <p><strong>Starting situation:</strong> A sponsor sees recurring administrative friction and pressure to ‘do something with AI,’ but has not defined the work, the decision owner, the sensitive information boundary, or a useful measure of progress.</p>
-      <p><strong>Decision to make:</strong> Decide whether there is one safe, owned problem worth testing next quarter—or whether the better answer is to improve the process without AI.</p>
-      <p><strong>Foundation focus:</strong> Frame the work, identify the evidence and constraints, compare AI and non-AI responses, and create a leadership brief that makes the next decision explicit.</p>
-      <p class="no-fit-note"><strong>Clean no-fit:</strong> Not a fit if the sponsor already needs a vendor selection, staff-reduction plan, security review, or guaranteed savings case.</p>
-    </article></div>
-      </section>
-      <section class="content-section fit-option-section" aria-labelledby="fit-options-heading">
-        <div class="section-heading"><p class="eyebrow">Choose the kind of help</p><h2 id="fit-options-heading">Maybe you need a clearer next decision</h2><p>Use these options to see whether the immediate need is a bounded discovery engagement, different help, or no engagement at all.</p></div>
-        <div class="fit-options-grid"><section class="fit-option-group">
-      <h3>See the work more clearly</h3>
-      <ul class="fit-option-list"><li class="fit-option">You need to understand which repeated work deserves attention before choosing an AI tool or project.</li><li class="fit-option">You need a shared picture of how work moves, where it changes hands, and where friction keeps returning.</li><li class="fit-option">You need to distinguish an AI possibility from a process, policy, training, or ownership problem.</li></ul>
-    </section><section class="fit-option-group">
-      <h3>Choose one bounded next step</h3>
-      <ul class="fit-option-list"><li class="fit-option">You need to compare possible responses by value, feasibility, risk, and readiness before starting a project.</li><li class="fit-option">You need to decide what must remain human-owned and what would make a small experiment worth considering.</li><li class="fit-option">You need one sponsor and one team to own a next decision instead of launching an open-ended program.</li></ul>
-    </section><section class="fit-option-group">
-      <h3>Set responsible boundaries</h3>
-      <ul class="fit-option-list"><li class="fit-option">You need to make current AI use, uncertainty, and team concerns visible before asking people to change how they work.</li><li class="fit-option">You need to identify information that is sensitive, confidential, or unsuitable for a casual test.</li><li class="fit-option">You need to separate questions for legal, privacy, security, or compliance specialists from a discovery engagement.</li></ul>
-    </section><section class="fit-option-group">
-      <h3>Get an honest handoff—or a clean no-fit</h3>
-      <ul class="fit-option-list"><li class="fit-option">You need editable decision materials and a leadership readout, not a finished application, audit, or training program.</li><li class="fit-option">You need an outside perspective because ownership, cross-functional disagreement, sensitive data, or an irreversible decision makes neutral facilitation valuable.</li><li class="fit-option">You may need different help if the immediate need is production implementation, specialist assurance, a vendor selection, or organization-wide change.</li></ul>
-    </section></div>
-        <p class="chart-note">These are fit signals, not a diagnosis or a promise that the Foundation is the answer.</p>
-      </section>
-      <section class="content-section deliverables-section" aria-labelledby="deliverables-heading">
-        <div class="section-heading"><p class="eyebrow">The handoff</p><h2 id="deliverables-heading">What you receive</h2><p>Eight concrete outputs, including editable handoff materials.</p></div>
-        <figure class="site-image handoff-image"><img src="/assets/foundation-handoff-materials.jpg" width="1536" height="1024" loading="lazy" decoding="async" alt="Illustration of an open folio with abstract team maps, ranked cards, and one selected next experiment."></figure>
-        <div class="deliverable-grid"><article><h3>Team-and-role map</h3><p>A view of the team structure and roles considered during discovery.</p></article><article><h3>AI-use baseline</h3><p>A current view of how AI use varies across the team.</p></article><article><h3>Potential AI Champion map</h3><p>Department-aware people who may help discover, evaluate, and eventually support useful practices.</p></article><article><h3>Ranked opportunity backlog</h3><p>An editable list of observed pain points and possible AI or automation responses, ranked by value, feasibility, risk, and readiness.</p></article><article><h3>Starter responsible-use guardrails</h3><p>Starter guidance based on the observed context, including questions that need legal, privacy, security, or compliance specialists.</p></article><article><h3>One recommended 90-day experiment</h3><p>A bounded experiment selected after the opportunities are ranked.</p></article><article><h3>Leadership brief</h3><p>A concise readout for the sponsor and leadership team.</p></article><article><h3>Editable handoff materials</h3><p>Working materials designed for the team to take forward.</p></article></div>
-      </section>
-      <section class="content-section guide-preview" aria-labelledby="guide-preview-heading">
-        <div class="section-heading"><p class="eyebrow">Do it yourself</p><h2 id="guide-preview-heading">Explore the Field Guide</h2><p>Complete, bounded procedures for teams that want to begin with the work itself.</p></div>
-        <div class="guide-grid"><article class="guide-card">
-        <a class="guide-image" href="/field-guide/ai-enablement-discovery/" tabindex="-1" aria-hidden="true">
-          <img src="/assets/field-guide-discovery.png" width="1536" height="1024" alt="">
-        </a>
-        <p class="eyebrow">listen</p>
-        <h3><a href="/field-guide/ai-enablement-discovery/">Run a lightweight AI enablement discovery</a></h3>
-        <p>Learn what is actually happening in one team&#39;s work before choosing tools, policies, or projects.</p>
+    <!-- App Container - All content rendered by JavaScript -->
+    <div id="app"></div>
 
-      </article><article class="guide-card">
-        <a class="guide-image" href="/field-guide/rank-ai-opportunities/" tabindex="-1" aria-hidden="true">
-          <img src="/assets/field-guide-ranking.png" width="1536" height="1024" loading="lazy" decoding="async" alt="">
-        </a>
-        <p class="eyebrow">rank</p>
-        <h3><a href="/field-guide/rank-ai-opportunities/">Rank AI opportunities without chasing every pain point</a></h3>
-        <p>Turn observed work friction into a transparent shortlist using value, feasibility, risk, and readiness.</p>
+    <!-- External Libraries -->
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
 
-      </article><article class="guide-card">
-        <a class="guide-image" href="/field-guide/90-day-ai-experiment/" tabindex="-1" aria-hidden="true">
-          <img src="/assets/field-guide-90-day-experiment.png" width="1536" height="1024" loading="lazy" decoding="async" alt="">
-        </a>
-        <p class="eyebrow">choose</p>
-        <h3><a href="/field-guide/90-day-ai-experiment/">Design a bounded 90-day AI experiment</a></h3>
-        <p>Define a reversible learning cycle with an owner, baseline, guardrails, checkpoints, and an explicit stop decision.</p>
+    <!-- Firebase -->
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
+    <script>
+      window.firebaseConfig = {
+        apiKey: "AIzaSyBfLjtPI90S8WodG19OrEO6jmT-8lvqF1I",
+        authDomain: "joerice-6050b.firebaseapp.com",
+        projectId: "joerice-6050b",
+        storageBucket: "joerice-6050b.firebasestorage.app",
+        messagingSenderId: "653941248098",
+        appId: "1:653941248098:web:0c3ec15b49a312aacf813b",
+        measurementId: "G-SS56CMWCR7"
+      };
+    </script>
 
-      </article></div>
-        <p><a class="text-action" href="/field-guide/">Read the complete Field Guide</a></p>
-      </section>
-      <section class="content-section fit-section" aria-labelledby="fit-heading">
-        <div class="section-heading"><p class="eyebrow">Fit and no-fit</p><h2 id="fit-heading">A bounded engagement, by design</h2></div>
-        <div class="boundary-grid"><div><h3>May fit</h3><ul class="plain-list"><li>One small business or operating department of roughly 5–20 people.</li><li>A team facing uneven AI use, scattered experimentation, uncertainty about responsible use, or recurring work friction.</li><li>A sponsor ready to support one bounded 90-day experiment after the handoff.</li></ul></div><div class="no-fit"><h3>Not a fit</h3><p>This is not a fit for a production application, security assessment, compliance assurance, organization-wide transformation, staff-reduction program, or guaranteed return.</p></div></div>
-      </section>
-      <section class="content-section practitioner-section" aria-labelledby="practitioner-heading">
-        <div class="section-heading"><p class="eyebrow">The practitioner</p><h2 id="practitioner-heading">A clear learning and responsibility boundary</h2></div>
-        <div class="practitioner-copy"><p class="lead">I am a solo, security-conscious technology practitioner actively learning, refining this offer, and validating it through founding engagements.</p><p>The engagement includes starter responsible-use guardrails and flags questions that require legal, privacy, security, or compliance specialists. It is not an audit or assurance service.</p></div>
-      </section>
-      <section class="content-section founding-offer" aria-labelledby="offer-heading">
-        <div class="section-heading"><p class="eyebrow">The founding offer</p><h2 id="offer-heading">Price, delivery, and exclusions</h2></div>
-        <div class="offer-details"><div class="offer-price"><p class="label">Founding engagement</p><p class="price">$2,500</p><p class="price-note">Founding price for each of the first two external engagements, subject to a one-page proposal.</p></div><div><h3>Delivery boundary</h3><p>Sponsor intake, one six-hour onsite discovery day, synthesis within five business days, and one remote leadership readout, within an approximately sixteen-hour practitioner boundary.</p><p class="small-note">The proposal controls the final schedule, access, payment, confidentiality, and cancellation terms.</p></div></div>
-        <div class="exclusions"><h3>What the Foundation does not include</h3><ul class="plain-list exclusions-list"><li>Production implementation, custom automation, or software development</li><li>Hosted infrastructure, cloud migration, or an internal LLM environment</li><li>Ongoing maintenance or managed support</li><li>Formal certification or training</li><li>Security assessment, legal advice, or compliance assurance</li><li>Guaranteed savings, adoption, return, or other business outcomes</li></ul><p>Automation implementation, custom systems, infrastructure, training, maintenance, and support are not included. If later work is justified, it is evaluated and proposed separately.</p></div>
-      </section>
-      <section class="content-section faq-preview" aria-labelledby="faq-preview-heading">
-        <div class="section-heading"><p class="eyebrow">Before you begin</p><h2 id="faq-preview-heading">Questions before you begin</h2></div>
-        <div class="faq-list"><details>
-        <summary>Who is this actually for?</summary>
-        <p>One small business or operating department of roughly 5–20 people with a sponsor who can provide access, make time for the relevant people, and support a small next-step decision after the handoff.</p>
-      </details><details>
-        <summary>What am I actually paying for?</summary>
-        <p>A fixed, bounded discovery-and-planning engagement: sponsor intake, one six-hour onsite discovery day, synthesis within five business days, a remote leadership readout, and editable decision materials. You are paying for a structured view of the work and one next-step decision—not a finished AI system.</p>
-      </details><details>
-        <summary>Why not just start with ChatGPT ourselves?</summary>
-        <p>You can, and the Field Guide gives you a place to start. The Foundation is designed for a team that wants to develop a shared view of the work, ownership, risk, evidence, and competing ideas before considering a team-level experiment. It is not a claim that outside help is always necessary.</p>
-      </details></div><p><a class="text-action" href="/faqs/">Read all FAQs</a></p>
-      </section>
-      <section class="request-fallback" id="request" aria-labelledby="request-heading">
-        <div><p class="eyebrow">The next step</p><h2 id="request-heading">Tell me what you&#39;re trying to improve</h2><p>The next step is a fit conversation—not free implementation. If your email app does not open, copy this request and send it to <a href="mailto:joe@joerice.me">joe@joerice.me</a>.</p></div>
-        <div class="request-copy"><label for="request-template">Email request template</label><textarea id="request-template" data-request-template readonly rows="13">Organization or team:
+    <!-- reCAPTCHA -->
+    <script src="https://www.google.com/recaptcha/api.js?render=6LcYpE4sAAAAALOW_7HWe81eUCnFkGFu-e8dAW_S"></script>
 
-What are you trying to improve?
-
-Approximate team size:
-
-Current AI situation:
-
-Preferred way to reply:</textarea><button class="copy-button" type="button" data-copy-request>Copy request text</button><p class="copy-status" data-copy-status role="status" aria-live="polite" aria-atomic="true"></p></div>
-      </section>
-    </main>
-    <footer class="site-footer">
-      <p>Joe authors and maintains this Field Guide with AI-assisted research and editing. Factual guidance links to its sources; working procedures are presented as practical methods, not guaranteed outcomes.</p>
-      <p><a href="mailto:joe@joerice.me">joe@joerice.me</a></p>
-    </footer>
-    <script type="module" src="/request.js"></script>
+    <!-- App Entry Point -->
+    <script type="module" src="assets/js/main.js"></script>
   </body>
 </html>
