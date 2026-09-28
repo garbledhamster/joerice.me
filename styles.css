@@ -403,7 +403,6 @@ ol {
 .serviceCard {
 	position: relative;
 	display: block;
-	cursor: pointer;
 	perspective: 1200px;
 	-webkit-perspective: 1200px;
 	min-height: var(--service-card-height);
@@ -413,6 +412,12 @@ ol {
 	position: absolute;
 	opacity: 0;
 	inset: 0;
+	cursor: pointer;
+}
+
+.serviceCardFlip {
+	display: block;
+	height: var(--service-card-height);
 	cursor: pointer;
 }
 
@@ -447,7 +452,7 @@ ol {
 	pointer-events: auto;
 }
 
-.serviceToggle:checked + .serviceCardInner .serviceCardFront {
+.serviceToggle:checked + .serviceCardFlip .serviceCardFront {
 	opacity: 0;
 	pointer-events: none;
 }
@@ -462,9 +467,10 @@ ol {
 	transform: rotateY(180deg);
 	opacity: 0;
 	pointer-events: none;
+	padding-bottom: 4rem;
 }
 
-.serviceToggle:checked + .serviceCardInner .serviceCardBack {
+.serviceToggle:checked + .serviceCardFlip .serviceCardBack {
 	opacity: 1;
 	pointer-events: auto;
 }
@@ -487,8 +493,47 @@ ol {
 	box-shadow: 0 0 0 3px var(--fg);
 }
 
-.serviceToggle:checked + .serviceCardInner {
+.serviceToggle:checked + .serviceCardFlip .serviceCardInner {
 	transform: rotateY(180deg);
+}
+
+.serviceChoice {
+	position: absolute;
+	right: 1.2rem;
+	bottom: 1.1rem;
+	left: 1.2rem;
+	z-index: 2;
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+	min-height: 2.35rem;
+	padding: 0.45rem 0.65rem;
+	border: 1px solid rgb(255, 255, 255, 0.55);
+	background: rgb(255, 255, 255, 0.12);
+	color: var(--bg);
+	font-size: 0.86rem;
+	font-weight: 600;
+	cursor: pointer;
+	opacity: 0;
+	visibility: hidden;
+	pointer-events: none;
+	transform: translateY(6px);
+	transition:
+		opacity 0.2s ease 0.2s,
+		transform 0.2s ease 0.2s;
+}
+
+.serviceChoice input {
+	width: 1rem;
+	height: 1rem;
+	accent-color: var(--yellow);
+}
+
+.serviceToggle:checked ~ .serviceChoice {
+	opacity: 1;
+	visibility: visible;
+	pointer-events: auto;
+	transform: translateY(0);
 }
 
 .sectionHeader {
@@ -600,6 +645,62 @@ ol {
 	scroll-margin-top: calc(var(--header-h) + 16px);
 }
 
+.postTitleRow {
+	position: relative;
+}
+
+.postTitleRow.is-manageable .postTitleButton {
+	padding-right: 10rem;
+}
+
+.postTitleActions {
+	position: absolute;
+	top: 50%;
+	right: 3rem;
+	display: flex;
+	gap: 0.35rem;
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(calc(-50% + 4px));
+	transition:
+		opacity 0.18s ease,
+		transform 0.18s ease;
+}
+
+.postTitleRow:hover .postTitleActions,
+.postTitleRow:focus-within .postTitleActions {
+	opacity: 1;
+	pointer-events: auto;
+	transform: translateY(-50%);
+}
+
+.postTitleEditButton,
+.postTitleDeleteButton {
+	min-height: 2rem;
+	padding: 0.3rem 0.55rem;
+	border: 1px solid var(--border);
+	background: var(--yellow);
+	color: var(--fg);
+	font-family: var(--fontHead);
+	font-size: 0.72rem;
+	letter-spacing: 0.06em;
+	text-transform: uppercase;
+	cursor: pointer;
+}
+
+.postTitleDeleteButton {
+	background: var(--red);
+	color: #fff;
+}
+
+.postTitleEditButton:hover,
+.postTitleEditButton:focus-visible,
+.postTitleDeleteButton:hover,
+.postTitleDeleteButton:focus-visible {
+	background: var(--fg);
+	color: var(--bg);
+}
+
 .postToggleIcon {
 	font-family: var(--fontHead);
 	font-size: 1.6rem;
@@ -646,6 +747,52 @@ ol {
 	justify-content: flex-end;
 	gap: 0.6rem;
 	margin-bottom: 1rem;
+}
+
+.postInlineEditor {
+	display: grid;
+	gap: 0.9rem;
+}
+
+.postInlineEditor > label {
+	display: grid;
+	gap: 0.35rem;
+	font-weight: 600;
+}
+
+.postInlineEditor input[type="text"] {
+	width: 100%;
+	padding: 0.65rem;
+	border: 1px solid var(--border);
+	background: #fff;
+	color: var(--fg);
+	font: inherit;
+}
+
+.postInlineOptions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 1rem;
+}
+
+.postInlineOptions label {
+	display: flex;
+	align-items: center;
+	gap: 0.4rem;
+	font-weight: 600;
+}
+
+.postInlineEditorStatus {
+	min-height: 1.4em;
+	color: var(--red);
+}
+
+@media (hover: none) {
+	.postTitleActions {
+		opacity: 1;
+		pointer-events: auto;
+		transform: translateY(-50%);
+	}
 }
 
 .closePostButton,
@@ -1316,6 +1463,54 @@ ol {
 .contact textarea {
 	resize: vertical;
 	min-height: 120px;
+}
+
+.selectedServices {
+	display: grid;
+	gap: 0.75rem;
+	margin-top: 0.9rem;
+}
+
+.selectedServices[hidden] {
+	display: none;
+}
+
+.selectedServiceAttachment {
+	padding: 0.9rem;
+	border: 1px solid var(--border);
+	background: rgb(255, 255, 255, 0.14);
+}
+
+.selectedServiceHeading {
+	display: flex;
+	align-items: center;
+	gap: 0.55rem;
+}
+
+.selectedServiceHeading h3 {
+	margin: 0;
+	font-size: 1.25rem;
+}
+
+.selectedServiceIcon {
+	display: grid;
+	width: 1.5rem;
+	height: 1.5rem;
+	place-items: center;
+	border: 1px solid currentColor;
+	border-radius: 50%;
+	font-weight: 700;
+}
+
+.selectedServiceAttachment textarea {
+	min-height: 86px;
+}
+
+.selectedServiceHelp {
+	display: block;
+	margin-top: 0.35rem;
+	font-size: 0.82rem;
+	opacity: 0.9;
 }
 
 .contact button {

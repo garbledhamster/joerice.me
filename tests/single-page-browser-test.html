@@ -42,6 +42,113 @@
     <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"></script>
     <script>
+      const testPost = {
+        title: "Editable test post",
+        body: "This post exists so the browser test can exercise the real inline editor.",
+        createdDate: "2026-01-01T00:00:00.000Z",
+        published: true,
+        pinned: false,
+      };
+	  const secondTestPost = {
+		title: "Second editable post",
+		body: "A second post makes stale inline-editor submissions observable.",
+		createdDate: "2026-01-02T00:00:00.000Z",
+		published: true,
+		pinned: false,
+	  };
+	  const testPosts = {
+		"editable-test-post": testPost,
+		"second-editable-test-post": secondTestPost,
+	  };
+	  window.testWrittenPostId = null;
+      let testPostDeleted = false;
+
+      const emptySnapshot = {
+        docs: [],
+        empty: true,
+        forEach() {},
+      };
+      const postSnapshot = {
+        get docs() {
+          return testPostDeleted
+            ? []
+            : Object.entries(testPosts).map(([id, post]) => ({
+				id,
+				data: () => ({ ...post }),
+			  }));
+        },
+        get empty() {
+          return testPostDeleted;
+        },
+        forEach(callback) {
+          this.docs.forEach(callback);
+        },
+      };
+      const makeCollection = (name) => {
+        const collection = {
+          where() {
+            return collection;
+          },
+          orderBy() {
+            return collection;
+          },
+          async get() {
+            return name === "Posts" ? postSnapshot : emptySnapshot;
+          },
+          doc(id = "new-test-post") {
+            return {
+              id,
+              async get() {
+                return {
+				  exists: !testPostDeleted && Boolean(testPosts[id]),
+				  data: () => ({ ...testPosts[id] }),
+                };
+              },
+              async set(data) {
+				window.testWrittenPostId = id;
+				Object.assign(testPosts[id], data);
+              },
+              async delete() {
+                testPostDeleted = true;
+              },
+            };
+          },
+          async add() {
+            return { id: "new-test-item" };
+          },
+        };
+        return collection;
+      };
+      const testFirestore = { collection: makeCollection };
+      const testAuth = {
+        isSignInWithEmailLink: () => false,
+        onAuthStateChanged(callback) {
+          queueMicrotask(() => callback({ email: "jmjrice94@gmail.com", uid: "browser-test-admin" }));
+        },
+      };
+      const firebaseAuth = () => testAuth;
+      const firebaseFirestore = () => testFirestore;
+      firebaseFirestore.FieldValue = { serverTimestamp: () => "2026-01-01T00:00:00.000Z" };
+      window.firebaseConfig = {
+        apiKey: "test",
+        authDomain: "test.example.com",
+        projectId: "test",
+        storageBucket: "test",
+        messagingSenderId: "test",
+        appId: "test",
+      };
+      window.firebase = {
+        apps: [],
+        initializeApp(config) {
+          const app = { config };
+          this.apps.push(app);
+          return app;
+        },
+        auth: firebaseAuth,
+        firestore: firebaseFirestore,
+        storage: () => ({}),
+      };
+
       const nativeFetch = window.fetch.bind(window);
       window.fetch = (input, init) => {
         const requestUrl = String(input);
@@ -111,13 +218,90 @@
         assert(document.querySelector(anchor), `${anchor} should render on the initial page`);
       });
 
+      const firstService = document.querySelector(".serviceCard");
+      const serviceTitle = firstService?.querySelector(".serviceCardFront h3")?.textContent.trim();
+      const backTitle = firstService?.querySelector(".serviceCardBack h3")?.textContent.trim();
+      const serviceSelect = firstService?.querySelector(".serviceSelect");
+      assert(backTitle === serviceTitle, "the back of a service card should repeat that service's title");
+      assert(serviceSelect, "a flipped service card should offer a selection checkbox");
+      assert(
+        getComputedStyle(serviceSelect).visibility === "hidden",
+        "service selection should stay out of keyboard navigation until the card is flipped",
+      );
+
+      firstService?.querySelector(".serviceCardFlip")?.click();
+      if (serviceSelect) {
+        assert(
+          getComputedStyle(serviceSelect).visibility === "visible",
+          "flipping a service card should reveal its selection checkbox",
+        );
+        serviceSelect.click();
+        const attachment = await waitFor(() => document.querySelector(".selectedServiceAttachment"));
+        const messageField = document.querySelector('#contactForm textarea[name="message"]');
+        const attachments = document.getElementById("selectedServices");
+        assert(firstService.classList.contains("is-flipped"), "checking a service should leave its card flipped");
+        assert(attachment?.textContent.includes(serviceTitle), "the selected service should attach to the contact form");
+        assert(
+          messageField && attachments && messageField.compareDocumentPosition(attachments) & Node.DOCUMENT_POSITION_FOLLOWING,
+          "selected services should appear below the contact message field",
+        );
+        assert(
+          attachment?.querySelector(".selectedServiceHelp")?.textContent.toLowerCase().includes("details"),
+          "the attached service should tell the user to fill in details",
+        );
+        assert(
+          attachment?.querySelector('textarea[name="serviceDetails"]'),
+          "the attached service should include a details input",
+        );
+
+        serviceSelect.click();
+        assert(
+          !document.querySelector(".selectedServiceAttachment"),
+          "unchecking a service should remove its contact attachment",
+        );
+      }
+
       assert(
         !document.querySelector(".pageControls"),
         "portfolio should render every post without pagination controls",
       );
 
-      const firstPost = await waitFor(() => document.querySelector(".postTitleButton"));
-      assert(firstPost, "portfolio should render post titles as expandable buttons");
+      const editablePost = await waitFor(() => document.querySelector('[data-id="editable-test-post"]'));
+      const editableRow = editablePost?.closest(".postAccordion");
+      assert(
+        editableRow?.querySelector(".postTitleEditButton") && editableRow?.querySelector(".postTitleDeleteButton"),
+        "editable posts should expose title-level edit and delete controls to the admin",
+      );
+
+      editableRow?.querySelector(".postTitleEditButton")?.click();
+      const inlineEditor = await waitFor(() => editableRow?.querySelector(".postInlineEditor"));
+      assert(inlineEditor, "editing a post should open an editor inside that post's accordion");
+      assert(
+        !document.getElementById("portfolioModal")?.classList.contains("show"),
+        "editing an existing post should not open the portfolio modal",
+      );
+      assert(
+        inlineEditor?.querySelector('input[name="title"]')?.value === "Editable test post",
+        "the inline editor should preload the post title",
+      );
+
+	  const staleEditor = inlineEditor;
+	  const secondEditablePost = await waitFor(() =>
+		document.querySelector('[data-id="second-editable-test-post"]'),
+	  );
+	  secondEditablePost?.closest(".postAccordion")?.querySelector(".postTitleEditButton")?.click();
+	  await waitFor(() =>
+		secondEditablePost?.closest(".postAccordion")?.querySelector(".postInlineEditor"),
+	  );
+	  staleEditor?.requestSubmit();
+	  await new Promise((resolve) => setTimeout(resolve, 50));
+	  assert(
+		window.testWrittenPostId === null,
+		"a stale inline editor should not save over the currently open post",
+	  );
+
+	  const firstPost = await waitFor(() => document.querySelector('[data-url^="posts/"]'));
+	  assert(firstPost, "portfolio should render post titles as expandable buttons");
 
       if (firstPost) {
         firstPost.click();

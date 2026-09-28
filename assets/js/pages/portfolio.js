@@ -79,18 +79,30 @@ function formatPostEntry(post, index, group) {
 	const unpublishedIndicator =
 		post.published === false && isAdminUser() ? " [DRAFT]" : "";
 	const readerId = `post-reader-${group}-${index}`;
+	const canManage =
+		isAdminUser() && post.source === "firestore" && Boolean(post.id);
+	const managementControls = canManage
+		? `
+        <div class="postTitleActions" data-admin-only>
+          <button class="postTitleEditButton" type="button" data-admin-action="edit post" aria-label="Edit ${safeTitle}">Edit</button>
+          <button class="postTitleDeleteButton" type="button" data-admin-action="delete post" aria-label="Delete ${safeTitle}">Delete</button>
+        </div>
+      `
+		: "";
 
 	return `
     <article class="postAccordion" data-tags="${safeTags}">
-      <button class="entry postTitleButton" type="button" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr} aria-expanded="false" aria-controls="${readerId}">
-        <span>${safeTitle}${unpublishedIndicator}</span>
-        <span class="postToggleIcon" aria-hidden="true">+</span>
-      </button>
+      <div class="postTitleRow${canManage ? " is-manageable" : ""}">
+        <button class="entry postTitleButton" type="button" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr} aria-expanded="false" aria-controls="${readerId}">
+          <span>${safeTitle}${unpublishedIndicator}</span>
+          <span class="postToggleIcon" aria-hidden="true">+</span>
+        </button>
+        ${managementControls}
+      </div>
       <div class="postInlineViewer" id="${readerId}" aria-hidden="true">
         <div class="postInlineClip">
           <div class="postInlineReader">
             <div class="postInlineActions">
-              <button class="inlineEditPostButton editBtn" type="button" data-admin-only data-skip-admin-ui hidden>Edit</button>
               <button class="closePostButton" type="button">close</button>
             </div>
             <div class="postInlineBody"></div>
@@ -217,7 +229,8 @@ function openPortfolioEditor(post = null) {
 	if (!portfolioModal) return;
 
 	// Only allow editing of local and firestore posts
-	const isReadOnlyPost = !["local", "firestore"].includes(post?.source ?? "");
+	const isReadOnlyPost =
+		Boolean(post) && !["local", "firestore"].includes(post?.source ?? "");
 
 	// Set editing state
 	editingPostId = post?.id ?? null;
@@ -318,13 +331,23 @@ function handlePostGridClick(event) {
 	const accordion = event.target.closest(".postAccordion");
 	if (!accordion) return;
 
+	if (event.target.closest(".postTitleEditButton")) {
+		void openInlinePostEditor(accordion);
+		return;
+	}
+
+	if (event.target.closest(".postTitleDeleteButton")) {
+		void deletePostFromTitle(accordion);
+		return;
+	}
+
 	if (event.target.closest(".closePostButton")) {
 		closePost(accordion);
 		return;
 	}
 
-	if (event.target.closest(".inlineEditPostButton")) {
-		openCurrentPostEditor();
+	if (event.target.closest(".postInlineCancelButton")) {
+		renderCurrentPost(accordion);
 		return;
 	}
 
@@ -341,21 +364,149 @@ function handlePostGridClick(event) {
 }
 
 /**
- * Open the active post in the portfolio editor.
+ * Render the active post as an inline editor.
+ * @param {Element} accordion - Post accordion
  */
-function openCurrentPostEditor() {
-	if (!ensureAdmin("edit post") || !currentPost) return;
-	if (!["local", "firestore"].includes(currentPost.source)) return;
+function renderInlinePostEditor(accordion) {
+	const postBody = $(".postInlineBody", accordion);
+	if (!postBody || !currentPost) return;
 
-	openPortfolioEditor({
-		id: currentPost.id,
-		title: getPostTitle(currentPost),
-		content: currentPost.content || "",
-		source: currentPost.source,
-		createdDate: currentPost.createdDate,
-		published: currentPost.published !== false,
-		pinned: currentPost.pinned === true,
-	});
+	const safeTitle = sanitizeText(getPostTitle(currentPost));
+	const safeContent = sanitizeText(currentPost.content || "");
+	postBody.innerHTML = `
+    <form class="postInlineEditor" data-id="${sanitizeText(currentPost.id)}">
+      <label>Title
+        <input name="title" type="text" value="${safeTitle}" required/>
+      </label>
+      <label>Post
+        <textarea class="postEditor" name="body" required>${safeContent}</textarea>
+      </label>
+      <div class="postInlineOptions">
+        <label><input name="published" type="checkbox"${currentPost.published !== false ? " checked" : ""}/> Published</label>
+        <label><input name="pinned" type="checkbox"${currentPost.pinned === true ? " checked" : ""}/> Pinned</label>
+      </div>
+      <div class="editorControls">
+        <button class="postInlineCancelButton cancelBtn" type="button">Cancel</button>
+        <button class="postInlineSaveButton saveBtn" type="submit">Save</button>
+      </div>
+      <p class="postInlineEditorStatus" role="status" aria-live="polite"></p>
+    </form>
+  `;
+	accordion.classList.add("is-editing");
+	$("input[name='title']", postBody)?.focus();
+}
+
+/**
+ * Load a post and open its editor inside the accordion.
+ * @param {Element} accordion - Post accordion
+ */
+async function openInlinePostEditor(accordion) {
+	if (!ensureAdmin("edit post")) return;
+	const titleButton = $(".postTitleButton", accordion);
+	if (titleButton?.dataset.source !== "firestore") return;
+
+	if (
+		openAccordion !== accordion ||
+		currentPost?.id !== titleButton.dataset.id
+	) {
+		closePost(openAccordion);
+		const loadedPost = await openPost(titleButton.dataset.url, accordion);
+		if (!loadedPost) return;
+	}
+
+	renderInlinePostEditor(accordion);
+}
+
+/**
+ * Restore the rendered Markdown after cancelling an edit.
+ * @param {Element} accordion - Post accordion
+ */
+function renderCurrentPost(accordion) {
+	const postBody = $(".postInlineBody", accordion);
+	if (!postBody || !currentPost) return;
+	postBody.innerHTML = sanitizeMarkdown(currentPost.content || "");
+	accordion.classList.remove("is-editing");
+}
+
+/**
+ * Delete an editable post from its title-row control.
+ * @param {Element} accordion - Post accordion
+ */
+async function deletePostFromTitle(accordion) {
+	if (!ensureAdmin("delete post")) return;
+	const titleButton = $(".postTitleButton", accordion);
+	const postId = titleButton?.dataset.id;
+	if (!postId || titleButton.dataset.source !== "firestore") return;
+	if (
+		!confirm(
+			"Are you sure you want to delete this post? This cannot be undone.",
+		)
+	)
+		return;
+
+	const postsRef = getPostsCollectionRef();
+	if (!postsRef) return;
+
+	try {
+		await postsRef.doc(postId).delete();
+		if (openAccordion === accordion) closePost(accordion);
+		await loadFirestorePosts();
+		renderPinned();
+		renderPage();
+	} catch (error) {
+		console.warn("Unable to delete post.", error);
+	}
+}
+
+/**
+ * Save an existing post from its inline editor.
+ * @param {Event} event - Form submit event
+ */
+async function handlePostGridSubmit(event) {
+	const form = event.target.closest(".postInlineEditor");
+	if (!form) return;
+	event.preventDefault();
+	if (!ensureAdmin("save post")) return;
+	const accordion = form.closest(".postAccordion");
+	const postId = form.dataset.id;
+	if (accordion !== openAccordion || !postId || currentPost?.id !== postId)
+		return;
+
+	const title = form.elements.title.value.trim();
+	const content = form.elements.body.value.trim();
+	const status = $(".postInlineEditorStatus", form);
+	if (!title || !content) return;
+
+	const postsRef = getPostsCollectionRef();
+	if (!postsRef) {
+		if (status) status.textContent = "Firestore is not available.";
+		return;
+	}
+
+	const saveButton = $(".postInlineSaveButton", form);
+	if (saveButton) saveButton.disabled = true;
+
+	try {
+		const now = new Date().toISOString();
+		await postsRef.doc(postId).set(
+			{
+				title,
+				body: content,
+				createdDate: currentPost.createdDate || now,
+				lastEditedDate: now,
+				published: form.elements.published.checked,
+				pinned: form.elements.pinned.checked,
+			},
+			{ merge: true },
+		);
+		await loadFirestorePosts();
+		renderPinned();
+		renderPage();
+	} catch (error) {
+		console.warn("Unable to save post.", error);
+		if (status) status.textContent = "Unable to save this post right now.";
+		if (saveButton) saveButton.disabled = false;
+	}
 }
 
 /**
@@ -371,18 +522,15 @@ async function openPost(url, accordion) {
 	const titleButton = $(".postTitleButton", accordion);
 	const viewer = $(".postInlineViewer", accordion);
 	const postBody = $(".postInlineBody", accordion);
-	const editButton = $(".inlineEditPostButton", accordion);
 
 	titleButton?.classList.add("active");
 	titleButton?.setAttribute("aria-expanded", "false");
 	viewer?.setAttribute("aria-hidden", "true");
 	accordion.classList.add("is-loading");
 	if (postBody) postBody.innerHTML = "<p>Loading post…</p>";
-	if (editButton) editButton.hidden = true;
 
 	let loadedPost = null;
 	let renderedContent = "";
-	let canEdit = false;
 
 	try {
 		if (url.startsWith("firestore:")) {
@@ -407,7 +555,6 @@ async function openPost(url, accordion) {
 				pinned: data.pinned === true,
 			};
 			renderedContent = sanitizeMarkdown(content);
-			canEdit = isAdminUser();
 		} else {
 			const yaml = globalThis.jsyaml;
 			if (!yaml) throw new Error("YAML parser unavailable");
@@ -418,16 +565,17 @@ async function openPost(url, accordion) {
 			renderedContent = sanitizeMarkdown(content);
 		}
 	} catch (error) {
-		if (requestId !== postOpenRequestId || openAccordion !== accordion) return;
+		if (requestId !== postOpenRequestId || openAccordion !== accordion)
+			return null;
 		console.warn("Unable to load post:", error);
 		renderedContent = "<p>Unable to load this post.</p>";
 	}
 
-	if (requestId !== postOpenRequestId || openAccordion !== accordion) return;
+	if (requestId !== postOpenRequestId || openAccordion !== accordion)
+		return null;
 
 	currentPost = loadedPost;
 	if (postBody) postBody.innerHTML = renderedContent;
-	if (editButton) editButton.hidden = !canEdit;
 	accordion.classList.remove("is-loading");
 	accordion.classList.add("is-open");
 	titleButton?.setAttribute("aria-expanded", "true");
@@ -438,6 +586,8 @@ async function openPost(url, accordion) {
 			accordion.scrollIntoView({ behavior: "smooth", block: "start" });
 		}
 	}, 220);
+
+	return loadedPost;
 }
 
 /**
@@ -454,6 +604,7 @@ function closePost(accordion) {
 	viewer?.setAttribute("aria-hidden", "true");
 	accordion.classList.remove("is-loading");
 	accordion.classList.remove("is-open");
+	accordion.classList.remove("is-editing");
 	if (isActive) {
 		postOpenRequestId += 1;
 		openAccordion = null;
@@ -554,6 +705,8 @@ export function initPortfolio() {
 
 	cleanupFns.push(addListener(pinnedGrid, "click", handlePostGridClick));
 	cleanupFns.push(addListener(entryGrid, "click", handlePostGridClick));
+	cleanupFns.push(addListener(pinnedGrid, "submit", handlePostGridSubmit));
+	cleanupFns.push(addListener(entryGrid, "submit", handlePostGridSubmit));
 
 	// Add post button
 	const addPortfolioBtn = $("#addPortfolioBtn");

@@ -7,9 +7,11 @@
 
 import { closeModal, openModal } from "../components/modal.js";
 import { $, addListener } from "../core/dom.js";
+import { sanitizeText } from "../services/sanitize.js";
 
 let contactForm = null;
 let cleanupFns = [];
+const selectedServices = new Map();
 
 /**
  * Get contact page HTML template
@@ -35,6 +37,7 @@ export function getContactTemplate() {
           </select>
         </label>
         <label>Message<textarea name="message" required></textarea></label>
+        <div class="selectedServices" id="selectedServices" aria-live="polite" hidden></div>
         <button type="submit">Send</button>
       </form>
     </section>
@@ -45,6 +48,62 @@ export function getContactTemplate() {
       </div>
     </div>
   `;
+}
+
+/**
+ * Render selected services as contact-form attachments.
+ */
+function renderSelectedServices() {
+	const container = $("#selectedServices");
+	if (!container) return;
+
+	container.hidden = selectedServices.size === 0;
+	container.innerHTML = Array.from(selectedServices, ([service, details]) => {
+		const safeService = sanitizeText(service);
+		const safeDetails = sanitizeText(details);
+		const serviceId = String(service)
+			.toLowerCase()
+			.trim()
+			.replace(/[^a-z0-9]+/g, "-")
+			.replace(/^-|-$/g, "");
+		const helpId = `service-help-${serviceId}`;
+
+		return `
+      <section class="selectedServiceAttachment" data-service="${safeService}">
+        <div class="selectedServiceHeading">
+          <span class="selectedServiceIcon" aria-hidden="true">✓</span>
+          <h3>${safeService}</h3>
+        </div>
+        <input type="hidden" name="services" value="${safeService}"/>
+        <label for="service-details-${serviceId}">Project details</label>
+        <textarea id="service-details-${serviceId}" name="serviceDetails" data-service="${safeService}" aria-describedby="${helpId}" required>${safeDetails}</textarea>
+        <small class="selectedServiceHelp" id="${helpId}">Fill in details about what you need for this selected service.</small>
+      </section>
+    `;
+	}).join("");
+}
+
+/**
+ * Sync a service card selection into the contact form.
+ * @param {CustomEvent} event - Service selection event
+ */
+function handleServiceSelection(event) {
+	const { service, selected } = event.detail || {};
+	if (!service) return;
+
+	if (selected)
+		selectedServices.set(service, selectedServices.get(service) || "");
+	else selectedServices.delete(service);
+	renderSelectedServices();
+}
+
+/**
+ * Preserve details when more service attachments are rendered.
+ * @param {Event} event - Contact form input event
+ */
+function handleServiceDetailsInput(event) {
+	if (!event.target.matches("textarea[data-service]")) return;
+	selectedServices.set(event.target.dataset.service, event.target.value);
 }
 
 /**
@@ -82,6 +141,11 @@ async function handleSubmit(e) {
 
 		// Reset form and show success
 		form.reset();
+		selectedServices.clear();
+		document.querySelectorAll(".serviceSelect").forEach((checkbox) => {
+			checkbox.checked = false;
+		});
+		renderSelectedServices();
 		openModal("contactModal");
 	} catch (error) {
 		console.error("Form submission error:", error);
@@ -114,7 +178,14 @@ export function initContact() {
 
 	if (contactForm) {
 		cleanupFns.push(addListener(contactForm, "submit", handleSubmit));
+		cleanupFns.push(
+			addListener(contactForm, "input", handleServiceDetailsInput),
+		);
 	}
+
+	cleanupFns.push(
+		addListener(window, "service-selection-change", handleServiceSelection),
+	);
 
 	// Close modal button
 	const closeBtn = $("#closeContactModal");
@@ -144,4 +215,5 @@ export function destroyContact() {
 	});
 	cleanupFns = [];
 	contactForm = null;
+	selectedServices.clear();
 }

@@ -26,28 +26,40 @@ export function createServiceCard({
 	const safeTitle = sanitizeText(title);
 	const safeDesc = sanitizeText(description);
 	const safeAriaLabel = sanitizeText(ariaLabel || `Flip ${title} card`);
+	const serviceId = String(title)
+		.toLowerCase()
+		.trim()
+		.replace(/[^a-z0-9]+/g, "-")
+		.replace(/^-|-$/g, "");
+	const flipId = `service-flip-${serviceId}`;
 
 	const highlightsList = highlights
 		.map((h) => `<li>${sanitizeText(h)}</li>`)
 		.join("");
 
 	return `
-    <label class="serviceCard">
-      <input class="serviceToggle" type="checkbox" aria-label="${safeAriaLabel}"/>
-      <span class="serviceCardInner">
-        <span class="serviceCardFace serviceCardFront">
-          <h3>${safeTitle}</h3>
-          <p>${safeDesc}</p>
-          <span class="serviceCardHint">Tap to flip</span>
+    <article class="serviceCard" data-service="${safeTitle}">
+      <input class="serviceToggle" id="${flipId}" type="checkbox" aria-label="${safeAriaLabel}"/>
+      <label class="serviceCardFlip" for="${flipId}">
+        <span class="serviceCardInner">
+          <span class="serviceCardFace serviceCardFront">
+            <h3>${safeTitle}</h3>
+            <p>${safeDesc}</p>
+            <span class="serviceCardHint">Tap to flip</span>
+          </span>
+          <span class="serviceCardFace serviceCardBack">
+            <h3>${safeTitle}</h3>
+            <ul>
+              ${highlightsList}
+            </ul>
+          </span>
         </span>
-        <span class="serviceCardFace serviceCardBack">
-          <h3>Highlights</h3>
-          <ul>
-            ${highlightsList}
-          </ul>
-        </span>
-      </span>
-    </label>
+      </label>
+      <label class="serviceChoice">
+        <input class="serviceSelect" type="checkbox" value="${safeTitle}"/>
+        <span>Select this service</span>
+      </label>
+    </article>
   `;
 }
 

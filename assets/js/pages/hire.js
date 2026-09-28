@@ -6,7 +6,9 @@
  */
 
 import { createServiceCard } from "../components/card.js";
-import { $ } from "../core/dom.js";
+import { $, addListener } from "../core/dom.js";
+
+let cleanupFns = [];
 
 /**
  * Services data configuration
@@ -117,12 +119,39 @@ export function renderHire() {
  * Service cards are CSS-only, no JS needed for flip
  */
 export function initHire() {
-	// Service cards use CSS :checked for flip - no JS needed
+	const servicesSection = $("#servicesSection");
+	if (!servicesSection) return;
+
+	cleanupFns.push(
+		addListener(servicesSection, "change", (event) => {
+			const card = event.target.closest(".serviceCard");
+			if (!card) return;
+
+			if (event.target.matches(".serviceToggle")) {
+				card.classList.toggle("is-flipped", event.target.checked);
+				return;
+			}
+
+			if (event.target.matches(".serviceSelect")) {
+				window.dispatchEvent(
+					new CustomEvent("service-selection-change", {
+						detail: {
+							service: event.target.value,
+							selected: event.target.checked,
+						},
+					}),
+				);
+			}
+		}),
+	);
 }
 
 /**
  * Clean up hire page
  */
 export function destroyHire() {
-	// Nothing to clean up
+	cleanupFns.forEach((cleanup) => {
+		cleanup();
+	});
+	cleanupFns = [];
 }
