@@ -43,7 +43,7 @@ const socialLinks = [
 ];
 
 const professionalIntroduction =
-	"My career has taken me through IT operations, project delivery, client support, and hands-on problem solving. Over more than a decade in IT, I have learned that the best systems make difficult work easier to understand and repeat. My own journey led me to build this portfolio as more than a record of past work: it is a place where people can use my services, notes, and practical resources to help themselves.";
+	"I'm Joe Rice, a systems generalist with more than a decade of experience in IT support, engineering, and administration. I help people solve technical problems, organize work, and understand the tools they use. My work includes networks and cloud systems, project planning, automation, documentation, and training. I like getting into the details, then explaining them in language people can use. Through my work and the resources I share here, I want to help people build confidence, make informed decisions, and develop the skills to help themselves.";
 
 /**
  * Get profile section HTML template.
@@ -63,7 +63,7 @@ export function getProfileTemplate() {
       <div class="social">
         ${socialLinksHtml}
       </div>
-      <h1 class="profileTitle">Systems, service, and practical technology.</h1>
+      <h1 class="profileTitle">Helping people make sense of technology and get work done.</h1>
       <p class="profileDesc" id="profileDesc">${professionalIntroduction}</p>
     </section>
   `;

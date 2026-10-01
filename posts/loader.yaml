@@ -1,1 +1,12 @@
-posts: 7
+posts:
+  - posts/0001.yaml
+  - posts/0002.yaml
+  - posts/0003.yaml
+  - posts/0004.yaml
+  - posts/0005.yaml
+  - posts/0006.yaml
+  - posts/0008.yaml
+  - posts/0009.yaml
+  - posts/0010.yaml
+  - posts/0011.yaml
+  - posts/0012.yaml

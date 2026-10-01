@@ -406,8 +406,21 @@
       assert(linksNav?.getAttribute("aria-current") === "true", "clicking Links should activate the final nav item");
 
       const aboutCopy = document.getElementById("about")?.textContent.toLowerCase() || "";
-      assert(aboutCopy.includes("career"), "About section should focus on Joe's professional career");
+      assert(aboutCopy.includes("systems generalist"), "About section should explain Joe's professional contribution");
       assert(aboutCopy.includes("help themselves"), "About section should explain the self-service purpose");
+
+      assert(!document.querySelector('[data-url="posts/0007.yaml"]'), "the retired resume must not appear in the portfolio");
+      for (let number = 8; number <= 12; number++) {
+        const url = `posts/${String(number).padStart(4, "0")}.yaml`;
+        const button = document.querySelector(`[data-url="${url}"]`);
+        assert(button, `professional article ${url} should be listed`);
+        if (!button) continue;
+        button.click();
+        const article = button.closest(".postAccordion");
+        await waitFor(() => article.classList.contains("is-open"));
+        const body = article.querySelector(".postInlineBody").textContent;
+        assert(body.length > 500 && !body.includes("Unable to load"), `professional article ${url} should open with its complete content`);
+      }
 
       // Exercise actual editor forms with only the Firebase boundary replaced.
       document.querySelector('.serviceEditButton[data-service-id="web-site"]').click();

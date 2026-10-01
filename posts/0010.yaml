@@ -1,0 +1,17 @@
+id: "0010"
+title: "Making Repeated Work Easier"
+date: 2026-10-01
+pinned: false
+tags: ["automation", "AI", "scripting", "process-improvement"]
+content: |
+  Repeated work catches my attention. I want to know why someone has to copy the same information, rebuild the same report, or repeat the same setup. Sometimes we need a script. Sometimes we need to agree on the process first.
+
+  My background includes scripting, API automations, and work with AI tools. I've used that experience to develop workflows and support systems, drawing on my IT background to think about access, maintenance, and the people who will use them.
+
+  I start by walking through the work. What starts it? What information does it need? Which steps follow a rule, and which require someone's judgment? If the input is incomplete, I want to understand how a person handles that today before deciding what a tool should do.
+
+  I approach AI with the same questions. I look for a task where someone can describe a useful result and review what the tool produces. Drafting, organizing information, or preparing a first pass may be useful places to explore. The person using the output still needs a way to check it and decide what happens next.
+
+  To find an opportunity in your own work, choose a task you repeat each week. Write down its steps, the information you use, and the points where you stop to make a decision. That gives you something concrete to discuss, whether you improve the process yourself or ask someone to help build a tool.
+
+  I can help people examine that process, identify a manageable starting point, and build or test an automation around it. I care about whether someone can understand the result and keep using it after the first demonstration.

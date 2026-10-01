@@ -1,45 +1,15 @@
-id: 0001
-title: "Who is Joe Rice?"
-date: 2025-05-03
+id: "0001"
+title: "What I Bring to the Work"
+date: 2026-10-01
 pinned: true
-tags: []
+tags: ["about", "systems", "learning"]
 content: |
-  Who is Joseph Rice?
-  ---
+  I'm Joe Rice. I help people understand complicated systems and find a way forward when the work feels tangled.
 
-  Oh hi, I'm Joseph (Joe) Rice!
+  My career has taken me through technical support, systems engineering, and administration. I've worked on networks, servers, cloud services, and migrations, and spent years solving problems with the people who depend on those systems. That experience taught me to look beyond the immediate technical issue. I want to understand what someone is trying to do, what is getting in their way, and what they need to feel comfortable moving forward.
 
-  I currently live in Saint Paul, Minnesota, with my wife and toddler, and another on the way. I've been a knowledge worker for over 10 years and love the concept of contious improvement in work and in life. If you were to ask me where I'm from, I'd tell you where I've lived, and probably say I've lived in Wisconsin for half my life.
-  
-  ### Other places include:
+  I also work on how people organize and deliver work. I build project processes, write documentation, develop automations, and help people learn unfamiliar tools. I enjoy connecting those pieces: understanding the problem, making a plan, doing the work, and leaving useful notes for whoever comes next.
 
-  ---
+  I'm a generalist by experience and curiosity. I like learning across fields, testing ideas, and improving the systems I use. I bring that same approach to conversations with teammates, clients, and people learning something new.
 
-  **My Youth:**
-
-  - Oklahoma
-  - Michigan
-  - Kansas
-  - Minnesota
-  
-
-  **My teenage years:**
-  - Wisconsin - Worked at a salvation army camp as a kitchen crew.
-  - Alabama - Worked at a fast food resturant, while in school I was a technitian
-
-  **My time as a young adult**
-
-  - Wisconsin - Entered my IT carreer at Computers Nationwide while going to Technical College
-  - Illinois - Moved to Illionoise and started working as a remote worker in 2020.
-
-  **Where I'm at as an adult**
-
-  - Minnesota - Again, where I'm now finding another phase of life unfolding right before my eyes
-  
-  ---
-
-  I worked for an MSP for almost a decade, seven of which was as an engineer.  In my time as an engineer, I’ve developed a generalist skill set. Some professional highlights include leading 30+ migrations) (cloud, wireless, security, networking, and email), **resolving 95%** of tier 2/3 tickets without vendor escalation, and managing projects using Agile and PMP methodologies using my own unique project managment framework. I focus on learning practical skills, which has helped me become a more well-rounded generalist.
-
-  Technically (on paper), I’m a specialist in support, networking, and security. I hold a Support Specialist Associate’s Degree and am certified in Network+ and Security+. I take pride in my education and believe certifications are incredibly important—especially today, when standardization is more necessary than ever, given how fluid the tech job market has become. I enjoy working on small teams, mentoring, being mentored, and talking about ideas.
-
-  Anyway that's a little bit about me.
+  I want my contribution to last beyond the task in front of me. A working system matters. So does helping someone understand it, maintain it, and make a better decision next time. This site is where I share that work and what I'm learning along the way.

@@ -487,9 +487,13 @@ async function loadYamlPosts() {
 	try {
 		const loaderText = await fetch("posts/loader.yaml").then((r) => r.text());
 		const loaderData = yaml.load(loaderText);
-		const count = Number(loaderData.posts) || 0;
-		for (let i = 1; i <= count; i++) {
-			const filePath = `posts/${String(i).padStart(4, "0")}.yaml`;
+		const filePaths = Array.isArray(loaderData.posts)
+			? loaderData.posts
+			: Array.from(
+					{ length: Number(loaderData.posts) || 0 },
+					(_, index) => `posts/${String(index + 1).padStart(4, "0")}.yaml`,
+				);
+		for (const filePath of filePaths) {
 			try {
 				const raw = await fetch(filePath).then((r) => {
 					if (!r.ok) throw new Error();
