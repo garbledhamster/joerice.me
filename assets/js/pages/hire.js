@@ -62,11 +62,41 @@ function cards() {
 
 export function getHireTemplate() {
 	return `<section class="services" id="servicesSection">
-      <div class="sectionHeader"><h2>Services</h2><button class="editBtn" id="addServiceButton" type="button" data-admin-only hidden>Add service</button></div>
-      <p class="servicesNote">Explore a service, browse related work, then select what you need.</p>
-      <p id="servicesStatus" role="status" hidden></p>
-      <div id="serviceEditorHost"></div>
-      <div class="serviceGrid">${cards()}</div>
+      <div class="sectionHeader"><h2>Products &amp; Services</h2></div>
+      <section class="servicesGroup" aria-labelledby="servicesHeading">
+        <div class="sectionHeader servicesGroupHeader"><h3 id="servicesHeading">Services</h3><button class="editBtn" id="addServiceButton" type="button" data-admin-only hidden>Add service</button></div>
+        <p class="servicesNote">Explore a service, browse related work, then select what you need.</p>
+        <p id="servicesStatus" role="status" hidden></p>
+        <div id="serviceEditorHost"></div>
+        <div class="serviceGrid">${cards()}</div>
+      </section>
+      <section class="productsGroup" id="products" aria-labelledby="productsHeading">
+        <h3 id="productsHeading">Products</h3>
+        <p class="servicesNote">Books and tools I've made for learning, reflection, and everyday life.</p>
+        <ul class="productList">
+          <li class="productItem">
+            <div>
+              <h4>The Manual for Feelings and Needs</h4>
+              <p>Find words for what you feel and what matters to you. An everyday reference with short definitions and practical situation guides, available in paperback and PDF.</p>
+            </div>
+            <a class="productLink" href="https://feelings.ourstuff.space/" target="_blank" rel="noopener noreferrer">Explore the manual<span class="productDomain">feelings.ourstuff.space</span><span class="sr-only"> (opens in a new tab)</span></a>
+          </li>
+          <li class="productItem">
+            <div>
+              <h4>The Classics</h4>
+              <p>Explore classic works, follow a ten-year reading plan, and keep notes as you read.</p>
+            </div>
+            <a class="productLink" href="https://classics.ourstuff.space/" target="_blank" rel="noopener noreferrer">Explore The Classics<span class="productDomain">classics.ourstuff.space</span><span class="sr-only"> (opens in a new tab)</span></a>
+          </li>
+          <li class="productItem">
+            <div>
+              <h4>Ourstuff.space</h4>
+              <p>A personal dashboard for Mind, Body, Spirit, and Life. Check in, capture thoughts, and track goals in one place.</p>
+            </div>
+            <a class="productLink" href="https://ourstuff.space/" target="_blank" rel="noopener noreferrer">Open Ourstuff.space<span class="productDomain">ourstuff.space</span><span class="sr-only"> (opens in a new tab)</span></a>
+          </li>
+        </ul>
+      </section>
     </section>`;
 }
 

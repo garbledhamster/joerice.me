@@ -247,8 +247,8 @@
       });
 
       const firstService = document.querySelector(".serviceCard");
-      const serviceTitle = firstService?.querySelector(".serviceCardFront h3")?.textContent.trim();
-      const backTitle = firstService?.querySelector(".serviceCardBack h3")?.textContent.trim();
+      const serviceTitle = firstService?.querySelector(".serviceCardFront h4")?.textContent.trim();
+      const backTitle = firstService?.querySelector(".serviceCardBack h4")?.textContent.trim();
       const serviceSelect = firstService?.querySelector(".serviceSelect");
       assert(backTitle === serviceTitle, "the back of a service card should repeat that service's title");
       assert(serviceSelect, "a flipped service card should offer a selection checkbox");

@@ -21,7 +21,7 @@ const navItems = [
 	{ label: "About", section: "about" },
 	{ label: "Portfolio", section: "portfolio" },
 	{ label: "Gallery", section: "gallery" },
-	{ label: "Services", section: "services" },
+	{ label: "Products &amp; Services", section: "services" },
 	{ label: "Quotes", section: "quotes" },
 	{ label: "Contact", section: "contact" },
 	{ label: "Links", section: "links" },

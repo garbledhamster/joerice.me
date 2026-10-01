@@ -45,12 +45,12 @@ export function createServiceCard({
       <div class="serviceCardFlip">
         <div class="serviceCardInner">
           <div class="serviceCardFace serviceCardFront">
-            <h3>${safeTitle}</h3>
+            <h4>${safeTitle}</h4>
             <p>${safeDesc}</p>
             <button class="serviceOpenButton" type="button" aria-label="View ${safeTitle} details">View details</button>
           </div>
           <div class="serviceCardFace serviceCardBack" inert>
-            <div class="serviceCardHeader"><h3>${safeTitle}</h3><button class="serviceCloseButton" type="button" aria-label="Close ${safeTitle} details">Close</button></div>
+            <div class="serviceCardHeader"><h4>${safeTitle}</h4><button class="serviceCloseButton" type="button" aria-label="Close ${safeTitle} details">Close</button></div>
             <div class="serviceViews" role="group" aria-label="${safeTitle} view">
               <button class="serviceDetailsButton" type="button" aria-pressed="true" aria-controls="${flipId}-details">Details</button>
               <button class="servicePostsToggle" type="button" aria-pressed="false" aria-expanded="false" aria-controls="${flipId}-posts">Related posts</button>
