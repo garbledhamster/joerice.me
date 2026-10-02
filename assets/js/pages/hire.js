@@ -95,6 +95,13 @@ export function getHireTemplate() {
             </div>
             <a class="productLink" href="https://ourstuff.space/" target="_blank" rel="noopener noreferrer">Open Ourstuff.space<span class="productDomain">ourstuff.space</span><span class="sr-only"> (opens in a new tab)</span></a>
           </li>
+          <li class="productItem">
+            <div>
+              <h4>Fast Track</h4>
+              <p>Keep track of your fasting routine and sign in to sync your history.</p>
+            </div>
+            <a class="productLink" href="https://fasttrack.ourstuff.space/" target="_blank" rel="noopener noreferrer">Open Fast Track<span class="productDomain">fasttrack.ourstuff.space</span><span class="sr-only"> (opens in a new tab)</span></a>
+          </li>
         </ul>
       </section>
     </section>`;
