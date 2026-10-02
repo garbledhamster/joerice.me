@@ -386,6 +386,93 @@ ol {
 	color: var(--fg);
 }
 
+/* Instagram gallery: shared site palette, responsive profile embed. */
+.instagramGallery {
+	color: var(--fg);
+}
+
+.instagramGalleryBody {
+	display: grid;
+	grid-template-columns: minmax(160px, 1fr) minmax(0, 540px);
+	align-items: start;
+	gap: calc(var(--space) * 2);
+}
+
+.instagramGalleryIntro h3 {
+	margin-top: 0;
+	font-size: clamp(1.5rem, 3vw, 2rem);
+	line-height: 1.15;
+}
+
+.instagramGalleryIntro p {
+	line-height: 1.6;
+}
+
+.instagramGalleryProfile {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.5rem;
+	min-height: 44px;
+	padding: 0.75rem;
+	border: 1px solid var(--border);
+	background: var(--fg);
+	color: var(--bg);
+	font-weight: 600;
+	overflow-wrap: anywhere;
+}
+
+.instagramGalleryProfile:hover {
+	background: var(--bg);
+	color: var(--fg);
+}
+
+.instagramGallery a:focus-visible {
+	outline: 2px solid var(--fg);
+	outline-offset: 4px;
+}
+
+.instagramGalleryContent {
+	min-width: 0;
+}
+
+.instagramGalleryEmbed {
+	max-width: 540px;
+	margin-inline: auto;
+}
+
+.instagramGalleryEmbed .instagram-media {
+	box-sizing: border-box;
+	width: 100% !important;
+	min-width: 0 !important;
+	max-width: 540px !important;
+	margin: 0 !important;
+	border-radius: 3px;
+	background: #fff;
+	color: #111;
+}
+
+.instagramGalleryEmbed blockquote {
+	padding: 2rem;
+	line-height: 1.6;
+}
+
+.instagramGalleryHelp {
+	margin: 1rem 0 0;
+	font-size: 0.875rem;
+	line-height: 1.6;
+}
+
+.instagramGalleryHelp a {
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+}
+
+@media (width <= 850px) {
+	.instagramGalleryBody {
+		grid-template-columns: minmax(0, 1fr);
+	}
+}
+
 .navSection {
 	margin-block: var(--space);
 	padding: calc(var(--space) * 1.2);
