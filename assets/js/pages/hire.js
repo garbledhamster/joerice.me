@@ -50,28 +50,79 @@ function showRelatedPosts(card, show) {
 	if (show) renderRelatedPosts(card);
 }
 
+const serviceGroups = [
+	{
+		id: "online",
+		title: "Build something online",
+		description:
+			"A website, an interactive tool, or a visual identity for what you're making.",
+		ids: ["web-site", "web-app", "logo-design"],
+	},
+	{
+		id: "tools",
+		title: "Make your tools and information easier to use",
+		description:
+			"Help with technology, scattered information, and learning how AI can fit your work.",
+		ids: ["it-services", "knowledge-mgmt", "ai-coaching"],
+	},
+	{
+		id: "experience",
+		title: "Explain what you bring to the work",
+		description: "Put your experience into words people can understand.",
+		ids: ["resume-writing"],
+	},
+];
+
 function cards() {
-	return getServices()
-		.filter((service) => service.available || isAdminUser())
-		.map(
-			(service) =>
-				`<div class="serviceItem">${createServiceCard(service)}${isAdminUser() ? `<button class="editBtn serviceEditButton" type="button" data-service-id="${sanitizeText(service.id)}" aria-label="Edit ${sanitizeText(service.title)}">Edit service${service.available ? "" : " (unavailable)"}</button>` : ""}</div>`,
-		)
+	const services = getServices().filter(
+		(service) => service.available || isAdminUser(),
+	);
+	const knownIds = new Set(serviceGroups.flatMap((group) => group.ids));
+	const groups = [
+		...serviceGroups,
+		{
+			id: "other",
+			title: "Other ways I can help",
+			description: "",
+			ids: services
+				.filter((service) => !knownIds.has(service.id))
+				.map((service) => service.id),
+		},
+	];
+	return groups
+		.map((group) => {
+			const members = services.filter((service) =>
+				group.ids.includes(service.id),
+			);
+			if (!members.length) return "";
+			return `<section class="servicePurposeGroup" aria-labelledby="service-group-${group.id}"><h3 id="service-group-${group.id}">${group.title}</h3>${group.description ? `<p class="serviceGroupIntro">${group.description}</p>` : ""}<div class="serviceGrid">${members.map((service) => `<div class="serviceItem">${createServiceCard(service)}${isAdminUser() ? `<button class="editBtn serviceEditButton" type="button" data-service-id="${sanitizeText(service.id)}" aria-label="Edit ${sanitizeText(service.title)}">Edit service${service.available ? "" : " (unavailable)"}</button>` : ""}</div>`).join("")}</div></section>`;
+		})
 		.join("");
 }
 
 export function getHireTemplate() {
-	return `<section class="services" id="servicesSection">
-      <div class="sectionHeader"><h2>Products &amp; Services</h2></div>
-      <section class="servicesGroup" aria-labelledby="servicesHeading">
-        <div class="sectionHeader servicesGroupHeader"><h3 id="servicesHeading">Services</h3><button class="editBtn" id="addServiceButton" type="button" data-admin-only hidden>Add service</button></div>
-        <p class="servicesNote">Explore a service, browse related work, then select what you need.</p>
-        <p id="servicesStatus" role="status" hidden></p>
-        <div id="serviceEditorHost"></div>
-        <div class="serviceGrid">${cards()}</div>
-      </section>
-      <section class="productsGroup" id="products" aria-labelledby="productsHeading">
-        <h3 id="productsHeading">Products</h3>
+	return `<section class="services" id="servicesSection" aria-labelledby="servicesHeading">
+      <div class="sectionHeader"><h2 id="servicesHeading">How I can help</h2><button class="editBtn" id="addServiceButton" type="button" data-admin-only hidden>Add service</button></div>
+      <p class="servicesIntro">You might have a project in mind or need help sorting out a problem. We can use these services as starting points so we can talk about what would help and work out a scope that fits your project.</p>
+      <p class="servicesNote">Read the details or browse related posts to learn more. Select any services that interest you, or use the form and explain what you need.</p>
+      <p id="servicesStatus" role="status" hidden></p>
+      <div id="serviceEditorHost"></div>
+      <div id="serviceGroups">${cards()}</div>
+      <div class="quoteProcess">
+        <h3>How we get started</h3>
+        <ol class="quoteSteps">
+          <li><h4>Tell me what you're trying to do</h4><p>Share your idea, the problem, or what you'd like to learn. A rough description is enough to start.</p></li>
+          <li><h4>We'll work out what's needed</h4><p>I'll review your request and follow up with questions so we can understand the scope.</p></li>
+          <li><h4>Get a quote for the work</h4><p>Once the scope is clear, I'll prepare a quote so you can decide whether you'd like to go ahead.</p></li>
+        </ol>
+        <a class="quoteLink" href="#contact">Tell me what you need</a>
+      </div>
+    </section>`;
+}
+
+export function getProductsTemplate() {
+	return `      <section class="services productsGroup" id="productsSection" aria-labelledby="productsHeading">
+        <h2 id="productsHeading">Books and tools</h2>
         <p class="servicesNote">Books and tools I've made for learning, reflection, and everyday life.</p>
         <ul class="productList">
           <li class="productItem">
@@ -103,8 +154,7 @@ export function getHireTemplate() {
             <a class="productLink" href="https://fasttrack.ourstuff.space/" target="_blank" rel="noopener noreferrer">Open Fast Track<span class="productDomain">fasttrack.ourstuff.space</span><span class="sr-only"> (opens in a new tab)</span></a>
           </li>
         </ul>
-      </section>
-    </section>`;
+      </section>`;
 }
 
 function syncSelections() {
@@ -118,14 +168,14 @@ function syncSelections() {
 					.closest(".serviceCard")
 					.classList.toggle("is-selected", input.checked);
 				input.nextElementSibling.textContent = input.checked
-					? "Service selected"
-					: "Select this service";
+					? "Added to your request"
+					: "Add to my quote request";
 			}
 		});
 }
 
 function renderCards() {
-	const grid = $("#servicesSection .serviceGrid");
+	const grid = $("#serviceGroups");
 	if (!grid) return;
 	const flipped = new Set(
 		Array.from(

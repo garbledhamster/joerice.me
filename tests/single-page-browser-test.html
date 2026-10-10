@@ -175,8 +175,14 @@
       };
 
       const nativeFetch = window.fetch.bind(window);
+      window.testQuoteRequests = [];
+      window.testFailQuoteRequest = false;
       window.fetch = (input, init) => {
         const requestUrl = String(input);
+        if (requestUrl === "https://formspree.io/f/xovqpvdv") {
+          window.testQuoteRequests.push([...init.body.entries()]);
+          return Promise.resolve(new Response("{}", { status: window.testFailQuoteRequest ? 500 : 200 }));
+        }
         const response = nativeFetch(input, init);
         if (!requestUrl.endsWith("posts/0001.yaml")) return response;
 
@@ -224,13 +230,57 @@
 
       await waitFor(() => document.body.classList.contains("loaded"));
 
+      // Exercise quote submission with only the external delivery boundary replaced.
+      const quoteForm = document.getElementById("contactForm");
+      const phoneField = quoteForm.elements.phone;
+      assert(phoneField?.type === "tel" && !phoneField.required, "quote requests should accept an optional phone number");
+      quoteForm.elements.name.value = "Quote test";
+      quoteForm.elements.email.value = "quote@example.com";
+      quoteForm.elements.message.value = "I need help getting my project online.";
+      if (phoneField) phoneField.value = "555-0100";
+      const { selectService } = await import("./assets/js/services/catalog.js");
+      selectService("web-site", true);
+      selectService("ai-coaching", true);
+      assert(quoteForm.checkValidity(), "one message should be enough to request a quote for multiple services");
+      window.testFailQuoteRequest = true;
+      const nativeAlert = window.alert;
+      window.alert = () => {};
+      quoteForm.requestSubmit();
+      await waitFor(() => window.testQuoteRequests.length, 1000);
+      if (window.testQuoteRequests.length) {
+        await waitFor(() => !quoteForm.querySelector('[type="submit"]').disabled);
+        assert(quoteForm.elements.message.value.includes("project online"), "failed quote requests should preserve the message");
+        assert(phoneField?.value === "555-0100", "failed quote requests should preserve the phone number");
+        assert(document.querySelectorAll('#selectedServices [name="services"]').length === 2, "failed quote requests should preserve service selections");
+        window.testFailQuoteRequest = false;
+        quoteForm.requestSubmit();
+        await waitFor(() => document.getElementById("contactModal").classList.contains("show"));
+        const sent = window.testQuoteRequests.at(-1);
+        assert(sent.some(([key, value]) => key === "phone" && value === "555-0100"), "quote delivery should include the supplied phone number");
+        assert(sent.filter(([key]) => key === "services").length === 2, "quote delivery should include every selected service");
+        assert(quoteForm.elements.message.value === "" && document.getElementById("serviceSelectionBanner").hidden, "successful delivery should clear the form and shared selections");
+        document.getElementById("closeContactModal").click();
+        quoteForm.elements.name.value = "Unsure test";
+        quoteForm.elements.email.value = "unsure@example.com";
+        quoteForm.elements.message.value = "I'm not sure which service fits.";
+        assert(quoteForm.checkValidity(), "quote requests should work without a phone number or service selection");
+        quoteForm.requestSubmit();
+        await waitFor(() => document.getElementById("contactModal").classList.contains("show"));
+        assert(!window.testQuoteRequests.at(-1).some(([key]) => key === "services"), "unsure visitors should be able to submit without selected services");
+        document.getElementById("closeContactModal").click();
+      }
+      window.alert = nativeAlert;
+      const { clearSelectedServices } = await import("./assets/js/services/catalog.js");
+      clearSelectedServices();
+      quoteForm.reset();
+
       const expectedAnchors = [
         "#about",
-        "#portfolio",
-        "#gallery",
         "#services",
-        "#quotes",
+        "#portfolio",
         "#contact",
+        "#gallery",
+        "#quotes",
         "#links",
       ];
       const navHrefs = [...document.querySelectorAll("#mainNav a[data-section]")].map(
@@ -279,13 +329,12 @@
           "selected services should appear below the contact message field",
         );
         assert(
-          attachment?.querySelector(".selectedServiceHelp")?.textContent.toLowerCase().includes("details"),
-          "the attached service should tell the user to fill in details",
+          !attachment?.querySelector("textarea"),
+          "selected services should attach without requiring duplicate project descriptions",
         );
-        assert(
-          attachment?.querySelector('textarea[name="serviceDetails"]'),
-          "the attached service should include a details input",
-        );
+        document.querySelector('.contactServiceSelect[value="ai-coaching"]').click();
+        assert(document.querySelector('.serviceSelect[value="ai-coaching"]').checked, "form service choices should sync with the service cards");
+        document.querySelector('.contactServiceSelect[value="ai-coaching"]').click();
 
         serviceSelect.click();
         assert(document.getElementById("serviceSelectionBanner").hidden, "clearing services should hide the banner");

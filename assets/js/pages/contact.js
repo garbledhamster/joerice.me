@@ -1,8 +1,6 @@
 /**
  * @file pages/contact.js
- * @description Contact page module
- *
- * Displays contact form with Formspree integration
+ * @description Quote request form with Formspree delivery.
  */
 
 import { closeModal, openModal } from "../components/modal.js";
@@ -10,59 +8,71 @@ import { $, addListener } from "../core/dom.js";
 import {
 	clearSelectedServices,
 	getSelectedServices,
+	getServices,
+	selectService,
 } from "../services/catalog.js";
 import { sanitizeText } from "../services/sanitize.js";
 
 let contactForm = null;
 let cleanupFns = [];
-const selectedServices = new Map();
 
-/**
- * Get contact page HTML template
- * @returns {string} Contact page HTML
- */
 export function getContactTemplate() {
 	return `
-    <section class="contact" id="contactSection">
-      <h2>Contact</h2>
+    <section class="contact" id="contactSection" aria-labelledby="contactHeading">
+      <h2 id="contactHeading">Tell me what you need help with</h2>
+      <p class="contactIntro">Have a project in mind, a problem to sort out, or something you'd like to learn? Tell me what you're trying to accomplish so we can figure out the next step. You don't need to know which service fits.</p>
+      <p class="contactIntro">I'll review your request, follow up with any questions, and put together a quote once the scope is clear.</p>
       <form id="contactForm">
-        <label>Name<input type="text" name="name" required/></label>
-        <label>Email<input type="email" name="email" required/></label>
-        <label>Contact Type
-          <select name="project" required>
-            <option value="">Select an option...</option>
-            <option>Personal Website</option>
-            <option>Professional Website</option>
-            <option>Recruiter</option>
-            <option>Friend</option>
-            <option>Family</option>
-            <option>Training/Coaching</option>
-            <option>Other</option>
-          </select>
-        </label>
-        <label>Message<textarea name="message" required></textarea></label>
+        <p class="formHelp">Name, email, and a description are required. Phone and service choices are optional.</p>
+        <label>Name<input type="text" name="name" autocomplete="name" required/></label>
+        <label>Email<input type="email" name="email" autocomplete="email" required/></label>
+        <label>Phone <span class="optionalField">(optional)</span><input type="tel" name="phone" autocomplete="tel" aria-describedby="phoneHelp"/></label>
+        <small class="formHelp" id="phoneHelp">Include a number if you're comfortable being contacted by phone.</small>
+        <label for="quoteMessage">What do you need help with?</label>
+        <textarea id="quoteMessage" name="message" aria-describedby="messageHelp" required></textarea>
+        <small class="formHelp" id="messageHelp">Share what you'd like to accomplish and what's getting in the way. If you have a timeline or budget in mind, you can include it. A rough idea is enough to start.</small>
+        <details class="contactServiceChoices">
+          <summary>Choose services if you know what you need <span class="optionalField">(optional)</span></summary>
+          <div id="contactServicePicker"></div>
+        </details>
         <div class="selectedServices" id="selectedServices" aria-live="polite" hidden></div>
-        <button type="submit">Send</button>
+        <p class="contactError" id="contactError" role="alert" hidden></p>
+        <button type="submit">Request a quote</button>
       </form>
     </section>
     <aside class="serviceSelectionBanner" id="serviceSelectionBanner" aria-label="Selected services" hidden>
       <span id="serviceSelectionCount" role="status" aria-live="polite"></span>
-      <button type="button" id="jumpToContact">Go to contact</button>
+      <button type="button" id="jumpToContact">Request a quote</button>
     </aside>
-    <div class="modal" id="contactModal">
+    <div class="modal" id="contactModal" aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="quoteSuccessHeading">
       <div class="modalContent">
-        <p>Thank you! Your message has been sent.</p>
-        <button id="closeContactModal" style="margin-top:1rem; border:1px solid var(--border); padding:.5rem 1rem; background:var(--yellow); font-family:var(--fontHead); cursor:pointer;">close</button>
+        <h3 id="quoteSuccessHeading">Thanks for your request</h3>
+        <p>I'll review what you need and follow up to clarify the scope so I can prepare a quote.</p>
+        <button class="quoteSuccessClose" id="closeContactModal" type="button">Close</button>
       </div>
     </div>
   `;
 }
 
-/**
- * Render selected services as contact-form attachments.
- */
+function renderContactServicePicker() {
+	const picker = $("#contactServicePicker");
+	if (!picker) return;
+	picker.innerHTML = `<fieldset class="contactServiceList"><legend class="sr-only">Services (optional)</legend>${getServices()
+		.filter((service) => service.available)
+		.map(
+			(service) =>
+				`<label><input class="contactServiceSelect" type="checkbox" value="${sanitizeText(service.id)}"/> <span>${sanitizeText(service.title)}</span></label>`,
+		)
+		.join("")}</fieldset>`;
+	renderSelectedServices();
+}
+
 function renderSelectedServices() {
 	const selections = getSelectedServices();
+	const ids = new Set(selections.map((service) => service.id));
+	document.querySelectorAll(".contactServiceSelect").forEach((input) => {
+		input.checked = ids.has(input.value);
+	});
 	const banner = $("#serviceSelectionBanner");
 	if (banner) banner.hidden = selections.length === 0;
 	document.body.classList.toggle("hasServiceSelection", selections.length > 0);
@@ -71,129 +81,61 @@ function renderSelectedServices() {
 		count.textContent = `${selections.length} service${selections.length === 1 ? "" : "s"} selected`;
 	const container = $("#selectedServices");
 	if (!container) return;
-
-	container.hidden = selectedServices.size === 0;
+	container.hidden = selections.length === 0;
 	container.innerHTML = selections
-		.map(({ id, title }) => {
-			const details = selectedServices.get(id) || "";
-			const safeService = sanitizeText(title);
-			const safeDetails = sanitizeText(details);
-			const serviceId = String(id)
-				.toLowerCase()
-				.trim()
-				.replace(/[^a-z0-9]+/g, "-")
-				.replace(/^-|-$/g, "");
-			const helpId = `service-help-${serviceId}`;
-
-			return `
-      <section class="selectedServiceAttachment" data-service="${safeService}">
-        <div class="selectedServiceHeading">
-          <span class="selectedServiceIcon" aria-hidden="true">✓</span>
-          <h3>${safeService}</h3>
-        </div>
-        <input type="hidden" name="services" value="${safeService}"/>
-        <label for="service-details-${serviceId}">Project details</label>
-        <textarea id="service-details-${serviceId}" name="serviceDetails" data-service="${sanitizeText(id)}" aria-describedby="${helpId}" required>${safeDetails}</textarea>
-        <small class="selectedServiceHelp" id="${helpId}">Fill in details about what you need for this selected service.</small>
-      </section>
-    `;
-		})
+		.map(
+			({ title }) =>
+				`<div class="selectedServiceAttachment"><span>${sanitizeText(title)}</span><input type="hidden" name="services" value="${sanitizeText(title)}"/></div>`,
+		)
 		.join("");
 }
 
-/**
- * Sync a service card selection into the contact form.
- * @param {CustomEvent} event - Service selection event
- */
-function handleServiceSelection() {
-	const ids = new Set(getSelectedServices().map((service) => service.id));
-	for (const id of selectedServices.keys()) {
-		if (!ids.has(id)) selectedServices.delete(id);
-	}
-	for (const id of ids) {
-		if (!selectedServices.has(id)) selectedServices.set(id, "");
-	}
-	renderSelectedServices();
-}
-
-/**
- * Preserve details when more service attachments are rendered.
- * @param {Event} event - Contact form input event
- */
-function handleServiceDetailsInput(event) {
-	if (!event.target.matches("textarea[data-service]")) return;
-	selectedServices.set(event.target.dataset.service, event.target.value);
-}
-
-/**
- * Handle form submission
- * @param {Event} e - Submit event
- */
-async function handleSubmit(e) {
-	e.preventDefault();
-
-	const form = e.target;
+async function handleSubmit(event) {
+	event.preventDefault();
+	const form = event.target;
 	const submitBtn = form.querySelector('button[type="submit"]');
-	const fd = new FormData(form);
-
-	// Disable submit button
-	if (submitBtn) {
-		submitBtn.disabled = true;
-		submitBtn.textContent = "Sending...";
-	}
+	if (submitBtn.disabled || !form.reportValidity()) return;
+	const errorMessage = $("#contactError");
+	errorMessage.hidden = true;
+	const data = new FormData(form);
+	submitBtn.disabled = true;
+	submitBtn.textContent = "Sending request…";
 
 	try {
-		// Get reCAPTCHA token if available
 		if (window.grecaptcha?.execute) {
 			const token = await window.grecaptcha.execute(
 				"6LcYpE4sAAAAALOW_7HWe81eUCnFkGFu-e8dAW_S",
 				{ action: "submit" },
 			);
-			fd.append("g-recaptcha-response", token);
+			data.append("g-recaptcha-response", token);
 		}
-
 		const response = await fetch("https://formspree.io/f/xovqpvdv", {
 			method: "POST",
-			body: fd,
+			body: data,
 			headers: { Accept: "application/json" },
 		});
-		if (!response.ok) throw new Error("Message could not be sent.");
-
-		// Reset form and show success
+		if (!response.ok) throw new Error("Quote request could not be sent.");
 		form.reset();
-		selectedServices.clear();
 		clearSelectedServices();
-		document.querySelectorAll(".serviceSelect").forEach((checkbox) => {
-			checkbox.checked = false;
-		});
-		renderSelectedServices();
 		openModal("contactModal");
 	} catch (error) {
-		console.error("Form submission error:", error);
-		alert("Unable to send message. Please try again.");
+		console.error("Quote request error:", error);
+		errorMessage.textContent =
+			"We couldn't send your request. Your information is still here so you can try again.";
+		errorMessage.hidden = false;
 	} finally {
-		// Re-enable submit button
-		if (submitBtn) {
-			submitBtn.disabled = false;
-			submitBtn.textContent = "Send";
-		}
+		submitBtn.disabled = false;
+		submitBtn.textContent = "Request a quote";
 	}
 }
 
-/**
- * Render contact page
- */
 export function renderContact() {
 	const mainContent = $("#mainContent");
 	if (!mainContent) return;
-
 	mainContent.innerHTML = getContactTemplate();
 	initContact();
 }
 
-/**
- * Initialize contact page
- */
 export function initContact() {
 	contactForm = $("#contactForm");
 	cleanupFns.push(
@@ -209,46 +151,39 @@ export function initContact() {
 				?.focus({ preventScroll: true });
 		}),
 	);
-	handleServiceSelection();
-
+	renderContactServicePicker();
 	if (contactForm) {
 		cleanupFns.push(addListener(contactForm, "submit", handleSubmit));
 		cleanupFns.push(
-			addListener(contactForm, "input", handleServiceDetailsInput),
-		);
-	}
-
-	cleanupFns.push(
-		addListener(window, "service-selection-change", handleServiceSelection),
-	);
-
-	// Close modal button
-	const closeBtn = $("#closeContactModal");
-	if (closeBtn) {
-		cleanupFns.push(
-			addListener(closeBtn, "click", () => closeModal("contactModal")),
-		);
-	}
-
-	// Modal backdrop click
-	const modal = $("#contactModal");
-	if (modal) {
-		cleanupFns.push(
-			addListener(modal, "click", (e) => {
-				if (e.target === modal) closeModal("contactModal");
+			addListener(contactForm, "change", (event) => {
+				if (event.target.matches(".contactServiceSelect"))
+					selectService(event.target.value, event.target.checked);
 			}),
 		);
 	}
+	cleanupFns.push(
+		addListener(window, "service-selection-change", renderSelectedServices),
+	);
+	cleanupFns.push(
+		addListener(window, "service-catalog-change", renderContactServicePicker),
+	);
+	cleanupFns.push(
+		addListener($("#closeContactModal"), "click", () =>
+			closeModal("contactModal"),
+		),
+	);
+	const modal = $("#contactModal");
+	cleanupFns.push(
+		addListener(modal, "click", (event) => {
+			if (event.target === modal) closeModal("contactModal");
+		}),
+	);
 }
 
-/**
- * Clean up contact page
- */
 export function destroyContact() {
-	cleanupFns.forEach((fn) => {
-		fn();
+	cleanupFns.forEach((cleanup) => {
+		cleanup();
 	});
 	cleanupFns = [];
 	contactForm = null;
-	selectedServices.clear();
 }

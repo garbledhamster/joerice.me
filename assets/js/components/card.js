@@ -64,7 +64,7 @@ export function createServiceCard({
       </div>
       <label class="serviceChoice">
         <input class="serviceSelect" type="checkbox" value="${sanitizeText(id || serviceId)}"${available ? "" : " disabled"}/>
-        <span>Select this service</span>
+        <span>Add to my quote request</span>
       </label>
     </article>
   `;

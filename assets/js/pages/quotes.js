@@ -34,7 +34,7 @@ export function getQuotesTemplate() {
 	return `
     <section class="quotes" id="quotesSection">
       <div class="sectionHeader">
-        <h2>Quotes</h2>
+        <h2>Favorite quotes</h2>
         <button class="editBtn" id="editQuotesBtn" type="button" data-admin-only>Edit</button>
       </div>
       <div class="quoteBox" id="quoteBox">

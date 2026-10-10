@@ -61,18 +61,20 @@ export function getPortfolioTemplate() {
     <section class="portfolio" id="portfolioSection">
       <div class="sectionHeader">
         <div class="sectionHeaderLeft">
-          <h2>Portfolio</h2>
+          <h2>Work &amp; notes</h2>
           <button class="refreshBtn" id="refreshPostsBtn" type="button" title="Refresh posts" aria-label="Refresh posts">
             <i class="fas fa-sync"></i>
           </button>
         </div>
         <button class="editBtn" id="addPortfolioBtn" type="button" data-admin-only>Add Post</button>
       </div>
+      <p class="portfolioIntro">These posts share how I approach technical problems, planning, documentation, and learning new tools. Open one to get a better sense of how I work.</p>
       <div class="portfolioStatus" id="portfolioStatus" hidden></div>
       <div class="subhead">Pinned</div>
       <div class="grid" id="pinnedGrid"></div>
       <div class="subhead">Posts</div>
       <div class="grid" id="entryGrid"></div>
+      <p class="portfolioInvite">Have something you need help working through? <a class="textLink" href="#contact">Tell me about it and request a quote.</a></p>
     </section>
   `;
 }

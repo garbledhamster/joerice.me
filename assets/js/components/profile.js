@@ -43,7 +43,7 @@ const socialLinks = [
 ];
 
 const professionalIntroduction =
-	"I'm Joe Rice, a systems generalist with more than a decade of experience in IT support, engineering, and administration. I help people solve technical problems, organize work, and understand the tools they use. My work includes networks and cloud systems, project planning, automation, documentation, and training. I like getting into the details, then explaining them in language people can use. Through my work and the resources I share here, I want to help people build confidence, make informed decisions, and develop the skills to help themselves.";
+	"I'm Joe Rice. I help individuals and small businesses build websites and apps, solve technology problems, organize information, and learn tools they can use in everyday work. You can bring a specific project or a problem you're still working out so we can figure out what's needed and get the work done.";
 
 /**
  * Get profile section HTML template.
@@ -60,11 +60,13 @@ export function getProfileTemplate() {
 	return `
     <section class="hero max singlePageSection" id="about" data-section="about">
       <img class="pic" src="assets/images/pictures/profile.jpg" alt="Joe Rice"/>
-      <div class="social">
+      <h1 class="profileTitle">Tell me what you're trying to accomplish.</h1>
+      <p class="profileDesc" id="profileDesc">${professionalIntroduction}</p>
+      <div class="profileActions"><a class="quoteLink" href="#contact">Request a quote</a><a class="textLink" href="#services">See how I can help</a></div>
+      <p class="profileExperience">I'm a systems generalist with more than a decade of experience in IT support, engineering, and administration. I like understanding what is getting in someone's way, making a plan, and explaining the work so they can feel comfortable with the next step and develop the skills to help themselves.</p>
+      <div class="social" aria-label="Find Joe elsewhere">
         ${socialLinksHtml}
       </div>
-      <h1 class="profileTitle">Helping people make sense of technology and get work done.</h1>
-      <p class="profileDesc" id="profileDesc">${professionalIntroduction}</p>
     </section>
   `;
 }

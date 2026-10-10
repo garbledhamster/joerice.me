@@ -19,11 +19,11 @@ let cleanupFns = [];
  */
 const navItems = [
 	{ label: "About", section: "about" },
-	{ label: "Portfolio", section: "portfolio" },
+	{ label: "Services", section: "services" },
+	{ label: "Work &amp; notes", section: "portfolio" },
+	{ label: "Request a quote", section: "contact", className: "navQuoteLink" },
 	{ label: "Gallery", section: "gallery" },
-	{ label: "Products &amp; Services", section: "services" },
-	{ label: "Quotes", section: "quotes" },
-	{ label: "Contact", section: "contact" },
+	{ label: "Favorite quotes", section: "quotes" },
 	{ label: "Links", section: "links" },
 	{
 		label: "Login",

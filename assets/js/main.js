@@ -11,7 +11,11 @@ import { getProfileTemplate } from "./components/profile.js";
 import { ready } from "./core/dom.js";
 import { getContactTemplate, initContact } from "./pages/contact.js";
 import { getGalleryTemplate, initGallery } from "./pages/gallery.js";
-import { getHireTemplate, initHire } from "./pages/hire.js";
+import {
+	getHireTemplate,
+	getProductsTemplate,
+	initHire,
+} from "./pages/hire.js";
 import { getLinksTemplate, initLinks } from "./pages/links.js";
 import { getPortfolioTemplate, initPortfolio } from "./pages/portfolio.js";
 import { getQuotesTemplate, initQuotes } from "./pages/quotes.js";
@@ -103,20 +107,23 @@ async function initApp() {
     ${getHeaderTemplate()}
     ${getProfileTemplate()}
     <main class="max singlePage" id="mainContent">
+      <div class="singlePageSection" id="services" data-section="services">
+        ${getHireTemplate()}
+      </div>
       <div class="singlePageSection" id="portfolio" data-section="portfolio">
         ${getPortfolioTemplate()}
+      </div>
+      <div class="singlePageSection" id="contact" data-section="contact">
+        ${getContactTemplate()}
+      </div>
+      <div class="singlePageSection" id="products">
+        ${getProductsTemplate()}
       </div>
       <div class="singlePageSection" id="gallery" data-section="gallery">
         ${getGalleryTemplate()}
       </div>
-      <div class="singlePageSection" id="services" data-section="services">
-        ${getHireTemplate()}
-      </div>
       <div class="singlePageSection" id="quotes" data-section="quotes">
         ${getQuotesTemplate()}
-      </div>
-      <div class="singlePageSection" id="contact" data-section="contact">
-        ${getContactTemplate()}
       </div>
       <div class="singlePageSection" id="links" data-section="links">
         ${getLinksTemplate()}
