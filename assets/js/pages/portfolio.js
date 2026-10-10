@@ -57,24 +57,54 @@ let cleanupFns = [];
  */
 export function getPortfolioTemplate() {
 	return `
-    <div class="search"><input id="q" type="search" placeholder="Search posts and notes..."/></div>
     <section class="portfolio" id="portfolioSection">
-      <div class="sectionHeader">
-        <div class="sectionHeaderLeft">
-          <h2>Work &amp; notes</h2>
-          <button class="refreshBtn" id="refreshPostsBtn" type="button" title="Refresh posts" aria-label="Refresh posts">
-            <i class="fas fa-sync"></i>
-          </button>
+      <h2>Work &amp; notes</h2>
+      <section class="websiteWork" aria-labelledby="websiteWorkHeading">
+        <h3 id="websiteWorkHeading">Websites I've built</h3>
+        <p class="portfolioIntro">These are websites I've built for other people. Each one is live, so you can look through it and get a feel for the work.</p>
+        <ul class="productList">
+          <li class="productItem">
+            <div>
+              <h4>J &amp; D's Heritage Hog Farm</h4>
+              <p>Learn about the farm and its pasture-raised hogs, look through photos, and find out how purchasing and pickup work.</p>
+            </div>
+            <a class="productLink" href="https://jdhogfarm.com/" target="_blank" rel="noopener noreferrer">Visit the farm site<span class="productDomain">jdhogfarm.com</span><span class="sr-only"> (opens in a new tab)</span></a>
+          </li>
+          <li class="productItem">
+            <div>
+              <h4>Spinners Pizza</h4>
+              <p>Find the menu, hours, and directions so you can plan a visit or call in a carry-out order.</p>
+            </div>
+            <a class="productLink" href="https://spinners.pizza/" target="_blank" rel="noopener noreferrer">Visit Spinners Pizza<span class="productDomain">spinners.pizza</span><span class="sr-only"> (opens in a new tab)</span></a>
+          </li>
+          <li class="productItem">
+            <div>
+              <h4>Privian Care Management</h4>
+              <p>Learn about RN care management and other support for seniors so families can understand the services and get in touch.</p>
+            </div>
+            <a class="productLink" href="https://priviancare.com/" target="_blank" rel="noopener noreferrer">Visit Privian Care<span class="productDomain">priviancare.com</span><span class="sr-only"> (opens in a new tab)</span></a>
+          </li>
+        </ul>
+        <p class="portfolioInvite">If you need a website, <a class="textLink" href="#contact">tell me what you have in mind so we can work out a quote.</a></p>
+      </section>
+      <section class="portfolioNotes" aria-labelledby="portfolioNotesHeading">
+        <div class="sectionHeader">
+          <div class="sectionHeaderLeft">
+            <h3 id="portfolioNotesHeading">How I work</h3>
+            <button class="refreshBtn" id="refreshPostsBtn" type="button" title="Refresh posts" aria-label="Refresh posts">
+              <i class="fas fa-sync"></i>
+            </button>
+          </div>
+          <button class="editBtn" id="addPortfolioBtn" type="button" data-admin-only>Add Post</button>
         </div>
-        <button class="editBtn" id="addPortfolioBtn" type="button" data-admin-only>Add Post</button>
-      </div>
-      <p class="portfolioIntro">These posts share how I approach technical problems, planning, documentation, and learning new tools. Open one to get a better sense of how I work.</p>
-      <div class="portfolioStatus" id="portfolioStatus" hidden></div>
-      <div class="subhead">Pinned</div>
-      <div class="grid" id="pinnedGrid"></div>
-      <div class="subhead">Posts</div>
-      <div class="grid" id="entryGrid"></div>
-      <p class="portfolioInvite">Have something you need help working through? <a class="textLink" href="#contact">Tell me about it and request a quote.</a></p>
+        <p class="portfolioIntro">These posts share how I approach technical problems, planning, documentation, and learning new tools. Open one to get a better sense of how I work.</p>
+        <div class="search"><label class="sr-only" for="q">Search posts and notes</label><input id="q" type="search" placeholder="Search posts and notes..."/></div>
+        <div class="portfolioStatus" id="portfolioStatus" hidden></div>
+        <div class="subhead">Pinned</div>
+        <div class="grid" id="pinnedGrid"></div>
+        <div class="subhead">Posts</div>
+        <div class="grid" id="entryGrid"></div>
+      </section>
     </section>
   `;
 }

@@ -2866,6 +2866,24 @@ footer {
 	color: var(--fg);
 }
 
+.websiteWork {
+	color: var(--fg);
+}
+
+.websiteWork .portfolioInvite {
+	margin-top: 1rem;
+}
+
+.portfolioNotes {
+	margin-top: 2rem;
+	padding-top: 1.5rem;
+	border-top: 1px solid var(--border);
+}
+
+.portfolioNotes .sectionHeader h3 {
+	margin: 0;
+}
+
 .contact button[type="submit"] {
 	background: var(--yellow);
 	color: var(--fg);
