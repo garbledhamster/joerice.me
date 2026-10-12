@@ -184,6 +184,9 @@
           return Promise.resolve(new Response("{}", { status: window.testFailQuoteRequest ? 500 : 200 }));
         }
         const response = nativeFetch(input, init);
+        if (requestUrl.endsWith("posts/0002.yaml")) {
+          return response.then(async (original) => new Response(`${await original.text()}\nserviceIds: ["web-site"]\n`, { status: original.status, headers: original.headers }));
+        }
         if (!requestUrl.endsWith("posts/0001.yaml")) return response;
 
         return new Promise((resolve, reject) => {
@@ -356,10 +359,16 @@
       const relatedButton = relatedCard?.querySelector('.servicePostsToggle');
       assert(relatedButton, "flipped services should offer related posts");
       relatedButton?.click();
-      const relatedLinks = relatedCard?.querySelectorAll('.servicePostLink');
-      assert(relatedLinks?.length === 1 && relatedLinks[0].textContent === "Editable test post", "related lists should include only posts tagged with this service");
+      const relatedLinks = [...(relatedCard?.querySelectorAll('.servicePostLink') || [])];
+      const bundledRelatedLink = relatedLinks.find(link => link.dataset.postUrl === "posts/0002.yaml");
+      assert(relatedLinks.some(link => link.textContent === "Editable test post") && bundledRelatedLink, "related lists should include tagged Firebase and bundled posts");
+      assert(!relatedLinks.some(link => link.textContent === "Private draft" || link.dataset.postUrl === "posts/0003.yaml"), "related lists should exclude private and untagged posts");
       assert(relatedCard?.querySelector('.serviceToggle').checked, "related posts must not unflip the service card");
-      relatedLinks?.[0]?.click();
+      bundledRelatedLink?.click();
+      const bundledTitle = document.querySelector('[data-url="posts/0002.yaml"]');
+      await waitFor(() => bundledTitle?.getAttribute('aria-expanded') === 'true');
+      assert(bundledTitle?.closest('.postAccordion').querySelector('.relatedServiceSelect[value="web-site"]'), "bundled post readers should offer their tagged service");
+      relatedLinks.find(link => link.textContent === "Editable test post")?.click();
       await waitFor(() => editablePost?.getAttribute('aria-expanded') === 'true');
       assert(editableRow?.classList.contains('is-open'), "related titles should open the matching inline reader");
       relatedCard?.querySelector('.serviceDetailsButton')?.click();
@@ -532,7 +541,7 @@
         window.testFailPostReads = false;
         document.getElementById("refreshPostsBtn").click();
         await waitFor(() => updatedCard.querySelector('.servicePostLink'));
-        assert(updatedCard.querySelector('.servicePostLink')?.textContent === "Editable test post", "refreshing should recover related posts after a failed read");
+        assert([...updatedCard.querySelectorAll('.servicePostLink')].some(link => link.textContent === "Editable test post"), "refreshing should recover related posts after a failed read");
       }
 
       if (failures.length) {

@@ -643,9 +643,10 @@ async function openPost(url, accordion) {
 					data.date instanceof Date ? data.date.toISOString() : data.date,
 				published: true,
 				pinned: data.pinned === true,
-				serviceIds: [],
+				serviceIds: Array.isArray(data.serviceIds) ? data.serviceIds : [],
 			};
-			renderedContent = sanitizeMarkdown(content);
+			renderedContent =
+				sanitizeMarkdown(content) + relatedServices(loadedPost.serviceIds);
 		}
 	} catch (error) {
 		if (requestId !== postOpenRequestId || openAccordion !== accordion)
@@ -738,6 +739,7 @@ async function loadYamlPosts() {
 					url: filePath,
 					pinned: data.pinned,
 					tags: data.tags || [],
+					serviceIds: Array.isArray(data.serviceIds) ? data.serviceIds : [],
 					source: "yaml",
 				};
 				yamlEntries.push(entry);

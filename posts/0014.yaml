@@ -1,0 +1,35 @@
+id: "0014"
+title: "A website for Spinners Pizza"
+date: 2026-10-12
+pinned: false
+tags: ["website","restaurant","community"]
+serviceIds: ["web-site"]
+"Joe's comments": ""
+content: |
+  I built [Spinners Pizza's website](https://spinners.pizza/) for Tim, my dad's friend, in Grovespring, Missouri. In [my November 2024 post](https://buymeacoffee.com/garbledhamster/spinner-pizza), I described taking on the project for free so I could help a local business and keep developing my website skills.
+
+  You can look through the menu, check the hours, and find directions before a visit. You can also see photos and read about the restaurant.
+
+  ![The Spinners Pizza homepage gives visitors links to call the restaurant or explore the menu.](assets/images/projects/spinners-overview-2026-10-12.jpg)
+
+  *The Spinners Pizza homepage gives visitors links to call the restaurant or explore the menu. Captured October 12, 2026.*
+
+  ### Looking through the menu
+
+  The homepage has an Explore Menu link that takes visitors to the menu section. It also includes hours and a phone number for carry-out, so someone can look into a visit or call the restaurant.
+
+  ![The menu presents food photos and options for specialty pizzas, custom pizzas, house specials, and burgers.](assets/images/projects/spinners-menu-2026-10-12.jpg)
+
+  *The menu presents food photos and options for specialty pizzas, custom pizzas, house specials, and burgers. Captured October 12, 2026.*
+
+  ### Getting there from a phone
+
+  The site includes the address and a Google Maps directions link. You can use those from your phone when you're getting ready to go.
+
+  ![The location section on a phone-sized screen includes the address, carry-out phone number, map, and directions link.](assets/images/projects/spinners-phone-2026-10-12.jpg)
+
+  *The location section on a phone-sized screen includes the address, carry-out phone number, map, and directions link. Captured October 12, 2026.*
+
+  Working on this site gave me a chance to practice with the information a restaurant's visitors would need.
+
+  [Visit Spinners Pizza](https://spinners.pizza/) to look through the site. If your business needs a website, [reach out and tell me about it](#contact).
