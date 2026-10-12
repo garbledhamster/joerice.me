@@ -558,9 +558,81 @@ ol {
 	font-weight: 400;
 }
 
+.projectRow {
+	grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+	align-items: start;
+	gap: calc(var(--space) * 1.5);
+	padding-block: calc(var(--space) * 2);
+}
+
+.projectPreview,
+.projectContent {
+	min-width: 0;
+}
+
+.projectContent h3 {
+	margin: 0 0 0.6rem;
+}
+
+.projectImageLink {
+	display: block;
+	border: 1px solid var(--border);
+	background: var(--bg);
+}
+
+.projectImageLink img {
+	display: block;
+	width: 100%;
+	height: auto;
+}
+
+.projectImageLink:hover {
+	outline: 1px solid var(--fg);
+	outline-offset: 3px;
+}
+
+.projectImageLink:focus-visible,
+.projectDetailLink:focus-visible {
+	outline: 2px solid var(--fg);
+	outline-offset: 4px;
+}
+
+.projectPreview figcaption {
+	margin-top: 0.5rem;
+	font-size: 0.8rem;
+}
+
+.projectDetailLink {
+	display: inline-block;
+	margin-top: 0.5rem;
+	padding-block: 0.4rem;
+	font-size: 0.85rem;
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+}
+
+.projectDetailLink:hover {
+	text-decoration-thickness: 2px;
+}
+
+.projectContent .projectService {
+	margin-top: 1rem;
+	font-size: 0.9rem;
+}
+
+.projectContent .productLink {
+	width: fit-content;
+	max-width: 100%;
+	margin-top: 1.25rem;
+}
+
 @media (width <= 600px) {
 	.productItem {
 		grid-template-columns: minmax(0, 1fr);
+	}
+
+	.projectRow {
+		gap: var(--space);
 	}
 
 	.productLink {

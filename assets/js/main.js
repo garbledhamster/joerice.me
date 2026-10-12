@@ -116,11 +116,11 @@ async function initApp() {
       <div class="singlePageSection" id="portfolio" data-section="portfolio">
         ${getPortfolioTemplate()}
       </div>
-      <div class="singlePageSection" id="contact" data-section="contact">
-        ${getContactTemplate()}
-      </div>
       <div class="singlePageSection" id="products">
         ${getProductsTemplate()}
+      </div>
+      <div class="singlePageSection" id="contact" data-section="contact">
+        ${getContactTemplate()}
       </div>
       <div class="singlePageSection" id="gallery" data-section="gallery">
         ${getGalleryTemplate()}

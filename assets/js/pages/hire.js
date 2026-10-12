@@ -121,38 +121,91 @@ export function getHireTemplate() {
 }
 
 export function getProductsTemplate() {
-	return `      <section class="services productsGroup" id="productsSection" aria-labelledby="productsHeading">
+	const products = [
+		{
+			title: "The Manual for Feelings and Needs",
+			description:
+				"Find words for what you feel and what matters to you. The website explains the manual, lets you look through a real sample, and helps you choose between paperback and PDF.",
+			service:
+				"A product website that connects your work, useful content, and buying options so people can decide whether it fits.",
+			url: "https://feelings.ourstuff.space/",
+			domain: "feelings.ourstuff.space",
+			linkText: "Explore the manual",
+			image: "feelings-home-2026-10-12.jpg",
+			imageWidth: 1265,
+			imageHeight: 712,
+			alt: "Feelings and Needs product website introducing the manual, its sample, and format choices.",
+			caption: "Understand the book before choosing a format.",
+			detailImage: "feelings-sample-2026-10-12.jpg",
+			detailText: "View the book sample screenshot",
+		},
+		{
+			title: "The Classics",
+			description:
+				"Find classic works through search and ideas, follow a ten-year reading plan, and keep notes connected to what you read.",
+			service:
+				"A web app that makes a large collection easier to browse and connects information to a practical plan.",
+			url: "https://classics.ourstuff.space/",
+			domain: "classics.ourstuff.space",
+			linkText: "Try The Classics",
+			image: "classics-library-2026-10-12.jpg",
+			alt: "The Classics public library showing search controls and a collection of classic works.",
+			caption: "A public view of the searchable reading collection.",
+			detailImage: "classics-plan-2026-10-12.jpg",
+			detailText: "View the ten-year reading plan screenshot",
+		},
+		{
+			title: "Ourstuff.space",
+			description:
+				"Start with Mind, Body, Spirit, or Life to check in, capture thoughts, and work with goals. Calendar and other tools keep related activities within reach.",
+			service:
+				"A dashboard that brings related tasks and information together so people know where to start.",
+			url: "https://ourstuff.space/",
+			domain: "ourstuff.space",
+			linkText: "Try Ourstuff.space",
+			image: "ourstuff-dashboard-2026-10-12.jpg",
+			alt: "Ourstuff public dashboard with Mind, Body, Spirit, and Life check-in paths.",
+			caption: "One starting place for related parts of everyday life.",
+			detailImage: "ourstuff-calendar-2026-10-12.jpg",
+			detailText: "View the calendar screenshot",
+		},
+		{
+			title: "Fast Track",
+			description:
+				"Keep track of your fasting routine and sign in to sync your history.",
+			service:
+				"A web app with a clear account entry point for a focused everyday tool.",
+			url: "https://fasttrack.ourstuff.space/",
+			domain: "fasttrack.ourstuff.space",
+			linkText: "Open Fast Track",
+			image: "fasttrack-sign-in-2026-10-12.jpg",
+			alt: "Fast Track public account-entry screen with sign-in controls.",
+			caption: "Public sign-in screen. The tracking tools require an account.",
+		},
+	];
+	return `<section class="services productsGroup" id="productsSection" aria-labelledby="productsHeading">
         <h2 id="productsHeading">Books and tools</h2>
-        <p class="servicesNote">Books and tools I've made for learning, reflection, and everyday life.</p>
+        <p class="portfolioIntro">These are my own projects for learning, reflection, and everyday life. I shape the purpose and experience, with AI helping me develop the software and content.</p>
         <ul class="productList">
-          <li class="productItem">
-            <div>
-              <h4>The Manual for Feelings and Needs</h4>
-              <p>Find words for what you feel and what matters to you. An everyday reference with short definitions and practical situation guides, available in paperback and PDF.</p>
+          ${products
+						.map(
+							(product) => `<li class="productItem projectRow">
+            <figure class="projectPreview">
+              <a class="projectImageLink" href="assets/images/projects/${product.image}" target="_blank" rel="noopener noreferrer" aria-label="View the ${product.title} screenshot (opens in a new tab)">
+                <img src="assets/images/projects/${product.image}" width="${product.imageWidth || 1280}" height="${product.imageHeight || 720}" loading="lazy" decoding="async" alt="${product.alt}"/>
+              </a>
+              <figcaption>${product.caption}</figcaption>
+              ${product.detailImage ? `<a class="projectDetailLink" href="assets/images/projects/${product.detailImage}" target="_blank" rel="noopener noreferrer">${product.detailText}<span class="sr-only"> (opens in a new tab)</span></a>` : ""}
+            </figure>
+            <div class="projectContent">
+              <h3>${product.title}</h3>
+              <p>${product.description}</p>
+              <p class="projectService"><strong>What I can help build:</strong> ${product.service}</p>
+              <a class="productLink" href="${product.url}" target="_blank" rel="noopener noreferrer">${product.linkText}<span class="productDomain">${product.domain}</span><span class="sr-only"> (opens in a new tab)</span></a>
             </div>
-            <a class="productLink" href="https://feelings.ourstuff.space/" target="_blank" rel="noopener noreferrer">Explore the manual<span class="productDomain">feelings.ourstuff.space</span><span class="sr-only"> (opens in a new tab)</span></a>
-          </li>
-          <li class="productItem">
-            <div>
-              <h4>The Classics</h4>
-              <p>Explore classic works, follow a ten-year reading plan, and keep notes as you read.</p>
-            </div>
-            <a class="productLink" href="https://classics.ourstuff.space/" target="_blank" rel="noopener noreferrer">Explore The Classics<span class="productDomain">classics.ourstuff.space</span><span class="sr-only"> (opens in a new tab)</span></a>
-          </li>
-          <li class="productItem">
-            <div>
-              <h4>Ourstuff.space</h4>
-              <p>A personal dashboard for Mind, Body, Spirit, and Life. Check in, capture thoughts, and track goals in one place.</p>
-            </div>
-            <a class="productLink" href="https://ourstuff.space/" target="_blank" rel="noopener noreferrer">Open Ourstuff.space<span class="productDomain">ourstuff.space</span><span class="sr-only"> (opens in a new tab)</span></a>
-          </li>
-          <li class="productItem">
-            <div>
-              <h4>Fast Track</h4>
-              <p>Keep track of your fasting routine and sign in to sync your history.</p>
-            </div>
-            <a class="productLink" href="https://fasttrack.ourstuff.space/" target="_blank" rel="noopener noreferrer">Open Fast Track<span class="productDomain">fasttrack.ourstuff.space</span><span class="sr-only"> (opens in a new tab)</span></a>
-          </li>
+          </li>`,
+						)
+						.join("")}
         </ul>
       </section>`;
 }
