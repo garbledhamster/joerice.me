@@ -184,10 +184,15 @@
           return Promise.resolve(new Response("{}", { status: window.testFailQuoteRequest ? 500 : 200 }));
         }
         const response = nativeFetch(input, init);
-        if (requestUrl.endsWith("posts/0002.yaml")) {
-          return response.then(async (original) => new Response(`${await original.text()}\nserviceIds: ["web-site"]\n`, { status: original.status, headers: original.headers }));
+        const requestPath = new URL(requestUrl, document.baseURI).pathname;
+        if (requestPath.endsWith("posts/0002.yaml")) {
+          return response.then(async (original) => {
+            const post = jsyaml.load(await original.text());
+            post.serviceIds = ["web-site"];
+            return new Response(jsyaml.dump(post), { status: original.status, headers: original.headers });
+          });
         }
-        if (!requestUrl.endsWith("posts/0001.yaml")) return response;
+        if (!requestPath.endsWith("posts/0001.yaml")) return response;
 
         return new Promise((resolve, reject) => {
           setTimeout(() => response.then(resolve, reject), 300);
@@ -347,14 +352,114 @@
         );
       }
 
-      assert(
-        !document.querySelector(".pageControls"),
-        "portfolio should render every post without pagination controls",
-      );
-
       await waitFor(() => document.getElementById("portfolioStatus").hidden);
-      const editablePost = await waitFor(() => document.querySelector('[data-id="editable-test-post"]'));
-      const editableRow = editablePost?.closest(".postAccordion");
+      const postSearch = document.getElementById("q");
+      const topicFilter = document.getElementById("postTopicFilter");
+      const typeFilter = document.getElementById("postTypeFilter");
+      const postPagination = document.getElementById("postPagination");
+      const postResultsCount = document.getElementById("postResultsCount");
+      const postEmptyState = document.getElementById("postEmptyState");
+      const postButton = (url) => [...document.querySelectorAll(".postTitleButton")].find(button => button.dataset.url === url);
+      const pagePostUrls = () => [...document.querySelectorAll("#entryGrid .postTitleButton")].map(button => button.dataset.url);
+      const currentPostPage = () => Number(document.querySelector('#postPagination [aria-current="page"]')?.dataset.page || 1);
+      const openPost = async (url) => {
+        window.dispatchEvent(new CustomEvent("open-related-post", { detail: { url } }));
+        return waitFor(() => {
+          const button = postButton(url);
+          return button?.getAttribute("aria-expanded") === "true" ? button : null;
+        });
+      };
+      const setPostSearch = (value) => {
+        postSearch.value = value;
+        postSearch.dispatchEvent(new Event("input", { bubbles: true }));
+      };
+      const setPostFilter = (filter, value) => {
+        filter.value = value;
+        filter.dispatchEvent(new Event("change", { bubbles: true }));
+      };
+      const loader = jsyaml.load(await (await fetch("posts/loader.yaml")).text());
+      const bundledPosts = await Promise.all(loader.posts.map(async (url) => ({
+        ...jsyaml.load(await (await fetch(url)).text()), url,
+      })));
+      const allTestPosts = [...bundledPosts, ...Object.entries(testPosts).map(([id, post]) => ({ ...post, url: `firestore:${id}` }))];
+      const unpinnedPosts = allTestPosts.filter(post => !post.pinned);
+
+      assert(!document.querySelector(".websiteWork"), "website projects should appear with the other posts instead of in a second list");
+      assert(topicFilter && typeFilter, "posts should offer service/topic and post-type filters");
+      assert(postPagination?.tagName === "NAV", "pagination should expose a navigation landmark");
+      assert(postResultsCount?.getAttribute("aria-live") === "polite", "updated result counts should be announced without interrupting readers");
+      assert(postEmptyState, "posts should provide a recoverable empty state");
+      const firstPageUrls = pagePostUrls();
+      assert(firstPageUrls.length === 6, "the initial page should display six unpinned posts");
+      assert(document.querySelector('#pinnedGrid [data-url="posts/0001.yaml"]'), "pinned posts should stay separate from the six-post page");
+      assert(firstPageUrls.every(url => !bundledPosts.find(post => post.url === url)?.pinned), "pinned posts should not also appear in the paginated list");
+      assert(firstPageUrls.every(url => postButton(url)?.querySelector(".postLabels")), "each post title should identify its type and services or topics");
+      assert(postResultsCount?.textContent.includes(`of ${unpinnedPosts.length} posts`), "the result count should include all posts across every page");
+      assert(document.querySelector('#postPagination [data-page="1"]')?.getAttribute("aria-current") === "page", "the first page should identify the current page accessibly");
+
+      const pageTwoButton = document.querySelector('#postPagination [data-page="2"]');
+      assert(pageTwoButton, "more than six posts should offer a second page");
+      if (pageTwoButton && topicFilter && typeFilter && postEmptyState) {
+        pageTwoButton.click();
+        await waitFor(() => currentPostPage() === 2);
+        const secondPageUrls = pagePostUrls();
+        assert(secondPageUrls.length > 0 && secondPageUrls.length <= 6, "moving pages should keep the list within six posts");
+        assert(secondPageUrls.every(url => !firstPageUrls.includes(url)), "the second page should show different posts without duplicates");
+        assert(document.querySelector('#pinnedGrid [data-url="posts/0001.yaml"]'), "moving pages should retain the separate pinned section");
+        assert(postResultsCount.textContent.includes(`of ${unpinnedPosts.length} posts`), "moving pages should preserve the total result count");
+
+        document.querySelector('#postPagination [data-page="1"]').click();
+        const offPagePost = allTestPosts.find(post => post.url === secondPageUrls[0]);
+        assert(offPagePost && !postButton(offPagePost.url), "the search fixture should start outside the current page");
+        if (offPagePost) {
+          setPostSearch(offPagePost.title);
+          await waitFor(() => postButton(offPagePost.url));
+          assert(postButton(offPagePost.url), "search should find matching posts on other pages");
+          assert(currentPostPage() === 1, "search changes should start at the first result page");
+          assert(pagePostUrls().length === 1 && postResultsCount.textContent.includes("of 1 posts"), "search should paginate and count only matching posts");
+        }
+        setPostSearch("no-post-can-match-this-unique-query");
+        assert(pagePostUrls().length === 0 && !postEmptyState.hidden, "unmatched searches should show an empty state");
+        assert(document.querySelectorAll("#pinnedGrid .postTitleButton").length === 0, "search should filter pinned posts as well");
+        setPostSearch("");
+        assert(postEmptyState.hidden && pagePostUrls().length === 6, "clearing search should recover the first page");
+
+        const assertFilteredPosts = (expected, label) => {
+          const rendered = pagePostUrls();
+          assert(rendered.length === Math.min(6, expected.filter(post => !post.pinned).length), `${label} should respect the page size`);
+          assert(rendered.every(url => expected.some(post => post.url === url)), `${label} should show only matching posts`);
+          assert(postResultsCount.textContent.includes(`of ${expected.filter(post => !post.pinned).length} posts`), `${label} should count matches across the full collection`);
+        };
+        document.querySelector('#postPagination [data-page="2"]').click();
+        assert([...topicFilter.options].some(option => option.value === "service:web-site"), "topic choices should include related services");
+        setPostFilter(topicFilter, "service:web-site");
+        assert(currentPostPage() === 1, "changing the service/topic filter should return to the first page");
+        assertFilteredPosts(allTestPosts.filter(post => post.serviceIds?.includes("web-site")), "service filtering");
+        assert(pagePostUrls().every(url => postButton(url)?.querySelector(".postLabels")?.textContent.includes("Web Site")), "service-related posts should show the service name beside their titles");
+        setPostFilter(topicFilter, "all");
+        document.querySelector('#postPagination [data-page="2"]').click();
+        assert([...topicFilter.options].some(option => option.value === "topic:website"), "topic choices should include the website topic");
+        setPostFilter(topicFilter, "topic:website");
+        assert(currentPostPage() === 1, "changing a topic should return to the first page");
+        assertFilteredPosts(allTestPosts.filter(post => post.tags?.includes("website")), "topic filtering");
+        setPostFilter(topicFilter, "all");
+        document.querySelector('#postPagination [data-page="2"]').click();
+        setPostFilter(typeFilter, "project");
+        assert(currentPostPage() === 1, "changing the post type should return to the first page");
+        assertFilteredPosts(allTestPosts.filter(post => (post.postType || "article") === "project"), "post-type filtering");
+        assert(pagePostUrls().length > 0, "the project type should include published website projects");
+        assert(pagePostUrls().every(url => postButton(url)?.querySelector(".postLabels")?.textContent.toLowerCase().includes("project")), "project posts should identify their post type beside the title");
+        setPostFilter(typeFilter, "article");
+        assertFilteredPosts(allTestPosts.filter(post => (post.postType || "article") === "article"), "article filtering");
+        setPostFilter(topicFilter, "topic:website");
+        const combinedMatches = allTestPosts.filter(post => (post.postType || "article") === "article" && post.tags?.includes("website"));
+        assertFilteredPosts(combinedMatches, "combined type and topic filtering");
+        assert(postEmptyState.hidden === Boolean(combinedMatches.length), "combined filters should display an empty state only when nothing matches");
+        setPostFilter(topicFilter, "all");
+        setPostFilter(typeFilter, "all");
+      }
+      let editablePost = await openPost("firestore:editable-test-post");
+      let editableRow = editablePost?.closest(".postAccordion");
       const relatedCard = document.querySelector('.serviceCard[data-service="Web Site"]');
       const relatedButton = relatedCard?.querySelector('.servicePostsToggle');
       assert(relatedButton, "flipped services should offer related posts");
@@ -364,12 +469,26 @@
       assert(relatedLinks.some(link => link.textContent === "Editable test post") && bundledRelatedLink, "related lists should include tagged Firebase and bundled posts");
       assert(!relatedLinks.some(link => link.textContent === "Private draft" || link.dataset.postUrl === "posts/0003.yaml"), "related lists should exclude private and untagged posts");
       assert(relatedCard?.querySelector('.serviceToggle').checked, "related posts must not unflip the service card");
+      setPostSearch("no-post-can-match-this-unique-query");
+      if (typeFilter && topicFilter) {
+        setPostFilter(typeFilter, "project");
+        setPostFilter(topicFilter, "topic:website");
+      }
+      assert(!postButton("posts/0002.yaml"), "the related-post fixture should start outside the filtered list");
       bundledRelatedLink?.click();
-      const bundledTitle = document.querySelector('[data-url="posts/0002.yaml"]');
-      await waitFor(() => bundledTitle?.getAttribute('aria-expanded') === 'true');
+      const bundledTitle = await waitFor(() => {
+        const button = postButton("posts/0002.yaml");
+        return button?.getAttribute("aria-expanded") === "true" ? button : null;
+      });
+      assert(bundledTitle, "service-related links should navigate to and open a post outside the current page");
+      assert(postSearch.value === "" && typeFilter?.value === "all" && topicFilter?.value === "all", "service-related links should clear filters that hide the requested post");
       assert(bundledTitle?.closest('.postAccordion').querySelector('.relatedServiceSelect[value="web-site"]'), "bundled post readers should offer their tagged service");
       relatedLinks.find(link => link.textContent === "Editable test post")?.click();
-      await waitFor(() => editablePost?.getAttribute('aria-expanded') === 'true');
+      editablePost = await waitFor(() => {
+        const button = postButton("firestore:editable-test-post");
+        return button?.getAttribute("aria-expanded") === "true" ? button : null;
+      });
+      editableRow = editablePost?.closest(".postAccordion");
       assert(editableRow?.classList.contains('is-open'), "related titles should open the matching inline reader");
       relatedCard?.querySelector('.serviceDetailsButton')?.click();
       assert(!relatedCard?.classList.contains('show-related-posts'), "back to details should restore service highlights");
@@ -380,7 +499,7 @@
       assert(!relatedCard?.querySelector('.serviceToggle').checked, "Close should explicitly return to the card front");
       relatedCard?.querySelector('.serviceOpenButton')?.click();
       assert(relatedCard?.querySelector('.serviceToggle').checked, "View details should reopen the card");
-      const emptyCard = document.querySelector('.serviceCard[data-service="Web App"]');
+      const emptyCard = document.querySelector('.serviceCard[data-service="Logo Design"]');
       emptyCard.querySelector('.serviceCardFlip').click();
       emptyCard.querySelector('.servicePostsToggle')?.click();
       assert(emptyCard.querySelector('.servicePosts')?.textContent.includes("No published posts"), "services without tagged posts should explain the empty list");
@@ -409,9 +528,7 @@
       window.testWrittenPostId = null;
 
 	  const staleEditor = inlineEditor;
-	  const secondEditablePost = await waitFor(() =>
-		document.querySelector('[data-id="second-editable-test-post"]'),
-	  );
+	  const secondEditablePost = await openPost("firestore:second-editable-test-post");
 	  secondEditablePost?.closest(".postAccordion")?.querySelector(".postTitleEditButton")?.click();
 	  await waitFor(() =>
 		secondEditablePost?.closest(".postAccordion")?.querySelector(".postInlineEditor"),
@@ -423,21 +540,23 @@
 		"a stale inline editor should not save over the currently open post",
 	  );
 
-	  const firstPost = await waitFor(() => document.querySelector('[data-url^="posts/"]'));
+	  const firstPost = await openPost("posts/0008.yaml");
 	  assert(firstPost, "portfolio should render post titles as expandable buttons");
 
       if (firstPost) {
         firstPost.click();
+        firstPost.click();
         const openPost = await waitFor(() => {
-          const body = document.querySelector(".postAccordion.is-open .postInlineBody");
+          const body = firstPost.closest(".postAccordion").querySelector(".postInlineBody");
           return body?.textContent.trim().length > 40 ? body : null;
         });
         assert(firstPost.getAttribute("aria-expanded") === "true", "clicked post title should become expanded");
         assert(openPost?.textContent.trim().length > 40, "expanded post reader should contain the post body");
       }
 
-      const delayedPost = document.querySelector('[data-url="posts/0001.yaml"]');
-      const fasterPost = document.querySelector('[data-url="posts/0002.yaml"]');
+      await openPost("posts/0002.yaml");
+      const delayedPost = postButton("posts/0001.yaml");
+      const fasterPost = postButton("posts/0002.yaml");
 
       if (delayedPost && fasterPost) {
         delayedPost.closest(".postAccordion")?.classList.contains("is-open") && delayedPost.click();
@@ -467,20 +586,46 @@
       assert(aboutCopy.includes("systems generalist"), "About section should explain Joe's professional contribution");
       assert(aboutCopy.includes("help themselves"), "About section should explain the self-service purpose");
 
-      assert(!document.querySelector('[data-url="posts/0007.yaml"]'), "the retired resume must not appear in the portfolio");
+      assert(!bundledPosts.some(post => post.url === "posts/0007.yaml"), "the retired resume must not appear in the portfolio source list");
       for (let number = 8; number <= 12; number++) {
         const url = `posts/${String(number).padStart(4, "0")}.yaml`;
-        const button = document.querySelector(`[data-url="${url}"]`);
-        assert(button, `professional article ${url} should be listed`);
+        const button = await openPost(url);
+        assert(button, `professional article ${url} should be reachable across pages`);
         if (!button) continue;
-        button.click();
         const article = button.closest(".postAccordion");
         await waitFor(() => article.classList.contains("is-open"));
         const body = article.querySelector(".postInlineBody").textContent;
         assert(body.length > 500 && !body.includes("Unable to load"), `professional article ${url} should open with its complete content`);
       }
 
+      // Migrating an actual project must retain the metadata used to find it.
+      const feelingsSource = bundledPosts.find(post => post.url === "posts/0017.yaml");
+      const feelingsPost = (await openPost("posts/0017.yaml"))?.closest(".postAccordion");
+      feelingsPost?.querySelector(".postTitleEditButton")?.click();
+      const feelingsEditor = await waitFor(() => feelingsPost?.querySelector(".postInlineEditor"));
+      assert(feelingsSource && feelingsEditor, "the current Feelings and Needs project should offer a real bundled-post editor");
+      if (feelingsSource && feelingsEditor) {
+        feelingsEditor.elements.body.value += "\n\nBrowser regression save.";
+        feelingsEditor.requestSubmit();
+        const savedFeelings = await waitFor(() => testPosts["imported-0017"]);
+        await waitFor(() => !feelingsEditor.isConnected);
+        assert(savedFeelings?.postType === feelingsSource.postType, "editing a bundled project should preserve its Project type in Firebase");
+        assert(savedFeelings?.productName === feelingsSource.productName, "editing a bundled project should preserve its product name in Firebase");
+        assert(JSON.stringify(savedFeelings?.tags) === JSON.stringify(feelingsSource.tags), "editing a bundled project should preserve its topic tags in Firebase");
+        setPostFilter(typeFilter, "project");
+        const migratedProject = postButton("firestore:imported-0017");
+        assert(migratedProject, "the migrated Feelings and Needs post should remain in the Project filter");
+        assert(migratedProject?.querySelector(".postLabels")?.textContent.includes("Feelings and Needs"), "the migrated project should still show its Feelings and Needs product label");
+        setPostFilter(typeFilter, "all");
+        setPostSearch("current-project");
+        assert(postButton("firestore:imported-0017"), "tag searches should find the Firebase replacement after a project is edited");
+        assert(!postButton("posts/0017.yaml"), "the edited project should replace its bundled original");
+        setPostSearch("");
+      }
+
       // Exercise actual editor forms with only the Firebase boundary replaced.
+      setPostSearch("Custom websites");
+      assert(pagePostUrls().length === 0 && !postEmptyState.hidden, "a future service name should initially have no search matches");
       document.querySelector('.serviceEditButton[data-service-id="web-site"]').click();
       const serviceEditor = document.querySelector(".serviceEditor");
       serviceEditor.elements.title.value = "Custom websites";
@@ -488,8 +633,11 @@
       await waitFor(() => !serviceEditor.isConnected);
       assert(testPosts["service-web-site"]?.title === "Custom websites", "service edits should persist as Firebase service records");
       assert(document.querySelector('.serviceCard[data-service="Custom websites"]'), "saved services should refresh their cards");
+      assert(postSearch.value === "Custom websites" && pagePostUrls().length > 0 && postEmptyState.hidden, "renaming a service should immediately reapply the current search and show its related posts");
+      assert(pagePostUrls().every(url => postButton(url)?.querySelector(".postLabels")?.textContent.includes("Custom websites")), "results of a renamed-service search should display its current name");
+      setPostSearch("");
 
-      const aboutPost = document.querySelector('[data-url="posts/0001.yaml"]')?.closest(".postAccordion");
+      const aboutPost = (await openPost("posts/0001.yaml"))?.closest(".postAccordion");
       aboutPost?.querySelector(".postTitleEditButton")?.click();
       const aboutEditor = await waitFor(() => aboutPost?.querySelector(".postInlineEditor"));
       assert(aboutEditor, "bundled About Me post should have an inline editor");
@@ -504,7 +652,7 @@
         assert(!testPosts["imported-0001"], "failed migration should not partially save");
         window.testFailWrites = false;
         aboutEditor.requestSubmit();
-        document.querySelector('.postTitleButton[data-id="second-editable-test-post"]').click();
+        window.dispatchEvent(new CustomEvent("open-related-post", { detail: { url: "firestore:second-editable-test-post" } }));
         await waitFor(() => testPosts["imported-0001"]);
         const savedCard = document.querySelector('.serviceCard[data-service="Custom websites"]');
         savedCard?.querySelector('.servicePostsToggle')?.click();
@@ -513,6 +661,7 @@
         await waitFor(() => document.querySelector('.postTitleButton[data-id="imported-0001"]'));
         assert(testPosts["imported-0001"]?.body.includes("phone"), "bundled edits should persist to Firebase Posts");
         assert(testPosts["imported-0001"]?.serviceIds.includes("web-site"), "related services should persist with the post");
+        assert(JSON.stringify(testPosts["imported-0001"]?.tags) === JSON.stringify(bundledPosts.find(post => post.url === "posts/0001.yaml")?.tags), "bundled About-post migration should preserve its original topic tags");
         const updatedCard = document.querySelector('.serviceCard[data-service="Custom websites"]');
         assert([...updatedCard.querySelectorAll('.servicePostLink')].some(link => link.textContent === "About my career"), "saving tags should immediately update the service's related posts");
         assert(!document.querySelector('[data-url="posts/0001.yaml"]'), "saved Firebase posts should replace bundled originals");
@@ -532,6 +681,8 @@
         destroyPortfolio();
         initPortfolio();
         await waitFor(() => document.getElementById("portfolioStatus").hidden);
+        window.dispatchEvent(new CustomEvent("open-related-post", { detail: { url: "firestore:imported-0001" } }));
+        window.dispatchEvent(new CustomEvent("open-related-post", { detail: { url: "posts/0001.yaml" } }));
         assert(!document.querySelector('[data-id="imported-0001"]') && !document.querySelector('[data-url="posts/0001.yaml"]'), "unpublished Firebase overrides must not reveal bundled originals on a return visit");
         assert(![...document.querySelectorAll('.servicePostLink')].some(link => link.textContent === "About my career" || link.textContent === "Private draft"), "unpublished posts must disappear from related service lists");
         window.testFailPostReads = true;
@@ -556,7 +707,7 @@
         const mode = new URLSearchParams(location.search).get("manual");
         const selector = mode === "post"
           ? '[data-url="posts/0001.yaml"]'
-          : mode === "related" ? '.postTitleButton[data-id="editable-test-post"]'
+          : mode === "related" ? '.serviceCard[data-service="Web Site"]'
           : '.serviceEditButton[data-service-id="web-site"]';
         for (let attempt = 0; attempt < 100; attempt += 1) {
           const target = document.querySelector(selector);

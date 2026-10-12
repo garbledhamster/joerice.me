@@ -3,6 +3,7 @@ title: "Writing Notes Someone Can Use Later"
 date: 2026-10-01
 pinned: false
 tags: ["documentation", "knowledge", "notes", "learning"]
+serviceIds: ["knowledge-mgmt"]
 content: |
   I take notes because I want to use what I've learned again. That might mean returning to a technical issue next month, handing a project to a teammate, or finding an idea from a book after I've forgotten where I read it.
 

@@ -2,6 +2,7 @@ id: "0013"
 title: "Building a website for my parents' hog farm"
 date: 2026-10-12
 pinned: false
+postType: project
 tags: ["website","family","farm"]
 serviceIds: ["web-site"]
 "Joe's comments": ""

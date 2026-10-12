@@ -2,6 +2,7 @@ id: "0014"
 title: "A website for Spinners Pizza"
 date: 2026-10-12
 pinned: false
+postType: project
 tags: ["website","restaurant","community"]
 serviceIds: ["web-site"]
 "Joe's comments": ""

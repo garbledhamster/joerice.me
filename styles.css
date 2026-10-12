@@ -2922,18 +2922,8 @@ footer {
 	color: var(--fg);
 }
 
-.websiteWork {
-	color: var(--fg);
-}
-
-.websiteWork .portfolioInvite {
-	margin-top: 1rem;
-}
-
 .portfolioNotes {
-	margin-top: 2rem;
-	padding-top: 1.5rem;
-	border-top: 1px solid var(--border);
+	margin-top: 1rem;
 }
 
 .portfolioNotes .sectionHeader h3 {
@@ -2950,4 +2940,122 @@ footer {
 .contact button[type="submit"]:hover:not([disabled]) {
 	background: var(--bg);
 	color: var(--fg);
+}
+
+/* Post browsing follows the site's outlined controls and yellow accents. */
+.postFilters {
+	display: grid;
+	grid-template-columns: minmax(0, 2fr) minmax(0, 1fr) minmax(0, 1fr);
+	gap: 1rem;
+	margin: 1.5rem 0 1rem;
+}
+.postFilters label,
+.postFilters .search {
+	display: grid;
+	gap: 0.4rem;
+	margin: 0;
+	font-size: 0.85rem;
+	font-weight: 600;
+}
+.postFilters #q,
+.postFilters select {
+	width: 100%;
+	min-width: 0;
+	min-height: 44px;
+	padding: 0.7rem;
+	border: 1px solid var(--border);
+	background: var(--bg);
+	color: var(--fg);
+	font: inherit;
+	font-weight: 400;
+}
+.postFilters #q::placeholder {
+	color: #555;
+	opacity: 1;
+}
+.postTitleText {
+	display: grid;
+	gap: 0.5rem;
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+.postLabels {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.35rem 0.8rem;
+	font-size: 0.78rem;
+	line-height: 1.5;
+}
+.postType {
+	font-weight: 600;
+}
+.postTopic {
+	color: #444;
+}
+.postResultsCount {
+	margin: 1.5rem 0 0.75rem;
+	font-size: 0.85rem;
+	font-variant-numeric: tabular-nums;
+}
+.postEmptyState {
+	padding: 1.5rem 0;
+}
+.postPagination {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 0.5rem;
+	margin-top: 1.25rem;
+}
+.postPagination[hidden],
+#pinnedPosts[hidden] {
+	display: none;
+}
+.postPagination button {
+	min-width: 44px;
+	min-height: 44px;
+	padding: 0.6rem 0.8rem;
+	border: 1px solid var(--border);
+	background: var(--bg);
+	color: var(--fg);
+	font: inherit;
+	cursor: pointer;
+}
+.postPagination button[aria-current="page"] {
+	background: var(--yellow);
+	font-weight: 600;
+}
+.postPagination button:hover:not(:disabled) {
+	background: var(--fg);
+	color: var(--bg);
+}
+.postPagination button:disabled {
+	color: #595959;
+	border-color: #888;
+	cursor: default;
+}
+.postFilters :focus-visible,
+.postPagination button:focus-visible,
+.postTitleButton:focus-visible {
+	outline: 2px solid var(--blue);
+	outline-offset: 3px;
+}
+#entryGrid {
+	scroll-margin-top: calc(var(--header-h) + 16px);
+}
+@media (max-width: 600px) {
+	.postFilters {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+	.postFilters .search {
+		grid-column: 1 / -1;
+	}
+}
+
+.portfolioNotes {
+	color: var(--fg);
+}
+.portfolioNotes .refreshBtn {
+	color: var(--fg);
+	border-color: var(--border);
 }

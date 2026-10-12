@@ -7,7 +7,7 @@
  */
 
 import { closeModal, openModal } from "../components/modal.js";
-import { $, $$, addListener } from "../core/dom.js";
+import { $, addListener } from "../core/dom.js";
 import {
 	ensureAdmin,
 	getFirestore,
@@ -15,6 +15,7 @@ import {
 	onAuthStateChange,
 } from "../services/auth.js";
 import {
+	getServices,
 	relatedServices,
 	selectService,
 	servicePicker,
@@ -34,6 +35,8 @@ let editingPostSource = null;
 let editingPostCreatedDate = null;
 let hasLoadedInitialPosts = false;
 let relatedPostsStatus = "loading";
+const POSTS_PER_PAGE = 6;
+let currentPage = 1;
 
 export function getRelatedPosts(serviceId) {
 	return {
@@ -59,51 +62,28 @@ export function getPortfolioTemplate() {
 	return `
     <section class="portfolio" id="portfolioSection">
       <h2>Work &amp; notes</h2>
-      <section class="websiteWork" aria-labelledby="websiteWorkHeading">
-        <h3 id="websiteWorkHeading">Websites I've built</h3>
-        <p class="portfolioIntro">These are websites I've built for other people. Each one is live, so you can look through it and get a feel for the work.</p>
-        <ul class="productList">
-          <li class="productItem">
-            <div>
-              <h4>J &amp; D's Heritage Hog Farm</h4>
-              <p>Learn about the farm and its pasture-raised hogs, look through photos, and find out how purchasing and pickup work.</p>
-            </div>
-            <a class="productLink" href="https://jdhogfarm.com/" target="_blank" rel="noopener noreferrer">Visit the farm site<span class="productDomain">jdhogfarm.com</span><span class="sr-only"> (opens in a new tab)</span></a>
-          </li>
-          <li class="productItem">
-            <div>
-              <h4>Spinners Pizza</h4>
-              <p>Find the menu, hours, and directions so you can plan a visit or call in a carry-out order.</p>
-            </div>
-            <a class="productLink" href="https://spinners.pizza/" target="_blank" rel="noopener noreferrer">Visit Spinners Pizza<span class="productDomain">spinners.pizza</span><span class="sr-only"> (opens in a new tab)</span></a>
-          </li>
-          <li class="productItem">
-            <div>
-              <h4>Privian Care Management</h4>
-              <p>Learn about RN care management and other support for seniors so families can understand the services and get in touch.</p>
-            </div>
-            <a class="productLink" href="https://priviancare.com/" target="_blank" rel="noopener noreferrer">Visit Privian Care<span class="productDomain">priviancare.com</span><span class="sr-only"> (opens in a new tab)</span></a>
-          </li>
-        </ul>
-        <p class="portfolioInvite">If you need a website, <a class="textLink" href="#contact">tell me what you have in mind so we can work out a quote.</a></p>
-      </section>
       <section class="portfolioNotes" aria-labelledby="portfolioNotesHeading">
         <div class="sectionHeader">
           <div class="sectionHeaderLeft">
-            <h3 id="portfolioNotesHeading">How I work</h3>
+            <h3 id="portfolioNotesHeading">Posts</h3>
             <button class="refreshBtn" id="refreshPostsBtn" type="button" title="Refresh posts" aria-label="Refresh posts">
               <i class="fas fa-sync"></i>
             </button>
           </div>
           <button class="editBtn" id="addPortfolioBtn" type="button" data-admin-only>Add Post</button>
         </div>
-        <p class="portfolioIntro">These posts share how I approach technical problems, planning, documentation, and learning new tools. Open one to get a better sense of how I work.</p>
-        <div class="search"><label class="sr-only" for="q">Search posts and notes</label><input id="q" type="search" placeholder="Search posts and notes..."/></div>
+        <p class="portfolioIntro">Projects I'm working on, websites I've built, and notes on how I work. Choose a topic or open a post to look through it.</p>
+        <div class="postFilters">
+          <div class="search"><label for="q">Search</label><input id="q" type="search" placeholder="Search posts and notes..."/></div>
+          <label for="postTopicFilter">Service or topic<select id="postTopicFilter"><option value="all">All topics</option></select></label>
+          <label for="postTypeFilter">Post type<select id="postTypeFilter"><option value="all">All types</option><option value="project">Projects</option><option value="article">Articles</option><option value="note">Notes</option><option value="product">Products</option></select></label>
+        </div>
         <div class="portfolioStatus" id="portfolioStatus" hidden></div>
-        <div class="subhead">Pinned</div>
-        <div class="grid" id="pinnedGrid"></div>
-        <div class="subhead">Posts</div>
+        <div id="pinnedPosts" hidden><h4 class="subhead">Pinned</h4><div class="grid" id="pinnedGrid"></div></div>
+        <p class="postResultsCount" id="postResultsCount" aria-live="polite" aria-atomic="true"></p>
         <div class="grid" id="entryGrid"></div>
+        <p class="postEmptyState" id="postEmptyState" hidden>No posts match. Try another topic or clear your search.</p>
+        <nav class="postPagination" id="postPagination" aria-label="Post pages" hidden></nav>
       </section>
     </section>
   `;
@@ -143,7 +123,7 @@ function formatPostEntry(post, index, group) {
     <article class="postAccordion" data-tags="${safeTags}">
       <div class="postTitleRow${canManage ? " is-manageable" : ""}">
         <button class="entry postTitleButton" type="button" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr} aria-expanded="false" aria-controls="${readerId}">
-          <span>${safeTitle}${unpublishedIndicator}</span>
+          <span class="postTitleText"><span>${safeTitle}${unpublishedIndicator}</span><span class="postLabels">${postLabels(post)}</span></span>
           <span class="postToggleIcon" aria-hidden="true">+</span>
         </button>
         ${managementControls}
@@ -215,7 +195,9 @@ async function loadFirestorePosts() {
 					data["Created Date"] || data.createdDate || new Date().toISOString(),
 				url: `firestore:${doc.id}`,
 				pinned: isPinned,
-				tags: [],
+				tags: Array.isArray(data.tags) ? data.tags : [],
+				postType: data.postType,
+				productName: data.productName,
 				id: doc.id,
 				source: "firestore",
 				published: isPublished,
@@ -363,28 +345,131 @@ function openPortfolioEditor(post = null) {
 	setTimeout(() => portfolioPostTitle?.focus(), 0);
 }
 
-/**
- * Render pinned posts
- */
+const postTypes = {
+	project: "Project",
+	article: "Article",
+	note: "Note",
+	product: "Product",
+};
+
+function postType(post) {
+	return Object.hasOwn(postTypes, post.postType) ? post.postType : "article";
+}
+
+function postTopics(post) {
+	const serviceNames = getServices()
+		.filter((service) => post.serviceIds?.includes(service.id))
+		.map((service) => service.title);
+	return [
+		...new Set(
+			[
+				post.productName,
+				...serviceNames,
+				...(serviceNames.length ? [] : post.tags || []),
+			].filter(Boolean),
+		),
+	];
+}
+
+function postLabels(post) {
+	return `<span class="postType">${postTypes[postType(post)]}</span>${postTopics(
+		post,
+	)
+		.slice(0, 2)
+		.map((topic) => `<span class="postTopic">${sanitizeText(topic)}</span>`)
+		.join("")}`;
+}
+
+function filteredPosts(collection) {
+	const query = searchInput?.value.trim().toLocaleLowerCase() || "";
+	const topic = $("#postTopicFilter")?.value || "all";
+	const type = $("#postTypeFilter")?.value || "all";
+	return collection.filter((post) => {
+		const matchesTopic =
+			topic === "all" ||
+			(topic.startsWith("service:")
+				? post.serviceIds?.includes(topic.slice(8))
+				: post.tags?.includes(topic.slice(6)));
+		const searchable = [
+			post.title,
+			postTypes[postType(post)],
+			...postTopics(post),
+			...(post.tags || []),
+		]
+			.join(" ")
+			.toLocaleLowerCase();
+		return (
+			matchesTopic &&
+			(type === "all" || postType(post) === type) &&
+			searchable.includes(query)
+		);
+	});
+}
+
+function renderPostFilters() {
+	const filter = $("#postTopicFilter");
+	if (!filter) return;
+	const previous = filter.value;
+	const all = [...pinned, ...notes];
+	const services = getServices().filter((service) =>
+		all.some((post) => post.serviceIds?.includes(service.id)),
+	);
+	const topics = [...new Set(all.flatMap((post) => post.tags || []))].sort(
+		(a, b) => a.localeCompare(b),
+	);
+	filter.innerHTML = `<option value="all">All topics</option>${services.length ? `<optgroup label="Services">${services.map((service) => `<option value="service:${sanitizeText(service.id)}">${sanitizeText(service.title)}</option>`).join("")}</optgroup>` : ""}${topics.length ? `<optgroup label="Topics">${topics.map((topic) => `<option value="topic:${sanitizeText(topic)}">${sanitizeText(topic)}</option>`).join("")}</optgroup>` : ""}`;
+	filter.value = [...filter.options].some((option) => option.value === previous)
+		? previous
+		: "all";
+}
+
 function renderPinned() {
 	if (!pinnedGrid) return;
 	if (openAccordion && pinnedGrid.contains(openAccordion))
 		closePost(openAccordion);
-	pinnedGrid.innerHTML = pinned
+	const entries = filteredPosts(pinned);
+	pinnedGrid.innerHTML = entries
 		.map((post, index) => formatPostEntry(post, index, "pinned"))
 		.join("");
+	$("#pinnedPosts").hidden = entries.length === 0;
 }
 
-/**
- * Render every non-pinned post.
- */
 export function renderPage() {
 	if (!entryGrid) return;
 	if (openAccordion && entryGrid.contains(openAccordion))
 		closePost(openAccordion);
-	entryGrid.innerHTML = notes
-		.map((post, index) => formatPostEntry(post, index, "post"))
+	renderPostFilters();
+	renderPinned();
+	const entries = filteredPosts(notes);
+	const pages = Math.max(1, Math.ceil(entries.length / POSTS_PER_PAGE));
+	currentPage = Math.min(Math.max(1, currentPage), pages);
+	const start = (currentPage - 1) * POSTS_PER_PAGE;
+	entryGrid.innerHTML = entries
+		.slice(start, start + POSTS_PER_PAGE)
+		.map((post, index) => formatPostEntry(post, start + index, "post"))
 		.join("");
+	const pinnedCount = filteredPosts(pinned).length;
+	$("#postResultsCount").textContent =
+		`${entries.length ? start + 1 : 0}–${Math.min(start + POSTS_PER_PAGE, entries.length)} of ${entries.length} posts${pinnedCount ? ` · ${pinnedCount} pinned` : ""}`;
+	$("#postEmptyState").hidden = entries.length + pinnedCount > 0;
+	const pagination = $("#postPagination");
+	pagination.hidden = pages <= 1;
+	const pageButton = (page, label, disabled = false) =>
+		`<button type="button" data-page="${page}"${disabled ? " disabled" : ""}${page === currentPage && typeof label === "number" ? ' aria-current="page"' : ""} aria-label="${typeof label === "number" ? `Page ${page}` : `${label} page`}">${label}</button>`;
+	const pageNumbers = [
+		...new Set([1, currentPage - 1, currentPage, currentPage + 1, pages]),
+	]
+		.filter((page) => page > 0 && page <= pages)
+		.sort((a, b) => a - b);
+	pagination.innerHTML =
+		pageButton(currentPage - 1, "Previous", currentPage === 1) +
+		pageNumbers
+			.map(
+				(page, index) =>
+					`${index && page - pageNumbers[index - 1] > 1 ? '<span aria-hidden="true">…</span>' : ""}${pageButton(page, page)}`,
+			)
+			.join("") +
+		pageButton(currentPage + 1, "Next", currentPage === pages);
 }
 
 /**
@@ -738,7 +823,9 @@ async function loadYamlPosts() {
 					date: data.date,
 					url: filePath,
 					pinned: data.pinned,
-					tags: data.tags || [],
+					tags: Array.isArray(data.tags) ? data.tags : [],
+					postType: data.postType,
+					productName: data.productName,
 					serviceIds: Array.isArray(data.serviceIds) ? data.serviceIds : [],
 					source: "yaml",
 				};
@@ -806,6 +893,13 @@ export function initPortfolio() {
 	);
 	cleanupFns.push(
 		addListener(window, "service-catalog-change", () => {
+			renderPostFilters();
+			for (const button of document.querySelectorAll(".postTitleButton")) {
+				const post = [...pinned, ...notes].find(
+					(entry) => entry.url === button.dataset.url,
+				);
+				if (post) $(".postLabels", button).innerHTML = postLabels(post);
+			}
 			document
 				.querySelectorAll(
 					".postInlineEditor .servicePicker, #portfolioServicePicker .servicePicker",
@@ -817,8 +911,22 @@ export function initPortfolio() {
 					);
 					picker.outerHTML = servicePicker(checked);
 				});
-			if (openAccordion && !openAccordion.classList.contains("is-editing"))
+			if (
+				searchInput?.value.trim() &&
+				!openAccordion?.classList.contains("is-editing")
+			) {
+				const activeUrl = currentPost?.url;
+				renderPage();
+				const title = Array.from(
+					document.querySelectorAll(".postTitleButton"),
+				).find((button) => button.dataset.url === activeUrl);
+				if (title) void openPost(activeUrl, title.closest(".postAccordion"));
+			} else if (
+				openAccordion &&
+				!openAccordion.classList.contains("is-editing")
+			) {
 				renderCurrentPost(openAccordion);
+			}
 		}),
 	);
 	cleanupFns.push(
@@ -830,23 +938,16 @@ export function initPortfolio() {
 				)
 			)
 				return;
-			const findTitle = () =>
-				Array.from(document.querySelectorAll(".postTitleButton")).find(
-					(button) => button.dataset.url === url,
-				);
-			let title = findTitle();
-			// A background YAML save may have created a new Firestore URL while
-			// leaving another active reader untouched. Reconcile when navigating.
-			if (!title) {
-				renderPinned();
-				renderPage();
-				title = findTitle();
-			}
+			if (searchInput) searchInput.value = "";
+			$("#postTopicFilter").value = "all";
+			$("#postTypeFilter").value = "all";
+			const index = notes.findIndex((post) => post.url === url);
+			currentPage = index < 0 ? 1 : Math.floor(index / POSTS_PER_PAGE) + 1;
+			renderPage();
+			const title = Array.from(
+				document.querySelectorAll(".postTitleButton"),
+			).find((button) => button.dataset.url === url);
 			if (!title) return;
-			if (searchInput) {
-				searchInput.value = "";
-				searchInput.dispatchEvent(new Event("input"));
-			}
 			const accordion = title.closest(".postAccordion");
 			if (accordion !== openAccordion) {
 				closePost(openAccordion);
@@ -1017,21 +1118,33 @@ export function initPortfolio() {
 		);
 	}
 
-	// Search
-	if (searchInput) {
-		cleanupFns.push(
-			addListener(searchInput, "input", (e) => {
-				const query = e.target.value.toLowerCase();
-				$$(".postAccordion").forEach((accordion) => {
-					accordion.style.display = accordion.textContent
-						.toLowerCase()
-						.includes(query)
-						? ""
-						: "none";
-				});
-			}),
-		);
+	// Filter the full collection before choosing a page.
+	const changeFilters = () => {
+		currentPage = 1;
+		renderPage();
+	};
+	if (searchInput)
+		cleanupFns.push(addListener(searchInput, "input", changeFilters));
+	for (const id of ["postTopicFilter", "postTypeFilter"]) {
+		cleanupFns.push(addListener($(`#${id}`), "change", changeFilters));
 	}
+	cleanupFns.push(
+		addListener($("#postPagination"), "click", (event) => {
+			const button = event.target.closest("button[data-page]");
+			if (!button || button.disabled) return;
+			currentPage = Number(button.dataset.page);
+			renderPage();
+			$("#postPagination [aria-current='page']")?.focus({
+				preventScroll: true,
+			});
+			entryGrid.scrollIntoView({
+				block: "start",
+				behavior: matchMedia("(prefers-reduced-motion: reduce)").matches
+					? "auto"
+					: "smooth",
+			});
+		}),
+	);
 
 	// Portfolio modal close button
 	const portfolioCloseButton = $("#portfolioCloseButton");
@@ -1067,6 +1180,7 @@ export function destroyPortfolio() {
 	});
 	cleanupFns = [];
 	hasLoadedInitialPosts = false;
+	currentPage = 1;
 	pinned.length = 0;
 	notes.length = 0;
 	openAccordion = null;

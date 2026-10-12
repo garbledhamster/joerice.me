@@ -2,7 +2,8 @@ id: 0005
 title: My Learning Process in 2025  
 date: 2025-05-03
 pinned: false
-tags: []
+tags: ["learning", "books", "AI"]
+serviceIds: ["knowledge-mgmt", "ai-coaching"]
 content: |
   # My Learning Process in 2025  
   ---

@@ -17,7 +17,20 @@ export async function savePost(post, values) {
 	const id = post?.source === "yaml" ? importedPostId(post.url) : post?.id;
 	const ref = id ? posts.doc(id) : posts.doc();
 	const now = new Date().toISOString();
+	const sourceMetadata =
+		post?.source === "yaml"
+			? {
+					tags: Array.isArray(post.data?.tags) ? post.data.tags : [],
+					...(typeof post.data?.postType === "string"
+						? { postType: post.data.postType }
+						: {}),
+					...(typeof post.data?.productName === "string"
+						? { productName: post.data.productName }
+						: {}),
+				}
+			: {};
 	const data = {
+		...sourceMetadata,
 		...values,
 		// Keep legacy capitalized fields in sync with existing published posts.
 		Title: values.title,

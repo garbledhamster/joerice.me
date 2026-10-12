@@ -3,6 +3,7 @@ title: "Helping People Get Back to Work"
 date: 2026-10-01
 pinned: false
 tags: ["technology", "troubleshooting", "support", "systems"]
+serviceIds: ["it-services"]
 content: |
   Someone tells me their internet isn't working. Before I open a management console, I want to know what they were trying to do. Can they reach their email? Is one computer affected, or the whole office? Did anything change before the problem started?
 

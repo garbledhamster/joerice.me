@@ -41,3 +41,20 @@ published-read permissions. No browser local storage is used for saved content.
 Firebase test double. It does not write to the production database. Add
 `?manual=service` or `?manual=post` for a disposable admin editor preview, or
 `?manual=related` for a populated related-post card preview.
+
+## Browsing posts
+
+Work & notes shows six posts per page, with pinned posts above the list. Search,
+service/topic, and post-type filters work across the complete collection. A
+related-service link opens the matching page and clears browsing filters.
+
+Bundled YAML posts may include `postType` (`project`, `article`, `note`, or
+`product`) and `productName`. Posts without a type appear as articles. The list
+shows the type, product name, related service names, or existing topic tags.
+Service names follow the current catalog, including admin edits. Preserve these
+optional fields when updating a Firebase post; ordinary saves merge with the
+existing record.
+
+## Joe's comments
+
+*Leave feedback on post browsing or content editing here.*
