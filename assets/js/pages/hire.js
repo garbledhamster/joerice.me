@@ -131,13 +131,40 @@ export function getProductsTemplate() {
 			url: "https://feelings.ourstuff.space/",
 			domain: "feelings.ourstuff.space",
 			linkText: "Explore the manual",
-			image: "feelings-home-2026-10-12.jpg",
-			imageWidth: 1265,
-			imageHeight: 712,
-			alt: "Feelings and Needs product website introducing the manual, its sample, and format choices.",
-			caption: "Understand the book before choosing a format.",
-			detailImage: "feelings-sample-2026-10-12.jpg",
-			detailText: "View the book sample screenshot",
+			screens: [
+				{
+					image: "feelings-home-2026-10-12.jpg",
+					title: "The manual",
+					width: 1265,
+					height: 712,
+					alt: "Feelings and Needs product website introducing the manual, its sample, and format choices.",
+					caption: "Understand the book before choosing a format.",
+				},
+				{
+					image: "feelings-sample-2026-10-12.jpg",
+					title: "Look inside",
+					width: 1265,
+					height: 712,
+					alt: "Sample pages from the manual with feeling and need definitions and a strategy for turning a reaction into words.",
+					caption: "Read sample definitions and a practical strategy.",
+				},
+				{
+					image: "feelings-stories-index-2026-10-12.jpg",
+					title: "Illustrated stories",
+					width: 1492,
+					height: 712,
+					alt: "Stories index with an illustrated birthday preview and Read More link.",
+					caption: "Browse a story preview and open the full article.",
+				},
+				{
+					image: "feelings-book-formats-2026-10-12.jpg",
+					title: "Formats and free companion",
+					width: 1215,
+					height: 395,
+					alt: "Shop cards for paperback, PDF, bundle and free companion.",
+					caption: "Choose a format or begin with the free companion.",
+				},
+			],
 		},
 		{
 			title: "The Classics",
@@ -148,11 +175,37 @@ export function getProductsTemplate() {
 			url: "https://classics.ourstuff.space/",
 			domain: "classics.ourstuff.space",
 			linkText: "Try The Classics",
-			image: "classics-library-2026-10-12.jpg",
-			alt: "The Classics public library showing search controls and a collection of classic works.",
-			caption: "A public view of the searchable reading collection.",
-			detailImage: "classics-plan-2026-10-12.jpg",
-			detailText: "View the ten-year reading plan screenshot",
+			screens: [
+				{
+					image: "classics-library-2026-10-12.jpg",
+					title: "Reading collection",
+					alt: "The Classics public library showing search controls and a collection of classic works.",
+					caption: "A public view of the searchable reading collection.",
+				},
+				{
+					image: "classics-plan-2026-10-12.jpg",
+					title: "Ten-year reading plan",
+					alt: "The Classics reading plan with year and idea filters, works by Plato and Aristophanes, and reading progress controls.",
+					caption: "Browse each year's works and track reading progress.",
+				},
+				{
+					image: "classics-republic-tools-2026-10-12.jpg",
+					title: "Inside a book entry",
+					width: 1280,
+					height: 720,
+					alt: "Republic entry with idea tags, reading-plan links and research resources.",
+					caption:
+						"Follow a book from its library entry into reading and research resources.",
+				},
+				{
+					image: "classics-justice-idea-map-2026-10-12.jpg",
+					title: "Explore an idea",
+					width: 1280,
+					height: 720,
+					alt: "Justice glossary map linking Great Ideas and related books.",
+					caption: "Move from a glossary term to related ideas and works.",
+				},
+			],
 		},
 		{
 			title: "Ourstuff.space",
@@ -163,51 +216,122 @@ export function getProductsTemplate() {
 			url: "https://ourstuff.space/",
 			domain: "ourstuff.space",
 			linkText: "Try Ourstuff.space",
-			image: "ourstuff-dashboard-2026-10-12.jpg",
-			alt: "Ourstuff public dashboard with Mind, Body, Spirit, and Life check-in paths.",
-			caption: "One starting place for related parts of everyday life.",
-			detailImage: "ourstuff-calendar-2026-10-12.jpg",
-			detailText: "View the calendar screenshot",
+			screens: [
+				{
+					image: "ourstuff-dashboard-2026-10-12.jpg",
+					title: "Everyday dashboard",
+					alt: "Ourstuff public dashboard with Mind, Body, Spirit, and Life check-in paths.",
+					caption: "One starting place for related parts of everyday life.",
+				},
+				{
+					image: "ourstuff-calendar-2026-10-12.jpg",
+					title: "Calendar",
+					alt: "Ourstuff Life calendar with month, week, day, and list views, alongside todo, project, and note tools.",
+					caption: "See the calendar alongside tasks, projects, and notes.",
+				},
+				{
+					image: "ourstuff-daily-return-guidance-2026-10-12.jpg",
+					title: "Daily Return guidance",
+					width: 1280,
+					height: 720,
+					alt: "Guidance for choosing Mind, Body, Spirit or Life.",
+					caption: "Read the prompts for choosing a check-in path.",
+				},
+				{
+					image: "ourstuff-focus-timer-2026-10-12.jpg",
+					title: "Focus timer",
+					width: 1280,
+					height: 720,
+					alt: "Unstarted focus timer with duration presets and alarm controls.",
+					caption: "Choose a duration and alarm for a focused session.",
+				},
+			],
 		},
 		{
 			title: "Fast Track",
 			description:
-				"Keep track of your fasting routine and sign in to sync your history.",
+				"Choose a duration and start a fasting timer. Nutrition, history, and notes sit alongside it so you can keep related information in one place.",
 			service:
-				"A web app with a clear account entry point for a focused everyday tool.",
+				"A focused web app with a timer, duration controls, and related tracking tools that are easy to find.",
 			url: "https://fasttrack.ourstuff.space/",
 			domain: "fasttrack.ourstuff.space",
 			linkText: "Open Fast Track",
-			image: "fasttrack-sign-in-2026-10-12.jpg",
-			alt: "Fast Track public account-entry screen with sign-in controls.",
-			caption: "Public sign-in screen. The tracking tools require an account.",
+			screens: [
+				{
+					image: "fasttrack-timer-detail-2026-10-12.jpg",
+					title: "Timer and duration choices",
+					width: 660,
+					height: 838,
+					alt: "Fast Track signed-in timer at rest, with duration choices and Start Fast control.",
+					caption: "See elapsed time and choose a duration before starting.",
+				},
+				{
+					image: "fasttrack-duration-detail-2026-10-12.jpg",
+					title: "Preview a duration",
+					width: 500,
+					height: 113,
+					alt: "An eight-hour duration preview with Close and Use this fast type controls.",
+					caption: "Preview a duration before applying it.",
+				},
+				{
+					image: "fasttrack-meal-entry-2026-10-12.jpg",
+					title: "Meal and nutrition notes",
+					width: 420,
+					height: 712,
+					alt: "A blank meal-note editor with calorie, macronutrient, and mineral fields.",
+					caption:
+						"Write a meal note and enter the nutrition listed on a food label.",
+				},
+				{
+					image: "fasttrack-history-detail-2026-10-12.jpg",
+					title: "Calendar and history",
+					width: 660,
+					height: 712,
+					alt: "Fast Track history calendar with daily progress, notes and recent fasts controls.",
+					caption: "Browse dates and reach daily notes or recent fasts.",
+				},
+			],
 		},
 	];
 	return `<section class="services productsGroup" id="productsSection" aria-labelledby="productsHeading">
         <h2 id="productsHeading">Books and tools</h2>
         <p class="portfolioIntro">These are my own projects for learning, reflection, and everyday life. I shape the purpose and experience, with AI helping me develop the software and content.</p>
+        <p class="projectGalleryHint">Take a look through the screens to see how each project works. Select any screenshot to open it full size.</p>
         <ul class="productList">
           ${products
 						.map(
-							(product) => `<li class="productItem projectRow">
-            <figure class="projectPreview">
-              <a class="projectImageLink" href="assets/images/projects/${product.image}" target="_blank" rel="noopener noreferrer" aria-label="View the ${product.title} screenshot (opens in a new tab)">
-                <img src="assets/images/projects/${product.image}" width="${product.imageWidth || 1280}" height="${product.imageHeight || 720}" loading="lazy" decoding="async" alt="${product.alt}"/>
-              </a>
-              <figcaption>${product.caption}</figcaption>
-              ${product.detailImage ? `<a class="projectDetailLink" href="assets/images/projects/${product.detailImage}" target="_blank" rel="noopener noreferrer">${product.detailText}<span class="sr-only"> (opens in a new tab)</span></a>` : ""}
-            </figure>
+							(product) => `<li class="productItem projectRow projectShowcase">
+            ${renderProductScreen(product.screens[0], product.title, "projectPreview")}
             <div class="projectContent">
               <h3>${product.title}</h3>
               <p>${product.description}</p>
               <p class="projectService"><strong>What I can help build:</strong> ${product.service}</p>
               <a class="productLink" href="${product.url}" target="_blank" rel="noopener noreferrer">${product.linkText}<span class="productDomain">${product.domain}</span><span class="sr-only"> (opens in a new tab)</span></a>
-            </div>
+            </div>${
+							product.screens.length > 1
+								? `<ul class="projectScreenshotGallery${product.screens[0].width < product.screens[0].height ? " projectPortraitGallery" : ""}">${product.screens
+										.slice(1)
+										.map(
+											(screen) =>
+												`<li>${renderProductScreen(screen, product.title, "projectFeaturePreview")}</li>`,
+										)
+										.join("")}</ul>`
+								: ""
+						}
           </li>`,
 						)
 						.join("")}
         </ul>
       </section>`;
+}
+
+function renderProductScreen(screen, productTitle, className) {
+	return `<figure class="${className}${screen.width > screen.height * 2 ? " projectWideScreenshot" : ""}">
+    <a class="projectImageLink" href="assets/images/projects/${screen.image}" target="_blank" rel="noopener noreferrer" aria-label="View ${sanitizeText(productTitle)}: ${sanitizeText(screen.title)} full-size screenshot (opens in a new tab)">
+      <img src="assets/images/projects/${screen.image}" width="${screen.width || 1280}" height="${screen.height || 720}" loading="lazy" decoding="async" alt="${sanitizeText(screen.alt)}">
+    </a>
+    <figcaption><strong class="projectShotTitle">${sanitizeText(screen.title)}</strong><span>${sanitizeText(screen.caption)}</span></figcaption>
+  </figure>`;
 }
 
 function syncSelections() {

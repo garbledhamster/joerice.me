@@ -3165,3 +3165,97 @@ footer {
 	outline: 2px solid var(--blue);
 	outline-offset: 3px;
 }
+
+/* Product showcases give the work a main view and a compact feature gallery. */
+.projectGalleryHint {
+	max-width: 70ch;
+	margin-bottom: 1.5rem;
+	font-size: 0.9rem;
+}
+
+.projectShowcase {
+	grid-template-columns: minmax(0, 1.35fr) minmax(0, 1fr);
+	row-gap: 1.5rem;
+}
+
+.projectShowcase figure {
+	min-width: 0;
+}
+
+.projectShowcase figcaption {
+	display: grid;
+	gap: 0.25rem;
+	margin-top: 0.75rem;
+	font-size: 0.85rem;
+	line-height: 1.5;
+}
+
+.projectShotTitle {
+	font-weight: 600;
+}
+
+.projectScreenshotGallery {
+	display: grid;
+	grid-column: 1 / -1;
+	grid-template-columns: repeat(3, minmax(0, 1fr));
+	align-items: start;
+	gap: 1.25rem;
+	min-width: 0;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.projectScreenshotGallery li {
+	min-width: 0;
+}
+
+.projectScreenshotGallery .projectImageLink img {
+	aspect-ratio: 16 / 9;
+	object-fit: contain;
+	background: var(--bg);
+}
+
+.projectPortraitGallery .projectImageLink img {
+	aspect-ratio: 4 / 5;
+}
+
+.projectWideScreenshot .projectImageLink img {
+	aspect-ratio: auto;
+}
+
+.projectShowcase .projectImageLink:hover {
+	outline: 2px solid var(--fg);
+	outline-offset: 3px;
+}
+
+@media (width <= 700px) {
+	.projectShowcase {
+		grid-template-columns: minmax(0, 1fr);
+		gap: 1.5rem;
+	}
+
+	.projectScreenshotGallery {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+		gap: 1rem;
+	}
+}
+
+@media (width <= 420px) {
+	.projectScreenshotGallery {
+		grid-template-columns: none;
+		grid-auto-flow: column;
+		grid-auto-columns: 85%;
+		overflow-x: auto;
+		overscroll-behavior-inline: contain;
+		padding: 0.5rem 0.5rem 0.75rem;
+		scroll-padding-inline: 0.5rem;
+		scroll-snap-type: x proximity;
+		scrollbar-color: var(--fg) var(--yellow);
+		scrollbar-width: thin;
+	}
+
+	.projectScreenshotGallery li {
+		scroll-snap-align: start;
+	}
+}
