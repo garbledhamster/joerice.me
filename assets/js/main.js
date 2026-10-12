@@ -7,7 +7,10 @@
 
 import { getHeaderTemplate, initHeader } from "./components/header.js";
 import { initModals } from "./components/modal.js";
-import { getProfileTemplate } from "./components/profile.js";
+import {
+	getProfileTemplate,
+	getSocialLinksTemplate,
+} from "./components/profile.js";
 import { ready } from "./core/dom.js";
 import { getContactTemplate, initContact } from "./pages/contact.js";
 import { getGalleryTemplate, initGallery } from "./pages/gallery.js";
@@ -129,7 +132,12 @@ async function initApp() {
         ${getLinksTemplate()}
       </div>
     </main>
-    <footer>© <span id="year">${new Date().getFullYear()}</span> Joe Rice. All rights reserved.</footer>
+    <footer>
+      <div class="max">
+        ${getSocialLinksTemplate()}
+        <p>© <span id="year">${new Date().getFullYear()}</span> Joe Rice. All rights reserved.</p>
+      </div>
+    </footer>
     ${getLoginModalTemplate()}
     ${getPortfolioModalTemplate()}
   `;
