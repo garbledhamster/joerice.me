@@ -598,6 +598,26 @@
         assert(body.length > 500 && !body.includes("Unable to load"), `professional article ${url} should open with its complete content`);
       }
 
+      const projectSites = [
+        ["posts/0013.yaml", "https://jdhogfarm.com/"],
+        ["posts/0014.yaml", "https://spinners.pizza/"],
+        ["posts/0015.yaml", "https://priviancare.com/"],
+        ["posts/0017.yaml", "https://feelings.ourstuff.space/"],
+      ];
+      for (const [url, websiteUrl] of projectSites) {
+        const title = await openPost(url);
+        title?.click();
+        const siteLink = title?.closest(".postAccordion").querySelector("a.postSiteLink");
+        assert(title?.getAttribute("aria-expanded") === "false" && siteLink?.href === websiteUrl, `${url} should offer its website directly while the post is collapsed`);
+        assert(siteLink && !title.contains(siteLink) && !siteLink.closest("button"), `${url} should keep its website link separate from the expandable title`);
+        assert(siteLink?.target === "_blank" && siteLink.relList.contains("noopener") && siteLink.relList.contains("noreferrer"), `${url} should safely open its website in a new tab`);
+        const target = siteLink?.getBoundingClientRect();
+        assert(siteLink?.tabIndex >= 0 && getComputedStyle(siteLink).visibility === "visible" && target?.height >= 44 && target?.width >= 44, `${url} should provide a visible keyboard-accessible website link with a usable touch target`);
+        title?.click();
+        await waitFor(() => title?.getAttribute("aria-expanded") === "true");
+        assert(title?.getAttribute("aria-expanded") === "true", `${url} should still open its post from the title`);
+      }
+
       // Migrating an actual project must retain the metadata used to find it.
       const feelingsSource = bundledPosts.find(post => post.url === "posts/0017.yaml");
       const feelingsPost = (await openPost("posts/0017.yaml"))?.closest(".postAccordion");
@@ -612,10 +632,12 @@
         assert(savedFeelings?.postType === feelingsSource.postType, "editing a bundled project should preserve its Project type in Firebase");
         assert(savedFeelings?.productName === feelingsSource.productName, "editing a bundled project should preserve its product name in Firebase");
         assert(JSON.stringify(savedFeelings?.tags) === JSON.stringify(feelingsSource.tags), "editing a bundled project should preserve its topic tags in Firebase");
+        assert(savedFeelings?.websiteUrl && savedFeelings.websiteUrl === feelingsSource.websiteUrl, "editing a bundled project should preserve its direct website URL in Firebase");
         setPostFilter(typeFilter, "project");
         const migratedProject = postButton("firestore:imported-0017");
         assert(migratedProject, "the migrated Feelings and Needs post should remain in the Project filter");
         assert(migratedProject?.querySelector(".postLabels")?.textContent.includes("Feelings and Needs"), "the migrated project should still show its Feelings and Needs product label");
+        assert(migratedProject?.closest(".postAccordion").querySelector("a.postSiteLink")?.href === "https://feelings.ourstuff.space/", "the Firebase replacement should keep its direct website link");
         setPostFilter(typeFilter, "all");
         setPostSearch("current-project");
         assert(postButton("firestore:imported-0017"), "tag searches should find the Firebase replacement after a project is edited");

@@ -48,6 +48,10 @@ Work & notes shows six posts per page, with pinned posts above the list. Search,
 service/topic, and post-type filters work across the complete collection. A
 related-service link opens the matching page and clears browsing filters.
 
+Website project posts can include a `websiteUrl` so visitors can open the site
+from the collapsed list. Use a complete HTTP or HTTPS address. The direct link
+remains separate from the post title and survives the first Firebase save.
+
 Bundled YAML posts may include `postType` (`project`, `article`, `note`, or
 `product`) and `productName`. Posts without a type appear as articles. The list
 shows the type, product name, related service names, or existing topic tags.

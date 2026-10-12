@@ -3131,3 +3131,37 @@ footer {
 	color: var(--fg);
 	border-color: var(--border);
 }
+
+/* Direct project links stay separate from the expanding post title. */
+.postAccordion.has-site-link .postTitleButton {
+	border-bottom: 0;
+	padding-bottom: 0.25rem;
+}
+.postSiteRow {
+	padding: 0 1rem 0.5rem;
+	border: 1px solid var(--border);
+	border-top: 0;
+	background: var(--bg);
+}
+.postSiteLink {
+	display: inline-flex;
+	align-items: center;
+	flex-wrap: wrap;
+	gap: 0.25rem 0.6rem;
+	min-height: 44px;
+	max-width: 100%;
+	color: var(--fg);
+	font-size: 0.85rem;
+	text-decoration: underline;
+	text-underline-offset: 0.2em;
+}
+.postSiteDomain {
+	overflow-wrap: anywhere;
+}
+.postSiteLink:hover {
+	color: var(--blue);
+}
+.postSiteLink:focus-visible {
+	outline: 2px solid var(--blue);
+	outline-offset: 3px;
+}

@@ -21,6 +21,9 @@ export async function savePost(post, values) {
 		post?.source === "yaml"
 			? {
 					tags: Array.isArray(post.data?.tags) ? post.data.tags : [],
+					...(typeof post.data?.websiteUrl === "string"
+						? { websiteUrl: post.data.websiteUrl }
+						: {}),
 					...(typeof post.data?.postType === "string"
 						? { postType: post.data.postType }
 						: {}),

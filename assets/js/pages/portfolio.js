@@ -109,6 +109,7 @@ function formatPostEntry(post, index, group) {
 	const unpublishedIndicator =
 		post.published === false && isAdminUser() ? " [DRAFT]" : "";
 	const readerId = `post-reader-${group}-${index}`;
+	const directLink = postSiteLink(post);
 	const canManage = isAdminUser();
 	const managementControls = canManage
 		? `
@@ -120,7 +121,7 @@ function formatPostEntry(post, index, group) {
 		: "";
 
 	return `
-    <article class="postAccordion" data-tags="${safeTags}">
+    <article class="postAccordion${directLink ? " has-site-link" : ""}" data-tags="${safeTags}">
       <div class="postTitleRow${canManage ? " is-manageable" : ""}">
         <button class="entry postTitleButton" type="button" data-url="${safeUrl}"${sourceAttr}${idAttr}${publishedAttr} aria-expanded="false" aria-controls="${readerId}">
           <span class="postTitleText"><span>${safeTitle}${unpublishedIndicator}</span><span class="postLabels">${postLabels(post)}</span></span>
@@ -128,6 +129,7 @@ function formatPostEntry(post, index, group) {
         </button>
         ${managementControls}
       </div>
+      ${directLink}
       <div class="postInlineViewer" id="${readerId}" aria-hidden="true">
         <div class="postInlineClip">
           <div class="postInlineReader">
@@ -198,6 +200,7 @@ async function loadFirestorePosts() {
 				tags: Array.isArray(data.tags) ? data.tags : [],
 				postType: data.postType,
 				productName: data.productName,
+				websiteUrl: data.websiteUrl,
 				id: doc.id,
 				source: "firestore",
 				published: isPublished,
@@ -343,6 +346,17 @@ function openPortfolioEditor(post = null) {
 
 	// Focus title field
 	setTimeout(() => portfolioPostTitle?.focus(), 0);
+}
+
+function postSiteLink(post) {
+	if (typeof post.websiteUrl !== "string") return "";
+	try {
+		const site = new URL(post.websiteUrl);
+		if (!["https:", "http:"].includes(site.protocol)) return "";
+		return `<div class="postSiteRow"><a class="postSiteLink" href="${sanitizeText(site.href)}" target="_blank" rel="noopener noreferrer"><span>Visit site</span><span class="postSiteDomain">${sanitizeText(site.hostname.replace(/^www\./, ""))}</span><span class="sr-only"> (opens in a new tab)</span></a></div>`;
+	} catch {
+		return "";
+	}
 }
 
 const postTypes = {
@@ -826,6 +840,7 @@ async function loadYamlPosts() {
 					tags: Array.isArray(data.tags) ? data.tags : [],
 					postType: data.postType,
 					productName: data.productName,
+					websiteUrl: data.websiteUrl,
 					serviceIds: Array.isArray(data.serviceIds) ? data.serviceIds : [],
 					source: "yaml",
 				};
