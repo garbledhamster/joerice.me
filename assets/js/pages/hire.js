@@ -108,21 +108,6 @@ export function getHireTemplate() {
       <p id="servicesStatus" role="status" hidden></p>
       <div id="serviceEditorHost"></div>
       <div id="serviceGroups">${cards()}</div>
-      <section class="serviceRates" aria-labelledby="serviceRatesHeading">
-        <h3 id="serviceRatesHeading">Rates and project quotes</h3>
-        <p class="serviceRatesIntro">These hourly ranges are a starting point. Most projects use a fixed quote for agreed deliverables. For investigation or other hourly work, we'll agree on the rate and budget before work begins.</p>
-        <dl class="rateList">
-          <div class="rateRow"><dt>IT support</dt><dd>$100–$125/hour</dd></div>
-          <div class="rateRow"><dt>Systems, networking, and familiar migrations</dt><dd>$125–$175/hour<span class="rateNote">Usual project rate: $150/hour</span></dd></div>
-          <div class="rateRow"><dt>Websites</dt><dd>$75–$125/hour</dd></div>
-          <div class="rateRow"><dt>Small apps and prototypes</dt><dd>$75–$125/hour</dd></div>
-          <div class="rateRow"><dt>Knowledge organization and documentation</dt><dd>$75–$125/hour</dd></div>
-          <div class="rateRow"><dt>Practical AI coaching</dt><dd>$75–$125/hour</dd></div>
-          <div class="rateRow"><dt>Resume writing</dt><dd>$50–$75/hour</dd></div>
-          <div class="rateRow"><dt>Logo design</dt><dd>$50–$75/hour</dd></div>
-        </dl>
-        <p class="rateScopeNote">Rates are in US dollars. Domains, hosting, software, and ongoing support need a separate agreement. For resumes and logos, I'll review your brief before quoting the work.</p>
-      </section>
       <div class="quoteProcess">
         <h3>How we get started</h3>
         <ol class="quoteSteps">

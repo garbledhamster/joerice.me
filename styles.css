@@ -3260,56 +3260,6 @@ footer {
 	}
 }
 
-/* Rates use simple rows and the site's existing outlined style. */
-.serviceRates {
-	margin-top: 2.5rem;
-	padding-top: 1.5rem;
-	border-top: 1px solid var(--border);
-}
-
-.serviceRates h3 {
-	margin-top: 0;
-}
-
-.serviceRatesIntro,
-.rateScopeNote,
-.upworkProcess p {
-	max-width: 70ch;
-}
-
-.rateList {
-	margin-block: 1rem;
-}
-
-.rateRow {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr) auto;
-	align-items: start;
-	gap: 1rem;
-	padding-block: 0.75rem;
-	border-bottom: 1px solid var(--border);
-}
-
-.rateRow dt {
-	font-weight: 600;
-}
-
-.rateRow dd {
-	text-align: right;
-	font-variant-numeric: tabular-nums;
-}
-
-.rateNote {
-	display: block;
-	margin-top: 0.25rem;
-	font-size: 0.8rem;
-	font-weight: 400;
-}
-
-.rateScopeNote {
-	font-size: 0.9rem;
-}
-
 .upworkProcess {
 	margin-block: 1.5rem;
 }
@@ -3318,17 +3268,10 @@ footer {
 	margin: 0 0 0.6rem;
 }
 
-.upworkProcess p + p {
-	margin-top: 0.75rem;
+.upworkProcess p {
+	max-width: 70ch;
 }
 
-@media (width <= 600px) {
-	.rateRow {
-		grid-template-columns: minmax(0, 1fr);
-		gap: 0.25rem;
-	}
-
-	.rateRow dd {
-		text-align: left;
-	}
+.upworkProcess p + p {
+	margin-top: 0.75rem;
 }
