@@ -14,13 +14,10 @@ import {
 import { ready } from "./core/dom.js";
 import { getContactTemplate, initContact } from "./pages/contact.js";
 import { getGalleryTemplate, initGallery } from "./pages/gallery.js";
-import {
-	getHireTemplate,
-	getProductsTemplate,
-	initHire,
-} from "./pages/hire.js";
+import { getHireTemplate, initHire } from "./pages/hire.js";
 import { getLinksTemplate, initLinks } from "./pages/links.js";
 import { getPortfolioTemplate, initPortfolio } from "./pages/portfolio.js";
+import { getProductsTemplate, initProducts } from "./pages/products.js";
 import { getQuotesTemplate, initQuotes } from "./pages/quotes.js";
 import { initAuth, updateAdminUi } from "./services/auth.js";
 import { initFirebase } from "./services/firebase.js";
@@ -149,6 +146,7 @@ async function initApp() {
 	initPortfolio();
 	initGallery();
 	initHire();
+	initProducts();
 	initQuotes();
 	initContact();
 	initLinks();

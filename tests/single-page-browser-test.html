@@ -238,6 +238,76 @@
 
       await waitFor(() => document.body.classList.contains("loaded"));
 
+
+      // The gallery must change examples without changing its viewing geometry.
+      const productsSection = document.getElementById("productsSection");
+      const productPicker = document.getElementById("productProjectPicker");
+      assert(Boolean(productPicker), "Books and tools should offer one project picker instead of four expanded galleries");
+      if (productPicker) {
+        await document.fonts.ready;
+        const viewport = productsSection.querySelector(".productGalleryViewport");
+        const frame = viewport.getBoundingClientRect();
+        const height = productsSection.getBoundingClientRect().height;
+        const frameOffset = frame.top - productsSection.getBoundingClientRect().top;
+        const pickProject = (value) => {
+          productPicker.value = value;
+          productPicker.dispatchEvent(new Event("change", { bubbles: true }));
+        };
+        const shownThumb = (index) => [...productsSection.querySelectorAll('[data-product-shot]')].find(button => button.dataset.productShot === String(index) && !button.closest("[inert]"));
+        assert(productPicker.options.length === 4, "the picker should retain all four existing projects");
+        shownThumb(2).click();
+        assert(productsSection.querySelector(".productMainImage").src.includes("feelings-stories-index"), "choosing a thumbnail should display its actual example");
+        assert(shownThumb(2).getAttribute("aria-pressed") === "true", "the selected thumbnail should announce its selection");
+        productsSection.querySelector('[data-product-direction="1"]').focus();
+        productsSection.querySelector('[data-product-direction="1"]').click();
+        assert(document.activeElement?.dataset.productDirection === "1", "next should keep keyboard focus on its control");
+        productsSection.querySelector('[data-product-direction="1"]').click();
+        assert(productsSection.querySelector(".productMainImage").src.includes("feelings-home"), "next should wrap from the last example to the first");
+        productsSection.querySelector('[data-product-direction="-1"]').click();
+        assert(productsSection.querySelector(".productMainImage").src.includes("feelings-book-formats"), "previous should wrap back to the last example");
+        pickProject("3");
+        shownThumb(2).click();
+        assert(productsSection.querySelector(".productMainImage").src.includes("fasttrack-meal-entry"), "portrait examples should remain available");
+        assert(productsSection.querySelector(".productMainImage").alt.includes("meal"), "the main image should carry the chosen example's alternative text");
+        pickProject("0");
+        assert(productsSection.querySelector(".productMainImage").src.includes("feelings-book-formats"), "returning to a project should restore its last example");
+        pickProject("3");
+        assert(productsSection.querySelector(".productMainImage").src.includes("fasttrack-meal-entry"), "projects should remember their examples independently");
+        const fullSize = productsSection.querySelector(".productGalleryViewport");
+        assert(fullSize.getAttribute("href").includes("fasttrack-meal-entry") && fullSize.target === "_blank", "full-size access should track the selected image");
+        assert([...productsSection.querySelectorAll(".productDetailsPanel")].filter(panel => !panel.inert).length === 1, "only the selected project's details should be interactive");
+        for (let project = 0; project < 4; project += 1) {
+          pickProject(String(project));
+          for (let shot = 0; shot < 4; shot += 1) {
+            shownThumb(shot).click();
+            const current = viewport.getBoundingClientRect();
+            assert(Math.abs(current.width-frame.width) < 1 && Math.abs(current.height-frame.height) < 1 && Math.abs(current.top-productsSection.getBoundingClientRect().top-frameOffset) < 1, "project and example changes should keep the same viewing frame");
+            assert(Math.abs(productsSection.getBoundingClientRect().height-height) < 1, "captions and details should not resize the section");
+          }
+        }
+        pickProject("0");
+        shownThumb(0).click();
+        shownThumb(1).focus({ preventScroll: true });
+        shownThumb(1).dispatchEvent(new KeyboardEvent("keydown", { key: "ArrowRight", bubbles: true }));
+        assert(productsSection.querySelector(".productMainImage").src.includes("feelings-stories-index"), "thumbnail arrow keys should move from the focused example, even when it was not selected");
+        const { initProducts, destroyProducts } = await import("./assets/js/pages/products.js");
+        destroyProducts();
+        initProducts();
+        initProducts();
+        pickProject("0");
+        shownThumb(0).click();
+        productsSection.querySelector('[data-product-direction="1"]').click();
+        assert(productsSection.querySelector(".productMainImage").src.includes("feelings-sample"), "reinitializing should not duplicate gallery controls");
+        const activeImage = productsSection.querySelector(".productMainImage");
+        activeImage.dispatchEvent(new Event("error"));
+        assert(!productsSection.querySelector(".productImageStatus").hidden && productsSection.querySelector(".productImageStatus").textContent.includes("could not load"), "an unavailable screenshot should give recovery guidance inside the same frame");
+        shownThumb(2).click();
+        activeImage.dispatchEvent(new Event("error"));
+        assert(!productsSection.querySelector(".productImageStatus").textContent.includes("could not load"), "a stale image error must not overwrite the new example's state");
+        pickProject("0");
+        shownThumb(0).click();
+      }
+
       // Exercise quote submission with only the external delivery boundary replaced.
       const quoteForm = document.getElementById("contactForm");
       const phoneField = quoteForm.elements.phone;
