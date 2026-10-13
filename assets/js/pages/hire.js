@@ -108,6 +108,21 @@ export function getHireTemplate() {
       <p id="servicesStatus" role="status" hidden></p>
       <div id="serviceEditorHost"></div>
       <div id="serviceGroups">${cards()}</div>
+      <section class="serviceRates" aria-labelledby="serviceRatesHeading">
+        <h3 id="serviceRatesHeading">Rates and project quotes</h3>
+        <p class="serviceRatesIntro">These hourly ranges are a starting point. Most projects use a fixed quote for agreed deliverables. For investigation or other hourly work, we'll agree on the rate and budget before work begins.</p>
+        <dl class="rateList">
+          <div class="rateRow"><dt>IT support</dt><dd>$100–$125/hour</dd></div>
+          <div class="rateRow"><dt>Systems, networking, and familiar migrations</dt><dd>$125–$175/hour<span class="rateNote">Usual project rate: $150/hour</span></dd></div>
+          <div class="rateRow"><dt>Websites</dt><dd>$75–$125/hour</dd></div>
+          <div class="rateRow"><dt>Small apps and prototypes</dt><dd>$75–$125/hour</dd></div>
+          <div class="rateRow"><dt>Knowledge organization and documentation</dt><dd>$75–$125/hour</dd></div>
+          <div class="rateRow"><dt>Practical AI coaching</dt><dd>$75–$125/hour</dd></div>
+          <div class="rateRow"><dt>Resume writing</dt><dd>$50–$75/hour</dd></div>
+          <div class="rateRow"><dt>Logo design</dt><dd>$50–$75/hour</dd></div>
+        </dl>
+        <p class="rateScopeNote">Rates are in US dollars. Domains, hosting, software, and ongoing support need a separate agreement. For resumes and logos, I'll review your brief before quoting the work.</p>
+      </section>
       <div class="quoteProcess">
         <h3>How we get started</h3>
         <ol class="quoteSteps">
@@ -115,6 +130,11 @@ export function getHireTemplate() {
           <li><h4>We'll work out what's needed</h4><p>I'll review your request and follow up with questions so we can understand the scope.</p></li>
           <li><h4>Get a quote for the work</h4><p>Once the scope is clear, I'll prepare a quote so you can decide whether you'd like to go ahead.</p></li>
         </ol>
+        <div class="upworkProcess">
+          <h4>Contracts and payments through Upwork</h4>
+          <p>After we agree on the scope and price, we can arrange an Upwork contract for payments and project messages. You'll need an Upwork account. Upwork charges client fees in addition to my quote.</p>
+          <p>Already on Upwork? <a class="textLink" href="https://www.upwork.com/freelancers/~016021fb4f5ed4ff13" target="_blank" rel="noopener noreferrer">View my profile<span class="sr-only"> (opens in a new tab)</span></a> so we can arrange the work there.</p>
+        </div>
         <a class="quoteLink" href="#contact">Tell me what you need</a>
       </div>
     </section>`;
