@@ -98,10 +98,12 @@ const products = [
 		linkText: "Try Ourstuff.space",
 		screens: [
 			{
-				image: "ourstuff-dashboard-2026-10-12.jpg",
-				title: "Everyday dashboard",
-				alt: "Ourstuff public dashboard with Mind, Body, Spirit, and Life check-in paths.",
-				caption: "One starting place for related parts of everyday life.",
+				image: "ourstuff-browser-mockup-2026-10-17.jpg",
+				title: "Browser mockup",
+				width: 1456,
+				height: 1088,
+				alt: "Ourstuff.space dashboard shown in a browser mockup.",
+				caption: "The everyday dashboard in a browser mockup.",
 			},
 			{
 				image: "ourstuff-calendar-2026-10-12.jpg",
@@ -138,12 +140,12 @@ const products = [
 		linkText: "Open Fast Track",
 		screens: [
 			{
-				image: "fasttrack-timer-detail-2026-10-12.jpg",
-				title: "Timer and duration choices",
-				width: 660,
-				height: 838,
-				alt: "Fast Track signed-in timer at rest, with duration choices and Start Fast control.",
-				caption: "See elapsed time and choose a duration before starting.",
+				image: "fasttrack-browser-phone-mockup-2026-10-17.jpg",
+				title: "Browser and phone mockup",
+				width: 1456,
+				height: 1088,
+				alt: "Fast Track timer and blank meal editor shown in browser and phone mockups.",
+				caption: "The idle timer and meal editor in browser and phone mockups.",
 			},
 			{
 				image: "fasttrack-duration-detail-2026-10-12.jpg",
