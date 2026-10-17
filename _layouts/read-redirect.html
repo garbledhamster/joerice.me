@@ -1,0 +1,20 @@
+{% assign reading = site.data.reading_links[page.book] -%}
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta http-equiv="refresh" content="0; url={{ reading.url | escape }}" />
+    <title>{{ reading.title | escape }} · Joe Rice</title>
+  </head>
+  <body>
+    <main>
+      <h1>{{ reading.title | escape }}</h1>
+      <p>Opening the companion website. If it doesn’t open, <a id="reading-link" href="{{ reading.url | escape }}">continue to {{ reading.title | escape }}</a>.</p>
+    </main>
+    <script>
+      window.location.replace(document.getElementById("reading-link").href);
+    </script>
+  </body>
+</html>
