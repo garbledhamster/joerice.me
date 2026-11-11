@@ -1,0 +1,42 @@
+body.kal-reading {
+	padding: 0;
+}
+
+.kal-reading main {
+	max-width: 46rem;
+	margin-inline: auto;
+	padding: clamp(1.25rem, 5vw, 3.5rem);
+	line-height: 1.65;
+}
+
+.kal-reading h1 {
+	margin-top: 0;
+	line-height: 1.15;
+}
+
+.kal-reading p + p {
+	margin-top: 1rem;
+}
+
+.kal-reading a {
+	color: #0647ad;
+	text-decoration: underline;
+	text-underline-offset: 0.15em;
+}
+
+.kal-reading nav {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.45rem 1.25rem;
+	margin-top: 2rem;
+	padding-top: 0.75rem;
+	border-top: 1px solid var(--border);
+}
+
+.kal-reading nav a {
+	padding-block: 0.5rem;
+}
+
+.kal-reading a[aria-current="page"] {
+	font-weight: 700;
+}
