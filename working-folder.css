@@ -32,8 +32,8 @@ body.working-folder {
 	background: var(--ground);
 	line-height: 1.45;
 }
-[hidden] {
-	display: none !important;
+.working-folder [hidden] {
+	display: none;
 }
 :focus-visible {
 	outline: 3px solid var(--focus);
@@ -698,11 +698,11 @@ p {
 }
 .working-folder .panel h1,
 .working-folder .note h2,
-.working-folder .note h3,
-.working-folder #folder-sheet-title {
+.working-folder .note h3 {
 	margin-block: 0 6px;
 }
-#folder-sheet-title {
+.working-folder #folder-sheet-title {
+	margin-block: 0 6px;
 	font-size: clamp(2rem, 4vw, 3.25rem);
 	line-height: 1;
 }

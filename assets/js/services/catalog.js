@@ -81,6 +81,7 @@ const defaults = [
 }));
 
 let catalog = defaults;
+let readVersion = 0;
 const selected = new Set();
 export const getServices = () => catalog.map((service) => ({ ...service }));
 export const getSelectedServices = () =>
@@ -112,34 +113,49 @@ export function clearSelectedServices() {
 	notifySelection();
 }
 
-export async function loadServices() {
-	const db = getFirestore();
-	if (!db) throw new Error("Services could not connect to Firebase.");
-	// Use the site's existing published-content permissions. Service records are
-	// distinguished by kind and excluded from the portfolio list.
-	const snapshot = await db
-		.collection("Posts")
-		.where("published", "==", true)
-		.get();
-	const overrides = new Map();
-	snapshot.forEach((doc) => {
-		const data = doc.data();
-		if (data.kind !== "service" || typeof data.serviceId !== "string") return;
-		overrides.set(data.serviceId, {
-			id: data.serviceId,
-			title: String(data.title || "Untitled service"),
-			description: String(data.description || ""),
-			highlights: Array.isArray(data.highlights)
-				? data.highlights.map(String)
-				: [],
-			available: data.available !== false,
-		});
-	});
-	catalog = defaults.map((service) => overrides.get(service.id) || service);
-	for (const service of overrides.values()) {
-		if (!defaults.some((item) => item.id === service.id)) catalog.push(service);
-	}
+export function resetPublishedServiceVisibility() {
+	catalog = defaults.map((service) => ({ ...service, available: false }));
 	notifyCatalog();
+}
+
+export async function loadServices() {
+	const version = ++readVersion;
+	try {
+		const db = getFirestore();
+		if (!db) throw new Error("Services could not connect to Firebase.");
+		const snapshot = await db
+			.collection("Posts")
+			.where("published", "==", true)
+			.get({ source: "server" });
+		if (version !== readVersion) return;
+		if (snapshot.metadata?.fromCache || snapshot.metadata?.hasPendingWrites) {
+			throw new Error("Service availability could not be confirmed.");
+		}
+		const overrides = new Map();
+		snapshot.forEach((doc) => {
+			const data = doc.data();
+			if (data.kind !== "service" || typeof data.serviceId !== "string") return;
+			overrides.set(data.serviceId, {
+				id: data.serviceId,
+				title: String(data.title || "Untitled service"),
+				description: String(data.description || ""),
+				highlights: Array.isArray(data.highlights)
+					? data.highlights.map(String)
+					: [],
+				available: data.available !== false,
+			});
+		});
+		catalog = defaults.map((service) => overrides.get(service.id) || service);
+		for (const service of overrides.values()) {
+			if (!defaults.some((item) => item.id === service.id))
+				catalog.push(service);
+		}
+		notifyCatalog();
+	} catch (error) {
+		if (version !== readVersion) return;
+		resetPublishedServiceVisibility();
+		throw error;
+	}
 }
 
 export async function saveService(id, values) {
@@ -161,6 +177,7 @@ export async function saveService(id, values) {
 		},
 		{ merge: true },
 	);
+	readVersion++;
 	const saved = { ...values, id: serviceId };
 	const index = catalog.findIndex((service) => service.id === serviceId);
 	catalog = [...catalog];

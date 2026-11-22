@@ -168,9 +168,10 @@ export const startingCatalog = [
 					"Leave with a list of fixes in order and a way to check each one.",
 				],
 				example: {
-					title: "Can you get a file back?",
-					text: "In this practice case, a team needs to recover a sample spreadsheet. I’d help set up a restore to a separate folder and ask the owner to open the copy and check that the expected rows are there.",
-					kind: "Simulated case",
+					title: "Restore a file from backup",
+					text: "Try a restore plan on two sample copies of the same inventory. Recover one missing row while preserving a newer count.",
+					kind: "Worked example",
+					href: "/examples/backup-restore/",
 				},
 			},
 		],

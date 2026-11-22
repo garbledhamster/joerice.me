@@ -1,4 +1,5 @@
 import { createElement } from "../core/dom.js";
+import { isPortfolioExampleAddress } from "./content-store.js";
 
 function element(tag, attrs, text) {
 	return createElement(tag, attrs, text === undefined ? [] : [text]);
@@ -64,7 +65,7 @@ export function createNote(note, layers, onInquire, motion) {
 				element("h3", {}, note.example.title),
 				element("p", {}, note.example.text),
 			);
-			if (/^https:\/\//i.test(note.example.href || "")) {
+			if (isPortfolioExampleAddress(note.example.href)) {
 				actions.append(
 					element(
 						"a",

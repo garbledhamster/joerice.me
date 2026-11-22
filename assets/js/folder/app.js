@@ -3,6 +3,7 @@ import {
 	getCurrentModal,
 	initModals,
 } from "../components/modal.js";
+import { getSocialLinksTemplate } from "../components/profile.js";
 import { createElement } from "../core/dom.js";
 import { getContactTemplate, initContact } from "../pages/contact.js";
 import { getGalleryTemplate, initGallery } from "../pages/gallery.js";
@@ -17,9 +18,14 @@ import {
 	onAuthStateChange,
 	updateAdminUi,
 } from "../services/auth.js";
-import { getServices, selectService } from "../services/catalog.js";
+import {
+	getServices,
+	resetPublishedServiceVisibility,
+	selectService,
+} from "../services/catalog.js";
 import { emptyFolderCatalog, loadPublishedFolder } from "./content-store.js";
 import { employers, guide } from "./contents.js";
+import { mountFolderEditor } from "./editor.js";
 import { createNote } from "./notes.js";
 import { startingCatalog } from "./starting-catalog.js";
 import { folderTemplate } from "./template.js";
@@ -32,7 +38,9 @@ const titles = {
 	guide: "How to build an idea",
 	products: "Books and tools",
 	"edit-services": "Edit services",
+	"edit-content": "Edit portfolio content",
 };
+const adminRoutes = new Set(["edit-services", "edit-content"]);
 const legacyAddresses = {
 	contact: { id: "hire" },
 	portfolio: { id: "work" },
@@ -55,12 +63,16 @@ export function mountWorkingFolder(root, templates) {
 		</div>
 		${getQuotesTemplate()}
 		${getLinksTemplate()}
-		<a class="action" href="#hire" data-route="hire">Send feedback or request an update</a>
+		<h2>Profiles</h2>
+		${getSocialLinksTemplate({ labels: ["Instagram", "GitHub", "Etsy"] })}
+		<a class="action" href="#hire" data-route="hire" data-feedback-entry>Send feedback or request an update</a>
 	`;
 	root.innerHTML = folderTemplate({
 		...templates,
 		quote: getContactTemplate({ sheet: true }),
-		work: getPortfolioTemplate(),
+		work:
+			getPortfolioTemplate() +
+			`<a class="action" href="#hire" data-route="hire">Ask about this work</a>`,
 		products: getProductsTemplate(),
 		services: getHireTemplate(),
 		personal,
@@ -92,6 +104,18 @@ export function mountWorkingFolder(root, templates) {
 			page,
 			nodes.map((node) => node.textContent.replace(/\s+/g, " ").trim()),
 		]),
+	);
+	const openEditor = mountFolderEditor(
+		root.querySelector('[data-sheet="edit-content"]'),
+		{
+			getCopy: (page) =>
+				copyNodes
+					.get(page)
+					.map((node) => node.textContent.trim())
+					.filter(Boolean)
+					.join("\n\n"),
+			refresh: refreshFolder,
+		},
 	);
 	let contentVersion = 0;
 	let renderedCatalog = "";
@@ -129,10 +153,12 @@ export function mountWorkingFolder(root, templates) {
 			if (version !== contentVersion) return;
 			renderCatalog(catalog);
 			showPublishedCopy(copy);
+			return true;
 		} catch {
 			if (version !== contentVersion) return;
 			renderCatalog(emptyFolderCatalog);
 			showPublishedCopy();
+			return false;
 		}
 	}
 
@@ -223,10 +249,13 @@ export function mountWorkingFolder(root, templates) {
 		if (id === activeRoute && sheet.open && !anchor) return;
 		const legacyModal = getCurrentModal();
 		if (legacyModal) closeModal(legacyModal);
+		if (activeRoute === "edit-content" && id !== activeRoute)
+			openEditor.close();
 		activeRoute = id;
 		heading.textContent = titles[id];
 		for (const panel of sheetPanels) panel.hidden = panel.dataset.sheet !== id;
 		if (!sheet.open) sheet.showModal();
+		if (id === "edit-content") openEditor();
 		if (id === "products" && !productsStarted) {
 			productsStarted = true;
 			initProducts();
@@ -254,10 +283,7 @@ export function mountWorkingFolder(root, templates) {
 				`#${id}`,
 			);
 		}
-		if (
-			Object.hasOwn(titles, id) &&
-			(id !== "edit-services" || isAdminUser())
-		) {
+		if (Object.hasOwn(titles, id) && (!adminRoutes.has(id) || isAdminUser())) {
 			if (categoryIds.has(history.state?.folderCategory))
 				selectCategory(history.state.folderCategory, true);
 			opener = routeOpeners.get(history.state?.folderOpener) || opener;
@@ -266,6 +292,7 @@ export function mountWorkingFolder(root, templates) {
 		}
 		const boardOnly = raw === "loginModal" || raw === "whiteboard";
 		const closedRoute = activeRoute;
+		if (closedRoute === "edit-content") openEditor.close();
 		activeRoute = undefined;
 		closingSheet = false;
 		selectCategory(
@@ -358,7 +385,8 @@ export function mountWorkingFolder(root, templates) {
 			event.altKey
 		)
 			return;
-		const id = link.getAttribute("href").slice(1);
+		const fragment = link.getAttribute("href").slice(1);
+		const id = legacyAddresses[fragment]?.id ?? fragment;
 		if (id === "whiteboard") {
 			event.preventDefault();
 			board.focus();
@@ -367,11 +395,20 @@ export function mountWorkingFolder(root, templates) {
 
 		if (
 			(!categoryIds.has(id) && !Object.hasOwn(titles, id)) ||
-			(id === "edit-services" && !isAdminUser())
+			(adminRoutes.has(id) && !isAdminUser())
 		)
 			return;
 		event.preventDefault();
-		if (!activeRoute && Object.hasOwn(titles, id)) opener = link;
+		if (link.closest("#loginModal") && adminRoutes.has(id)) {
+			root.querySelector("#loginCancel").click();
+			opener = root.querySelector("#loginButton");
+		} else if (!activeRoute && Object.hasOwn(titles, id)) opener = link;
+		if (
+			link.hasAttribute("data-feedback-entry") &&
+			root.querySelector("#quoteConfirmation:not([hidden])")
+		) {
+			root.querySelector("#restartQuote").click();
+		}
 		navigate(id);
 	});
 	picker.addEventListener("change", () => navigate(picker.value));
@@ -411,6 +448,7 @@ export function mountWorkingFolder(root, templates) {
 	renderCatalog(emptyFolderCatalog);
 	initModals();
 	initAuth();
+	resetPublishedServiceVisibility();
 	initHire();
 	initContact();
 	window.addEventListener("open-related-post", () => {
@@ -420,7 +458,9 @@ export function mountWorkingFolder(root, templates) {
 	updateAdminUi();
 	onAuthStateChange(() => {
 		refreshFolder();
-		if (activeRoute === "edit-services" && !isAdminUser()) closeSheet();
+		if (adminRoutes.has(activeRoute) && !isAdminUser()) closeSheet();
+		else if (isAdminUser() && adminRoutes.has(location.hash.slice(1)))
+			syncLocation();
 	});
 	syncLocation();
 	document.body.classList.add("loaded");

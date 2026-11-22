@@ -134,6 +134,21 @@ async function smoke(browser, fixture, viewport) {
 			await page.locator("[data-close]").click();
 			await page.locator("dialog[open]").waitFor({ state: "hidden" });
 		}
+		await page.locator(".categories a[href='#build']").click();
+		await hire.click();
+		await page.locator("[data-close]").evaluate((control) => {
+			control.click();
+			control.click();
+		});
+		await page.locator("dialog[open]").waitFor({ state: "hidden" });
+		assert.equal(new URL(page.url()).hash, "#build");
+
+		await page.locator("#loginButton").click();
+		await page.getByRole("link", { name: "Edit portfolio content" }).click();
+		await page.locator("dialog[open] .folder-editor").waitFor();
+		await page.locator("[data-close]").click();
+		await page.locator("dialog[open]").waitFor({ state: "hidden" });
+		assert.equal(await page.locator(".folder-editor").count(), 0);
 		await exerciseQuote(page, hire);
 		const categories = [
 			"about",

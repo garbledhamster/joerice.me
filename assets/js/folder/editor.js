@@ -1,6 +1,7 @@
 import { isAdminUser, onAuthStateChange } from "../services/auth.js";
 import {
 	getEditableNotes,
+	isPortfolioExampleAddress,
 	readNoteForEdit,
 	saveFolderCopy,
 	saveFolderNote,
@@ -38,13 +39,10 @@ function noteValues(fields) {
 	if (!Number.isSafeInteger(order) || order < 0) {
 		throw new Error("Enter an order of zero or a higher whole number.");
 	}
-	const url = URL.parse(exampleHref);
-	if (
-		exampleHref &&
-		(url?.protocol !== "https:" || url.username || url.password)
-	) {
+	if (exampleHref && !isPortfolioExampleAddress(exampleHref)) {
 		throw new Error("Use a complete HTTPS address for the example.");
 	}
+
 	return {
 		title,
 		included,
@@ -63,7 +61,7 @@ const noteFields = `
 		<textarea name="included" rows="4" required></textarea>
 	</label>
 	<label class="portfolioField">Example link (optional)
-		<input type="url" name="exampleHref" inputmode="url">
+		<input type="text" name="exampleHref" inputmode="url">
 	</label>
 	<label class="portfolioField">Category
 		<select name="category" required></select>
@@ -78,7 +76,7 @@ const noteFields = `
 `;
 
 const copyFields = `
-	<label class="portfolioField">Opening paragraph
+	<label class="portfolioField">Page copy (leave a blank line between paragraphs)
 		<textarea name="text" rows="6" required></textarea>
 	</label>
 `;
@@ -211,7 +209,8 @@ export function mountFolderEditor(container, { getCopy, refresh }) {
 					else await saveFolderNote(current.id, values);
 					if (!isCurrent()) return;
 					try {
-						await refresh();
+						if ((await refresh()) === false)
+							throw new Error("Public refresh unavailable.");
 						result = "Saved.";
 					} catch {
 						result = "Saved. Reload the page to see the update.";

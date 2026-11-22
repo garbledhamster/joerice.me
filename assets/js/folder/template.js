@@ -39,7 +39,6 @@ export function folderTemplate({
 			<footer class="guide">
 				<a href="#guide" data-route="guide">How to build an idea →</a>
 				<div class="admin-actions">
-					<a class="login-control" href="#edit-services" data-route="edit-services" data-admin-only hidden>Edit services</a>
 					<a class="login-control" href="#loginModal" id="loginButton">Login</a>
 				</div>
 			</footer>
@@ -57,6 +56,7 @@ export function folderTemplate({
 				<div data-sheet="guide" hidden>${guide}</div>
 				<div data-sheet="products" hidden>${products}</div>
 				<div data-sheet="edit-services" hidden>${services}</div>
+				<div data-sheet="edit-content" hidden></div>
 			</div>
 		</dialog>
 		${login}

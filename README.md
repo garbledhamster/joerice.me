@@ -41,6 +41,10 @@ The job reports these advisory results separately. These counts come from the ex
 
 Run `npm run lint` to include the advisory linters in a local check. Run `npm run lint:html:vnu` with Java for an additional HTML standards check. The Jekyll layouts and reading-link source pages contain Liquid and front matter. Verify them through the separate Pages build and the [reading-link checks](docs/reading-links.md). Before release, record passing Code Quality runs on the pull request and the exact release candidate, plus the separate Pages build result.
 
+## Working Folder browser check
+
+With Playwright and its Chromium browser available, run `node tests/working-folder-browser-test.cjs` from the checkout. The test serves the normal entry on loopback and uses local doubles for Firebase, CAPTCHA, and quote delivery. Set `WORKING_FOLDER_CAPTURES` to an output directory to save the viewport captures. The individual HTML browser fixtures in `tests/` exercise the existing archive, quote transport, and admin editor.
+
 ## 📝 Code Style Guidelines
 
 ### JavaScript

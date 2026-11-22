@@ -40,6 +40,16 @@ function cleanText(value) {
 	return typeof value === "string" ? value.trim() : "";
 }
 
+export function isPortfolioExampleAddress(address) {
+	if (address === "/examples/backup-restore/") return true;
+	try {
+		const url = new URL(address);
+		return url.protocol === "https:" && !url.username && !url.password;
+	} catch {
+		return false;
+	}
+}
+
 function noteFields(values) {
 	const title = cleanText(values.title);
 	const included = Array.isArray(values.included)
@@ -57,12 +67,10 @@ function noteFields(values) {
 			"Choose a category and enter a nonnegative whole number for the order.",
 		);
 	}
-	if (href) {
-		const url = URL.parse(href);
-		if (!url || url.protocol !== "https:" || url.username || url.password) {
-			throw new Error("Use a complete HTTPS address for the example.");
-		}
+	if (href && !isPortfolioExampleAddress(href)) {
+		throw new Error("Use a complete HTTPS address for the example.");
 	}
+
 	return {
 		title,
 		included,
@@ -88,6 +96,9 @@ export async function loadPublishedFolder() {
 	const snapshot = await posts()
 		.where("published", "==", true)
 		.get({ source: "server" });
+	if (snapshot.metadata?.fromCache || snapshot.metadata?.hasPendingWrites) {
+		throw new Error("Portfolio publication data could not be confirmed.");
+	}
 	const overrides = new Map();
 	const copy = {};
 	snapshot.forEach((doc) => {
@@ -114,7 +125,14 @@ export async function loadPublishedFolder() {
 		if (override?.hidden === true) continue;
 		try {
 			const fields = override ? noteFields(override) : noteToFields(starter);
-			const example = { ...starter.example, href: fields.exampleHref };
+			const example =
+				starter.example.href && !fields.exampleHref
+					? {
+							title: "Example currently unavailable",
+							kind: "Example availability",
+							text: "Get in touch if you’d like to talk through how this work could fit your project.",
+						}
+					: { ...starter.example, href: fields.exampleHref };
 			notes.push({
 				...starter,
 				...fields,
