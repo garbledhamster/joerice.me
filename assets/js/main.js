@@ -12,6 +12,7 @@ import {
 	getSocialLinksTemplate,
 } from "./components/profile.js";
 import { ready } from "./core/dom.js";
+import { mountWorkingFolder } from "./folder/app.js";
 import { getContactTemplate, initContact } from "./pages/contact.js";
 import { getGalleryTemplate, initGallery } from "./pages/gallery.js";
 import { getHireTemplate, initHire } from "./pages/hire.js";
@@ -102,7 +103,15 @@ async function initApp() {
 		return;
 	}
 
-	// Render every public section once so navigation can use page anchors.
+	if (app.hasAttribute("data-working-folder")) {
+		mountWorkingFolder(app, {
+			login: getLoginModalTemplate(),
+			postEditor: getPortfolioModalTemplate(),
+		});
+		return;
+	}
+
+	// Keep the long-standing module fixture and legacy entry usable.
 	app.innerHTML = `
     ${getHeaderTemplate()}
     ${getProfileTemplate()}
