@@ -122,10 +122,10 @@
 				  data: () => ({ ...records[id] }),
                 };
               },
-              async set(data) {
+              async set(data, options) {
 				if (window.testFailWrites) throw new Error("Test permission denied");
 				window.testWrittenPostId = id;
-				records[id] = { ...records[id], ...data };
+				records[id] = options?.merge ? { ...records[id], ...data } : { ...data };
               },
               async delete() {
                 testPostDeleted = true;

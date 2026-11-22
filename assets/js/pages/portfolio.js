@@ -43,6 +43,7 @@ const NON_POST_KINDS = [
 	"working-folder-note",
 	"working-folder-note-edit",
 	"working-folder-copy",
+	"working-folder-layout",
 ];
 const POSTS_PER_PAGE = 6;
 let currentPage = 1;

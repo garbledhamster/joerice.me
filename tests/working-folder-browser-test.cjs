@@ -215,9 +215,39 @@ async function smoke(browser, fixture, viewport) {
 		await page.locator("#loginButton").click();
 		await page.getByRole("link", { name: "Edit portfolio content" }).click();
 		await page.locator("dialog[open] .folder-editor").waitFor();
+		if (viewport.width === 390) {
+			await page
+				.locator('.folder-editor [name="content"]')
+				.selectOption("guide");
+			await page
+				.getByRole("textbox", { name: "Introduction" })
+				.fill("Test guide opening.");
+			await page
+				.locator(".folder-editor")
+				.getByRole("button", { name: "Save" })
+				.click();
+			await page
+				.locator(".folder-editor [role=status]")
+				.getByText("Saved.", { exact: true })
+				.waitFor();
+		}
 		await page.locator("[data-close]").click();
 		await page.locator("dialog[open]").waitFor({ state: "hidden" });
 		assert.equal(await page.locator(".folder-editor").count(), 0);
+		if (viewport.width === 390) {
+			await page.locator('.guide [data-route="guide"]').click();
+			const guide = page.locator('dialog[open] [data-sheet="guide"]');
+			const paragraphs = await guide
+				.locator("[data-folder-copy]")
+				.allTextContents();
+			assert.equal(paragraphs[0], "Test guide opening.");
+			assert(paragraphs.slice(1).every((text) => text.trim().length > 50));
+			await guide
+				.getByRole("link", { name: /Find and read a sample page/ })
+				.waitFor();
+			await page.locator("[data-close]").click();
+			await page.locator("dialog[open]").waitFor({ state: "hidden" });
+		}
 		await exerciseQuote(page, hire);
 		const categories = [
 			"about",

@@ -23,7 +23,7 @@ function fillNote(fields, note) {
 	fields.included.value = note.included.join("\n");
 	fields.exampleHref.value = note.exampleHref;
 	fields.category.value = note.category;
-	fields.order.value = String(note.order);
+	fields.order.value = String(note.order + 1);
 	fields.hidden.checked = note.hidden;
 }
 
@@ -37,8 +37,8 @@ function noteValues(fields) {
 	const order = fields.order.valueAsNumber;
 	if (!title || !included.length)
 		throw new Error("Enter a title and at least one included item.");
-	if (!Number.isSafeInteger(order) || order < 0) {
-		throw new Error("Enter an order of zero or a higher whole number.");
+	if (!Number.isSafeInteger(order) || order < 1) {
+		throw new Error("Enter a position of 1 or a higher whole number.");
 	}
 	if (exampleHref && !isPortfolioExampleAddress(exampleHref)) {
 		throw new Error("Use a complete HTTPS address for the example.");
@@ -49,7 +49,7 @@ function noteValues(fields) {
 		included,
 		exampleHref,
 		category: fields.category.value,
-		order,
+		order: order - 1,
 		hidden: fields.hidden.checked,
 	};
 }
@@ -67,8 +67,8 @@ const noteFields = `
 	<label class="portfolioField">Category
 		<select name="category" required></select>
 	</label>
-	<label class="portfolioField">Order (0 first)
-		<input type="number" name="order" min="0" step="1" required>
+	<label class="portfolioField">Position in category (1 is first)
+		<input type="number" name="order" min="1" step="1" required>
 	</label>
 	<label class="portfolioFieldCheckbox folder-editor-visibility">
 		<input type="checkbox" name="hidden">
@@ -77,8 +77,8 @@ const noteFields = `
 `;
 
 const copyFields = `
-	<label class="portfolioField">Page copy (leave a blank line between paragraphs)
-		<textarea name="text" rows="6" required></textarea>
+	<label class="portfolioField">Introduction
+		<textarea name="text" rows="4" required></textarea>
 	</label>
 `;
 
@@ -171,7 +171,7 @@ export function mountFolderEditor(container, { getCopy, refresh }) {
 			const form = document.createElement("form");
 			form.innerHTML = `
 				<fieldset class="folder-editor-fields">
-					<legend>${isCopy ? "Page copy" : "Note details"}</legend>
+					<legend>${isCopy ? "Page introduction" : "Note details"}</legend>
 					${isCopy ? copyFields : noteFields}
 					<button class="portfolioSaveButton" type="submit">Save</button>
 				</fieldset>
@@ -212,7 +212,10 @@ export function mountFolderEditor(container, { getCopy, refresh }) {
 				let result;
 				try {
 					if (isCopy) await saveFolderCopy(current.id, values);
-					else await saveFolderNote(current.id, values);
+					else {
+						const order = await saveFolderNote(current.id, values);
+						if (isCurrent()) fields.order.value = String(order + 1);
+					}
 					if (!isCurrent()) return;
 					try {
 						if ((await refresh()) === false)

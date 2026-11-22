@@ -112,7 +112,7 @@ export function mountWorkingFolder(root, templates) {
 	const openEditor = mountFolderEditor(
 		root.querySelector('[data-sheet="edit-content"]'),
 		{
-			getCopy: (page) => originalCopy.get(page).join("\n\n"),
+			getCopy: (page) => originalCopy.get(page)[0],
 			refresh: refreshFolder,
 		},
 	);
@@ -132,15 +132,17 @@ export function mountWorkingFolder(root, templates) {
 
 	function showPublishedCopy(copy = {}) {
 		for (const [page, nodes] of copyNodes) {
-			const paragraphs =
-				copy[page]?.split(/\r?\n\s*\r?\n/) || originalCopy.get(page);
+			const [intro, ...body] = originalCopy.get(page);
+			const saved = copy[page];
 			nodes.forEach((node, index) => {
-				const text =
-					index === nodes.length - 1
-						? paragraphs.slice(index).join("\n\n")
-						: paragraphs[index];
-				node.textContent = text || "";
-				node.hidden = !text;
+				if (index === 0) node.textContent = saved?.intro || intro;
+				else {
+					const previous =
+						index === nodes.length - 1
+							? saved?.legacyBody.slice(index - 1).join("\n\n")
+							: saved?.legacyBody[index - 1];
+					node.textContent = previous || body[index - 1];
+				}
 			});
 		}
 	}

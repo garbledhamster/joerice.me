@@ -155,6 +155,7 @@
         nextRead(false).complete(Object.keys(records));
         await settle();
         assert(!$("#quoteText").textContent && !$("#quoteCite").textContent, "An empty public result clears the quote and attribution");
+        assert($("#quoteBox").hidden && $("#quoteAvailability").textContent.includes("No favorite quotes"), "No published quotes has a readable empty state");
 
         $(".quoteAddButton").click();
         $(".quote-inline-text").value = "A new public sample";
@@ -172,6 +173,11 @@
         nextRead(false).complete(Object.keys(records));
         await settle();
         assert($("#quoteListItems").textContent.includes("A new public sample"), "Reopening loads the confirmed quote");
+        emitAuth(null);
+        nextRead(true).reject(new Error("Fixture public read denied"));
+        await settle();
+        assert($("#quoteBox").hidden && $("#quoteAvailability").textContent.includes("unavailable"), "A failed public lookup has its own state");
+        assertScrubbed();
 
         $("#testResults").textContent = "PASS Personal quotes publication and editor lifecycle";
         document.body.dataset.testStatus = "passed";

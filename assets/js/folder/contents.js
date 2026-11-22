@@ -25,7 +25,7 @@ export const guide = `
 		<p data-folder-copy="guide">I use a Project Bible to keep the decisions, examples and checks together. For the book site, I needed
 		sample pages, a place to put them, and a clear path from the sample to the guide and book.
 		Once that path worked, I could ask a reader to find the sample, read a page, and tell me where they would go next.</p>
-		<a class="action" href="https://feelings.ourstuff.space/" target="_blank" rel="noopener noreferrer">Try the book site (new tab) ↗</a>
+		<a class="action" href="https://feelings.ourstuff.space/" target="_blank" rel="noopener noreferrer">Find and read a sample page (new tab) ↗</a>
 	</section>
 	<section class="box">
 		<h2>Show how to keep it running</h2>

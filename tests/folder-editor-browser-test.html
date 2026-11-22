@@ -56,10 +56,10 @@
 								}
 								return { exists: Boolean(data), data: () => structuredClone(data) };
 							},
-							async set(data) {
+							async set(data, options) {
 								firewall();
 								if (failWrites) throw new Error("Permission denied");
-								records.set(id, structuredClone(data));
+								records.set(id, structuredClone(options?.merge ? { ...records.get(id), ...data } : data));
 							},
 						};
 					},
@@ -76,17 +76,17 @@
 					},
 				};
 			},
-			batch() {
+			async runTransaction(operation) {
 				const pending = [];
-				return {
+				const order = await operation({
+					get(ref) { return ref.get(); },
 					set(ref, data) { pending.push([ref.id, data]); },
-					async commit() {
-						firewall();
-						if (failWrites) throw new Error("Permission denied");
-						for (const [id, data] of pending) records.set(id, structuredClone(data));
-						await deferWrite;
-					},
-				};
+				});
+				firewall();
+				if (failWrites) throw new Error("Permission denied");
+				for (const [id, data] of pending) records.set(id, structuredClone(data));
+				await deferWrite;
+				return order;
 			},
 		};
 		window.firebaseConfig = Object.fromEntries(
@@ -140,7 +140,7 @@
 			};
 			await refresh();
 			const open = mountFolderEditor(editor, {
-				getCopy: (page) => published.copy[page] ?? "Original page copy",
+				getCopy: () => "Original page copy",
 				refresh,
 			});
 			open();
@@ -157,6 +157,11 @@
 			assert(document.activeElement === picker, "Keyboard users must be able to continue using the chooser");
 			await until(() => field("title"), "A keyboard selection should still load the editor");
 			assert(document.activeElement === picker, "A completed read must not steal picker focus");
+			field("order").value = "1";
+			submit();
+			await until(() => /saved/i.test(status().textContent), "The occupied-position move should save");
+			assert(notes("build").slice(0, 3).map(({ id }) => id).join() === "channel,book,local",
+				"Position 1 inserts the selected note and leaves its peers in order");
 			picker.blur();
 			choose("book");
 			assert(document.activeElement === status(), "Loading a note should focus its status");
@@ -187,11 +192,11 @@
 			submit();
 			await until(() => /saved/i.test(status().textContent), "Retry should save the note");
 			await refresh();
-			const moved = notes("writing").at(-1);
-			assert(moved.id === "book" && moved.order === 2 && moved.serviceId === "web-site",
+			const moved = notes("writing")[1];
+			assert(moved.id === "book" && moved.order === 1 && moved.serviceId === "web-site",
 				"Reloaded publication should move the original note and keep its reference");
 			assert(moved.title === '<img src=x> Updated book' &&
-				moved.example.href === "https://example.test/book" &&
+				moved.example.href === "https://example.test/book" && moved.example.title === "Work example" &&
 				moved.included.join("|") === "Choose a sample|Order a copy",
 				"Reloaded publication should include the saved title, example URL and included work");
 
@@ -202,10 +207,21 @@
 			assert(!notes("writing").some(({ id }) => id === "book"), "Hidden notes must leave the publication");
 			assert(!JSON.stringify(records.get("working-folder-note-book")).includes("Updated book"),
 				"A hidden note must keep its title out of its public record");
+			assert(!Object.values(records.get("working-folder-layout").categories).flat().includes("book"),
+				"Only visible notes appear in the public arrangement");
 			open();
 			choose("book");
 			await until(() => field("hidden")?.checked, "Reopening should show saved visibility");
 			assert(field("title").value === '<img src=x> Updated book', "An admin can still edit the hidden note");
+			field("hidden").checked = false;
+			field("order").value = "99";
+			submit();
+			await until(() => /saved/i.test(status().textContent), "Restoring a note should save");
+			assert(notes("writing").at(-1).id === "book" && field("order").value === "3",
+				"Restoring beyond the last position appends and reports the actual position");
+			field("hidden").checked = true;
+			submit();
+			await until(() => /saved/i.test(status().textContent), "Retain the hidden state for the sign-out scenario");
 
 			for (const [page, text] of [["guide", "Updated guide"], ["employers", "Updated employer copy"]]) {
 				choose(page);
@@ -214,7 +230,7 @@
 				field("text").value = text;
 				submit();
 				await until(() => /saved/i.test(status().textContent), "Page copy should save");
-				assert(published.copy[page] === text, "Published read must expose updated page copy");
+				assert(published.copy[page].intro === text, "Published read must expose the updated introduction");
 			}
 			open();
 			const pendingCopy = hold();

@@ -23,11 +23,12 @@ export function getQuotesTemplate() {
         <h2>Favorite quotes</h2>
         <button class="editBtn" id="editQuotesBtn" type="button" data-admin-only hidden aria-hidden="true" aria-controls="quoteEditor" aria-expanded="false">Edit</button>
       </div>
-      <div class="quoteBox" id="quoteBox">
+      <p id="quoteAvailability" role="status">Loading favorite quotes…</p>
+      <div class="quoteBox" id="quoteBox" hidden>
         <blockquote id="quoteText"></blockquote>
         <cite id="quoteCite"></cite>
       </div>
-      <div class="progressWrap"><div class="progressBar" id="quoteProgress"></div></div>
+      <div class="progressWrap" hidden><div class="progressBar" id="quoteProgress"></div></div>
       <div class="quoteEditor editPanel is-collapsed" id="quoteEditor" data-admin-only hidden aria-hidden="true">
         <aside class="quoteList">
           <div class="quoteListHeader">
@@ -105,6 +106,7 @@ export function initQuotes() {
 
 	const quoteText = $("#quoteText");
 	const quoteCite = $("#quoteCite");
+	const availability = $("#quoteAvailability");
 	const progressBar = $("#quoteProgress");
 	const editQuotesBtn = $("#editQuotesBtn");
 	const quoteEditor = $("#quoteEditor");
@@ -119,23 +121,30 @@ export function initQuotes() {
 	let transition;
 	let mounted = true;
 
-	function showPublicQuote(quote) {
+	function showPublicQuote(
+		quote,
+		emptyMessage = "No favorite quotes to show yet.",
+	) {
+		quoteBox.hidden = !quote;
+		progressBar.parentElement.hidden = publicQuotes.length < 2;
+		availability.hidden = Boolean(quote);
+		availability.textContent = quote ? "" : emptyMessage;
 		quoteText.textContent = quote ? `"${quote.text}"` : "";
 		quoteCite.textContent = quote ? `— ${quote.author || "Unknown"}` : "";
 		quoteBox.classList.toggle("active", Boolean(quote));
 		progressBar.style.transition = "none";
 		progressBar.style.width = quote ? "100%" : "0%";
-		if (quote) {
+		if (publicQuotes.length > 1) {
 			void progressBar.offsetWidth;
 			progressBar.style.transition = "width linear 6.4s";
 			progressBar.style.width = "0%";
 		}
 	}
 
-	function startCarousel(startIndex = 0) {
+	function startCarousel(startIndex = 0, emptyMessage) {
 		clearInterval(interval);
 		clearTimeout(transition);
-		showPublicQuote(publicQuotes[startIndex]);
+		showPublicQuote(publicQuotes[startIndex], emptyMessage);
 		if (publicQuotes.length < 2) return;
 
 		let index = startIndex;
@@ -149,18 +158,29 @@ export function initQuotes() {
 	}
 
 	async function refreshPublicQuotes() {
-		if (!quotesRef) return;
+		const unavailable = "Favorite quotes are unavailable right now.";
+		if (!quotesRef) {
+			startCarousel(0, unavailable);
+			return;
+		}
 		const request = ++publicRequest;
 		const visibleQuotes = [];
+		let message;
 		try {
 			// A single-field query avoids needing a composite index for quote dates.
 			const snapshot = await quotesRef
 				.where("visible", "==", true)
 				.get(SERVER_READ);
 			if (!mounted || request !== publicRequest) return;
+			if (snapshot.metadata?.fromCache || snapshot.metadata?.hasPendingWrites)
+				throw new Error("Public quote data could not be confirmed.");
 			snapshot.forEach((doc) => {
 				const data = doc.data();
-				if (data.visible === true) {
+				if (
+					data.visible === true &&
+					typeof data.text === "string" &&
+					data.text.trim()
+				) {
 					visibleQuotes.push({
 						...quoteRecord(doc.id, data),
 						date: quoteDate(data.createdAt),
@@ -168,12 +188,13 @@ export function initQuotes() {
 				}
 			});
 		} catch (error) {
+			message = unavailable;
 			if (mounted && request === publicRequest)
 				console.warn("Unable to load public quotes:", error);
 		}
 		if (!mounted || request !== publicRequest) return;
 		publicQuotes = visibleQuotes.sort((a, b) => b.date - a.date);
-		startCarousel();
+		startCarousel(0, message);
 	}
 
 	function closeEditor() {

@@ -4,6 +4,7 @@ import { startingCatalog } from "./starting-catalog.js";
 const NOTE = "working-folder-note";
 const NOTE_EDIT = "working-folder-note-edit";
 const COPY = "working-folder-copy";
+export const FOLDER_LAYOUT_KIND = "working-folder-layout";
 const copyPages = new Set(["guide", "employers"]);
 const categoryIds = new Set(startingCatalog.map(({ id }) => id));
 const starterNotes = startingCatalog.flatMap(({ id, notes }) =>
@@ -38,6 +39,48 @@ function posts() {
 
 function cleanText(value) {
 	return typeof value === "string" ? value.trim() : "";
+}
+
+function requireConfirmed(snapshot) {
+	if (snapshot.metadata?.fromCache || snapshot.metadata?.hasPendingWrites)
+		throw new Error("Portfolio publication data could not be confirmed.");
+	return snapshot;
+}
+
+function copyParts(data) {
+	const [legacyIntro, ...legacyBody] = cleanText(data.text).split(
+		/\r?\n\s*\r?\n/,
+	);
+	return { intro: cleanText(data.intro) || legacyIntro, legacyBody };
+}
+
+function exampleFor(note, href) {
+	if (href === (note.example.href || "")) return note.example;
+	return href
+		? {
+				href,
+				title: "Work example",
+				kind: "Example",
+				text: "Open the example to see the work.",
+			}
+		: {
+				title: "Example currently unavailable",
+				kind: "Example availability",
+				text: "Get in touch if you’d like to talk through how this work could fit your project.",
+			};
+}
+
+function arrangeNotes(notes, ids) {
+	const indexed = new Map(
+		notes.sort((a, b) => a.order - b.order).map((note) => [note.id, note]),
+	);
+	const arranged = [];
+	for (const id of Array.isArray(ids) ? ids : []) {
+		if (!indexed.has(id)) continue;
+		arranged.push(indexed.get(id));
+		indexed.delete(id);
+	}
+	return [...arranged, ...indexed.values()];
 }
 
 export function isPortfolioExampleAddress(address) {
@@ -93,14 +136,12 @@ function noteToFields(note) {
 }
 
 export async function loadPublishedFolder() {
-	const snapshot = await posts()
-		.where("published", "==", true)
-		.get({ source: "server" });
-	if (snapshot.metadata?.fromCache || snapshot.metadata?.hasPendingWrites) {
-		throw new Error("Portfolio publication data could not be confirmed.");
-	}
+	const snapshot = requireConfirmed(
+		await posts().where("published", "==", true).get({ source: "server" }),
+	);
 	const overrides = new Map();
 	const copy = {};
+	let layout;
 	snapshot.forEach((doc) => {
 		const data = doc.data();
 		if (data.published !== true) return;
@@ -115,8 +156,12 @@ export async function loadPublishedFolder() {
 			copyPages.has(data.page) &&
 			doc.id === `${COPY}-${data.page}`
 		) {
-			const text = cleanText(data.text);
-			if (text) copy[data.page] = text;
+			copy[data.page] = copyParts(data);
+		} else if (
+			data.kind === FOLDER_LAYOUT_KIND &&
+			doc.id === FOLDER_LAYOUT_KIND
+		) {
+			layout = data.categories;
 		}
 	});
 	const notes = [];
@@ -125,18 +170,10 @@ export async function loadPublishedFolder() {
 		if (override?.hidden === true) continue;
 		try {
 			const fields = override ? noteFields(override) : noteToFields(starter);
-			const example =
-				starter.example.href && !fields.exampleHref
-					? {
-							title: "Example currently unavailable",
-							kind: "Example availability",
-							text: "Get in touch if you’d like to talk through how this work could fit your project.",
-						}
-					: { ...starter.example, href: fields.exampleHref };
 			notes.push({
 				...starter,
 				...fields,
-				example,
+				example: exampleFor(starter, fields.exampleHref),
 				serviceId: serviceIds[starter.id],
 			});
 		} catch {
@@ -146,9 +183,10 @@ export async function loadPublishedFolder() {
 	return {
 		catalog: startingCatalog.map((category) => ({
 			...category,
-			notes: notes
-				.filter((note) => note.category === category.id)
-				.sort((a, b) => a.order - b.order),
+			notes: arrangeNotes(
+				notes.filter((note) => note.category === category.id),
+				layout?.[category.id],
+			),
 		})),
 		copy,
 	};
@@ -164,14 +202,26 @@ export async function readNoteForEdit(noteId) {
 	const starter = starterById.get(noteId);
 	if (!starter) throw new Error("This note is unavailable.");
 	const collection = posts();
-	const draft = await collection
-		.doc(`${NOTE_EDIT}-${noteId}`)
-		.get({ source: "server" });
-	if (draft.exists) return noteFields(draft.data());
-	const saved = await collection
-		.doc(`${NOTE}-${noteId}`)
-		.get({ source: "server" });
-	return saved.exists ? noteFields(saved.data()) : noteToFields(starter);
+	const draft = requireConfirmed(
+		await collection.doc(`${NOTE_EDIT}-${noteId}`).get({ source: "server" }),
+	);
+	const { catalog } = await loadPublishedFolder();
+	const category = catalog.find(({ notes }) =>
+		notes.some(({ id }) => id === noteId),
+	);
+	const order = category?.notes.findIndex(({ id }) => id === noteId);
+	if (draft.exists) {
+		const fields = noteFields(draft.data());
+		return order === undefined ? fields : { ...fields, order };
+	}
+	const published = category?.notes[order];
+	if (published) return { ...noteToFields(published), order };
+	const saved = requireConfirmed(
+		await collection.doc(`${NOTE}-${noteId}`).get({ source: "server" }),
+	);
+	return saved.exists
+		? { ...noteToFields(starter), hidden: saved.data().hidden === true }
+		: noteToFields(starter);
 }
 
 export async function saveFolderNote(noteId, values) {
@@ -181,46 +231,77 @@ export async function saveFolderNote(noteId, values) {
 	const fields = noteFields(values);
 	const db = getFirestore();
 	const collection = posts();
-	const batch = db.batch();
-	batch.set(collection.doc(`${NOTE_EDIT}-${noteId}`), {
-		...fields,
-		kind: NOTE_EDIT,
-		noteId,
-		published: false,
+	const layoutRef = collection.doc(FOLDER_LAYOUT_KIND);
+	const { catalog } = await loadPublishedFolder();
+	return db.runTransaction(async (transaction) => {
+		const current = await transaction.get(layoutRef);
+		const saved = current.exists ? current.data() : undefined;
+		if (saved && (saved.kind !== FOLDER_LAYOUT_KIND || !saved.categories))
+			throw new Error("The current note order could not be read.");
+		const categories = Object.fromEntries(
+			catalog.map(({ id, notes }) => {
+				const order = saved
+					? saved.categories[id]
+					: notes.map((note) => note.id);
+				if (!Array.isArray(order))
+					throw new Error("The current note order could not be read.");
+				return [
+					id,
+					[
+						...new Set(
+							order.filter((id) => id !== noteId && starterById.has(id)),
+						),
+					],
+				];
+			}),
+		);
+		const destination = categories[fields.category];
+		const order = Math.min(fields.order, destination.length);
+		if (!fields.hidden) destination.splice(order, 0, noteId);
+		const record = { ...fields, order };
+		transaction.set(layoutRef, {
+			kind: FOLDER_LAYOUT_KIND,
+			categories,
+			published: true,
+		});
+		transaction.set(collection.doc(`${NOTE_EDIT}-${noteId}`), {
+			...record,
+			kind: NOTE_EDIT,
+			noteId,
+			published: false,
+		});
+		transaction.set(collection.doc(`${NOTE}-${noteId}`), {
+			...(fields.hidden ? { hidden: true } : record),
+			kind: NOTE,
+			noteId,
+			published: true,
+		});
+		return order;
 	});
-	const publicFields = fields.hidden ? { hidden: true } : fields;
-	batch.set(collection.doc(`${NOTE}-${noteId}`), {
-		...publicFields,
-		kind: NOTE,
-		noteId,
-		published: true,
-	});
-	await batch.commit();
 }
 
 export async function readFolderCopyForEdit(page) {
 	if (!ensureAdmin("read folder copy"))
 		throw new Error("Sign in as admin to edit portfolio content.");
 	if (!copyPages.has(page)) throw new Error("This page is unavailable.");
-	const record = await posts().doc(`${COPY}-${page}`).get({ source: "server" });
-	if (record.metadata?.fromCache || record.metadata?.hasPendingWrites) {
-		throw new Error("Page copy could not be confirmed.");
-	}
+	const record = requireConfirmed(
+		await posts().doc(`${COPY}-${page}`).get({ source: "server" }),
+	);
 	if (!record.exists) return undefined;
 	const data = record.data();
-	const text = cleanText(data.text);
-	if (data.kind !== COPY || data.page !== page || !text)
+	const { intro } = copyParts(data);
+	if (data.kind !== COPY || data.page !== page || !intro)
 		throw new Error("This page copy is unavailable.");
-	return text;
+	return intro;
 }
 
 export async function saveFolderCopy(page, value) {
 	if (!ensureAdmin("save folder copy"))
 		throw new Error("Sign in as admin to edit portfolio content.");
-	const text = cleanText(value);
-	if (!copyPages.has(page) || !text)
+	const intro = cleanText(value);
+	if (!copyPages.has(page) || !intro)
 		throw new Error("Enter the copy you want to publish.");
 	await posts()
 		.doc(`${COPY}-${page}`)
-		.set({ kind: COPY, page, text, published: true });
+		.set({ kind: COPY, page, intro, published: true }, { merge: true });
 }
