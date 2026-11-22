@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>Folder editor browser tests</title>
+	<link rel="stylesheet" href="../styles.css">
+</head>
+<body>
+	<button type="button" id="loginButton">Login</button>
+	<main id="editor"></main>
+	<pre id="testResults" role="status">Running folder editor browser tests…</pre>
+	<script type="module">
+		const editor = document.querySelector("#editor");
+		const results = document.querySelector("#testResults");
+		const records = new Map();
+		const admin = { email: "jmjrice94@gmail.com", uid: "admin-1" };
+		let setUser;
+		let failWrites = false;
+		let deferRead;
+		let deferWrite;
+		let failRefresh = false;
+		let published;
+		let signedIn = null;
+		let loginClicked = false;
+		document.querySelector("#loginButton").addEventListener("click", () => { loginClicked = true; });
+
+		const auth = {
+			onAuthStateChanged(callback) {
+				setUser = (user) => {
+					signedIn = user;
+					callback(user);
+				};
+				setUser(null);
+			},
+		};
+		const firewall = () => {
+			if (signedIn?.email !== admin.email) throw new Error("Permission denied");
+		};
+		const firestore = {
+			collection(name) {
+				if (name !== "Posts") throw new Error("Unexpected collection");
+				return {
+					doc(id) {
+						return {
+							id,
+							async get() {
+								firewall();
+								const data = records.get(id);
+								if (deferRead) {
+									const wait = deferRead;
+									deferRead = null;
+									await wait;
+								}
+								return { exists: Boolean(data), data: () => structuredClone(data) };
+							},
+							async set(data) {
+								firewall();
+								if (failWrites) throw new Error("Permission denied");
+								records.set(id, structuredClone(data));
+							},
+						};
+					},
+					where(field, operator, value) {
+						if (field !== "published" || operator !== "==" || value !== true) {
+							throw new Error("Expected a public query");
+						}
+						return { async get() {
+							const matches = [...records].filter(([, record]) => record.published === true);
+							return { forEach: (callback) => {
+								for (const [id, data] of matches) callback({ id, data: () => structuredClone(data) });
+							} };
+						} };
+					},
+				};
+			},
+			batch() {
+				const pending = [];
+				return {
+					set(ref, data) { pending.push([ref.id, data]); },
+					async commit() {
+						firewall();
+						if (failWrites) throw new Error("Permission denied");
+						for (const [id, data] of pending) records.set(id, structuredClone(data));
+						await deferWrite;
+					},
+				};
+			},
+		};
+		window.firebaseConfig = Object.fromEntries(
+			["apiKey", "authDomain", "projectId", "storageBucket", "messagingSenderId", "appId"]
+				.map((key) => [key, "test-only"]),
+		);
+		window.firebase = {
+			apps: [{}],
+			auth: () => auth,
+			firestore: () => firestore,
+		};
+
+		function assert(condition, message) {
+			if (!condition) throw new Error(message);
+		}
+		function field(name) {
+			return editor.querySelector(`[name="${name}"]`);
+		}
+		function choose(value) {
+			field("content").value = value;
+			field("content").dispatchEvent(new Event("change", { bubbles: true }));
+		}
+		function status() {
+			return editor.querySelector("[role=status]");
+		}
+		async function until(check, message) {
+			const deadline = performance.now() + 2000;
+			while (!check() && performance.now() < deadline) {
+				await new Promise((resolve) => setTimeout(resolve, 20));
+			}
+			assert(check(), message);
+		}
+		function submit() {
+			editor.querySelector("form").requestSubmit();
+		}
+		function hold() {
+			let release;
+			const promise = new Promise((resolve) => { release = resolve; });
+			return { promise, release };
+		}
+		const notes = (category) => published.catalog.find(({ id }) => id === category).notes;
+
+		try {
+			const { initAuth } = await import("../assets/js/services/auth.js");
+			const { loadPublishedFolder } = await import("../assets/js/folder/content-store.js");
+			const { mountFolderEditor } = await import("../assets/js/folder/editor.js");
+			initAuth();
+			const refresh = async () => {
+				if (failRefresh) throw new Error("Public read unavailable");
+				published = await loadPublishedFolder();
+			};
+			await refresh();
+			const open = mountFolderEditor(editor, {
+				getCopy: (page) => published.copy[page] ?? "Original page copy",
+				refresh,
+			});
+			open();
+			assert(!field("content"), "Signed-out visitors must not receive edit controls");
+			editor.querySelector("button").click();
+			assert(loginClicked, "Editor sign-in must open the existing login");
+			setUser({ email: "member@example.test", uid: "member" });
+			assert(!field("content"), "Signed-in non-admin visitors must not receive edit controls");
+
+			setUser(admin);
+			const picker = field("content");
+			assert(document.activeElement === picker, "The editor should focus the content chooser");
+			choose("channel");
+			assert(document.activeElement === picker, "Keyboard users must be able to continue using the chooser");
+			await until(() => field("title"), "A keyboard selection should still load the editor");
+			assert(document.activeElement === picker, "A completed read must not steal picker focus");
+			picker.blur();
+			choose("book");
+			assert(document.activeElement === status(), "Loading a note should focus its status");
+			await until(() => field("title"), "The book note should load");
+			assert(document.activeElement === field("title"), "Loaded note should focus its first field");
+			field("title").value = '<img src=x> Updated book';
+			field("included").value = "Choose a sample\n\nOrder a copy";
+			field("exampleHref").value = "javascript:alert(1)";
+			field("category").value = "writing";
+			field("order").value = "2";
+			submit();
+			await until(() => /HTTPS/.test(status().textContent), "Reject an unsafe example URL");
+			assert(notes("build").some(({ id }) => id === "book"), "Validation cannot publish an edit");
+
+			field("exampleHref").value = "https://example.test/book";
+			failWrites = true;
+			submit();
+			await until(() => /couldn.t save/i.test(status().textContent), "A rejected save needs a retry notice");
+			assert(document.activeElement === status(), "A failed save must leave focus on its result");
+			assert(field("title").value === '<img src=x> Updated book' &&
+				field("exampleHref").value === "https://example.test/book" &&
+				field("included").value === "Choose a sample\n\nOrder a copy" &&
+				field("category").value === "writing" && field("order").value === "2",
+				"All typed fields must survive a rejected save");
+			assert(!editor.querySelector("img"), "Editor values must remain text");
+
+			failWrites = false;
+			submit();
+			await until(() => /saved/i.test(status().textContent), "Retry should save the note");
+			await refresh();
+			const moved = notes("writing").at(-1);
+			assert(moved.id === "book" && moved.order === 2 && moved.serviceId === "web-site",
+				"Reloaded publication should move the original note and keep its reference");
+			assert(moved.title === '<img src=x> Updated book' &&
+				moved.example.href === "https://example.test/book" &&
+				moved.included.join("|") === "Choose a sample|Order a copy",
+				"Reloaded publication should include the saved title, example URL and included work");
+
+			field("hidden").checked = true;
+			submit();
+			await until(() => /saved/i.test(status().textContent), "Visibility should save");
+			await refresh();
+			assert(!notes("writing").some(({ id }) => id === "book"), "Hidden notes must leave the publication");
+			assert(!JSON.stringify(records.get("working-folder-note-book")).includes("Updated book"),
+				"A hidden note must keep its title out of its public record");
+			open();
+			choose("book");
+			await until(() => field("hidden")?.checked, "Reopening should show saved visibility");
+			assert(field("title").value === '<img src=x> Updated book', "An admin can still edit the hidden note");
+
+			for (const [page, text] of [["guide", "Updated guide"], ["employers", "Updated employer copy"]]) {
+				choose(page);
+				assert(field("text").value === "Original page copy", "The opening paragraph should fill the copy form");
+				field("text").value = text;
+				submit();
+				await until(() => /saved/i.test(status().textContent), "Page copy should save");
+				assert(published.copy[page] === text, "Published read must expose updated page copy");
+			}
+			open();
+			choose("employers");
+			assert(field("text").value === "Updated employer copy", "Reopen should show saved page copy");
+
+			const firstRead = hold();
+			deferRead = firstRead.promise;
+			choose("book");
+			choose("guide");
+			firstRead.release();
+			await new Promise((resolve) => setTimeout(resolve, 30));
+			assert(!field("title") && field("text")?.value === "Updated guide",
+				"A note read that finishes after switching pages must leave the current form in place");
+
+			const secondRead = hold();
+			deferRead = secondRead.promise;
+			choose("book");
+			open.close();
+			secondRead.release();
+			await new Promise((resolve) => setTimeout(resolve, 30));
+			assert(!editor.hasChildNodes(), "A pending read must not restore a closed editor");
+
+			open();
+			const thirdRead = hold();
+			deferRead = thirdRead.promise;
+			choose("book");
+			failRefresh = true;
+			setUser(null);
+			assert(!field("content") && !field("title"), "Sign-out should immediately remove all edit controls");
+			thirdRead.release();
+			await new Promise((resolve) => setTimeout(resolve, 30));
+			assert(!field("title") && !editor.textContent.includes("Updated book"),
+				"A deferred private read and unavailable public refresh cannot repopulate the signed-out editor");
+			const publicView = await loadPublishedFolder();
+			assert(!publicView.catalog.some(({ notes }) => notes.some(({ id }) => id === "book")),
+				"A fresh signed-out public query must keep the hidden note out");
+
+			setUser(admin);
+			choose("book");
+			await until(() => field("title"), "The admin should be able to resume editing");
+			const lastWrite = hold();
+			deferWrite = lastWrite.promise;
+			field("title").value = "Another private title";
+			submit();
+			setUser(null);
+			lastWrite.release();
+			await new Promise((resolve) => setTimeout(resolve, 30));
+			assert(!field("content") && !editor.textContent.includes("Another private title"),
+				"Completing a pending save must not restore a previous admin's editor");
+			document.body.dataset.testStatus = "passed";
+			results.textContent = "Folder editor browser tests passed";
+		} catch (error) {
+			document.body.dataset.testStatus = "failed";
+			results.textContent = error.stack || error.message;
+		}
+	</script>
+</body>
+</html>
