@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Personal quotes browser test</title>
+  </head>
+  <body>
+    <div id="fixture"></div>
+    <pre id="testResults" role="status">Running…</pre>
+    <script type="module">
+      import { destroyQuotes, getQuotesTemplate, initQuotes } from "../assets/js/pages/quotes.js";
+      import { initAuth } from "../assets/js/services/auth.js";
+
+      const $ = (selector) => document.querySelector(selector);
+      const admin = { uid: "fixture-admin", email: "jmjrice94@gmail.com" };
+      const visitor = { uid: "fixture-visitor", isAnonymous: true };
+      const records = {
+        older: { text: "Older public", visible: true, createdAt: "2025-08-03" },
+        recent: { text: "Recent public", visible: true, createdAt: "2025-10-02" },
+        hidden: { text: "Private quote", author: "Private author", visible: false, createdAt: "2026-02-02" },
+        legacy: { text: "Legacy quote", createdAt: "2025-09-03" },
+      };
+      const reads = [];
+      const writes = [];
+      let emitAuth;
+
+      function queueRead(publicOnly, options) {
+        return new Promise((resolve) => {
+          reads.push({ publicOnly, options, complete(ids) {
+            const docs = ids.map((id) => ({ id, data: () => records[id] }));
+            resolve({ forEach: (callback) => docs.forEach(callback) });
+          } });
+        });
+      }
+
+      window.firebaseConfig = Object.fromEntries(
+        ["apiKey", "authDomain", "projectId", "storageBucket", "messagingSenderId", "appId"].map((key) => [key, "fixture"]),
+      );
+      window.firebase = {
+        apps: [{}],
+        auth: () => ({ onAuthStateChanged(callback) { emitAuth = callback; } }),
+        firestore: () => ({ collection(name) {
+          assert(name === "Quotes", "Uses the existing Quotes collection");
+          return {
+            where(field, operator, value) {
+              assert(field === "visible" && operator === "==" && value === true, "Public query requires explicit visibility");
+              return { get: (options) => queueRead(true, options) };
+            },
+            orderBy() { return { get: (options) => queueRead(false, options) }; },
+            doc(id) {
+              return {
+                async update(record) {
+                  Object.assign(records[id], record);
+                  writes.push({ id, record });
+                },
+                async set(record) {
+                  Object.assign(records[id], record);
+                  writes.push({ id, record });
+                },
+              };
+            },
+          };
+        } }),
+      };
+      window.confirm = () => true;
+
+      function assert(condition, message) {
+        if (!condition) throw new Error(message);
+      }
+
+      async function settle() {
+        await new Promise((resolve) => setTimeout(resolve, 0));
+      }
+
+      function nextRead(publicOnly) {
+        const read = reads.find((entry) => entry.publicOnly === publicOnly);
+        assert(read, publicOnly ? "Public read uses a visibility query" : "Open admin editor requests its own data");
+        reads.splice(reads.indexOf(read), 1);
+        assert(read.options?.source === "server", "Quote reads use current server data");
+        return read;
+      }
+
+      function assertScrubbed() {
+        assert($("#quoteEditor").hidden && $("#quoteEditor").classList.contains("is-collapsed"), "Sign-out hides and collapses the editor");
+        assert($("#quoteListItems").childElementCount === 0, "Sign-out synchronously removes private editor DOM");
+        assert(!$("#quotesSection").innerHTML.includes("Private quote"), "Private text never remains in the page DOM");
+      }
+
+      try {
+        $("#fixture").innerHTML = getQuotesTemplate();
+        initAuth();
+        initQuotes();
+        nextRead(true).complete(Object.keys(records));
+        await settle();
+        assert(reads.length === 0, "Visitor never requests the unfiltered collection");
+        assertScrubbed();
+        assert($("#quoteText").textContent.includes("Recent public"), "Public carousel orders visible quotes newest first");
+
+        emitAuth(admin);
+        nextRead(true).complete(["older", "recent"]);
+        $("#editQuotesBtn").click();
+        nextRead(false).complete(Object.keys(records));
+        await settle();
+        assert($("#quoteListItems").textContent.includes("Legacy quote"), "Authorized editor keeps legacy quotes with missing visibility");
+        $(".quote-hidden .quoteListButton").click();
+        assert($("#quoteText").textContent.includes("Recent public"), "An editor selection never displays a private quote in the carousel");
+        $(".quote-hidden .quote-edit-button").click();
+        assert($(".quote-inline-text").value === "Private quote", "Admin can edit a private quote");
+        $(".quote-inline-save").click();
+        await settle();
+        assert(writes[0]?.id === "hidden" && writes[0].record.visible !== true, "Editing a hidden quote preserves its visibility");
+        const lateEditorRead = nextRead(false);
+        nextRead(true).complete(["older", "recent"]);
+        emitAuth(null);
+        assertScrubbed();
+        lateEditorRead.complete(Object.keys(records));
+        await settle();
+        assertScrubbed();
+        const signedOutRead = nextRead(true);
+
+        emitAuth(visitor);
+        nextRead(true).complete(["older"]);
+        await settle();
+        signedOutRead.complete(["recent"]);
+        await settle();
+        assert($("#quoteText").textContent.includes("Older public"), "A late public response cannot overwrite the current public result");
+
+        emitAuth(admin);
+        nextRead(true).complete(["older", "recent"]);
+        $("#editQuotesBtn").click();
+        nextRead(false).complete(Object.keys(records));
+        await settle();
+        const legacy = [...document.querySelectorAll(".quote-list-item")].find((item) => item.textContent.includes("Legacy quote"));
+        const publishLegacy = legacy.querySelector(".quote-visibility-button");
+        assert(publishLegacy.getAttribute("aria-label") === "Publish legacy quote", "Editor identifies legacy visibility");
+        publishLegacy.click();
+        await settle();
+        assert(writes.at(-1)?.id === "legacy" && records.legacy.visible === true, "Admin can explicitly publish a legacy quote");
+        nextRead(true).complete(["older", "recent", "legacy"]);
+        nextRead(false).complete(Object.keys(records));
+        await settle();
+        assert($("#quoteListItems").textContent.includes("Legacy quote"), "Authorized editor reopens after reauthentication");
+
+        const recent = [...document.querySelectorAll(".quote-list-item")].find((item) => item.textContent.includes("Recent public"));
+        recent.querySelector(".quote-visibility-button").click();
+        await settle();
+        assert(records.recent.visible === false, "Admin can hide a published quote");
+        assert(!$("#quoteText").textContent.includes("Recent public"), "Unpublishing removes the quote before the next read finishes");
+        nextRead(true).complete([]);
+        nextRead(false).complete(Object.keys(records));
+        await settle();
+        assert(!$("#quoteText").textContent && !$("#quoteCite").textContent, "An empty public result clears the quote and attribution");
+
+        $("#testResults").textContent = "PASS Personal quotes publication and editor lifecycle";
+        document.body.dataset.testStatus = "passed";
+      } catch (error) {
+        $("#testResults").textContent = `FAIL ${error.message}`;
+        document.body.dataset.testStatus = "failed";
+      } finally {
+        destroyQuotes();
+      }
+    </script>
+  </body>
+</html>
