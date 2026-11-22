@@ -43,7 +43,12 @@ async function smoke(browser, fixture, viewport) {
 		reducedMotion: "reduce",
 		ignoreHTTPSErrors: true,
 	});
-	await context.addInitScript({ content: fixture });
+	await context.addInitScript({
+		content: fixture.replace(
+			"onAuthStateChanged(callback) {",
+			"onAuthStateChanged(callback) { window.applyWorkingFolderAuth = callback;",
+		),
+	});
 	await context.addInitScript(() => {
 		window.grecaptcha = {
 			ready: (run) => run(),
@@ -194,6 +199,24 @@ async function smoke(browser, fixture, viewport) {
 			await page.goto(`${index}#${fragment}`);
 			await page.locator(`dialog[open] ${selector}`).waitFor();
 		}
+		await page.goto(`${index}#edit-content`);
+		await page.locator("dialog[open] .folder-editor").waitFor();
+		await page.evaluate(() => {
+			window.testFailPostReads = true;
+			window.applyWorkingFolderAuth({ uid: "fixture-public" });
+		});
+		await page.locator("dialog[open]").waitFor({ state: "hidden" });
+		assert.equal(await page.locator(".folder-editor").count(), 0);
+		await page
+			.locator("#loginButton")
+			.filter({ hasText: /^Login$/ })
+			.waitFor();
+		await page
+			.locator(".panel:not([inert])")
+			.getByText("Notes are currently unavailable.", { exact: false })
+			.waitFor();
+		await page.locator(mobile ? ".phone-hire" : ".desktop-hire").click();
+		await page.locator("dialog[open] #contactForm").waitFor();
 		assert.deepEqual(
 			errors.map((error) => error.message),
 			[],
