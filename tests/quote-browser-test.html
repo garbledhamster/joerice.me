@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Quote browser tests</title>
+  </head>
+  <body>
+    <button type="button" id="hire">Hire me</button>
+    <button type="button" id="feedback">Send feedback or request an update</button>
+    <button type="button" id="work">Work &amp; Notes</button>
+    <dialog id="quoteSheet" aria-label="Hire me">
+      <form method="dialog"><button type="submit">Close</button></form>
+      <div id="quoteBody"></div>
+    </dialog>
+    <dialog id="workSheet" aria-label="Work &amp; Notes">
+      <form method="dialog"><button type="submit">Close</button></form>
+    </dialog>
+    <pre id="testResults" role="status">Running quote browser tests…</pre>
+    <script type="module" src="quote-browser-test.js"></script>
+  </body>
+</html>
