@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta http-equiv="Content-Security-Policy" content="default-src 'none'; style-src 'unsafe-inline'; img-src data:; base-uri 'none'; form-action 'none'">
+    <title>Restore a file from backup · Joe Rice</title>
+    <meta name="description" content="A worked example of recovering a missing spreadsheet row while keeping newer edits.">
+    <link rel="icon" href="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7">
+    <style>
+      :root {
+        /* Working Folder palette and local type fallbacks. */
+        --ink: #19231c;
+        --muted: #4b5045;
+        --ground: #efebe0;
+        --board: #fffdf7;
+        --frame: #cab794;
+        --yellow: #ffcf00;
+        --focus: #005c90;
+        --hire: #214936;
+        --paper: #f9edbe;
+        --note-blue: #e1edf0;
+        --note-green: #deebdf;
+
+        color: var(--ink);
+        background: var(--ground);
+        font: 1rem / 1.55 "Space Grotesk", system-ui, sans-serif;
+      }
+
+      *, *::before, *::after {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+      }
+
+      a {
+        color: inherit;
+        text-underline-offset: 0.21em;
+      }
+
+      :focus-visible {
+        outline: 3px solid var(--focus);
+        outline-offset: 3px;
+      }
+
+      .masthead {
+        background: var(--yellow);
+        padding-inline: max(1rem, calc((100% - 53rem) / 2));
+      }
+
+      .masthead a {
+        display: inline-flex;
+        align-items: center;
+        min-block-size: 44px;
+        font-weight: 700;
+      }
+
+      main {
+        max-inline-size: 55rem;
+        margin: clamp(1rem, 4vw, 3rem) auto;
+        padding-inline: 0.75rem;
+      }
+
+      article {
+        background: var(--board);
+        border: 4px solid var(--frame);
+        border-radius: 9px;
+        padding: clamp(1rem, 4vw, 2.5rem);
+      }
+
+      h1, h2, h3, p, dl {
+        margin: 0;
+      }
+
+      h1 {
+        margin-block-end: 0.65rem;
+        font-family: "Bebas Neue", system-ui, sans-serif;
+        font-size: clamp(2rem, 5vw, 3.45rem);
+        line-height: 1.05;
+        letter-spacing: -0.035em;
+        text-wrap: balance;
+      }
+
+      h2 {
+        margin-block-end: 0.4rem;
+        font-size: 1.17rem;
+        line-height: 1.3;
+      }
+
+      h3 {
+        font-size: 1rem;
+        line-height: 1.25;
+      }
+
+      p {
+        max-inline-size: 67ch;
+      }
+
+      .comparison, .procedure, details {
+        margin-block-start: 1.5rem;
+      }
+
+      .files {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 0.75rem;
+      }
+
+      .file {
+        border: 1px solid var(--frame);
+        border-radius: 3px;
+        padding: 0.75rem 0.9rem;
+        background: var(--paper);
+      }
+
+      .backup {
+        background: var(--note-blue);
+      }
+
+      .date {
+        font-weight: 400;
+        color: var(--muted);
+      }
+
+      dl {
+        margin-block-start: 0.5rem;
+      }
+
+      .row {
+        display: flex;
+        justify-content: space-between;
+        gap: 0.5rem;
+        padding-block: 0.3rem;
+        border-block-start: 1px solid var(--frame);
+      }
+
+      dd {
+        margin: 0;
+        font-weight: 700;
+        font-variant-numeric: tabular-nums;
+      }
+
+      summary {
+        inline-size: fit-content;
+        min-block-size: 44px;
+        padding: 0.56rem 0.8rem;
+        color: white;
+        background: var(--hire);
+        border-radius: 5px;
+        font-weight: 700;
+        cursor: pointer;
+      }
+
+      summary:hover {
+        text-decoration: underline;
+        text-underline-offset: 0.21em;
+      }
+
+      .result {
+        max-inline-size: 34rem;
+        margin-block-start: 0.75rem;
+        padding: 0.9rem;
+        background: var(--note-green);
+        border: 1px solid var(--frame);
+        border-radius: 3px;
+      }
+
+      .result p {
+        margin-block-start: 0.5rem;
+      }
+
+      @media (max-width: 36rem) {
+        .files {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header class="masthead">
+      <a href="../../#security">Back to Security</a>
+    </header>
+    <main>
+      <article>
+        <h1>Restore a file from backup</h1>
+        <p>A row disappeared from <code>supplies.csv</code>. Bring it back and keep the edits made since the last backup. This example uses invented data.</p>
+
+        <section class="comparison" aria-labelledby="compare-heading">
+          <h2 id="compare-heading">Compare the two copies</h2>
+          <div class="files">
+            <section class="file" id="current-file" aria-labelledby="current-heading">
+              <h3 id="current-heading">Current file <span class="date">· April 16</span></h3>
+              <dl>
+                <div class="row">
+                  <dt>Seed trays</dt>
+                  <dd>Missing</dd>
+                </div>
+                <div class="row">
+                  <dt>Plant labels</dt>
+                  <dd>45</dd>
+                </div>
+              </dl>
+            </section>
+            <section class="file backup" id="backup-file" aria-labelledby="backup-heading">
+              <h3 id="backup-heading">Backup copy <span class="date">· April 15</span></h3>
+              <dl>
+                <div class="row">
+                  <dt>Seed trays</dt>
+                  <dd>12</dd>
+                </div>
+                <div class="row">
+                  <dt>Plant labels</dt>
+                  <dd>30</dd>
+                </div>
+              </dl>
+            </section>
+          </div>
+        </section>
+
+        <section class="procedure" aria-labelledby="restore-heading">
+          <h2 id="restore-heading">Joe’s restore plan</h2>
+          <p>Restore the April 15 backup into a separate folder to keep the current file intact. Open both files and copy the missing Seed trays row into a new copy of the current file. Replacing the whole spreadsheet would put Plant labels back at 30.</p>
+        </section>
+
+        <details>
+          <summary>See the checked result</summary>
+          <section class="result" aria-labelledby="result-heading">
+            <h2 id="result-heading">Recovered copy</h2>
+            <dl>
+              <div class="row">
+                <dt>Seed trays</dt>
+                <dd>12</dd>
+              </div>
+              <div class="row">
+                <dt>Plant labels</dt>
+                <dd>45</dd>
+              </div>
+            </dl>
+            <p>The Seed trays count matches the April 15 backup. The Plant labels count matches the newer April 16 file.</p>
+          </section>
+        </details>
+      </article>
+    </main>
+  </body>
+</html>
