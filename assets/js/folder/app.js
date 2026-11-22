@@ -7,7 +7,11 @@ import { getSocialLinksTemplate } from "../components/profile.js";
 import { createElement } from "../core/dom.js";
 import { getContactTemplate, initContact } from "../pages/contact.js";
 import { getGalleryTemplate, initGallery } from "../pages/gallery.js";
-import { getHireTemplate, initHire } from "../pages/hire.js";
+import {
+	clearServiceEditor,
+	getHireTemplate,
+	initHire,
+} from "../pages/hire.js";
 import { getLinksTemplate } from "../pages/links.js";
 import { getPortfolioTemplate, initPortfolio } from "../pages/portfolio.js";
 import { getProductsTemplate, initProducts } from "../pages/products.js";
@@ -251,6 +255,8 @@ export function mountWorkingFolder(root, templates) {
 		if (legacyModal) closeModal(legacyModal);
 		if (activeRoute === "edit-content" && id !== activeRoute)
 			openEditor.close();
+		if (activeRoute === "edit-services" && id !== activeRoute)
+			clearServiceEditor();
 		activeRoute = id;
 		heading.textContent = titles[id];
 		for (const panel of sheetPanels) panel.hidden = panel.dataset.sheet !== id;
@@ -293,6 +299,7 @@ export function mountWorkingFolder(root, templates) {
 		const boardOnly = raw === "loginModal" || raw === "whiteboard";
 		const closedRoute = activeRoute;
 		if (closedRoute === "edit-content") openEditor.close();
+		if (closedRoute === "edit-services") clearServiceEditor();
 		activeRoute = undefined;
 		closingSheet = false;
 		selectCategory(

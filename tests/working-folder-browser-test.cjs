@@ -217,6 +217,19 @@ async function smoke(browser, fixture, viewport) {
 			.waitFor();
 		await page.locator(mobile ? ".phone-hire" : ".desktop-hire").click();
 		await page.locator("dialog[open] #contactForm").waitFor();
+
+		await page.goto(`${index}#edit-services`);
+		await page.reload({ waitUntil: "domcontentloaded" });
+		await page.locator("dialog[open] #addServiceButton").click();
+		await page
+			.locator(".serviceEditor [name=title]")
+			.fill("Draft service sample");
+		await page.evaluate(() => {
+			window.testFailPostReads = true;
+			window.applyWorkingFolderAuth({ uid: "fixture-public" });
+		});
+		await page.locator("dialog[open]").waitFor({ state: "hidden" });
+		assert.equal(await page.locator(".serviceEditor").count(), 0);
 		assert.deepEqual(
 			errors.map((error) => error.message),
 			[],
