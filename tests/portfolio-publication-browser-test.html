@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <base href="../">
+  <title>Work &amp; Notes publication browser test</title>
+  <style>
+    #portfolioModal:not(.show) { display: none; }
+  </style>
+</head>
+<body>
+  <div id="archive"></div>
+  <div id="portfolioModal" hidden aria-hidden="true">
+    <h2 id="portfolioModalTitle">Add Post</h2>
+    <label>Title <input id="portfolioPostTitle" type="text"></label>
+    <label>Post <textarea id="portfolioPostBody"></textarea></label>
+    <label>Published <input id="portfolioPostPublished" type="checkbox"></label>
+    <label>Pinned <input id="portfolioPostPinned" type="checkbox"></label>
+    <div id="portfolioServicePicker"></div>
+    <button id="portfolioSaveButton" type="button">Save</button>
+    <button id="portfolioDeleteButton" type="button">Delete</button>
+    <p id="portfolioEditorStatus"></p>
+  </div>
+  <pre id="testResults" role="status">Running…</pre>
+  <script type="module">
+    import { getPortfolioTemplate, getRelatedPosts, initPortfolio } from "./assets/js/pages/portfolio.js";
+    import { initAuth } from "./assets/js/services/auth.js";
+
+    const params = new URLSearchParams(location.search);
+    const scenario = params.get("case") || "rejected-signout";
+    const fresh = scenario.startsWith("fresh-");
+    const admin = { email: "jmjrice94@gmail.com", uid: "fixture-admin" };
+    const visiblePost = {
+      title: "Public field notes",
+      body: "Public body text",
+      published: true,
+      pinned: true,
+      tags: ["Field notes"],
+      serviceIds: ["web-site", "removed-service"],
+    };
+    const draft = {
+      title: "Fixture draft title",
+      body: "Fixture draft detail",
+      published: false,
+      tags: ["Fixture-only topic"],
+      serviceIds: ["web-site"],
+    };
+    const overrides = {
+      "source-imported-0001": { kind: "source-override", sourceUrl: "posts/original-one.yaml", published: true },
+      "source-imported-0002": { kind: "source-override", sourceUrl: "posts/original-two.yaml", published: true },
+      "imported-0001": { ...draft, sourceUrl: "posts/original-one.yaml" },
+    };
+    const publicDocs = {
+      ...overrides,
+      visible: visiblePost,
+      "legacy-hidden": { title: "Hidden legacy title", published: true, Published: false },
+      "folder-note": { kind: "working-folder-note", title: "Working Folder note record", published: true },
+      "folder-edit": { kind: "working-folder-note-edit", title: "Working Folder edit record", published: true },
+      "folder-copy": { kind: "working-folder-copy", title: "Working Folder copy record", published: true },
+    };
+    const adminDocs = { ...publicDocs, draft };
+    const requests = [];
+    let authChanged;
+    let storedPost;
+    let detailResponse = visiblePost;
+    let failWrites = true;
+    let bundledReadFails = false;
+
+    function enqueue(publicOnly, options) {
+      return new Promise((resolve, reject) => {
+        requests.push({
+          publicOnly,
+          resolve(records = publicOnly ? publicDocs : adminDocs) {
+            const docs = Object.entries(records)
+              .filter(([, data]) => !publicOnly || data.published === true)
+              .map(([id, data]) => ({ id, data: () => data }));
+            resolve({ metadata: { fromCache: false }, forEach: (callback) => docs.forEach(callback) });
+          },
+          unavailable(code) {
+            if (options?.source !== "server" && code === "unavailable") {
+              const docs = [{ id: "cached", data: () => ({ ...visiblePost, title: "Cached post title" }) }];
+              resolve({ metadata: { fromCache: true }, forEach: (callback) => docs.forEach(callback) });
+            } else {
+              reject(Object.assign(new Error("Fixture read unavailable"), { code }));
+            }
+          },
+        });
+      });
+    }
+
+    window.firebaseConfig = Object.fromEntries(
+      ["apiKey", "authDomain", "projectId", "storageBucket", "messagingSenderId", "appId"].map((key) => [key, "fixture"]),
+    );
+    window.firebase = {
+      apps: [{}],
+      auth: () => ({
+        onAuthStateChanged(callback) { authChanged = callback; },
+        signInAnonymously: () => new Promise(() => {}),
+      }),
+      firestore: () => ({
+        collection: () => ({
+          get: (options) => enqueue(false, options),
+          where(field, comparison, value) {
+            if (field !== "published" || comparison !== "==" || value !== true) throw new Error("Unexpected public query");
+            return { get: (options) => enqueue(true, options) };
+          },
+          doc: (id) => ({
+            id,
+            get: async () => ({ exists: true, data: () => id === "visible" ? detailResponse : draft }),
+            async set(values) {
+              if (failWrites) throw new Error("Fixture write denied");
+              storedPost = values;
+            },
+          }),
+        }),
+      }),
+    };
+    window.jsyaml = { load: JSON.parse };
+    window.fetch = async (url) => {
+      if (bundledReadFails && url === "posts/kept.yaml") {
+        return new Response("{}", { status: 404 });
+      }
+      const sources = {
+        "posts/loader.yaml": { posts: ["posts/original-one.yaml", "posts/original-two.yaml", "posts/kept.yaml"] },
+        "posts/original-one.yaml": { title: "Suppressed replacement original", content: "Past public content" },
+        "posts/original-two.yaml": { title: "Suppressed deleted original", content: "Past public content" },
+        "posts/kept.yaml": { title: "Current bundled post", content: "Public bundled content" },
+      };
+      if (!(url in sources)) throw new Error("Unexpected fetch in disposable fixture");
+      return new Response(JSON.stringify(sources[url]));
+    };
+
+    const archive = document.getElementById("archive");
+    const status = () => document.getElementById("portfolioStatus");
+    const findPost = (id) => archive.querySelector(`button[data-id="${id}"]`);
+    function assert(condition, message) {
+      if (!condition) throw new Error(message);
+    }
+    async function waitFor(check, message) {
+      for (let attempt = 0; attempt < 160; attempt += 1) {
+        if (check()) return;
+        await new Promise((resolve) => setTimeout(resolve, 10));
+      }
+      throw new Error(message);
+    }
+    async function takeRequest(publicOnly) {
+      await waitFor(() => requests.some((request) => request.publicOnly === publicOnly), "Expected an archive read");
+      const index = requests.findIndex((request) => request.publicOnly === publicOnly);
+      return requests.splice(index, 1)[0];
+    }
+    function checkCleared() {
+      assert(!archive.textContent.includes("Fixture draft") && !archive.textContent.includes("Fixture-only topic"), "Draft title, detail and topic must clear");
+      assert(!archive.querySelector(".postInlineEditor, .postTitleEditButton"), "Post editors must clear");
+      assert(document.getElementById("portfolioModal").getAttribute("aria-hidden") === "true", "Pending modal must close");
+      assert(!document.getElementById("portfolioPostTitle").value && !document.getElementById("portfolioPostBody").value, "Pending modal values must clear");
+      assert(!getRelatedPosts("web-site").posts.some((post) => post.title === draft.title), "A related list must never show a draft");
+    }
+
+    try {
+      archive.innerHTML = getPortfolioTemplate();
+      document.getElementById("portfolioModal").hidden = false;
+      initAuth();
+      if (!fresh) void authChanged(admin);
+      initPortfolio();
+      const firstRead = await takeRequest(fresh);
+      if (fresh) {
+        assert(firstRead.publicOnly, "A fresh public load must use the published query");
+        if (["fresh-success", "fresh-detail", "fresh-bundled-detail", "fresh-refresh"].includes(scenario)) {
+          firstRead.resolve(publicDocs);
+          await waitFor(() => status().hidden, "The public archive did not finish");
+          assert(findPost("visible") && archive.textContent.includes("Current bundled post"), "Current published records and unsuppressed posts must be listed");
+          assert(!archive.textContent.includes("Suppressed"), "Replacement and deletion markers must hide originals");
+          assert(!archive.textContent.includes("Hidden legacy title"), "A legacy unpublished flag must veto publication even if the lowercase flag is true");
+          assert(!archive.textContent.includes("Working Folder"), "Working Folder records must stay out of the archive");
+          if (scenario === "fresh-detail") {
+            detailResponse = { ...draft };
+            findPost("visible").click();
+            await waitFor(() => archive.querySelector(".postAccordion.is-open"), "The reader did not open");
+            assert(!archive.textContent.includes("Fixture draft detail"), "A record that is no longer published must not appear in the public reader");
+          }
+          if (scenario === "fresh-refresh") {
+            const filter = document.getElementById("postTopicFilter");
+            filter.value = "topic:Field notes";
+            filter.dispatchEvent(new Event("change"));
+            document.getElementById("refreshPostsBtn").click();
+            (await takeRequest(true)).resolve();
+            await waitFor(() => status().hidden, "The public refresh did not finish");
+            assert(filter.value === "topic:Field notes", "Refreshing must retain a valid public topic selection");
+          }
+          if (scenario === "fresh-bundled-detail") {
+            bundledReadFails = true;
+            archive.querySelector('[data-url="posts/kept.yaml"]').click();
+            await waitFor(() => archive.querySelector(".postAccordion.is-open"), "The bundled reader did not open");
+            assert(archive.querySelector(".is-open .postInlineBody").textContent.includes("Unable"), "A failed bundled read must offer an error state");
+          }
+        } else {
+          firstRead.unavailable(scenario === "fresh-offline" ? "unavailable" : "permission-denied");
+          await waitFor(() => /unavailable|could not load/.test(status().textContent), "The archive must offer an unavailable state");
+          assert(!archive.querySelector(".postTitleButton"), "An unavailable read cannot establish current visibility for bundled or cached posts");
+        }
+        checkCleared();
+      } else {
+        firstRead.resolve();
+        await waitFor(() => findPost("draft"), "The admin archive did not load");
+        if (scenario === "editor") {
+          findPost("visible").closest(".postAccordion").querySelector(".postTitleEditButton").click();
+          await waitFor(() => archive.querySelector(".postInlineEditor"), "The editor did not open");
+          const editor = archive.querySelector(".postInlineEditor");
+          assert(editor.querySelector('[value="removed-service"]').checked, "Editing must retain a missing service reference");
+          editor.elements.body.value = "Updated fixture text";
+          editor.requestSubmit();
+          await waitFor(() => editor.querySelector('[role="status"]').textContent.includes("Unable"), "The rejected write should announce a retryable error");
+          assert(editor.isConnected && editor.elements.body.value === "Updated fixture text", "The rejected write should retain form values");
+          failWrites = false;
+          editor.requestSubmit();
+          (await takeRequest(false)).resolve();
+          await waitFor(() => !editor.isConnected, "The saved editor did not close");
+          assert(storedPost.body === "Updated fixture text" && storedPost.serviceIds.includes("removed-service"), "A retry must save the edited value and stable service reference");
+        } else {
+          const filter = document.getElementById("postTopicFilter");
+          filter.value = "topic:Fixture-only topic";
+          filter.dispatchEvent(new Event("change"));
+          findPost("draft").click();
+          await waitFor(() => archive.textContent.includes("Fixture draft detail"), "The admin draft should open");
+          document.getElementById("addPortfolioBtn").click();
+          document.getElementById("portfolioPostTitle").value = "Unsaved editor title";
+          document.getElementById("portfolioPostBody").value = "Unsaved editor body";
+          let adminRead;
+          if (scenario !== "rejected-signout") {
+            document.getElementById("refreshPostsBtn").click();
+            adminRead = await takeRequest(false);
+          }
+          void authChanged(null);
+          checkCleared();
+          assert(filter.value === "all", "The draft-only selection must reset on sign-out");
+          const publicRead = await takeRequest(true);
+          if (scenario === "rejected-signout") {
+            publicRead.unavailable("permission-denied");
+            await waitFor(() => /unavailable|could not load/.test(status().textContent), "Failed sign-out refresh must show an unavailable state");
+          } else {
+            if (scenario === "admin-first") adminRead.resolve();
+            await new Promise((resolve) => setTimeout(resolve, 35));
+            checkCleared();
+            publicRead.resolve();
+            await waitFor(() => findPost("visible"), "The published archive did not recover");
+            if (scenario === "public-first") adminRead.resolve();
+            await new Promise((resolve) => setTimeout(resolve, 35));
+            assert(findPost("visible"), "An older admin response must not replace the public result");
+          }
+          checkCleared();
+        }
+      }
+      document.body.dataset.testStatus = "passed";
+      document.getElementById("testResults").textContent = `PASS ${scenario}`;
+    } catch (error) {
+      document.body.dataset.testStatus = "failed";
+      document.getElementById("testResults").textContent = error.message;
+    }
+  </script>
+</body>
+</html>

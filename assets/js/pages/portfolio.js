@@ -3,10 +3,10 @@
  * @description Portfolio page module
  *
  * Displays all portfolio entries with search and inline post viewing.
- * Supports Firestore, local storage, and YAML post sources
+ * Reads Firestore posts and combines them with current bundled YAML sources.
  */
 
-import { closeModal, openModal } from "../components/modal.js";
+import { closeModal, isModalOpen, openModal } from "../components/modal.js";
 import { $, addListener } from "../core/dom.js";
 import {
 	ensureAdmin,
@@ -26,15 +26,24 @@ import { sanitizeMarkdown, sanitizeText } from "../services/sanitize.js";
 // State
 const pinned = [];
 const notes = [];
-const yamlEntries = [];
 let currentPost = null;
 let openAccordion = null;
 let postOpenRequestId = 0;
 let editingPostId = null;
 let editingPostSource = null;
 let editingPostCreatedDate = null;
-let hasLoadedInitialPosts = false;
+let archiveRequestId = 0;
+let archiveSessionId = 0;
+let adminSession = null;
 let relatedPostsStatus = "loading";
+const SERVER_READ = { source: "server" };
+const NON_POST_KINDS = [
+	"source-override",
+	"service",
+	"working-folder-note",
+	"working-folder-note-edit",
+	"working-folder-copy",
+];
 const POSTS_PER_PAGE = 6;
 let currentPage = 1;
 
@@ -78,7 +87,7 @@ export function getPortfolioTemplate() {
           <label for="postTopicFilter">Service or topic<select id="postTopicFilter"><option value="all">All topics</option></select></label>
           <label for="postTypeFilter">Post type<select id="postTypeFilter"><option value="all">All types</option><option value="project">Projects</option><option value="article">Articles</option><option value="note">Notes</option><option value="product">Products</option></select></label>
         </div>
-        <div class="portfolioStatus" id="portfolioStatus" hidden></div>
+        <div class="portfolioStatus" id="portfolioStatus" role="status" hidden></div>
         <div id="pinnedPosts" hidden><h4 class="subhead">Pinned</h4><div class="grid" id="pinnedGrid"></div></div>
         <p class="postResultsCount" id="postResultsCount" aria-live="polite" aria-atomic="true"></p>
         <div class="grid" id="entryGrid"></div>
@@ -165,71 +174,55 @@ function isPostPublished(data) {
 	return true;
 }
 
+function isPublicPost(data) {
+	return data.published === true && isPostPublished(data);
+}
+
+function isPostRecord(data) {
+	return !NON_POST_KINDS.includes(data.kind);
+}
+
 /**
- * Load posts from Firestore
+ * Read posts and public suppression markers from Firestore.
  */
-async function loadFirestorePosts() {
+async function readFirestorePosts(canReadDrafts) {
 	const postsRef = getPostsCollectionRef();
-	relatedPostsStatus = "loading";
-	window.dispatchEvent(new Event("portfolio-posts-change"));
+	if (!postsRef) throw new Error("Posts are not connected.");
+	const query = canReadDrafts
+		? postsRef
+		: postsRef.where("published", "==", true);
+	const snapshot = await query.get(SERVER_READ);
+	if (snapshot.metadata?.fromCache || snapshot.metadata?.hasPendingWrites)
+		throw new Error("Publication state could not be confirmed.");
 
-	try {
-		if (!postsRef) throw new Error("Posts are not connected.");
-		let query = postsRef;
-		if (!isAdminUser()) {
-			query = postsRef.where("published", "==", true);
+	const entries = [];
+	const overriddenSources = new Set();
+	snapshot.forEach((doc) => {
+		const data = doc.data() || {};
+		const isPost = isPostRecord(data);
+		if (data.sourceUrl && (isPost || data.kind === "source-override")) {
+			overriddenSources.add(data.sourceUrl);
 		}
+		const published = isPublicPost(data);
+		if (!isPost || (!canReadDrafts && !published)) return;
 
-		const snapshot = await query.get();
-		const firestoreEntries = [];
-		const overriddenSources = new Set();
-
-		snapshot.forEach((doc) => {
-			const data = doc.data() || {};
-			if (data.sourceUrl) overriddenSources.add(data.sourceUrl);
-			if (data.kind === "source-override" || data.kind === "service") return;
-			const isPublished = isPostPublished(data);
-			const isPinned = data.pinned === true;
-
-			firestoreEntries.push({
-				title: data.title ?? data.Title ?? "Untitled",
-				date:
-					data["Created Date"] || data.createdDate || new Date().toISOString(),
-				url: `firestore:${doc.id}`,
-				pinned: isPinned,
-				tags: Array.isArray(data.tags) ? data.tags : [],
-				postType: data.postType,
-				productName: data.productName,
-				websiteUrl: data.websiteUrl,
-				id: doc.id,
-				source: "firestore",
-				published: isPublished,
-				serviceIds: Array.isArray(data.serviceIds) ? data.serviceIds : [],
-			});
+		entries.push({
+			title: data.title ?? data.Title ?? "Untitled",
+			date:
+				data["Created Date"] || data.createdDate || new Date().toISOString(),
+			url: `firestore:${doc.id}`,
+			pinned: data.pinned === true,
+			tags: Array.isArray(data.tags) ? data.tags : [],
+			postType: data.postType,
+			productName: data.productName,
+			websiteUrl: data.websiteUrl,
+			id: doc.id,
+			source: "firestore",
+			published,
+			serviceIds: Array.isArray(data.serviceIds) ? data.serviceIds : [],
 		});
-
-		// Clear existing firestore entries
-		const fallbackEntries = yamlEntries.filter(
-			(post) => !overriddenSources.has(post.url),
-		);
-		const otherPinned = fallbackEntries.filter((post) => post.pinned);
-		const otherNotes = fallbackEntries.filter((post) => !post.pinned);
-
-		pinned.length = 0;
-		notes.length = 0;
-
-		pinned.push(...otherPinned, ...firestoreEntries.filter((e) => e.pinned));
-		notes.push(...otherNotes, ...firestoreEntries.filter((e) => !e.pinned));
-
-		pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
-		notes.sort((a, b) => new Date(b.date) - new Date(a.date));
-		relatedPostsStatus = "ready";
-	} catch (error) {
-		relatedPostsStatus = "error";
-		console.warn("Unable to load Firestore posts:", error);
-	} finally {
-		window.dispatchEvent(new Event("portfolio-posts-change"));
-	}
+	});
+	return { entries, overriddenSources };
 }
 
 /**
@@ -241,6 +234,24 @@ function setEditorStatus(message) {
 	if (editorStatus) {
 		editorStatus.textContent = message || "";
 	}
+}
+
+function resetPortfolioEditor() {
+	editingPostId = null;
+	editingPostSource = null;
+	editingPostCreatedDate = null;
+	if (isModalOpen("portfolioModal")) closeModal("portfolioModal");
+	for (const id of ["portfolioPostTitle", "portfolioPostBody"]) {
+		const input = $(`#${id}`);
+		if (input) input.value = "";
+	}
+	const published = $("#portfolioPostPublished");
+	const pinned = $("#portfolioPostPinned");
+	if (published) published.checked = true;
+	if (pinned) pinned.checked = false;
+	const picker = $("#portfolioServicePicker");
+	if (picker) picker.replaceChildren();
+	setEditorStatus("");
 }
 
 /**
@@ -345,7 +356,10 @@ function openPortfolioEditor(post = null) {
 	openModal("portfolioModal");
 
 	// Focus title field
-	setTimeout(() => portfolioPostTitle?.focus(), 0);
+	setTimeout(() => {
+		if (isAdminUser() && isModalOpen("portfolioModal"))
+			portfolioPostTitle?.focus();
+	}, 0);
 }
 
 function postSiteLink(post) {
@@ -463,9 +477,11 @@ export function renderPage() {
 		.map((post, index) => formatPostEntry(post, start + index, "post"))
 		.join("");
 	const pinnedCount = filteredPosts(pinned).length;
-	$("#postResultsCount").textContent =
-		`${entries.length ? start + 1 : 0}–${Math.min(start + POSTS_PER_PAGE, entries.length)} of ${entries.length} posts${pinnedCount ? ` · ${pinnedCount} pinned` : ""}`;
-	$("#postEmptyState").hidden = entries.length + pinnedCount > 0;
+	const ready = relatedPostsStatus === "ready";
+	$("#postResultsCount").textContent = ready
+		? `${entries.length ? start + 1 : 0}–${Math.min(start + POSTS_PER_PAGE, entries.length)} of ${entries.length} posts${pinnedCount ? ` · ${pinnedCount} pinned` : ""}`
+		: "";
+	$("#postEmptyState").hidden = !ready || entries.length + pinnedCount > 0;
 	const pagination = $("#postPagination");
 	pagination.hidden = pages <= 1;
 	const pageButton = (page, label, disabled = false) =>
@@ -576,7 +592,7 @@ async function openInlinePostEditor(accordion) {
 	) {
 		closePost(openAccordion);
 		const loadedPost = await openPost(titleButton.dataset.url, accordion);
-		if (!loadedPost) return;
+		if (!loadedPost || openAccordion !== accordion || !isAdminUser()) return;
 	}
 
 	renderInlinePostEditor(accordion);
@@ -613,13 +629,13 @@ async function deletePostFromTitle(accordion) {
 
 	const postsRef = getPostsCollectionRef();
 	if (!postsRef) return;
+	const sessionId = archiveSessionId;
 
 	try {
 		await postsRef.doc(postId).delete();
+		if (sessionId !== archiveSessionId) return;
 		if (openAccordion === accordion) closePost(accordion);
-		await loadFirestorePosts();
-		renderPinned();
-		renderPage();
+		await loadPosts();
 	} catch (error) {
 		console.warn("Unable to delete post.", error);
 	}
@@ -654,6 +670,7 @@ async function handlePostGridSubmit(event) {
 	if (saveButton?.disabled) return;
 	if (saveButton) saveButton.disabled = true;
 	const savedPost = currentPost;
+	const sessionId = archiveSessionId;
 
 	try {
 		await savePost(savedPost, {
@@ -666,13 +683,11 @@ async function handlePostGridSubmit(event) {
 				(input) => input.value,
 			),
 		});
-		await loadFirestorePosts();
-		if (openAccordion === accordion && currentPost === savedPost) {
-			renderPinned();
-			renderPage();
-		}
+		if (sessionId !== archiveSessionId) return;
+		await loadPosts(() => openAccordion === accordion || !openAccordion);
 	} catch (error) {
 		console.warn("Unable to save post.", error);
+		if (sessionId !== archiveSessionId) return;
 		if (status) status.textContent = "Unable to save this post right now.";
 		if (saveButton) saveButton.disabled = false;
 	}
@@ -707,10 +722,18 @@ async function openPost(url, accordion) {
 			const postsRef = getPostsCollectionRef();
 			if (!postsRef) throw new Error("Firestore unavailable");
 
-			const doc = await postsRef.doc(postId).get();
-			if (!doc.exists) throw new Error("Post unavailable");
-
+			const doc = await postsRef.doc(postId).get(SERVER_READ);
 			const data = doc.data() || {};
+			if (
+				!doc.exists ||
+				doc.metadata?.fromCache ||
+				doc.metadata?.hasPendingWrites ||
+				!isPostRecord(data) ||
+				(!isAdminUser() && !isPublicPost(data))
+			) {
+				throw new Error("Post unavailable");
+			}
+
 			const content = data.body ?? data.Body ?? "";
 
 			loadedPost = {
@@ -729,8 +752,9 @@ async function openPost(url, accordion) {
 		} else {
 			const yaml = globalThis.jsyaml;
 			if (!yaml) throw new Error("YAML parser unavailable");
-			const raw = await fetch(url).then((r) => r.text());
-			const data = yaml.load(raw);
+			const response = await fetch(url);
+			if (!response.ok) throw new Error("Post unavailable");
+			const data = yaml.load(await response.text());
 			const content = data.content || "";
 			loadedPost = {
 				url,
@@ -782,6 +806,7 @@ function closePost(accordion) {
 	const isActive = openAccordion === accordion;
 	const titleButton = $(".postTitleButton", accordion);
 	const viewer = $(".postInlineViewer", accordion);
+	$(".postInlineBody", accordion)?.replaceChildren();
 	titleButton?.classList.remove("active");
 	titleButton?.setAttribute("aria-expanded", "false");
 	viewer?.setAttribute("aria-hidden", "true");
@@ -809,15 +834,17 @@ function setPortfolioStatus(message) {
 /**
  * Load posts from YAML files
  */
-async function loadYamlPosts() {
-	yamlEntries.length = 0;
+async function readYamlPosts(overriddenSources) {
+	const entries = [];
 	const yaml = globalThis.jsyaml;
 	if (!yaml) {
 		console.warn("YAML parser not available, skipping YAML posts.");
-		return;
+		return entries;
 	}
 	try {
-		const loaderText = await fetch("posts/loader.yaml").then((r) => r.text());
+		const loader = await fetch("posts/loader.yaml");
+		if (!loader.ok) throw new Error("The bundled post list is unavailable.");
+		const loaderText = await loader.text();
 		const loaderData = yaml.load(loaderText);
 		const filePaths = Array.isArray(loaderData.posts)
 			? loaderData.posts
@@ -826,13 +853,12 @@ async function loadYamlPosts() {
 					(_, index) => `posts/${String(index + 1).padStart(4, "0")}.yaml`,
 				);
 		for (const filePath of filePaths) {
+			if (overriddenSources.has(filePath)) continue;
 			try {
-				const raw = await fetch(filePath).then((r) => {
-					if (!r.ok) throw new Error();
-					return r.text();
-				});
-				const data = yaml.load(raw);
-				const entry = {
+				const response = await fetch(filePath);
+				if (!response.ok) continue;
+				const data = yaml.load(await response.text());
+				entries.push({
 					title: data.title,
 					date: data.date,
 					url: filePath,
@@ -843,36 +869,76 @@ async function loadYamlPosts() {
 					websiteUrl: data.websiteUrl,
 					serviceIds: Array.isArray(data.serviceIds) ? data.serviceIds : [],
 					source: "yaml",
-				};
-				yamlEntries.push(entry);
-				if (entry.pinned) pinned.push(entry);
-				else notes.push(entry);
+				});
 			} catch {}
 		}
 	} catch (error) {
 		console.warn("Unable to load YAML posts.", error);
 	}
+	return entries;
 }
 
-/**
- * Load all posts
- */
-async function loadPosts() {
-	setPortfolioStatus("Loading posts...");
-	await loadYamlPosts();
-	await loadFirestorePosts();
+function clearArchive() {
+	closePost(openAccordion);
+	pinned.length = 0;
+	notes.length = 0;
+}
 
-	pinned.sort((a, b) => new Date(b.date) - new Date(a.date));
-	notes.sort((a, b) => new Date(b.date) - new Date(a.date));
+async function loadPosts(shouldRender = () => true) {
+	const requestId = ++archiveRequestId;
+	const canReadDrafts = isAdminUser();
+	const isCurrent = () =>
+		requestId === archiveRequestId && canReadDrafts === isAdminUser();
+	relatedPostsStatus = "loading";
+	setPortfolioStatus("Loading posts…");
+	window.dispatchEvent(new Event("portfolio-posts-change"));
 
-	renderPinned();
-	renderPage();
-
-	if (!pinned.length && !notes.length) {
-		setPortfolioStatus("No posts available yet.");
-	} else {
+	try {
+		const { entries, overriddenSources } =
+			await readFirestorePosts(canReadDrafts);
+		if (!isCurrent()) return;
+		// Every bundled post can have a Firestore replacement. Only list it
+		// after verifying the current suppression markers on the server.
+		const bundled = await readYamlPosts(overriddenSources);
+		if (!isCurrent()) return;
+		const posts = [...bundled, ...entries].sort(
+			(a, b) => new Date(b.date) - new Date(a.date),
+		);
+		pinned.length = 0;
+		notes.length = 0;
+		for (const post of posts) {
+			(post.pinned ? pinned : notes).push(post);
+		}
+		relatedPostsStatus = "ready";
 		setPortfolioStatus("");
+		if (shouldRender()) renderPage();
+	} catch (error) {
+		if (!isCurrent()) return;
+		clearArchive();
+		if (error?.code === "permission-denied") resetPortfolioEditor();
+		relatedPostsStatus = "error";
+		setPortfolioStatus("Posts are temporarily unavailable. Try refreshing.");
+		renderPage();
+		console.warn("Unable to load Firestore posts:", error);
 	}
+	window.dispatchEvent(new Event("portfolio-posts-change"));
+}
+
+function handleArchiveAuthChange(user) {
+	const nextAdminSession = isAdminUser() ? user?.uid : null;
+	if (nextAdminSession !== adminSession) {
+		adminSession = nextAdminSession;
+		archiveSessionId += 1;
+		relatedPostsStatus = "loading";
+		clearArchive();
+		resetPortfolioEditor();
+		currentPage = 1;
+		if (searchInput) searchInput.value = "";
+		$("#postTopicFilter").value = "all";
+		$("#postTypeFilter").value = "all";
+		renderPage();
+	}
+	void loadPosts();
 }
 
 /**
@@ -990,12 +1056,8 @@ export function initPortfolio() {
 	const refreshPostsBtn = $("#refreshPostsBtn");
 	if (refreshPostsBtn) {
 		cleanupFns.push(
-			addListener(refreshPostsBtn, "click", async () => {
-				// Clear existing posts
-				pinned.length = 0;
-				notes.length = 0;
-				// Reload all posts
-				await loadPosts();
+			addListener(refreshPostsBtn, "click", () => {
+				void loadPosts();
 			}),
 		);
 	}
@@ -1034,12 +1096,13 @@ export function initPortfolio() {
 					return;
 				}
 
+				const sessionId = archiveSessionId;
 				try {
 					if (portfolioSaveButton.disabled) return;
 					portfolioSaveButton.disabled = true;
 					const createdDate = editingPostCreatedDate ?? now;
 
-					const savedId = await savePost(
+					await savePost(
 						editingPostId
 							? { id: editingPostId, source: editingPostSource, createdDate }
 							: null,
@@ -1059,27 +1122,16 @@ export function initPortfolio() {
 						},
 					);
 
-					// Update state
-					editingPostId = savedId;
-					editingPostSource = "firestore";
-					editingPostCreatedDate = createdDate;
-
-					// Reload posts and re-render
-					await loadFirestorePosts();
-					renderPinned();
-					renderPage();
-					setPortfolioStatus("");
-					closeModal("portfolioModal");
-
-					// Clear editing state
-					editingPostId = null;
-					editingPostSource = null;
-					editingPostCreatedDate = null;
+					if (sessionId !== archiveSessionId) return;
+					await loadPosts();
+					if (sessionId === archiveSessionId) resetPortfolioEditor();
 				} catch (error) {
 					console.warn("Unable to save post.", error);
-					setEditorStatus("Unable to save this post right now.");
+					if (sessionId === archiveSessionId)
+						setEditorStatus("Unable to save this post right now.");
 				} finally {
-					portfolioSaveButton.disabled = false;
+					if (sessionId === archiveSessionId)
+						portfolioSaveButton.disabled = false;
 				}
 			}),
 		);
@@ -1111,23 +1163,16 @@ export function initPortfolio() {
 					return;
 				}
 
+				const sessionId = archiveSessionId;
 				try {
 					await postsRef.doc(editingPostId).delete();
-
-					// Clear editing state
-					editingPostId = null;
-					editingPostSource = null;
-					editingPostCreatedDate = null;
-
-					// Reload posts and re-render
-					await loadFirestorePosts();
-					renderPinned();
-					renderPage();
-					setPortfolioStatus("");
-					closeModal("portfolioModal");
+					if (sessionId !== archiveSessionId) return;
+					resetPortfolioEditor();
+					await loadPosts();
 				} catch (error) {
 					console.warn("Unable to delete post.", error);
-					setEditorStatus("Unable to delete this post right now.");
+					if (sessionId === archiveSessionId)
+						setEditorStatus("Unable to delete this post right now.");
 				}
 			}),
 		);
@@ -1172,18 +1217,7 @@ export function initPortfolio() {
 	}
 
 	// Load posts on auth state change
-	cleanupFns.push(
-		onAuthStateChange(async () => {
-			if (!hasLoadedInitialPosts) {
-				hasLoadedInitialPosts = true;
-				await loadPosts();
-			} else {
-				await loadFirestorePosts();
-				renderPinned();
-				renderPage();
-			}
-		}),
-	);
+	cleanupFns.push(onAuthStateChange(handleArchiveAuthChange));
 }
 
 /**
@@ -1194,11 +1228,15 @@ export function destroyPortfolio() {
 		fn();
 	});
 	cleanupFns = [];
-	hasLoadedInitialPosts = false;
+	archiveRequestId += 1;
+	archiveSessionId += 1;
+	adminSession = null;
 	currentPage = 1;
-	pinned.length = 0;
-	notes.length = 0;
-	openAccordion = null;
-	currentPost = null;
-	postOpenRequestId += 1;
+	relatedPostsStatus = "loading";
+	clearArchive();
+	resetPortfolioEditor();
+	renderPage();
+	pinnedGrid = null;
+	entryGrid = null;
+	searchInput = null;
 }
