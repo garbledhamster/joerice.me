@@ -34,6 +34,7 @@ export function getQuotesTemplate() {
             <span>Quotes</span>
             <button class="quoteAddButton" type="button">Add</button>
           </div>
+          <p id="quoteEditorStatus" role="status"></p>
           <ul id="quoteListItems"></ul>
         </aside>
       </div>
@@ -108,6 +109,7 @@ export function initQuotes() {
 	const editQuotesBtn = $("#editQuotesBtn");
 	const quoteEditor = $("#quoteEditor");
 	const quoteListItems = $("#quoteListItems");
+	const editorStatus = $("#quoteEditorStatus");
 	const quoteAddButton = $(".quoteAddButton");
 	const quotesRef = getFirestore()?.collection("Quotes");
 	let publicQuotes = [];
@@ -183,6 +185,7 @@ export function initQuotes() {
 		editQuotesBtn.textContent = "Edit";
 		editQuotesBtn.setAttribute("aria-expanded", "false");
 		quoteListItems.replaceChildren();
+		editorStatus.textContent = "";
 	}
 
 	function renderEditor() {
@@ -194,8 +197,10 @@ export function initQuotes() {
 	}
 
 	async function refreshEditorQuotes(session) {
-		if (!quotesRef) return;
+		editorStatus.textContent = "Loading quotes…";
 		try {
+			if (!quotesRef)
+				throw new Error("Could not connect to the quote archive.");
 			const snapshot = await quotesRef
 				.orderBy("createdAt", "desc")
 				.get(SERVER_READ);
@@ -206,9 +211,13 @@ export function initQuotes() {
 			});
 			session.quotes = quotes;
 			renderEditor();
+			editorStatus.textContent = "";
 		} catch (error) {
-			if (editor === session)
+			if (editor === session) {
+				editorStatus.textContent =
+					"Couldn’t reload the quote list. Close and reopen the editor to retry.";
 				console.warn("Unable to load quote editor:", error);
+			}
 		}
 	}
 
@@ -224,6 +233,8 @@ export function initQuotes() {
 			void refreshPublicQuotes();
 			if (editor !== session) return;
 			session.editingIndex = null;
+			session.quotes = [];
+			renderEditor();
 			await refreshEditorQuotes(session);
 		} catch (error) {
 			if (editor === session) {

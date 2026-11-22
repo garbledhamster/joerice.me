@@ -25,8 +25,8 @@
       let emitAuth;
 
       function queueRead(publicOnly, options) {
-        return new Promise((resolve) => {
-          reads.push({ publicOnly, options, complete(ids) {
+        return new Promise((resolve, reject) => {
+          reads.push({ publicOnly, options, reject, complete(ids) {
             const docs = ids.map((id) => ({ id, data: () => records[id] }));
             resolve({ forEach: (callback) => docs.forEach(callback) });
           } });
@@ -47,6 +47,11 @@
               return { get: (options) => queueRead(true, options) };
             },
             orderBy() { return { get: (options) => queueRead(false, options) }; },
+            async add(record) {
+              const id = `new-${writes.length}`;
+              records[id] = record;
+              writes.push({ id, record });
+            },
             doc(id) {
               return {
                 async update(record) {
@@ -150,6 +155,23 @@
         nextRead(false).complete(Object.keys(records));
         await settle();
         assert(!$("#quoteText").textContent && !$("#quoteCite").textContent, "An empty public result clears the quote and attribution");
+
+        $(".quoteAddButton").click();
+        $(".quote-inline-text").value = "A new public sample";
+        const save = $(".quote-inline-save");
+        save.click();
+        await settle();
+        nextRead(true).complete(Object.keys(records));
+        nextRead(false).reject(new Error("Fixture read denied"));
+        await settle();
+        assert(writes.filter(({ record }) => record.text === "A new public sample").length === 1, "The new quote is committed once");
+        assert(!$(".quote-inline-save"), "A failed refresh must not leave a working duplicate Add form");
+        assert($("#quoteEditorStatus").textContent.includes("retry"), "The failed reload offers a safe recovery");
+        $("#editQuotesBtn").click();
+        $("#editQuotesBtn").click();
+        nextRead(false).complete(Object.keys(records));
+        await settle();
+        assert($("#quoteListItems").textContent.includes("A new public sample"), "Reopening loads the confirmed quote");
 
         $("#testResults").textContent = "PASS Personal quotes publication and editor lifecycle";
         document.body.dataset.testStatus = "passed";

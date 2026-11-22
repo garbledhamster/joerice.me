@@ -2,6 +2,7 @@ import { isAdminUser, onAuthStateChange } from "../services/auth.js";
 import {
 	getEditableNotes,
 	isPortfolioExampleAddress,
+	readFolderCopyForEdit,
 	readNoteForEdit,
 	saveFolderCopy,
 	saveFolderNote,
@@ -143,24 +144,29 @@ export function mountFolderEditor(container, { getCopy, refresh }) {
 			announce("", false);
 			if (!current.id) return;
 
-			let note;
-			if (!isCopy) {
-				announce("Loading note…", document.activeElement !== picker);
-				try {
-					note = await readNoteForEdit(current.id);
-				} catch {
-					if (!isCurrent()) return;
-					const retry = document.createElement("button");
-					retry.type = "button";
-					retry.className = "portfolioSaveButton";
-					retry.textContent = "Retry loading";
-					retry.addEventListener("click", loadSelection);
-					formSlot.replaceChildren(retry);
-					announce("Couldn’t load this note.");
-					return;
-				}
+			let currentContent;
+			announce(
+				isCopy ? "Loading page copy…" : "Loading note…",
+				document.activeElement !== picker,
+			);
+			try {
+				currentContent = isCopy
+					? await readFolderCopyForEdit(current.id)
+					: await readNoteForEdit(current.id);
+			} catch {
 				if (!isCurrent()) return;
+				const retry = document.createElement("button");
+				retry.type = "button";
+				retry.className = "portfolioSaveButton";
+				retry.textContent = "Retry loading";
+				retry.addEventListener("click", loadSelection);
+				formSlot.replaceChildren(retry);
+				announce(
+					isCopy ? "Couldn’t load this page copy." : "Couldn’t load this note.",
+				);
+				return;
 			}
+			if (!isCurrent()) return;
 
 			const form = document.createElement("form");
 			form.innerHTML = `
@@ -173,13 +179,13 @@ export function mountFolderEditor(container, { getCopy, refresh }) {
 			const fields = form.elements;
 			const fieldset = form.querySelector("fieldset");
 			if (isCopy) {
-				fields.text.value = getCopy(current.id) ?? "";
+				fields.text.value = currentContent ?? getCopy(current.id) ?? "";
 			} else {
 				addOptions(
 					fields.category,
 					startingCatalog.map(({ id, name }) => [id, name]),
 				);
-				fillNote(fields, note);
+				fillNote(fields, currentContent);
 			}
 			formSlot.replaceChildren(form);
 			if (document.activeElement === status)

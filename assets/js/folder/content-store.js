@@ -198,6 +198,22 @@ export async function saveFolderNote(noteId, values) {
 	await batch.commit();
 }
 
+export async function readFolderCopyForEdit(page) {
+	if (!ensureAdmin("read folder copy"))
+		throw new Error("Sign in as admin to edit portfolio content.");
+	if (!copyPages.has(page)) throw new Error("This page is unavailable.");
+	const record = await posts().doc(`${COPY}-${page}`).get({ source: "server" });
+	if (record.metadata?.fromCache || record.metadata?.hasPendingWrites) {
+		throw new Error("Page copy could not be confirmed.");
+	}
+	if (!record.exists) return undefined;
+	const data = record.data();
+	const text = cleanText(data.text);
+	if (data.kind !== COPY || data.page !== page || !text)
+		throw new Error("This page copy is unavailable.");
+	return text;
+}
+
 export async function saveFolderCopy(page, value) {
 	if (!ensureAdmin("save folder copy"))
 		throw new Error("Sign in as admin to edit portfolio content.");

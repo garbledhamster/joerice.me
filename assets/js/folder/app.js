@@ -112,12 +112,7 @@ export function mountWorkingFolder(root, templates) {
 	const openEditor = mountFolderEditor(
 		root.querySelector('[data-sheet="edit-content"]'),
 		{
-			getCopy: (page) =>
-				copyNodes
-					.get(page)
-					.map((node) => node.textContent.trim())
-					.filter(Boolean)
-					.join("\n\n"),
+			getCopy: (page) => originalCopy.get(page).join("\n\n"),
 			refresh: refreshFolder,
 		},
 	);

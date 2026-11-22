@@ -17,6 +17,7 @@
 		const admin = { email: "jmjrice94@gmail.com", uid: "admin-1" };
 		let setUser;
 		let failWrites = false;
+		let failReads = false;
 		let deferRead;
 		let deferWrite;
 		let failRefresh = false;
@@ -46,6 +47,7 @@
 							id,
 							async get() {
 								firewall();
+								if (failReads) throw new Error("Read denied");
 								const data = records.get(id);
 								if (deferRead) {
 									const wait = deferRead;
@@ -207,6 +209,7 @@
 
 			for (const [page, text] of [["guide", "Updated guide"], ["employers", "Updated employer copy"]]) {
 				choose(page);
+				await until(() => field("text"), "Wait for the confirmed page record");
 				assert(field("text").value === "Original page copy", "The opening paragraph should fill the copy form");
 				field("text").value = text;
 				submit();
@@ -214,8 +217,21 @@
 				assert(published.copy[page] === text, "Published read must expose updated page copy");
 			}
 			open();
+			const pendingCopy = hold();
+			deferRead = pendingCopy.promise;
 			choose("employers");
+			assert(!field("text"), "Unconfirmed page copy must not be editable");
+			pendingCopy.release();
+			await until(() => field("text"), "Wait for the saved page copy");
 			assert(field("text").value === "Updated employer copy", "Reopen should show saved page copy");
+
+			failReads = true;
+			choose("guide");
+			await until(() => /couldn.t load/i.test(status().textContent), "A denied page read should offer recovery");
+			assert(!field("text"), "A failed read must not allow overwriting the saved article with defaults");
+			failReads = false;
+			editor.querySelector(".folder-editor-form button").click();
+			await until(() => field("text")?.value === "Updated guide", "Retry should load the saved text");
 
 			const firstRead = hold();
 			deferRead = firstRead.promise;
