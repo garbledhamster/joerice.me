@@ -675,11 +675,160 @@ p {
 	margin-top: 12px;
 }
 .route-body [data-sheet="work"] .portfolio {
+	margin: 0;
 	padding: 0;
+	border: 0;
+	background: transparent;
+	color: var(--ink);
 }
 .route-body [data-sheet="hire"] .contact {
+	margin: 0;
 	background: none;
+	border: 0;
+	color: var(--ink);
 	padding: 0;
+}
+.route-body #quoteInquiry {
+	display: grid;
+	gap: 12px;
+}
+.route-body
+	:is(
+		#contactHeading,
+		#quoteSuccessHeading,
+		#quoteTermsHeading,
+		#linkedPostTitle
+	) {
+	margin: 0;
+	font:
+		700 1.32rem / 1.15 "Space Grotesk",
+		sans-serif;
+	letter-spacing: normal;
+	text-align: left;
+}
+.route-body .contactIntro,
+.route-body #contactForm {
+	width: 100%;
+	margin: 0;
+}
+.route-body #contactForm {
+	gap: 5px;
+}
+.route-body #contactForm :is(input, textarea),
+.route-body #contactForm .formHelp {
+	margin: 0;
+}
+.route-body #contactForm .formHelp {
+	color: var(--muted);
+}
+.route-body #contactForm :is(label, legend) {
+	color: var(--ink);
+}
+.route-body #contactServicePicker {
+	margin-top: 14px;
+}
+.route-body #contactServicePicker label {
+	display: flex;
+}
+.route-body #quoteTerms {
+	padding: 14px;
+	border: 1px solid var(--tab-line);
+	border-radius: 5px;
+	background: #f6f2e6;
+}
+.route-body #quoteConfirmation {
+	display: grid;
+	justify-items: start;
+	gap: 12px;
+	padding: 16px;
+	border: 1px solid #a1b8a5;
+	border-radius: 5px;
+	background: var(--note-green);
+}
+.route-body .contact :is([type="submit"], #restartQuote) {
+	justify-self: start;
+	min-height: 44px;
+	margin-top: 10px;
+	border: 1px solid var(--hire);
+	border-radius: 5px;
+	background: var(--hire);
+	color: #fff;
+	font:
+		700 1rem / 1.15 "Space Grotesk",
+		sans-serif;
+}
+.route-body .contactError,
+.route-body .contactFieldError {
+	color: #842235;
+}
+.route-body .contactError {
+	margin-top: 8px;
+	border: 1px solid #cb8e96;
+	border-radius: 5px;
+	background: var(--pink);
+}
+.route-body .portfolioNotes {
+	margin: 0;
+	color: var(--ink);
+}
+.route-body .postTitleButton {
+	color: var(--ink);
+}
+.route-body .postInlineReader,
+.route-body #linkedPostArticle {
+	padding: clamp(10px, 2vw, 18px);
+	border: 1px solid var(--tab-line);
+	border-radius: 5px;
+	background: #f6f2e6;
+	color: var(--ink);
+}
+.route-body #linkedPostTitle {
+	padding-bottom: 6px;
+}
+.route-body .postInlineActions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 4px 12px;
+}
+.route-body .postInlineActions :is(button, a) {
+	color: var(--ink);
+	min-height: 44px;
+}
+.route-body .postInlineActions button {
+	border-radius: 4px;
+	background: var(--tab);
+}
+@media (max-width: 720px) {
+	.route-body .postTitleRow.is-manageable .postTitleButton {
+		padding-right: 1rem;
+	}
+	.route-body .postTitleRow .postTitleActions {
+		position: static;
+		justify-content: end;
+		padding: 4px 0;
+		transform: none;
+	}
+	.route-body .postTitleActions button {
+		min-height: 44px;
+	}
+}
+.route-body [data-sheet="personal"] :is(.gallery, .quotes, .links) {
+	margin: 0;
+	padding: 14px;
+	border: 1px solid var(--tab-line);
+	border-radius: 5px;
+	background: #f6f2e6;
+	color: var(--ink);
+	box-shadow: none;
+	user-select: auto;
+}
+.route-body [data-sheet="personal"] .links a {
+	color: var(--hire);
+	border: 0;
+	text-decoration: underline;
+}
+.route-body [data-sheet="personal"] .progressBar {
+	background: var(--hire);
 }
 .route-body [data-sheet="personal"] img {
 	border-radius: 6px;

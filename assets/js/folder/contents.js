@@ -4,8 +4,11 @@ export const employers = `
 	<section class="box">
 		<h2>Selected work</h2>
 		<p data-folder-copy="employers">See examples of how I document working systems, connect tools, and help people take over what we build.</p>
-		<a class="action" href="#systems">Explore IT &amp; Systems</a>
-		<a class="action" href="#automation">Explore Automation</a>
+		<ul class="selected-work-links">
+			<li><a class="action" href="#work/0008">Helping People Get Back to Work</a></li>
+			<li><a class="action" href="#work/0010">Making Repeated Work Easier</a></li>
+			<li><a class="action" href="#work/0017">Building Feelings and Needs</a></li>
+		</ul>
 		<a class="action" href="#work" data-route="work">Read Work &amp; Notes</a>
 	</section>
 	<p>Ask me for my current résumé or tell me about the role you’re hiring for.</p>

@@ -47,6 +47,9 @@ const NON_POST_KINDS = [
 ];
 const POSTS_PER_PAGE = 6;
 let currentPage = 1;
+let linkedPostKey = "";
+let linkedPost = null;
+let resultScroll;
 
 export function getRelatedPosts(serviceId) {
 	return {
@@ -74,10 +77,21 @@ let cleanupFns = [];
  * Get portfolio page HTML template
  * @returns {string} Portfolio page HTML
  */
-export function getPortfolioTemplate() {
+export function getPortfolioTemplate({ folder = false } = {}) {
 	return `
     <section class="portfolio" id="portfolioSection">
       <h2>Work &amp; notes</h2>
+      ${
+				folder
+					? `<section id="linkedPost" hidden aria-labelledby="linkedPostTitle">
+        <a class="action" href="#work" data-return-to-results>← Back to results</a>
+        <h3 id="linkedPostTitle" tabindex="-1">Selected work</h3>
+        <article class="postAccordion" id="linkedPostArticle">
+          <div class="postInlineBody" aria-live="polite"></div>
+        </article>
+      </section>`
+					: ""
+			}
       <section class="portfolioNotes" aria-labelledby="portfolioNotesHeading">
         <div class="sectionHeader">
           <div class="sectionHeaderLeft">
@@ -98,11 +112,59 @@ export function getPortfolioTemplate() {
         <div id="pinnedPosts" hidden><h4 class="subhead">Pinned</h4><div class="grid" id="pinnedGrid"></div></div>
         <p class="postResultsCount" id="postResultsCount" aria-live="polite" aria-atomic="true"></p>
         <div class="grid" id="entryGrid"></div>
-        <p class="postEmptyState" id="postEmptyState" hidden>No posts match. Try another topic or clear your search.</p>
+        <div class="postEmptyState" id="postEmptyState" hidden>
+          <p>No posts match. Try another topic or clear your search.</p>
+          <button class="action" id="clearPostFilters" type="button">Clear search and filters</button>
+        </div>
         <nav class="postPagination" id="postPagination" aria-label="Post pages" hidden></nav>
       </section>
     </section>
   `;
+}
+
+function shareKey(post) {
+	const source = post.source === "yaml" ? post.url : post.sourceUrl;
+	const bundled = /^posts\/(\d{4})\.yaml$/.exec(source);
+	return bundled?.[1] ?? `post-${encodeURIComponent(post.id)}`;
+}
+
+function renderLinkedPost() {
+	if (!linkedPost || !linkedPostKey) return;
+	const title = $("#linkedPostTitle", linkedPost);
+	const article = $("#linkedPostArticle", linkedPost);
+	const entry =
+		relatedPostsStatus === "ready" &&
+		[...pinned, ...notes].find(
+			(post) => post.published !== false && shareKey(post) === linkedPostKey,
+		);
+	closePost(openAccordion);
+	if (entry) {
+		title.textContent = entry.title;
+		void openPost(entry.url, article);
+	} else {
+		title.textContent = "Selected work";
+		$(".postInlineBody", article).textContent =
+			relatedPostsStatus === "loading"
+				? "Loading work…"
+				: "This work is unavailable. Return to results to find other published work.";
+	}
+}
+
+export function selectLinkedPortfolioPost(key) {
+	if (!linkedPost || linkedPostKey === key) return;
+	linkedPostKey = key;
+	linkedPost.hidden = !key;
+	$(".portfolioNotes", linkedPost.parentElement).hidden = Boolean(key);
+	if (key) {
+		renderLinkedPost();
+		$("#linkedPostTitle", linkedPost).focus({ preventScroll: true });
+	} else if (openAccordion === $("#linkedPostArticle", linkedPost)) {
+		closePost(openAccordion);
+	}
+}
+
+export function portfolioResultPosition(accordion) {
+	if (resultScroll?.accordion === accordion) return resultScroll?.top;
 }
 
 /**
@@ -126,6 +188,10 @@ function formatPostEntry(post, index, group) {
 		post.published === false && isAdminUser() ? " [DRAFT]" : "";
 	const readerId = `post-reader-${group}-${index}`;
 	const directLink = postSiteLink(post);
+	const share =
+		linkedPost && post.published !== false
+			? `<a class="action postShareLink" href="#work/${sanitizeText(shareKey(post))}">Direct link to this post</a>`
+			: "";
 	const canManage = isAdminUser();
 	const managementControls = canManage
 		? `
@@ -150,7 +216,8 @@ function formatPostEntry(post, index, group) {
         <div class="postInlineClip">
           <div class="postInlineReader">
             <div class="postInlineActions">
-              <button class="closePostButton" type="button">close</button>
+              <button class="closePostButton" type="button">← Back to results</button>
+              ${share}
             </div>
             <div class="postInlineBody"></div>
           </div>
@@ -225,6 +292,7 @@ async function readFirestorePosts(canReadDrafts) {
 			websiteUrl: data.websiteUrl,
 			id: doc.id,
 			source: "firestore",
+			sourceUrl: data.sourceUrl,
 			published,
 			serviceIds: Array.isArray(data.serviceIds) ? data.serviceIds : [],
 		});
@@ -507,6 +575,7 @@ export function renderPage() {
 			)
 			.join("") +
 		pageButton(currentPage + 1, "Next", currentPage === pages);
+	if (linkedPostKey) renderLinkedPost();
 }
 
 /**
@@ -529,7 +598,11 @@ function handlePostGridClick(event) {
 	}
 
 	if (event.target.closest(".closePostButton")) {
+		const position = resultScroll?.accordion === accordion && resultScroll;
 		closePost(accordion);
+		$(".postTitleButton", accordion)?.focus({ preventScroll: true });
+		if (position)
+			position.scroller.scrollTo({ top: position.top, behavior: "instant" });
 		return;
 	}
 
@@ -547,6 +620,12 @@ function handlePostGridClick(event) {
 	}
 
 	closePost(openAccordion);
+	const scroller = accordion.closest("dialog") || window;
+	resultScroll = {
+		accordion,
+		scroller,
+		top: scroller.scrollTop ?? window.scrollY,
+	};
 	void openPost(titleButton.dataset.url, accordion);
 }
 
@@ -796,7 +875,11 @@ async function openPost(url, accordion) {
 	viewer?.setAttribute("aria-hidden", "false");
 
 	setTimeout(() => {
-		if (requestId === postOpenRequestId && openAccordion === accordion) {
+		if (
+			titleButton &&
+			requestId === postOpenRequestId &&
+			openAccordion === accordion
+		) {
 			accordion.scrollIntoView({
 				behavior: archiveScrollBehavior(),
 				block: "start",
@@ -824,6 +907,7 @@ function closePost(accordion) {
 	accordion.classList.remove("is-open");
 	accordion.classList.remove("is-editing");
 	if (isActive) {
+		if (resultScroll?.accordion === accordion) resultScroll = undefined;
 		postOpenRequestId += 1;
 		openAccordion = null;
 		currentPost = null;
@@ -901,6 +985,7 @@ async function loadPosts(shouldRender = () => true) {
 		requestId === archiveRequestId && canReadDrafts === isAdminUser();
 	relatedPostsStatus = "loading";
 	setPortfolioStatus("Loading posts…");
+	if (linkedPostKey) renderLinkedPost();
 	window.dispatchEvent(new Event("portfolio-posts-change"));
 
 	try {
@@ -969,6 +1054,7 @@ export function initPortfolio() {
 	pinnedGrid = $("#pinnedGrid");
 	entryGrid = $("#entryGrid");
 	searchInput = $("#q");
+	linkedPost = $("#linkedPost");
 
 	if (!pinnedGrid || !entryGrid) return;
 
@@ -1198,6 +1284,15 @@ export function initPortfolio() {
 	};
 	if (searchInput)
 		cleanupFns.push(addListener(searchInput, "input", changeFilters));
+	cleanupFns.push(
+		addListener($("#clearPostFilters"), "click", () => {
+			searchInput.value = "";
+			$("#postTopicFilter").value = "all";
+			$("#postTypeFilter").value = "all";
+			changeFilters();
+			searchInput.focus();
+		}),
+	);
 	for (const id of ["postTopicFilter", "postTypeFilter"]) {
 		cleanupFns.push(addListener($(`#${id}`), "change", changeFilters));
 	}
@@ -1246,6 +1341,8 @@ export function destroyPortfolio() {
 	adminSession = null;
 	currentPage = 1;
 	relatedPostsStatus = "loading";
+	linkedPostKey = "";
+	linkedPost = null;
 	clearArchive();
 	resetPortfolioEditor();
 	renderPage();

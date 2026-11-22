@@ -84,7 +84,11 @@ function arrangeNotes(notes, ids) {
 }
 
 export function isPortfolioExampleAddress(address) {
-	if (address === "/examples/backup-restore/") return true;
+	if (
+		address === "/examples/backup-restore/" ||
+		/^\/examples\/worked-cases\/#(?:printer|report|meeting)$/.test(address)
+	)
+		return true;
 	try {
 		const url = new URL(address);
 		return url.protocol === "https:" && !url.username && !url.password;

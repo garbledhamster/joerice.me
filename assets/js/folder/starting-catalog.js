@@ -194,6 +194,7 @@ export const startingCatalog = [
 					title: "One laptop can’t use the office printer",
 					text: "In this practice case, other devices can print. I’d check which printer the laptop has selected, then print a test page and a regular document with the person who reported the problem.",
 					kind: "Simulated case",
+					href: "/examples/worked-cases/#printer",
 				},
 			},
 			{
@@ -231,6 +232,7 @@ export const startingCatalog = [
 					title: "Three rows for a weekly report",
 					text: "In this practice case, I’d set up a script that accepts rows with a date and sets aside rows with a missing date. With two dated rows and one missing a date, the check is two in the report and one to review. Fill in the date before running that row again.",
 					kind: "Simulated case",
+					href: "/examples/worked-cases/#report",
 				},
 			},
 			{
@@ -268,6 +270,7 @@ export const startingCatalog = [
 					title: "Turn sample meeting notes into next steps",
 					text: "In a practice session, I’d ask you to mark who agreed to do what in a short set of notes. Then we’d compare the AI’s list with the notes and catch any owner or deadline it added on its own.",
 					kind: "Illustrative exercise",
+					href: "/examples/worked-cases/#meeting",
 				},
 			},
 			{

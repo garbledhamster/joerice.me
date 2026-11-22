@@ -13,7 +13,12 @@ import {
 	initHire,
 } from "../pages/hire.js";
 import { getLinksTemplate } from "../pages/links.js";
-import { getPortfolioTemplate, initPortfolio } from "../pages/portfolio.js";
+import {
+	getPortfolioTemplate,
+	initPortfolio,
+	portfolioResultPosition,
+	selectLinkedPortfolioPost,
+} from "../pages/portfolio.js";
 import { getProductsTemplate, initProducts } from "../pages/products.js";
 import { getQuotesTemplate, initQuotes } from "../pages/quotes.js";
 import {
@@ -75,7 +80,7 @@ export function mountWorkingFolder(root, templates) {
 		...templates,
 		quote: getContactTemplate({ sheet: true }),
 		work:
-			getPortfolioTemplate() +
+			getPortfolioTemplate({ folder: true }) +
 			`<a class="action" href="#hire" data-route="hire">Ask about this work</a>`,
 		products: getProductsTemplate(),
 		services: getHireTemplate(),
@@ -129,6 +134,7 @@ export function mountWorkingFolder(root, templates) {
 	let ignoreScrollUntil = 0;
 	let personalStarted = false;
 	let productsStarted = false;
+	let workResultsReturn;
 
 	function showPublishedCopy(copy = {}) {
 		for (const [page, nodes] of copyNodes) {
@@ -313,12 +319,13 @@ export function mountWorkingFolder(root, templates) {
 		const hash = location.hash.slice(1);
 		const raw = hash.replace(/^\//, "");
 		const legacy = legacyAddresses[raw];
-		const id = legacy?.id || raw;
+		const postKey = raw.startsWith("work/") ? raw.slice(5) : "";
+		const id = postKey ? "work" : legacy?.id || raw;
 		if (legacy || hash !== raw) {
 			history.replaceState(
 				{ ...history.state, folderAnchor: legacy?.anchor },
 				"",
-				`#${id}`,
+				`#${legacy ? id : raw}`,
 			);
 		}
 		if (Object.hasOwn(titles, id) && (!adminRoutes.has(id) || isAdminUser())) {
@@ -326,8 +333,20 @@ export function mountWorkingFolder(root, templates) {
 				selectCategory(history.state.folderCategory, true);
 			opener = routeOpeners.get(history.state?.folderOpener) || opener;
 			openRoute(id, history.state?.folderAnchor);
+			selectLinkedPortfolioPost(postKey);
+			if (id !== "work") workResultsReturn = undefined;
+			if (!postKey && id === "work" && workResultsReturn) {
+				const { control, scrollTop } = workResultsReturn;
+				workResultsReturn = undefined;
+				(control.isConnected ? control : root.querySelector("#q")).focus({
+					preventScroll: true,
+				});
+				sheet.scrollTop = scrollTop;
+			}
 			return;
 		}
+		selectLinkedPortfolioPost("");
+		workResultsReturn = undefined;
 		const boardOnly = raw === "loginModal" || raw === "whiteboard";
 		const closedRoute = activeRoute;
 		if (closedRoute === "edit-content") openEditor.close();
@@ -425,6 +444,23 @@ export function mountWorkingFolder(root, templates) {
 		)
 			return;
 		const fragment = link.getAttribute("href").slice(1);
+		if (fragment.startsWith("work/")) {
+			event.preventDefault();
+			if (activeRoute === "work") {
+				const accordion = link.closest(".postAccordion");
+				const control = accordion?.querySelector(".postTitleButton");
+				if (control)
+					workResultsReturn = {
+						control,
+						scrollTop: portfolioResultPosition(accordion) ?? sheet.scrollTop,
+					};
+			} else if (!activeRoute) opener = link;
+			navigate(fragment);
+			sheet.scrollTop = 0;
+			return;
+		}
+		if (link.hasAttribute("data-return-to-results") && !workResultsReturn)
+			workResultsReturn = { control: root.querySelector("#q"), scrollTop: 0 };
 		const id = legacyAddresses[fragment]?.id ?? fragment;
 		if (id === "whiteboard") {
 			event.preventDefault();
