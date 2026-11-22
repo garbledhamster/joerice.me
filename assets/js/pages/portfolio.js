@@ -57,6 +57,12 @@ export function getRelatedPosts(serviceId) {
 	};
 }
 
+function archiveScrollBehavior() {
+	return matchMedia("(prefers-reduced-motion: reduce)").matches
+		? "instant"
+		: "smooth";
+}
+
 // DOM references
 let pinnedGrid = null;
 let entryGrid = null;
@@ -790,7 +796,10 @@ async function openPost(url, accordion) {
 
 	setTimeout(() => {
 		if (requestId === postOpenRequestId && openAccordion === accordion) {
-			accordion.scrollIntoView({ behavior: "smooth", block: "start" });
+			accordion.scrollIntoView({
+				behavior: archiveScrollBehavior(),
+				block: "start",
+			});
 		}
 	}, 220);
 
@@ -1034,7 +1043,10 @@ export function initPortfolio() {
 				closePost(openAccordion);
 				void openPost(title.dataset.url, accordion);
 			} else {
-				accordion.scrollIntoView({ block: "start", behavior: "smooth" });
+				accordion.scrollIntoView({
+					block: "start",
+					behavior: archiveScrollBehavior(),
+				});
 			}
 			title.focus({ preventScroll: true });
 		}),

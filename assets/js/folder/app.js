@@ -1,16 +1,16 @@
-import { getGalleryTemplate, initGallery } from "../pages/gallery.js";
-import { getLinksTemplate } from "../pages/links.js";
-import { getQuotesTemplate, initQuotes } from "../pages/quotes.js";
-import { getContactTemplate, initContact } from "../pages/contact.js";
-import { getPortfolioTemplate, initPortfolio } from "../pages/portfolio.js";
-import { getProductsTemplate, initProducts } from "../pages/products.js";
-import { getHireTemplate, initHire } from "../pages/hire.js";
 import {
 	closeModal,
 	getCurrentModal,
 	initModals,
 } from "../components/modal.js";
 import { createElement } from "../core/dom.js";
+import { getContactTemplate, initContact } from "../pages/contact.js";
+import { getGalleryTemplate, initGallery } from "../pages/gallery.js";
+import { getHireTemplate, initHire } from "../pages/hire.js";
+import { getLinksTemplate } from "../pages/links.js";
+import { getPortfolioTemplate, initPortfolio } from "../pages/portfolio.js";
+import { getProductsTemplate, initProducts } from "../pages/products.js";
+import { getQuotesTemplate, initQuotes } from "../pages/quotes.js";
 import {
 	initAuth,
 	isAdminUser,
@@ -18,11 +18,11 @@ import {
 	updateAdminUi,
 } from "../services/auth.js";
 import { getServices, selectService } from "../services/catalog.js";
-import { startingCatalog } from "./starting-catalog.js";
 import { emptyFolderCatalog, loadPublishedFolder } from "./content-store.js";
-import { createNote } from "./notes.js";
-import { folderTemplate } from "./template.js";
 import { employers, guide } from "./contents.js";
+import { createNote } from "./notes.js";
+import { startingCatalog } from "./starting-catalog.js";
+import { folderTemplate } from "./template.js";
 
 const titles = {
 	hire: "Hire me",
@@ -82,13 +82,16 @@ export function mountWorkingFolder(root, templates) {
 	const sheetPanels = Array.from(sheet.querySelectorAll("[data-sheet]"));
 	const categoryIds = new Set(startingCatalog.map((category) => category.id));
 	const copyNodes = new Map(
-		[...root.querySelectorAll("[data-folder-copy]")].map((node) => [
-			node.dataset.folderCopy,
-			node,
+		["guide", "employers"].map((page) => [
+			page,
+			Array.from(root.querySelectorAll(`[data-folder-copy="${page}"]`)),
 		]),
 	);
 	const originalCopy = new Map(
-		Array.from(copyNodes, ([key, node]) => [key, node.textContent]),
+		Array.from(copyNodes, ([page, nodes]) => [
+			page,
+			nodes.map((node) => node.textContent.replace(/\s+/g, " ").trim()),
+		]),
 	);
 	let contentVersion = 0;
 	let renderedCatalog = "";
@@ -96,10 +99,28 @@ export function mountWorkingFolder(root, templates) {
 	let activeCategory = "about";
 	let activeRoute;
 	let opener;
+	let closingSheet = false;
+	let openerKey = 0;
+	const routeOpeners = new Map();
 	let scrollTimer;
 	let ignoreScrollUntil = 0;
 	let personalStarted = false;
 	let productsStarted = false;
+
+	function showPublishedCopy(copy = {}) {
+		for (const [page, nodes] of copyNodes) {
+			const paragraphs =
+				copy[page]?.split(/\r?\n\s*\r?\n/) || originalCopy.get(page);
+			nodes.forEach((node, index) => {
+				const text =
+					index === nodes.length - 1
+						? paragraphs.slice(index).join("\n\n")
+						: paragraphs[index];
+				node.textContent = text || "";
+				node.hidden = !text;
+			});
+		}
+	}
 
 	async function refreshFolder() {
 		const version = ++contentVersion;
@@ -107,13 +128,11 @@ export function mountWorkingFolder(root, templates) {
 			const { catalog, copy } = await loadPublishedFolder();
 			if (version !== contentVersion) return;
 			renderCatalog(catalog);
-			for (const [key, node] of copyNodes)
-				node.textContent = copy[key] ?? originalCopy.get(key);
+			showPublishedCopy(copy);
 		} catch {
 			if (version !== contentVersion) return;
 			renderCatalog(emptyFolderCatalog);
-			for (const [key, node] of copyNodes)
-				node.textContent = originalCopy.get(key);
+			showPublishedCopy();
 		}
 	}
 
@@ -224,45 +243,93 @@ export function mountWorkingFolder(root, templates) {
 	}
 
 	function syncLocation() {
-		const raw = location.hash.slice(1).replace(/^\//, "");
+		const hash = location.hash.slice(1);
+		const raw = hash.replace(/^\//, "");
 		const legacy = legacyAddresses[raw];
 		const id = legacy?.id || raw;
+		if (legacy || hash !== raw) {
+			history.replaceState(
+				{ ...history.state, folderAnchor: legacy?.anchor },
+				"",
+				`#${id}`,
+			);
+		}
 		if (
 			Object.hasOwn(titles, id) &&
 			(id !== "edit-services" || isAdminUser())
 		) {
 			if (categoryIds.has(history.state?.folderCategory))
 				selectCategory(history.state.folderCategory, true);
-			openRoute(id, legacy?.anchor);
+			opener = routeOpeners.get(history.state?.folderOpener) || opener;
+			openRoute(id, history.state?.folderAnchor);
 			return;
 		}
-		if (raw === "loginModal" || raw === "whiteboard") return;
+		const boardOnly = raw === "loginModal" || raw === "whiteboard";
+		const closedRoute = activeRoute;
 		activeRoute = undefined;
-		selectCategory(categoryIds.has(id) ? id : "about", true);
+		closingSheet = false;
+		selectCategory(
+			categoryIds.has(id) ? id : boardOnly ? activeCategory : "about",
+			true,
+		);
 		if (sheet.open) {
 			const legacyModal = getCurrentModal();
 			if (legacyModal) closeModal(legacyModal);
 			sheet.close();
+			const routeControls = [
+				...root.querySelectorAll(`[data-route="${closedRoute}"]`),
+			];
 			const returnTarget =
-				opener?.isConnected && opener.getClientRects().length ? opener : board;
+				[
+					opener,
+					...routeControls,
+					phone.matches
+						? picker
+						: nav.querySelector('[aria-current="location"]'),
+				].find(
+					(control) =>
+						control?.isConnected &&
+						!control.closest("[inert]") &&
+						control.getClientRects().length,
+				) || board;
 			returnTarget.focus({ preventScroll: true });
 			opener = undefined;
 		}
 	}
 
-	function navigate(id, replace = Boolean(activeRoute)) {
+	function navigate(
+		id,
+		replace = Boolean(activeRoute) && !categoryIds.has(id),
+	) {
 		if (location.hash === `#${id}`) {
 			syncLocation();
+			return;
+		}
+		const category = categoryIds.has(id);
+		if (
+			category &&
+			!replace &&
+			activeRoute &&
+			id === activeCategory &&
+			history.state?.folderRouteFromBoard
+		) {
+			history.back();
 			return;
 		}
 		const fromBoard = replace
 			? Boolean(history.state?.folderRouteFromBoard)
 			: !activeRoute;
-		const state = categoryIds.has(id)
+		let source = history.state?.folderOpener;
+		if (!category && !replace && opener) {
+			source = ++openerKey;
+			routeOpeners.set(source, opener);
+		}
+		const state = category
 			? null
 			: {
 					folderRouteFromBoard: fromBoard,
 					folderCategory: activeCategory,
+					folderOpener: source,
 				};
 		if (replace) history.replaceState(state, "", `#${id}`);
 		else history.pushState(state, "", `#${id}`);
@@ -270,6 +337,8 @@ export function mountWorkingFolder(root, templates) {
 	}
 
 	function closeSheet() {
+		if (closingSheet || !sheet.open) return;
+		closingSheet = true;
 		if (history.state?.folderRouteFromBoard) history.back();
 		else navigate(activeCategory, true);
 	}
@@ -290,6 +359,12 @@ export function mountWorkingFolder(root, templates) {
 		)
 			return;
 		const id = link.getAttribute("href").slice(1);
+		if (id === "whiteboard") {
+			event.preventDefault();
+			board.focus();
+			return;
+		}
+
 		if (
 			(!categoryIds.has(id) && !Object.hasOwn(titles, id)) ||
 			(id === "edit-services" && !isAdminUser())
@@ -338,6 +413,9 @@ export function mountWorkingFolder(root, templates) {
 	initAuth();
 	initHire();
 	initContact();
+	window.addEventListener("open-related-post", () => {
+		if (activeRoute !== "work") navigate("work");
+	});
 	initPortfolio();
 	updateAdminUi();
 	onAuthStateChange(() => {

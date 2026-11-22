@@ -754,3 +754,7 @@ p {
 .route-body .box h2 {
 	margin: 0;
 }
+
+.route-body [data-folder-copy] {
+	white-space: pre-line;
+}
