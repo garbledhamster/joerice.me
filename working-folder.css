@@ -202,14 +202,20 @@ p {
 }
 .track {
 	grid-row: 2;
-	display: flex;
-	overflow: hidden;
+	display: grid;
+	grid-template: minmax(0, 1fr) / minmax(0, 1fr);
+	overflow: clip;
 }
 .panel {
-	flex: 0 0 100%;
+	grid-area: 1 / 1;
 	min-width: 0;
-	overflow: auto;
+	min-height: 0;
+	overflow: hidden auto;
+	container-type: inline-size;
 	padding: 25px 28px 30px;
+}
+.panel[inert] {
+	visibility: hidden;
 }
 .intro {
 	display: flex;
@@ -244,17 +250,28 @@ p {
 	display: none;
 }
 .notes {
-	display: grid;
-	grid-template-columns: repeat(3, minmax(0, 1fr));
+	display: flex;
+	flex-wrap: wrap;
+	justify-content: center;
 	align-items: start;
-	gap: 22px;
+	gap: 18px;
+	position: relative;
 }
 .note {
 	--note-color: var(--paper);
+	--unit: min(100cqi, 10.5rem);
 	position: relative;
 	isolation: isolate;
-	min-width: 0;
-	container-type: inline-size;
+	inline-size: var(--unit);
+	block-size: var(--unit);
+	perspective: max(600px, 75cqi);
+}
+.note:nth-child(odd) {
+	inline-size: calc(2 * var(--unit));
+}
+.note h2,
+.note p,
+.note li {
 	overflow-wrap: anywhere;
 }
 .face::after {
@@ -289,12 +306,12 @@ p {
 }
 .note h2 {
 	font:
-		clamp(1.45rem, 10cqi, 2.7rem) / 1 "Bebas Neue",
+		1.8rem / 1 "Bebas Neue",
 		sans-serif;
 }
 .face:not([data-layer="0"]) h2 {
 	font:
-		700 1.3rem / 1.12 "Space Grotesk",
+		700 1rem / 1.2 "Space Grotesk",
 		sans-serif;
 }
 .note ul {
@@ -312,23 +329,41 @@ p {
 }
 .actions {
 	display: flex;
+	flex: none;
 	align-items: center;
-	flex-wrap: wrap;
-	gap: 0 12px;
+	justify-content: space-between;
+	gap: 2px;
 }
 .action,
 .back {
 	display: inline-flex;
-	text-align: left;
 	align-items: center;
 	font-weight: 700;
+	font-size: 0.84rem;
+	line-height: 1.2;
 	min-height: 44px;
-	padding: 4px 3px;
+	padding: 4px 5px;
+	border-radius: 4px;
 }
 .action {
+	text-align: left;
 	text-decoration: underline;
 	text-decoration-thickness: 1px;
 	text-underline-offset: 0.22em;
+	color: var(--hire);
+}
+.back {
+	gap: 4px;
+	background: #fffdf791;
+	border: 1px solid #71654245;
+}
+.back::before {
+	content: "";
+	inline-size: 6px;
+	block-size: 6px;
+	border: solid currentColor;
+	border-width: 0 0 1px 1px;
+	transform: rotate(45deg);
 }
 .action:hover,
 .back:hover {
@@ -461,11 +496,6 @@ p {
 	padding-left: 12px;
 	margin-left: 0;
 }
-@media (max-width: 980px) {
-	.notes {
-		grid-template-columns: repeat(2, minmax(0, 1fr));
-	}
-}
 @media (max-width: 720px) {
 	.folder {
 		--rail: 34px;
@@ -518,14 +548,8 @@ p {
 		border: 0;
 		background: transparent;
 	}
-	.track {
-		overflow: auto hidden;
-		scroll-snap-type: x mandatory;
-		scrollbar-width: none;
-	}
 	.panel {
 		padding: 4px 12px 16px;
-		scroll-snap-align: start;
 	}
 	.intro {
 		margin-bottom: 12px;
@@ -542,19 +566,19 @@ p {
 		display: none;
 	}
 	.notes {
-		grid-template-columns: minmax(0, 1fr);
-		gap: 11px;
+		gap: 12px;
+	}
+	.note {
+		--unit: min(100cqi, 8.25rem);
 	}
 	.note h2 {
 		font:
-			700 1.22rem / 1.1 "Space Grotesk",
+			700 1.15rem / 1.12 "Space Grotesk",
 			sans-serif;
 	}
-	.note ul,
-	.note p,
-	.note button,
-	.note a {
-		font-size: 0.88rem;
+	.note li,
+	.note p {
+		font-size: 0.85rem;
 	}
 	.guide {
 		padding-left: calc(6px + var(--rail));
@@ -593,11 +617,12 @@ p {
 	}
 }
 .face {
-	position: relative;
+	position: absolute;
+	inset: 0;
 	display: flex;
 	flex-direction: column;
-	gap: 10px;
-	padding: 18px;
+	gap: 5px;
+	padding: 12px 10px 8px;
 	border: 1px solid #71654245;
 	border-radius: 2px;
 	background: linear-gradient(#78642c0d, transparent 28%), var(--note-color);
@@ -607,29 +632,64 @@ p {
 		2px 6px 0 -2px var(--note-color),
 		2px 7px 0 -2px #67553237,
 		3px 9px 6px -5px #3c2e1f52;
-	transform-origin: 50% 5%;
+	backface-visibility: hidden;
 }
-.face[data-layer="0"] {
-	aspect-ratio: 2 / 1;
+.face:not([data-layer="2"]) {
+	cursor: pointer;
 }
-.face.peeling-face {
-	position: absolute;
-	inset: 0 0 auto;
+.face.turning-out {
 	z-index: 1;
 	pointer-events: none;
 }
-.face .actions {
-	margin-top: auto;
+.note-copy {
+	flex: 1;
+	min-height: 0;
+	padding: 0 3px 1px 1px;
+	overflow: hidden auto;
+	scrollbar-gutter: stable;
 }
-@media (max-width: 720px) {
-	.face {
-		gap: 5px;
-		padding: 10px 12px 5px;
+.note-copy:focus-visible,
+.note-copy h2:focus-visible {
+	outline-offset: -3px;
+}
+.note-copy > * + * {
+	margin-top: 0.35em;
+}
+.panel,
+.note-copy {
+	scrollbar-width: thin;
+	scrollbar-color: #786e50 transparent;
+}
+@supports selector(::-webkit-scrollbar) {
+	.panel,
+	.note-copy {
+		scrollbar-width: auto;
+		scrollbar-color: auto;
+	}
+	:is(.panel, .note-copy)::-webkit-scrollbar {
+		width: 6px;
+	}
+	:is(.panel, .note-copy)::-webkit-scrollbar-track {
+		background: #786e5029;
+		border-radius: 4px;
+	}
+	:is(.panel, .note-copy)::-webkit-scrollbar-thumb {
+		background: #786e50;
+		border-radius: 4px;
 	}
 }
-@media (max-width: 350px) {
-	.face[data-layer="0"] {
-		aspect-ratio: 1;
+@container (width < 16.5rem) {
+	.note:nth-child(odd) {
+		inline-size: var(--unit);
+		block-size: calc(2 * var(--unit));
+	}
+}
+@media (min-width: 721px) {
+	@container (width < 21rem) {
+		.note:nth-child(odd) {
+			inline-size: var(--unit);
+			block-size: calc(2 * var(--unit));
+		}
 	}
 }
 @media (max-width: 720px) {
@@ -839,15 +899,9 @@ p {
 .working-folder .panel h1 {
 	margin-block: 0 6px;
 }
-.working-folder .note h2,
-.working-folder .note h3 {
+.working-folder .note h2 {
 	margin-block: 0;
 	letter-spacing: normal;
-}
-.working-folder .note h3 {
-	font:
-		700 1.08rem / 1.15 "Space Grotesk",
-		sans-serif;
 }
 .working-folder #folder-sheet-title {
 	margin-block: 0 6px;

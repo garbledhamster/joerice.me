@@ -59,45 +59,125 @@ async function checkMotion(page, index, viewport) {
 	});
 	assert(tabMotion[0].some((frame) => frame.includes("translateY(6px)")));
 	assert(tabMotion[1].some((frame) => frame.includes("translateY(-7px)")));
-	const dimensions = await page
-		.locator('[data-category="build"] .note')
-		.evaluateAll((notes) =>
-			notes.map((note) => [note.offsetWidth, note.offsetHeight]),
-		);
-	for (const [width, height] of dimensions) {
-		assert(
-			Math.abs(width / height - (viewport.width <= 350 ? 1 : 2)) < 0.03,
-			`${viewport.width}: ${width}×${height} paper`,
-		);
-		assert.deepEqual([width, height], dimensions[0]);
+	const panel = page.locator('[data-category="build"]');
+	const measure = () =>
+		panel
+			.locator(".note")
+			.evaluateAll((notes) =>
+				notes.map((note) => [
+					note.offsetLeft,
+					note.offsetTop,
+					note.offsetWidth,
+					note.offsetHeight,
+				]),
+			);
+	const dimensions = await measure();
+	const [, , squareWidth, squareHeight] = dimensions[1];
+	assert.equal(squareWidth, squareHeight, "The second pad is the square unit");
+	const boardWidth = await panel
+		.locator(".notes")
+		.evaluate((el) => el.clientWidth);
+	const wide = boardWidth >= 2 * squareWidth;
+	const rows = Map.groupBy(dimensions, ([, top]) => top);
+	for (const row of rows.values()) {
+		const [[left]] = row;
+		const [lastLeft, , lastWidth] = row.at(-1);
+		assert(Math.abs(left - (boardWidth - lastLeft - lastWidth)) <= 2);
 	}
-	const included = book.getByRole("button", { name: /^See what’s included/ });
-	await included.evaluate((button) => button.click());
-	await book
-		.getByRole("button", { name: /^See an example/ })
-		.evaluate((button) => button.click());
-	const ghost = book.locator(".peeling-face");
+	for (const [position, [, , width, height]] of dimensions.entries()) {
+		const rectangle = position % 2 === 0;
+		assert.equal(width, squareWidth * (rectangle && wide ? 2 : 1));
+		assert.equal(height, squareWidth * (rectangle && !wide ? 2 : 1));
+	}
+	assert.equal(
+		await page
+			.locator(".track")
+			.evaluate((el) => el.scrollWidth - el.clientWidth),
+		0,
+	);
+	assert.equal(
+		await panel.evaluate((el) => el.scrollWidth - el.clientWidth),
+		0,
+	);
+	assert.equal(
+		await page.evaluate(
+			() => document.documentElement.scrollWidth - innerWidth,
+		),
+		0,
+	);
+
+	// Tap the body, then pause both faces at the narrow edge of the flip.
+	await book.locator(".note-copy h2").click();
+	assert.equal(await book.getAttribute("data-layer"), "1");
+	const turn = await book.evaluate((note) =>
+		note.getAnimations({ subtree: true }).map((animation) => {
+			animation.pause();
+			animation.currentTime = animation.effect.getTiming().duration / 2;
+			const bounds = animation.effect.target.getBoundingClientRect();
+			return { width: bounds.width, frames: animation.effect.getKeyframes() };
+		}),
+	);
+	assert.equal(turn.length, 2);
+	assert(turn.every(({ width }) => width < dimensions[0][2] / 2));
+	assert(
+		turn.some(({ frames }) =>
+			frames.at(-1).transform.includes("rotateY(180deg)"),
+		),
+	);
+	assert.deepEqual(await measure(), dimensions);
+	const ghost = book.locator(".turning-out");
 	assert.equal(await ghost.getAttribute("inert"), "");
-	assert.equal(await ghost.locator("li").count(), 3);
 	assert.equal(await ghost.locator("[id]").count(), 0);
 	await page.emulateMedia({ reducedMotion: "reduce" });
 	await ghost.waitFor({ state: "detached" });
+	const next = book.locator("button.action");
+	await next.focus();
+	await page.keyboard.press("Enter");
+	assert.equal(await book.getAttribute("data-layer"), "2");
+	assert.equal(
+		await book.evaluate((note) => note.getAnimations({ subtree: true }).length),
+		0,
+	);
+	assert.deepEqual(await measure(), dimensions);
+
+	const square = panel.locator(".note").nth(1);
+	await square.locator("button.action").click();
+	const copy = square.locator(".note-copy");
+	await copy.focus();
+	await page.keyboard.press("End");
+	await copy.evaluate(
+		(el) =>
+			new Promise((resolve) => {
+				if (el.scrollTop > 0) resolve();
+				else el.addEventListener("scroll", resolve, { once: true });
+			}),
+	);
+	assert(
+		await copy.evaluate(
+			(el) => el.scrollTop > 0 && el.scrollWidth === el.clientWidth,
+		),
+	);
+	assert(await square.locator(".back").isVisible());
+	assert.deepEqual(await measure(), dimensions);
+
 	await page.emulateMedia({ reducedMotion: "no-preference" });
 	const returning = await book
 		.getByRole("button", { name: /^Back one layer/ })
 		.evaluate((button) => {
 			const note = button.closest(".note");
 			button.click();
-			return note.firstElementChild
-				.getAnimations()
-				.some(
-					(animation) => animation.effect.getTiming().direction === "reverse",
-				);
+			return note
+				.querySelector(".turning-out")
+				.getAnimations()[0]
+				.effect.getKeyframes()
+				.at(-1)
+				.transform.includes("rotateY(-180deg)");
 		});
-	assert(returning, "Back animates the returning paper face");
+	assert(returning, "Back reverses the turn");
 	await page.emulateMedia({ reducedMotion: "reduce" });
+	await ghost.waitFor({ state: "detached" });
 	console.log(
-		`${viewport.width}px paper sizing, opposing tab cues and peel/restore passed`,
+		`${viewport.width}px fixed-size centered cards, flip, and scrolling passed`,
 	);
 }
 
@@ -409,7 +489,6 @@ async function checkMobileGestures(context, page, index) {
 	await book.waitFor();
 	const cdp = await context.newCDPSession(page);
 	try {
-		const board = await page.locator(".track").boundingBox();
 		const action = await book.locator("button.action").boundingBox();
 		const send = (type, touchPoints) =>
 			cdp.send("Input.dispatchTouchEvent", { type, touchPoints });
@@ -430,19 +509,34 @@ async function checkMobileGestures(context, page, index) {
 		);
 		assert.equal(await book.getAttribute("data-layer"), "0");
 		assert.equal(await page.locator("#folder-category").inputValue(), "build");
+		const channel = page.locator("#note-channel");
+		await channel.locator("button.action").tap();
+		const copy = channel.locator(".note-copy");
+		await copy.scrollIntoViewIfNeeded();
+		const body = await copy.boundingBox();
+		await drag(body.x + body.width / 2, body.y + body.height - 6, 0, -48);
+		await page.waitForFunction(
+			() => document.querySelector("#note-channel .note-copy").scrollTop > 0,
+		);
+		assert.equal(await channel.getAttribute("data-layer"), "1");
+		await channel.locator(".back").tap();
+		assert.equal(await channel.getAttribute("data-layer"), "0");
+		const board = await page.locator(".track").boundingBox();
 		await drag(
-			board.x + board.width - 24,
+			board.x + board.width - 12,
 			board.y + board.height / 2,
-			-board.width * 0.7,
+			-board.width * 0.75,
 			0,
 		);
+		assert.equal(new URL(page.url()).hash, "#build");
+		assert.equal(
+			await page.locator(".track").evaluate((el) => el.scrollLeft),
+			0,
+		);
+		await page.locator("#folder-category").selectOption("security");
 		await page
 			.locator('.panel[data-category="security"]:not([inert])')
 			.waitFor();
-		assert.equal(
-			await page.locator("#folder-category").inputValue(),
-			"security",
-		);
 		assert.equal(new URL(page.url()).hash, "#security");
 	} finally {
 		await cdp.detach();
@@ -529,7 +623,7 @@ async function exerciseEvidence(page, index) {
 			await note.locator("button.action").evaluate((button) => button.click());
 			assert((await note.locator(".face li").count()) > 0);
 			await note.locator("button.action").evaluate((button) => button.click());
-			assert((await note.locator(".face h3").textContent()).trim());
+			assert((await note.locator(".face h2").textContent()).trim());
 			const target = (await note.locator("a.action").count())
 				? await note.locator("a.action").getAttribute("href")
 				: "";

@@ -5,42 +5,64 @@ function element(tag, attrs, text) {
 	return createElement(tag, attrs, text === undefined ? [] : [text]);
 }
 
-const peelFrames = [
-	{ transform: "perspective(500px) translateY(0) rotateX(0) rotateZ(0)" },
-	{
-		offset: 0.32,
-		transform:
-			"perspective(500px) translateY(-9px) rotateX(28deg) rotateZ(-2deg)",
-	},
-	{
-		opacity: 0,
-		transform:
-			"perspective(500px) translateY(-88px) rotateX(58deg) rotateZ(-12deg)",
-	},
-];
+function flip(from, to, direction, motion, onFinish) {
+	from.classList.add("turning-out");
+	from.inert = true;
+	from.setAttribute("aria-hidden", "true");
+
+	const timing = { duration: 500, easing: "ease-in-out" };
+	const outgoing = from.animate(
+		[
+			{ transform: "rotateY(0deg)" },
+			{ transform: `rotateY(${direction * 180}deg)` },
+		],
+		timing,
+	);
+	const incoming = to.animate(
+		[
+			{ transform: `rotateY(${-direction * 180}deg)` },
+			{ transform: "rotateY(0deg)" },
+		],
+		timing,
+	);
+	let finished = false;
+	function clean() {
+		if (finished) return;
+		finished = true;
+		from.remove();
+		motion.removeEventListener("change", clean);
+		outgoing.cancel();
+		incoming.cancel();
+		onFinish();
+	}
+	motion.addEventListener("change", clean);
+	outgoing.finished.then(clean, clean);
+	return clean;
+}
 
 export function createNote(note, layers, onInquire, motion) {
 	const article = element("article", {
 		className: "note",
 		id: `note-${note.id}`,
-		"aria-labelledby": `note-${note.id}-title`,
+		"aria-label": note.title,
 	});
-	let animation;
+	let finishFlip;
 
 	function render(layer, moveFocus = false) {
-		animation?.cancel();
+		finishFlip?.();
 		const previous = article.firstElementChild;
-		const animate = previous && !motion.matches;
-		const restoring = animate && layer < Number(article.dataset.layer);
-		const oldHeight = animate && previous.offsetHeight;
+		const direction = layer < Number(article.dataset.layer) ? -1 : 1;
 		article.dataset.layer = layer;
 		const face = element("div", { className: "face", "data-layer": layer });
-		const title = element("h2", { id: `note-${note.id}-title` }, note.title);
+		const copy = element("div", { className: "note-copy" });
 		if (layer > 0) {
-			const kind = layer === 1 ? "What’s included" : note.example.kind;
-			face.append(element("p", { className: "note-kind" }, kind));
+			copy.tabIndex = 0;
+			copy.setAttribute("role", "group");
+			copy.setAttribute("aria-label", `Read ${note.title}`);
 		}
-		face.append(title);
+		const headings = [note.title, "What’s included", note.example.title];
+		const title = element("h2", {}, headings[layer]);
+		copy.append(title);
 		const actions = element("div", { className: "actions" });
 
 		if (layer > 0) {
@@ -52,7 +74,7 @@ export function createNote(note, layers, onInquire, motion) {
 					"aria-label": `Back one layer for ${note.title}`,
 					onClick: () => change(layer - 1),
 				},
-				"← Back",
+				"Back",
 			);
 			actions.append(back);
 		}
@@ -60,7 +82,7 @@ export function createNote(note, layers, onInquire, motion) {
 			if (layer === 1) {
 				const list = element("ul", {});
 				for (const line of note.included) list.append(element("li", {}, line));
-				face.append(list);
+				copy.append(list);
 			}
 			const label = layer === 0 ? "See what’s included" : "See an example";
 			actions.append(
@@ -70,16 +92,14 @@ export function createNote(note, layers, onInquire, motion) {
 						type: "button",
 						className: "action",
 						"aria-label": `${label} for ${note.title}`,
-						onClick: () => {
-							if (article.dataset.layer === String(layer)) change(layer + 1);
-						},
+						onClick: () => change(layer + 1),
 					},
-					`${label} +`,
+					layer === 0 ? "What’s included" : "Example",
 				),
 			);
 		} else {
-			face.append(
-				element("h3", {}, note.example.title),
+			copy.append(
+				element("p", { className: "note-kind" }, note.example.kind),
 				element("p", {}, note.example.text),
 			);
 			if (isPortfolioExampleAddress(note.example.href)) {
@@ -91,8 +111,9 @@ export function createNote(note, layers, onInquire, motion) {
 							href: note.example.href,
 							target: "_blank",
 							rel: "noopener noreferrer",
+							"aria-label": "Open example (new tab)",
 						},
-						"Open example (new tab) ↗",
+						"Open ↗",
 					),
 				);
 			} else {
@@ -102,52 +123,26 @@ export function createNote(note, layers, onInquire, motion) {
 						{
 							type: "button",
 							className: "action",
+							"aria-label": "Ask about this work",
 							onClick: (event) => onInquire(event.currentTarget, note),
 						},
-						"Ask about this work",
+						"Ask Joe",
 					),
 				);
 			}
 		}
-		face.append(actions);
-		article.replaceChildren(face);
-		if (animate) {
-			let leaving;
-			if (!restoring) {
-				leaving = previous.cloneNode(true);
-				leaving.classList.add("peeling-face");
-				leaving.inert = true;
-				leaving.setAttribute("aria-hidden", "true");
-				for (const control of leaving.querySelectorAll("[id]"))
-					control.removeAttribute("id");
-				leaving.style.blockSize = `${oldHeight}px`;
-				article.append(leaving);
-			}
-			const run = (leaving || face).animate(peelFrames, {
-				duration: restoring ? 330 : 420,
-				direction: restoring ? "reverse" : "normal",
-				easing: "cubic-bezier(.35, .05, .65, .95)",
+		face.append(copy, actions);
+		if (previous && !motion.matches) {
+			article.prepend(face);
+			finishFlip = flip(previous, face, direction, motion, () => {
+				finishFlip = undefined;
 			});
-			animation = run;
-			const stopForReducedMotion = () => {
-				if (motion.matches) run.cancel();
-			};
-			const clean = () => {
-				leaving?.remove();
-				motion.removeEventListener("change", stopForReducedMotion);
-				if (animation === run) animation = undefined;
-			};
-			motion.addEventListener("change", stopForReducedMotion);
-			run.finished.then(clean, clean);
+		} else {
+			article.replaceChildren(face);
 		}
 		if (moveFocus) {
 			title.tabIndex = -1;
 			title.focus({ preventScroll: true });
-			title.scrollIntoView({
-				block: "nearest",
-				inline: "nearest",
-				behavior: "instant",
-			});
 		}
 	}
 
@@ -155,6 +150,19 @@ export function createNote(note, layers, onInquire, motion) {
 		layers.set(note.id, depth);
 		render(depth, true);
 	}
+
+	article.addEventListener("click", (event) => {
+		const layer = Number(article.dataset.layer);
+		if (layer === 2 || event.target.closest("button, a")) return;
+		const selection = window.getSelection();
+		if (
+			selection &&
+			!selection.isCollapsed &&
+			article.contains(selection.anchorNode)
+		)
+			return;
+		change(layer + 1);
+	});
 
 	render(layers.get(note.id) || 0);
 	return article;

@@ -130,8 +130,6 @@ export function mountWorkingFolder(root, templates) {
 	let closingSheet = false;
 	let openerKey = 0;
 	const routeOpeners = new Map();
-	let scrollTimer;
-	let ignoreScrollUntil = 0;
 	let personalStarted = false;
 	let productsStarted = false;
 	let workResultsReturn;
@@ -214,7 +212,7 @@ export function mountWorkingFolder(root, templates) {
 		track.replaceChildren(...panels);
 		for (const panel of panels)
 			panel.scrollTop = scrollPositions.get(panel.dataset.category) || 0;
-		selectCategory(activeCategory, true);
+		selectCategory(activeCategory);
 	}
 
 	function inquire(control, note) {
@@ -226,7 +224,7 @@ export function mountWorkingFolder(root, templates) {
 		navigate("hire");
 	}
 
-	function selectCategory(id, moveTrack) {
+	function selectCategory(id) {
 		const index = panels.findIndex((panel) => panel.dataset.category === id);
 		if (index < 0) return;
 		activeCategory = id;
@@ -262,14 +260,13 @@ export function mountWorkingFolder(root, templates) {
 					},
 				);
 			}
-			if (moveTrack)
-				panels[index].animate(
-					[
-						{ opacity: 0.55, transform: "translateY(9px)" },
-						{ opacity: 1, transform: "translateY(0)" },
-					],
-					{ duration: 230, easing: "ease-out" },
-				);
+			panels[index].animate(
+				[
+					{ opacity: 0.55, transform: "translateY(9px)" },
+					{ opacity: 1, transform: "translateY(0)" },
+				],
+				{ duration: 230, easing: "ease-out" },
+			);
 		}
 		const departing = panels.find(
 			(panel) =>
@@ -280,11 +277,6 @@ export function mountWorkingFolder(root, templates) {
 		panels.forEach((panel, position) => {
 			panel.inert = position !== index;
 		});
-		if (moveTrack) {
-			clearTimeout(scrollTimer);
-			ignoreScrollUntil = performance.now() + 180;
-			track.scrollTo({ left: track.clientWidth * index, behavior: "instant" });
-		}
 	}
 
 	function openRoute(id, anchor) {
@@ -330,7 +322,7 @@ export function mountWorkingFolder(root, templates) {
 		}
 		if (Object.hasOwn(titles, id) && (!adminRoutes.has(id) || isAdminUser())) {
 			if (categoryIds.has(history.state?.folderCategory))
-				selectCategory(history.state.folderCategory, true);
+				selectCategory(history.state.folderCategory);
 			opener = routeOpeners.get(history.state?.folderOpener) || opener;
 			openRoute(id, history.state?.folderAnchor);
 			selectLinkedPortfolioPost(postKey);
@@ -355,7 +347,6 @@ export function mountWorkingFolder(root, templates) {
 		closingSheet = false;
 		selectCategory(
 			categoryIds.has(id) ? id : boardOnly ? activeCategory : "about",
-			true,
 		);
 		if (sheet.open) {
 			const legacyModal = getCurrentModal();
@@ -501,21 +492,6 @@ export function mountWorkingFolder(root, templates) {
 		event.preventDefault();
 		closeSheet();
 	});
-	track.addEventListener(
-		"scroll",
-		() => {
-			if (!phone.matches || performance.now() < ignoreScrollUntil) return;
-			clearTimeout(scrollTimer);
-			scrollTimer = setTimeout(() => {
-				const panel = panels[Math.round(track.scrollLeft / track.clientWidth)];
-				const id = panel?.dataset.category;
-				if (!id || id === activeCategory || activeRoute) return;
-				history.replaceState(null, "", `#${id}`);
-				selectCategory(id, false);
-			}, 110);
-		},
-		{ passive: true },
-	);
 	window.addEventListener("popstate", syncLocation);
 	window.addEventListener("hashchange", syncLocation);
 	motion.addEventListener("change", () => {
@@ -523,7 +499,6 @@ export function mountWorkingFolder(root, templates) {
 		for (const tab of [...nav.children, ...panels])
 			for (const animation of tab.getAnimations()) animation.cancel();
 	});
-	new ResizeObserver(() => selectCategory(activeCategory, true)).observe(track);
 
 	renderCatalog(emptyFolderCatalog);
 	initModals();
