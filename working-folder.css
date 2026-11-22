@@ -119,6 +119,9 @@ p {
 	font-size: 0.88rem;
 	font-weight: 600;
 }
+.masthead .site-links a {
+	text-decoration: underline;
+}
 .hire,
 .solid {
 	color: white;
@@ -243,34 +246,30 @@ p {
 .notes {
 	display: grid;
 	grid-template-columns: repeat(3, minmax(0, 1fr));
+	align-items: start;
 	gap: 22px;
 }
 .note {
 	--note-color: var(--paper);
 	position: relative;
 	isolation: isolate;
-	background: var(--note-color);
-	border: 1px solid #24231926;
-	border-radius: 3px;
-	box-shadow:
-		0 3px 0 -1px var(--note-color),
-		0 -4px 0 -2px var(--note-color),
-		0 5px 7px #3f382426;
-	padding: 20px;
-	min-block-size: 168px;
-	display: flex;
-	flex-direction: column;
-	justify-content: space-between;
-	gap: 10px;
+	min-width: 0;
+	container-type: inline-size;
 	overflow-wrap: anywhere;
 }
-.note::after {
+.face::after {
 	content: "";
 	position: absolute;
 	inset: auto 0 0 auto;
-	width: 17px;
-	height: 17px;
-	background: linear-gradient(135deg, transparent 49%, #ffffff98 50%);
+	width: 24px;
+	height: 24px;
+	background: linear-gradient(
+		135deg,
+		#ffffff94 50%,
+		#65563228 51%,
+		#fffdf7 65%
+	);
+	clip-path: polygon(100% 0, 100% 100%, 0 100%);
 	pointer-events: none;
 }
 .note:nth-child(6n + 2) {
@@ -289,13 +288,11 @@ p {
 	--note-color: var(--peach);
 }
 .note h2 {
-	max-width: 20ch;
 	font:
-		clamp(1.95rem, 3.3vw, 3rem) / 1 "Bebas Neue",
+		clamp(1.45rem, 10cqi, 2.7rem) / 1 "Bebas Neue",
 		sans-serif;
 }
-.note[data-layer="1"] h2,
-.note[data-layer="2"] h2 {
+.face:not([data-layer="0"]) h2 {
 	font:
 		700 1.3rem / 1.12 "Space Grotesk",
 		sans-serif;
@@ -303,6 +300,10 @@ p {
 .note ul {
 	margin: 0;
 	padding-left: 1.25em;
+	list-style: disc;
+}
+.note li {
+	list-style: disc;
 }
 .note-kind {
 	font-weight: 700;
@@ -344,10 +345,12 @@ p {
 	font-size: 0.88rem;
 	font-weight: 700;
 	padding: 6px 12px;
+	color: var(--ink);
 }
 .route-sheet {
 	width: min(780px, calc(100vw - 28px));
 	max-height: calc(100dvh - 28px);
+	margin: auto;
 	padding: 0;
 	border: 2px solid var(--frame);
 	border-radius: 9px;
@@ -542,14 +545,9 @@ p {
 		grid-template-columns: minmax(0, 1fr);
 		gap: 11px;
 	}
-	.note {
-		padding: 12px 13px 5px;
-		min-block-size: 110px;
-		gap: 3px;
-	}
 	.note h2 {
 		font:
-			700 1.3rem / 1.1 "Space Grotesk",
+			700 1.22rem / 1.1 "Space Grotesk",
 			sans-serif;
 	}
 	.note ul,
@@ -594,44 +592,31 @@ p {
 		padding-top: 6px;
 	}
 }
-@keyframes reveal {
-	from {
-		opacity: 0.4;
-		transform: translateY(3px);
-	}
-	to {
-		opacity: 1;
-		transform: none;
-	}
-}
-@keyframes peel {
-	to {
-		opacity: 0;
-		transform: perspective(420px) translateY(-28px) rotateX(35deg) rotate(-6deg);
-	}
-}
-.note-face-enter {
-	animation: reveal 0.17s ease-out;
-}
-.peeling-face {
-	position: absolute;
-	inset: -1px;
-	background: var(--note-color);
-	padding: inherit;
-	pointer-events: none;
-	animation: peel 0.17s ease-in forwards;
-}
-@media (prefers-reduced-motion: reduce) {
-	.note-face-enter,
-	.peeling-face {
-		animation: none;
-	}
-}
 .face {
+	position: relative;
 	display: flex;
-	flex: 1;
 	flex-direction: column;
 	gap: 10px;
+	padding: 18px;
+	border: 1px solid #71654245;
+	border-radius: 2px;
+	background: linear-gradient(#78642c0d, transparent 28%), var(--note-color);
+	box-shadow:
+		1px 3px 0 -1px var(--note-color),
+		1px 4px 0 -1px #67553249,
+		2px 6px 0 -2px var(--note-color),
+		2px 7px 0 -2px #67553237,
+		3px 9px 6px -5px #3c2e1f52;
+	transform-origin: 50% 5%;
+}
+.face[data-layer="0"] {
+	aspect-ratio: 2 / 1;
+}
+.face.peeling-face {
+	position: absolute;
+	inset: 0 0 auto;
+	z-index: 1;
+	pointer-events: none;
 }
 .face .actions {
 	margin-top: auto;
@@ -639,6 +624,12 @@ p {
 @media (max-width: 720px) {
 	.face {
 		gap: 5px;
+		padding: 10px 12px 5px;
+	}
+}
+@media (max-width: 350px) {
+	.face[data-layer="0"] {
+		aspect-ratio: 1;
 	}
 }
 @media (max-width: 720px) {
@@ -696,10 +687,18 @@ p {
 .route-body .contact .contactButton {
 	min-height: 44px;
 }
-.working-folder .panel h1,
+.working-folder .panel h1 {
+	margin-block: 0 6px;
+}
 .working-folder .note h2,
 .working-folder .note h3 {
-	margin-block: 0 6px;
+	margin-block: 0;
+	letter-spacing: normal;
+}
+.working-folder .note h3 {
+	font:
+		700 1.08rem / 1.15 "Space Grotesk",
+		sans-serif;
 }
 .working-folder #folder-sheet-title {
 	margin-block: 0 6px;

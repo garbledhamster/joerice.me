@@ -224,9 +224,44 @@ export function mountWorkingFolder(root, templates) {
 		activeCategory = id;
 		picker.value = id;
 		const currentLink = nav.querySelector(`[href="#${id}"]`);
+		const previousLink = nav.querySelector('[aria-current="location"]');
 		for (const link of nav.children) {
 			if (link === currentLink) link.setAttribute("aria-current", "location");
 			else link.removeAttribute("aria-current");
+		}
+		if (previousLink && previousLink !== currentLink && !motion.matches) {
+			const flat = "translateY(0) perspective(240px) rotateY(0) rotate(180deg)";
+			for (const [tab, turn] of [
+				[
+					previousLink,
+					"translateY(6px) perspective(240px) rotateY(28deg) rotate(180deg)",
+				],
+				[
+					currentLink,
+					"translateY(-7px) perspective(240px) rotateY(-32deg) rotate(180deg)",
+				],
+			]) {
+				for (const animation of tab.getAnimations()) animation.cancel();
+				tab.animate(
+					[
+						{ transform: flat },
+						{ transform: turn, offset: 0.44 },
+						{ transform: flat },
+					],
+					{
+						duration: 310,
+						easing: "ease-in-out",
+					},
+				);
+			}
+			if (moveTrack)
+				panels[index].animate(
+					[
+						{ opacity: 0.55, transform: "translateY(9px)" },
+						{ opacity: 1, transform: "translateY(0)" },
+					],
+					{ duration: 230, easing: "ease-out" },
+				);
 		}
 		const departing = panels.find(
 			(panel) =>
@@ -445,6 +480,11 @@ export function mountWorkingFolder(root, templates) {
 	);
 	window.addEventListener("popstate", syncLocation);
 	window.addEventListener("hashchange", syncLocation);
+	motion.addEventListener("change", () => {
+		if (!motion.matches) return;
+		for (const tab of [...nav.children, ...panels])
+			for (const animation of tab.getAnimations()) animation.cancel();
+	});
 	new ResizeObserver(() => selectCategory(activeCategory, true)).observe(track);
 
 	renderCatalog(emptyFolderCatalog);

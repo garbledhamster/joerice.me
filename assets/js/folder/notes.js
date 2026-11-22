@@ -5,19 +5,36 @@ function element(tag, attrs, text) {
 	return createElement(tag, attrs, text === undefined ? [] : [text]);
 }
 
+const peelFrames = [
+	{ transform: "perspective(500px) translateY(0) rotateX(0) rotateZ(0)" },
+	{
+		offset: 0.32,
+		transform:
+			"perspective(500px) translateY(-9px) rotateX(28deg) rotateZ(-2deg)",
+	},
+	{
+		opacity: 0,
+		transform:
+			"perspective(500px) translateY(-88px) rotateX(58deg) rotateZ(-12deg)",
+	},
+];
+
 export function createNote(note, layers, onInquire, motion) {
 	const article = element("article", {
 		className: "note",
 		id: `note-${note.id}`,
 		"aria-labelledby": `note-${note.id}-title`,
 	});
+	let animation;
 
 	function render(layer, moveFocus = false) {
-		const previous = article.querySelector(".face");
-		const animate =
-			previous && layer > Number(article.dataset.layer) && !motion.matches;
+		animation?.cancel();
+		const previous = article.firstElementChild;
+		const animate = previous && !motion.matches;
+		const restoring = animate && layer < Number(article.dataset.layer);
+		const oldHeight = animate && previous.offsetHeight;
 		article.dataset.layer = layer;
-		const face = element("div", { className: "face" });
+		const face = element("div", { className: "face", "data-layer": layer });
 		const title = element("h2", { id: `note-${note.id}-title` }, note.title);
 		if (layer > 0) {
 			const kind = layer === 1 ? "What’s included" : note.example.kind;
@@ -95,20 +112,33 @@ export function createNote(note, layers, onInquire, motion) {
 		face.append(actions);
 		article.replaceChildren(face);
 		if (animate) {
-			const leaving = element(
-				"div",
-				{
-					className: "peeling-face",
-					"aria-hidden": "true",
-					inert: "",
-				},
-				note.title,
-			);
-			article.append(leaving);
-			leaving.addEventListener("animationend", () => leaving.remove(), {
-				once: true,
+			let leaving;
+			if (!restoring) {
+				leaving = previous.cloneNode(true);
+				leaving.classList.add("peeling-face");
+				leaving.inert = true;
+				leaving.setAttribute("aria-hidden", "true");
+				for (const control of leaving.querySelectorAll("[id]"))
+					control.removeAttribute("id");
+				leaving.style.blockSize = `${oldHeight}px`;
+				article.append(leaving);
+			}
+			const run = (leaving || face).animate(peelFrames, {
+				duration: restoring ? 330 : 420,
+				direction: restoring ? "reverse" : "normal",
+				easing: "cubic-bezier(.35, .05, .65, .95)",
 			});
-			face.classList.add("note-face-enter");
+			animation = run;
+			const stopForReducedMotion = () => {
+				if (motion.matches) run.cancel();
+			};
+			const clean = () => {
+				leaving?.remove();
+				motion.removeEventListener("change", stopForReducedMotion);
+				if (animation === run) animation = undefined;
+			};
+			motion.addEventListener("change", stopForReducedMotion);
+			run.finished.then(clean, clean);
 		}
 		if (moveFocus) {
 			title.tabIndex = -1;

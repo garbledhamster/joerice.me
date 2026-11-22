@@ -34,6 +34,69 @@ const server = createServer(async (request, response) => {
 	}
 });
 
+async function checkMotion(page, index, viewport) {
+	await page.emulateMedia({ reducedMotion: "no-preference" });
+	await page.goto(index);
+	const book = page.locator("#note-book");
+	await book.waitFor({ state: "attached" });
+	const board = page.locator('.categories a[href="#build"]');
+	const tabMotion = await board.evaluate((link) => {
+		const old = document.querySelector(
+			'.categories a[aria-current="location"]',
+		);
+		link.click();
+		return [old, link].map((tab) =>
+			tab
+				.getAnimations()
+				.flatMap((animation) =>
+					animation.effect.getKeyframes().map((frame) => frame.transform),
+				),
+		);
+	});
+	assert(tabMotion[0].some((frame) => frame.includes("translateY(6px)")));
+	assert(tabMotion[1].some((frame) => frame.includes("translateY(-7px)")));
+	const dimensions = await page
+		.locator('[data-category="build"] .note')
+		.evaluateAll((notes) =>
+			notes.map((note) => [note.offsetWidth, note.offsetHeight]),
+		);
+	for (const [width, height] of dimensions) {
+		assert(
+			Math.abs(width / height - (viewport.width <= 350 ? 1 : 2)) < 0.03,
+			`${viewport.width}: ${width}×${height} paper`,
+		);
+		assert.deepEqual([width, height], dimensions[0]);
+	}
+	const included = book.getByRole("button", { name: /^See what’s included/ });
+	await included.evaluate((button) => button.click());
+	await book
+		.getByRole("button", { name: /^See an example/ })
+		.evaluate((button) => button.click());
+	const ghost = book.locator(".peeling-face");
+	assert.equal(await ghost.getAttribute("inert"), "");
+	assert.equal(await ghost.locator("li").count(), 3);
+	assert.equal(await ghost.locator("[id]").count(), 0);
+	await page.emulateMedia({ reducedMotion: "reduce" });
+	await ghost.waitFor({ state: "detached" });
+	await page.emulateMedia({ reducedMotion: "no-preference" });
+	const returning = await book
+		.getByRole("button", { name: /^Back one layer/ })
+		.evaluate((button) => {
+			const note = button.closest(".note");
+			button.click();
+			return note.firstElementChild
+				.getAnimations()
+				.some(
+					(animation) => animation.effect.getTiming().direction === "reverse",
+				);
+		});
+	assert(returning, "Back animates the returning paper face");
+	await page.emulateMedia({ reducedMotion: "reduce" });
+	console.log(
+		`${viewport.width}px paper sizing, opposing tab cues and peel/restore passed`,
+	);
+}
+
 async function smoke(browser, fixture, viewport) {
 	const mobile = viewport.width < 600;
 	const context = await browser.newContext({
@@ -68,6 +131,7 @@ async function smoke(browser, fixture, viewport) {
 	page.on("pageerror", (error) => errors.push(error));
 	try {
 		const index = `http://127.0.0.1:${server.address().port}/`;
+		await checkMotion(page, index, viewport);
 		await page.goto(index, { waitUntil: "domcontentloaded" });
 		await page
 			.locator(".panel:not([inert]) h1")
@@ -311,6 +375,7 @@ async function exerciseQuote(page, hire) {
 			{ width: 1440, height: 900 },
 			{ width: 390, height: 844 },
 			{ width: 375, height: 667 },
+			{ width: 320, height: 640 },
 		]) {
 			await smoke(browser, fixture, viewport);
 		}
