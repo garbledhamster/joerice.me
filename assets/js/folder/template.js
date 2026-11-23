@@ -1,7 +1,7 @@
 const companionSites = [
-	["Ourstuff", "https://ourstuff.space/"],
-	["The Classics", "https://classics.ourstuff.space/"],
-	["Feelings & Needs", "https://feelings.ourstuff.space/"],
+	["Ourstuff", "https://ourstuff.space/", "ourstuff"],
+	["The Classics", "https://classics.ourstuff.space/", "classics"],
+	["Feelings & Needs", "https://feelings.ourstuff.space/", "feelings"],
 ];
 
 const destinations = [
@@ -113,7 +113,11 @@ function rail(classes, label, entries, { sheets = false } = {}) {
 		${entries
 			.map(([name, href, symbol], index) => {
 				const external = href.startsWith("https:");
-				const cue = external ? "external" : symbol;
+				const tabIcon =
+					symbol &&
+					(external
+						? `<img class="site-favicon" src="/assets/images/site-favicons/${symbol}.png" width="16" height="16" alt="">`
+						: icon(symbol));
 				const newTab = external
 					? ' target="_blank" rel="noopener noreferrer" aria-description="Opens in a new tab"'
 					: "";
@@ -123,12 +127,12 @@ function rail(classes, label, entries, { sheets = false } = {}) {
 				<div class="tab-controls">
 					<button class="tab-toggle" type="button" aria-label="${name}" aria-expanded="false" aria-controls="${linkId}">
 						<span class="tab-number" aria-hidden="true">
-							${cue ? icon(cue) : ""}${index + 1}
+							${tabIcon || ""}${index + 1}
 						</span>
 						<span class="tab-title">${name}</span>
 					</button>
 					<a id="${linkId}" class="tab-link" href="${href}"${route}${newTab} aria-label="${name}">
-						${symbol ? `<span class="tab-symbol">${icon(symbol)}</span>` : ""}
+						${tabIcon ? `<span class="tab-symbol">${tabIcon}</span>` : ""}
 						<span class="tab-title">${name}</span>
 						<span class="tab-arrow">${icon(external ? "external" : "open")}</span>
 					</a>

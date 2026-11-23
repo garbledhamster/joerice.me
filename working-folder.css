@@ -214,6 +214,15 @@ p {
 	border-radius: 8px 8px 0 0;
 	border-bottom-color: var(--frame);
 }
+
+.site-favicon {
+	display: block;
+}
+
+.tab-number .site-favicon {
+	inline-size: 13px;
+	block-size: 13px;
+}
 .guide .folder-tab {
 	--tab-surface: var(--note-green);
 }
