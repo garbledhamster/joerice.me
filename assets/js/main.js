@@ -27,7 +27,7 @@ import { initFirebase } from "./services/firebase.js";
  * Get the login modal template
  * @returns {string} Login modal HTML
  */
-function getLoginModalTemplate({ folder = false } = {}) {
+function getLoginModalTemplate() {
 	return `
     <div class="modal loginModal" id="loginModal" aria-hidden="true" role="dialog" aria-modal="true">
       <div class="modalContent">
@@ -45,14 +45,6 @@ function getLoginModalTemplate({ folder = false } = {}) {
           <input id="showGithubContent" type="checkbox" checked/>
           <span>Show GitHub Content</span>
         </label>
-        ${
-					folder
-						? `<nav class="admin-actions" aria-label="Portfolio administration" data-admin-only hidden>
-        <a class="login-control" href="#edit-content" data-route="edit-content">Edit portfolio content</a>
-        <a class="login-control" href="#edit-services" data-route="edit-services">Edit services</a>
-      </nav>`
-						: ""
-				}
       <button class="loginLogoutButton" id="loginLogoutButton" type="button" data-admin-only hidden>Logout</button>
         <p class="loginStatus" id="loginStatus" role="status" aria-live="polite"></p>
       </div>
@@ -112,10 +104,7 @@ async function initApp() {
 	}
 
 	if (app.hasAttribute("data-working-folder")) {
-		mountWorkingFolder(app, {
-			login: getLoginModalTemplate({ folder: true }),
-			postEditor: getPortfolioModalTemplate(),
-		});
+		mountWorkingFolder(app);
 		return;
 	}
 

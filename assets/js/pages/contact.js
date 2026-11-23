@@ -39,15 +39,19 @@ export function getContactTemplate({ sheet = false } = {}) {
           <p class="contactIntro">I'll review your request, follow up with any questions, and put together a quote once the scope is clear.</p>`
 			}
       <form id="contactForm" novalidate>
+        ${sheet ? '<div class="quote-details"><div>' : ""}
         <label for="quoteName">Name (required)</label>
         <input id="quoteName" type="text" name="name" autocomplete="name" aria-describedby="nameError" required/>
         <small class="contactFieldError" id="nameError" hidden></small>
+        ${sheet ? "</div><div>" : ""}
         <label for="quoteEmail">Email (required)</label>
         <input id="quoteEmail" type="email" name="email" autocomplete="email" aria-describedby="emailError" required/>
         <small class="contactFieldError" id="emailError" hidden></small>
+        ${sheet ? '</div><div class="quote-phone">' : ""}
         <label for="quotePhone">Phone <span class="optionalField">(optional)</span></label>
         <input id="quotePhone" type="tel" name="phone" autocomplete="tel" aria-describedby="phoneHelp"/>
         <small class="formHelp" id="phoneHelp">Include a number if you're comfortable being contacted by phone.</small>
+        ${sheet ? "</div></div>" : ""}
         <label for="quoteMessage">What do you need help with? (required)</label>
         <textarea id="quoteMessage" name="message" aria-describedby="messageHelp messageError" required></textarea>
         <small class="contactFieldError" id="messageError" hidden></small>

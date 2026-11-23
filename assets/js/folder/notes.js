@@ -5,53 +5,135 @@ function element(tag, attrs, text) {
 	return createElement(tag, attrs, text === undefined ? [] : [text]);
 }
 
-function flip(from, to, direction, motion, onFinish) {
+// Each hinge paints a slice of the same face. The real controls stay on the card.
+function paperStrip(face, start, portion, offset) {
+	const hinge = element("div", { className: "paper-hinge" });
+	const slice = element("div", { className: "paper-slice" });
+	hinge.style.top = `${offset}%`;
+	slice.style.height = `${portion}%`;
+	const print = face.cloneNode(true);
+	print.classList.remove("turning-out");
+	print.style.top = `${(-100 * start) / portion}%`;
+	print.style.height = `${10000 / portion}%`;
+	slice.append(print);
+	hinge.append(slice);
+	return hinge;
+}
+
+function peel(from, to, goingBack, onFinish) {
+	const cover = goingBack ? to : from;
+	const scrollTop = cover.querySelector(".note-copy").scrollTop;
+	const animations = [];
+
 	from.classList.add("turning-out");
 	from.inert = true;
 	from.setAttribute("aria-hidden", "true");
 
-	const timing = { duration: 500, easing: "ease-in-out" };
-	const outgoing = from.animate(
-		[
-			{ transform: "rotateY(0deg)" },
-			{ transform: `rotateY(${direction * 180}deg)` },
-		],
-		timing,
-	);
-	const incoming = to.animate(
-		[
-			{ transform: `rotateY(${-direction * 180}deg)` },
-			{ transform: "rotateY(0deg)" },
-		],
-		timing,
-	);
+	const shadow = element("div", {
+		className: "paper-shadow",
+		"aria-hidden": "true",
+	});
+	const sheet = element("div", {
+		className: "paper-peel",
+		"aria-hidden": "true",
+	});
+	sheet.inert = true;
+	const topSize = 42;
+	const middleSize = 30;
+	const tipStart = topSize + middleSize;
+	const top = paperStrip(cover, 0, topSize, 0);
+	const middle = paperStrip(cover, topSize, middleSize, topSize);
+	const tip = paperStrip(cover, tipStart, 100 - tipStart, middleSize);
+	const light = element("div", { className: "paper-light" });
+	tip.firstElementChild.append(light);
+	top.append(middle);
+	middle.append(tip);
+	sheet.append(top);
+	cover.classList.add("under-paper-peel");
+	from.parentElement.append(shadow, sheet);
+	for (const copy of sheet.querySelectorAll(".note-copy")) {
+		copy.scrollTop = scrollTop;
+	}
+
+	const timing = {
+		duration: 740,
+		direction: goingBack ? "reverse" : "normal",
+		fill: "both",
+	};
+	const animate = (target, frames) => {
+		animations.push(target.animate(frames, timing));
+	};
+	animate(top, [
+		{ transform: "translateY(0) rotateX(0deg)", easing: "ease-in-out" },
+		{
+			offset: 0.46,
+			transform: "translateY(0) rotateX(20deg)",
+			easing: "ease-in",
+		},
+		{
+			offset: 0.68,
+			transform: "translateY(-34%) rotateX(30deg)",
+			easing: "ease-out",
+		},
+		{ transform: "translateY(-105%) rotateX(23deg)" },
+	]);
+	animate(middle, [
+		{ transform: "rotateX(0deg)", easing: "ease-out" },
+		{ offset: 0.31, transform: "rotateX(22deg)" },
+		{ offset: 0.51, transform: "rotateX(27deg)" },
+		{ transform: "rotateX(16deg)" },
+	]);
+	animate(tip, [
+		{ transform: "rotateX(0deg)", easing: "ease-out" },
+		{ offset: 0.22, transform: "rotateX(25deg)" },
+		{ offset: 0.51, transform: "rotateX(27deg)" },
+		{ transform: "rotateX(12deg)" },
+	]);
+	for (const slice of sheet.querySelectorAll(".paper-slice")) {
+		animate(slice, [
+			{ opacity: 1 },
+			{ offset: 0.78, opacity: 1 },
+			{ opacity: 0 },
+		]);
+	}
+	animate(shadow, [
+		{ opacity: 0, transform: "scaleY(0.5)" },
+		{ offset: 0.45, opacity: 0.85, transform: "scaleY(1)" },
+		{ opacity: 0, transform: "scaleY(1.2)" },
+	]);
+	animate(light, [
+		{ opacity: 0 },
+		{ offset: 0.45, opacity: 1 },
+		{ opacity: 0 },
+	]);
+
 	let finished = false;
 	function clean() {
 		if (finished) return;
 		finished = true;
+		cover.classList.remove("under-paper-peel");
 		from.remove();
-		motion.removeEventListener("change", clean);
-		outgoing.cancel();
-		incoming.cancel();
+		sheet.remove();
+		shadow.remove();
+		for (const animation of animations) animation.cancel();
 		onFinish();
 	}
-	motion.addEventListener("change", clean);
-	outgoing.finished.then(clean, clean);
+	animations[0].finished.then(clean, clean);
 	return clean;
 }
 
-export function createNote(note, layers, onInquire, motion) {
+export function createNote(note, layers, onInquire) {
 	const article = element("article", {
 		className: "note",
 		id: `note-${note.id}`,
 		"aria-label": note.title,
 	});
-	let finishFlip;
+	let finishPeel;
 
 	function render(layer, moveFocus = false) {
-		finishFlip?.();
+		finishPeel?.();
 		const previous = article.firstElementChild;
-		const direction = layer < Number(article.dataset.layer) ? -1 : 1;
+		const goingBack = layer < Number(article.dataset.layer);
 		article.dataset.layer = layer;
 		const face = element("div", { className: "face", "data-layer": layer });
 		const copy = element("div", { className: "note-copy" });
@@ -66,6 +148,19 @@ export function createNote(note, layers, onInquire, motion) {
 		const actions = element("div", { className: "actions" });
 
 		if (layer > 0) {
+			const icon = document.createElementNS(
+				"http://www.w3.org/2000/svg",
+				"svg",
+			);
+			icon.setAttribute("viewBox", "0 0 24 24");
+			icon.setAttribute("aria-hidden", "true");
+			icon.setAttribute("focusable", "false");
+			const path = document.createElementNS(
+				"http://www.w3.org/2000/svg",
+				"path",
+			);
+			path.setAttribute("d", "M19 12H5m0 0 7-7m-7 7 7 7");
+			icon.append(path);
 			const back = element(
 				"button",
 				{
@@ -74,7 +169,7 @@ export function createNote(note, layers, onInquire, motion) {
 					"aria-label": `Back one layer for ${note.title}`,
 					onClick: () => change(layer - 1),
 				},
-				"Back",
+				icon,
 			);
 			actions.append(back);
 		}
@@ -132,23 +227,66 @@ export function createNote(note, layers, onInquire, motion) {
 			}
 		}
 		face.append(copy, actions);
-		if (previous && !motion.matches) {
+		if (previous) {
 			article.prepend(face);
-			finishFlip = flip(previous, face, direction, motion, () => {
-				finishFlip = undefined;
+			finishPeel = peel(previous, face, goingBack, () => {
+				finishPeel = undefined;
 			});
 		} else {
 			article.replaceChildren(face);
 		}
+		requestAnimationFrame(() =>
+			fitTitle(copy.querySelector("h2"), article, layer),
+		);
 		if (moveFocus) {
 			title.tabIndex = -1;
 			title.focus({ preventScroll: true });
 		}
 	}
 
+	function fitTitle(title, card, layer) {
+		const countLines = () => {
+			const range = document.createRange();
+			range.selectNodeContents(title);
+			const tops = Array.from(range.getClientRects()).map((rect) =>
+				Math.round(rect.top),
+			);
+			return new Set(tops).size || 1;
+		};
+		const fit = () => {
+			if (!title.isConnected || !card.contains(title)) return;
+			if (
+				layer === 0 &&
+				countLines() >= 3 &&
+				!card.classList.contains("note-wide")
+			) {
+				card.classList.add("note-wide");
+				requestAnimationFrame(fit);
+				return;
+			}
+			let size = Number.parseFloat(getComputedStyle(title).fontSize);
+			while (countLines() > 2 && size > 9) {
+				size -= 0.5;
+				title.style.fontSize = `${size}px`;
+			}
+		};
+		title.style.removeProperty("font-size");
+		if (document.fonts?.ready) document.fonts.ready.then(fit);
+		else fit();
+	}
+
 	function change(depth) {
 		layers.set(note.id, depth);
 		render(depth, true);
+	}
+
+	if (typeof ResizeObserver !== "undefined") {
+		const resizeObserver = new ResizeObserver(() => {
+			const activeTitle = article.firstElementChild?.querySelector("h2");
+			if (activeTitle)
+				fitTitle(activeTitle, article, Number(article.dataset.layer));
+		});
+		resizeObserver.observe(article);
 	}
 
 	article.addEventListener("click", (event) => {

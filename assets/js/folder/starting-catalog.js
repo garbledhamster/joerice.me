@@ -14,10 +14,10 @@ export const startingCatalog = [
 					"Use Back on the note to return one sheet at a time.",
 				],
 				example: {
-					title: "A book site you can try",
-					text: "I made a site for The Manual for Feelings and Needs so you could read a few pages before choosing the book. Start with the sample and see where you’d go next.",
-					kind: "Live example",
-					href: "https://feelings.ourstuff.space/",
+					title: "Read a sample from The Manual for Feelings and Needs",
+					text: "I made a site for my manual so you could read a few pages before choosing the book. Open the sample and try one page.",
+					kind: "Sample PDF",
+					href: "https://feelings.ourstuff.space/preview/htHOW",
 				},
 			},
 			{
@@ -49,6 +49,7 @@ export const startingCatalog = [
 		notes: [
 			{
 				id: "book",
+				serviceId: "web-site",
 				title: "A website for your book",
 				included: [
 					"A page to introduce your book",
@@ -64,6 +65,7 @@ export const startingCatalog = [
 			},
 			{
 				id: "channel",
+				serviceId: "web-site",
 				title: "A home for your channel",
 				included: [
 					"A place to watch or listen to your latest work",
@@ -79,6 +81,7 @@ export const startingCatalog = [
 			},
 			{
 				id: "local",
+				serviceId: "web-site",
 				title: "A site for your local business",
 				included: [
 					"The information customers need before they visit or call",
@@ -87,13 +90,14 @@ export const startingCatalog = [
 				],
 				example: {
 					title: "J & D’s Heritage Hog Farm",
-					text: "I built this site for my parents’ farm. Start with the buying information and see what you’d need to ask about, reserve and pick up a hog.",
+					text: "I built this site for my parents’ farm. Start with the buying information, then find where to ask about availability and pickup.",
 					kind: "Published portfolio project",
 					href: "https://jdhogfarm.com/",
 				},
 			},
 			{
 				id: "app",
+				serviceId: "web-app",
 				title: "An app for a useful idea",
 				included: [
 					"One clear task people can do with the app",
@@ -102,13 +106,14 @@ export const startingCatalog = [
 				],
 				example: {
 					title: "Fast Track",
-					text: "Fast Track is one of my web apps. Try previewing a timer duration and look for the history view to see how the related screens fit together.",
-					kind: "Live web app",
+					text: "Fast Track is one of my web apps. It asks you to sign in before you can try the timer or open the history view.",
+					kind: "Sign-in required",
 					href: "https://fasttrack.ourstuff.space/",
 				},
 			},
 			{
 				id: "product",
+				serviceId: "web-site",
 				title: "A site that explains what you offer",
 				included: [
 					"A clear description of what someone can get from you",
@@ -124,6 +129,7 @@ export const startingCatalog = [
 			},
 			{
 				id: "portfolio",
+				serviceId: "web-site",
 				title: "A portfolio that shows what you did",
 				included: [
 					"Selected work with your role and what came out of it",
@@ -139,6 +145,7 @@ export const startingCatalog = [
 			},
 			{
 				id: "fan",
+				serviceId: "web-site",
 				title: "A site for your fan community",
 				included: [
 					"A home for the parts of the subject fans want to explore",
@@ -184,6 +191,7 @@ export const startingCatalog = [
 		notes: [
 			{
 				id: "troubleshoot",
+				serviceId: "it-services",
 				title: "Get a device or tool working again",
 				included: [
 					"Find out what you were trying to do and who else is affected.",
@@ -199,6 +207,7 @@ export const startingCatalog = [
 			},
 			{
 				id: "knowledge",
+				serviceId: "knowledge-mgmt",
 				title: "Make the information you keep easier to find",
 				included: [
 					"Organize notes around the questions people need answered.",
@@ -260,6 +269,7 @@ export const startingCatalog = [
 		notes: [
 			{
 				id: "coach",
+				serviceId: "ai-coaching",
 				title: "Learn AI on a task you know",
 				included: [
 					"Pick a task and bring a sample you can share.",
@@ -321,6 +331,7 @@ export const startingCatalog = [
 		notes: [
 			{
 				id: "logo",
+				serviceId: "logo-design",
 				title: "A logo that fits your work",
 				included: [
 					"Talk through what you do, who it’s for and where the logo needs to work.",
@@ -335,6 +346,7 @@ export const startingCatalog = [
 			},
 			{
 				id: "resume",
+				serviceId: "resume-writing",
 				title: "A résumé that shows what you did",
 				included: [
 					"Choose experience that fits the kind of work you want.",

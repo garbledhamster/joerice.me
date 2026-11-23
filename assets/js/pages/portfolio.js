@@ -61,6 +61,9 @@ export function getRelatedPosts(serviceId) {
 	};
 }
 
+const backArrow =
+	'<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M19 12H5m7 7-7-7 7-7"/></svg>';
+
 function archiveScrollBehavior() {
 	return matchMedia("(prefers-reduced-motion: reduce)").matches
 		? "instant"
@@ -84,7 +87,7 @@ export function getPortfolioTemplate({ folder = false } = {}) {
       ${
 				folder
 					? `<section id="linkedPost" hidden aria-labelledby="linkedPostTitle">
-        <a class="action" href="#work" data-return-to-results>← Back to results</a>
+        <a class="back" href="#work" data-return-to-results aria-label="Back to results" title="Back to results">${backArrow}</a>
         <h3 id="linkedPostTitle" tabindex="-1">Selected work</h3>
         <article class="postAccordion" id="linkedPostArticle">
           <div class="postInlineBody" aria-live="polite"></div>
@@ -100,7 +103,7 @@ export function getPortfolioTemplate({ folder = false } = {}) {
               <i class="fas fa-sync"></i>
             </button>
           </div>
-          <button class="editBtn" id="addPortfolioBtn" type="button" data-admin-only>Add Post</button>
+          ${folder ? "" : '<button class="editBtn" id="addPortfolioBtn" type="button" data-admin-only>Add Post</button>'}
         </div>
         <p class="portfolioIntro">Projects I'm working on, websites I've built, and notes on how I work. Choose a topic or open a post to look through it.</p>
         <div class="postFilters">
@@ -216,7 +219,7 @@ function formatPostEntry(post, index, group) {
         <div class="postInlineClip">
           <div class="postInlineReader">
             <div class="postInlineActions">
-              <button class="closePostButton" type="button">← Back to results</button>
+              ${linkedPost ? `<button class="closePostButton" type="button" aria-label="Back to results" title="Back to results">${backArrow}</button>` : '<button class="closePostButton" type="button">← Back to results</button>'}
               ${share}
             </div>
             <div class="postInlineBody"></div>
@@ -964,7 +967,9 @@ async function readYamlPosts(overriddenSources) {
 					serviceIds: Array.isArray(data.serviceIds) ? data.serviceIds : [],
 					source: "yaml",
 				});
-			} catch {}
+			} catch {
+				// A missing bundled post does not prevent the remaining posts from loading.
+			}
 		}
 	} catch (error) {
 		console.warn("Unable to load YAML posts.", error);

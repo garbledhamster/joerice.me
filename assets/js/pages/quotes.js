@@ -16,12 +16,12 @@ const SERVER_READ = { source: "server" };
 const slideMs = 7000;
 let cleanupQuotes;
 
-export function getQuotesTemplate() {
+export function getQuotesTemplate({ readOnly = false } = {}) {
 	return `
     <section class="quotes" id="quotesSection">
       <div class="sectionHeader">
         <h2>Favorite quotes</h2>
-        <button class="editBtn" id="editQuotesBtn" type="button" data-admin-only hidden aria-hidden="true" aria-controls="quoteEditor" aria-expanded="false">Edit</button>
+        ${readOnly ? "" : ' <button class="editBtn" id="editQuotesBtn" type="button" data-admin-only hidden aria-hidden="true" aria-controls="quoteEditor" aria-expanded="false">Edit</button>'}
       </div>
       <p id="quoteAvailability" role="status">Loading favorite quotes…</p>
       <div class="quoteBox" id="quoteBox" hidden>
@@ -29,7 +29,10 @@ export function getQuotesTemplate() {
         <cite id="quoteCite"></cite>
       </div>
       <div class="progressWrap" hidden><div class="progressBar" id="quoteProgress"></div></div>
-      <div class="quoteEditor editPanel is-collapsed" id="quoteEditor" data-admin-only hidden aria-hidden="true">
+      ${
+				readOnly
+					? ""
+					: `      <div class="quoteEditor editPanel is-collapsed" id="quoteEditor" data-admin-only hidden aria-hidden="true">
         <aside class="quoteList">
           <div class="quoteListHeader">
             <span>Quotes</span>
@@ -38,7 +41,8 @@ export function getQuotesTemplate() {
           <p id="quoteEditorStatus" role="status"></p>
           <ul id="quoteListItems"></ul>
         </aside>
-      </div>
+      </div>`
+			}
     </section>
   `;
 }
@@ -198,6 +202,7 @@ export function initQuotes() {
 	}
 
 	function closeEditor() {
+		if (!quoteEditor) return;
 		if (editor) {
 			editor.quotes = [];
 			editor = undefined;
@@ -272,6 +277,7 @@ export function initQuotes() {
 			closeEditor();
 			const hidden = !isAdminUser();
 			for (const element of [editQuotesBtn, quoteEditor]) {
+				if (!element) continue;
 				element.hidden = hidden;
 				element.setAttribute("aria-hidden", String(hidden));
 			}

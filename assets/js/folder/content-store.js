@@ -11,20 +11,6 @@ const starterNotes = startingCatalog.flatMap(({ id, notes }) =>
 	notes.map((note, order) => ({ ...note, category: id, order, hidden: false })),
 );
 const starterById = new Map(starterNotes.map((note) => [note.id, note]));
-const serviceIds = {
-	book: "web-site",
-	channel: "web-site",
-	local: "web-site",
-	product: "web-site",
-	portfolio: "web-site",
-	fan: "web-site",
-	app: "web-app",
-	troubleshoot: "it-services",
-	knowledge: "knowledge-mgmt",
-	coach: "ai-coaching",
-	logo: "logo-design",
-	resume: "resume-writing",
-};
 
 export const emptyFolderCatalog = startingCatalog.map((category) => ({
 	...category,
@@ -178,7 +164,7 @@ export async function loadPublishedFolder() {
 				...starter,
 				...fields,
 				example: exampleFor(starter, fields.exampleHref),
-				serviceId: serviceIds[starter.id],
+				serviceId: starter.serviceId,
 			});
 		} catch {
 			// Leave malformed publication records out until they can be corrected.

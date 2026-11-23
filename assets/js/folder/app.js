@@ -7,11 +7,6 @@ import { getSocialLinksTemplate } from "../components/profile.js";
 import { createElement } from "../core/dom.js";
 import { getContactTemplate, initContact } from "../pages/contact.js";
 import { getGalleryTemplate, initGallery } from "../pages/gallery.js";
-import {
-	clearServiceEditor,
-	getHireTemplate,
-	initHire,
-} from "../pages/hire.js";
 import { getLinksTemplate } from "../pages/links.js";
 import {
 	getPortfolioTemplate,
@@ -22,22 +17,15 @@ import {
 import { getProductsTemplate, initProducts } from "../pages/products.js";
 import { getQuotesTemplate, initQuotes } from "../pages/quotes.js";
 import {
-	initAuth,
-	isAdminUser,
-	onAuthStateChange,
-	updateAdminUi,
-} from "../services/auth.js";
-import {
 	getServices,
+	loadServices,
 	resetPublishedServiceVisibility,
 	selectService,
 } from "../services/catalog.js";
-import { emptyFolderCatalog, loadPublishedFolder } from "./content-store.js";
 import { employers, guide } from "./contents.js";
-import { mountFolderEditor } from "./editor.js";
 import { createNote } from "./notes.js";
 import { startingCatalog } from "./starting-catalog.js";
-import { folderTemplate } from "./template.js";
+import { folderTemplate, setupTabs } from "./template.js";
 
 const titles = {
 	hire: "Hire me",
@@ -46,10 +34,8 @@ const titles = {
 	personal: "Personal",
 	guide: "How to build an idea",
 	products: "Books and tools",
-	"edit-services": "Edit services",
-	"edit-content": "Edit portfolio content",
 };
-const adminRoutes = new Set(["edit-services", "edit-content"]);
+const retiredRoutes = new Set(["loginModal", "edit-services", "edit-content"]);
 const legacyAddresses = {
 	contact: { id: "hire" },
 	portfolio: { id: "work" },
@@ -64,32 +50,30 @@ function element(tag, attributes, text) {
 	return createElement(tag, attributes, text === undefined ? [] : [text]);
 }
 
-export function mountWorkingFolder(root, templates) {
+export function mountWorkingFolder(root) {
 	const personal = `
 		<div id="personal-photos">
-			<img src="assets/images/pictures/profile.jpg" width="140" height="140" alt="Portrait of Joe Rice">
+			<img class="personal-portrait" src="assets/images/pictures/profile.jpg" width="140" height="140" alt="Portrait of Joe Rice">
 			${getGalleryTemplate()}
 		</div>
-		${getQuotesTemplate()}
+		${getQuotesTemplate({ readOnly: true })}
 		${getLinksTemplate()}
 		<h2>Profiles</h2>
 		${getSocialLinksTemplate({ labels: ["Instagram", "GitHub", "Etsy"] })}
 		<a class="action" href="#hire" data-route="hire" data-feedback-entry>Send feedback or request an update</a>
 	`;
 	root.innerHTML = folderTemplate({
-		...templates,
+		categories: startingCatalog,
 		quote: getContactTemplate({ sheet: true }),
 		work:
 			getPortfolioTemplate({ folder: true }) +
 			`<a class="action" href="#hire" data-route="hire">Ask about this work</a>`,
 		products: getProductsTemplate(),
-		services: getHireTemplate(),
 		personal,
 		employers,
 		guide,
 	});
 
-	const motion = matchMedia("(prefers-reduced-motion: reduce)");
 	const phone = matchMedia("(max-width: 720px)");
 	const nav = root.querySelector(".categories");
 	const picker = root.querySelector("#folder-category");
@@ -99,31 +83,8 @@ export function mountWorkingFolder(root, templates) {
 	const heading = sheet.querySelector("#folder-sheet-title");
 	const close = sheet.querySelector("[data-close]");
 	const layers = new Map();
-	const scrollPositions = new Map();
 	const sheetPanels = Array.from(sheet.querySelectorAll("[data-sheet]"));
 	const categoryIds = new Set(startingCatalog.map((category) => category.id));
-	const copyNodes = new Map(
-		["guide", "employers"].map((page) => [
-			page,
-			Array.from(root.querySelectorAll(`[data-folder-copy="${page}"]`)),
-		]),
-	);
-	const originalCopy = new Map(
-		Array.from(copyNodes, ([page, nodes]) => [
-			page,
-			nodes.map((node) => node.textContent.replace(/\s+/g, " ").trim()),
-		]),
-	);
-	const openEditor = mountFolderEditor(
-		root.querySelector('[data-sheet="edit-content"]'),
-		{
-			getCopy: (page) => originalCopy.get(page)[0],
-			refresh: refreshFolder,
-		},
-	);
-	let contentVersion = 0;
-	let renderedCatalog = "";
-	let panels = [];
 	let activeCategory = "about";
 	let activeRoute;
 	let opener;
@@ -134,46 +95,8 @@ export function mountWorkingFolder(root, templates) {
 	let productsStarted = false;
 	let workResultsReturn;
 
-	function showPublishedCopy(copy = {}) {
-		for (const [page, nodes] of copyNodes) {
-			const [intro, ...body] = originalCopy.get(page);
-			const saved = copy[page];
-			nodes.forEach((node, index) => {
-				if (index === 0) node.textContent = saved?.intro || intro;
-				else {
-					const previous =
-						index === nodes.length - 1
-							? saved?.legacyBody.slice(index - 1).join("\n\n")
-							: saved?.legacyBody[index - 1];
-					node.textContent = previous || body[index - 1];
-				}
-			});
-		}
-	}
-
-	async function refreshFolder() {
-		const version = ++contentVersion;
-		try {
-			const { catalog, copy } = await loadPublishedFolder();
-			if (version !== contentVersion) return;
-			renderCatalog(catalog);
-			showPublishedCopy(copy);
-			return true;
-		} catch {
-			if (version !== contentVersion) return;
-			renderCatalog(emptyFolderCatalog);
-			showPublishedCopy();
-			return false;
-		}
-	}
-
-	function renderCatalog(catalog) {
-		const signature = JSON.stringify(catalog);
-		if (signature === renderedCatalog) return;
-		renderedCatalog = signature;
-		for (const panel of panels)
-			scrollPositions.set(panel.dataset.category, panel.scrollTop);
-		panels = catalog.map((category) => {
+	function renderCatalog() {
+		const panels = startingCatalog.map((category) => {
 			const panel = element("section", {
 				className: "panel",
 				"data-category": category.id,
@@ -195,25 +118,18 @@ export function mountWorkingFolder(root, templates) {
 				intro.append(aside);
 			}
 			const notes = element("div", { className: "notes" });
-			for (const note of category.notes)
-				notes.append(createNote(note, layers, inquire, motion));
-			if (!notes.childElementCount) {
-				notes.append(
-					element(
-						"p",
-						{},
-						"Notes are currently unavailable. You can still get in touch.",
-					),
-				);
+			for (const note of category.notes) {
+				notes.append(createNote(note, layers, inquire));
 			}
 			panel.append(intro, notes);
 			return panel;
 		});
-		track.replaceChildren(...panels);
-		for (const panel of panels)
-			panel.scrollTop = scrollPositions.get(panel.dataset.category) || 0;
-		selectCategory(activeCategory);
+		track.append(...panels);
+		return panels;
 	}
+
+	const panels = renderCatalog();
+	const tabs = setupTabs(root, phone);
 
 	function inquire(control, note) {
 		const service = getServices().find(
@@ -230,36 +146,29 @@ export function mountWorkingFolder(root, templates) {
 		activeCategory = id;
 		picker.value = id;
 		const currentLink = nav.querySelector(`[href="#${id}"]`);
-		const previousLink = nav.querySelector('[aria-current="location"]');
-		for (const link of nav.children) {
-			if (link === currentLink) link.setAttribute("aria-current", "location");
-			else link.removeAttribute("aria-current");
-		}
-		if (previousLink && previousLink !== currentLink && !motion.matches) {
-			const flat = "translateY(0) perspective(240px) rotateY(0) rotate(180deg)";
-			for (const [tab, turn] of [
-				[
-					previousLink,
-					"translateY(6px) perspective(240px) rotateY(28deg) rotate(180deg)",
-				],
-				[
-					currentLink,
-					"translateY(-7px) perspective(240px) rotateY(-32deg) rotate(180deg)",
-				],
+		const previousLink = nav.querySelector('a[aria-current="location"]');
+		tabs.select(nav, currentLink);
+		if (previousLink && previousLink !== currentLink) {
+			for (const [link, distance, angle] of [
+				[previousLink, 6, 28],
+				[currentLink, -7, -32],
 			]) {
+				const tab = tabs.visibleControl(link.closest(".folder-tab"));
 				for (const animation of tab.getAnimations()) animation.cancel();
 				tab.animate(
 					[
-						{ transform: flat },
-						{ transform: turn, offset: 0.44 },
-						{ transform: flat },
+						{ transform: "none" },
+						{
+							transform: `translateY(${distance}px) perspective(240px) rotateY(${angle}deg)`,
+							offset: 0.44,
+						},
+						{ transform: "none" },
 					],
-					{
-						duration: 310,
-						easing: "ease-in-out",
-					},
+					{ duration: 310, easing: "ease-in-out" },
 				);
 			}
+			for (const panel of panels)
+				for (const animation of panel.getAnimations()) animation.cancel();
 			panels[index].animate(
 				[
 					{ opacity: 0.55, transform: "translateY(9px)" },
@@ -273,7 +182,10 @@ export function mountWorkingFolder(root, templates) {
 				panel.dataset.category !== id && panel.contains(document.activeElement),
 		);
 		if (departing)
-			(phone.matches ? picker : currentLink)?.focus({ preventScroll: true });
+			(phone.matches
+				? picker
+				: tabs.visibleControl(currentLink.closest(".folder-tab"))
+			).focus({ preventScroll: true });
 		panels.forEach((panel, position) => {
 			panel.inert = position !== index;
 		});
@@ -283,15 +195,22 @@ export function mountWorkingFolder(root, templates) {
 		if (id === activeRoute && sheet.open && !anchor) return;
 		const legacyModal = getCurrentModal();
 		if (legacyModal) closeModal(legacyModal);
-		if (activeRoute === "edit-content" && id !== activeRoute)
-			openEditor.close();
-		if (activeRoute === "edit-services" && id !== activeRoute)
-			clearServiceEditor();
 		activeRoute = id;
 		heading.textContent = titles[id];
 		for (const panel of sheetPanels) panel.hidden = panel.dataset.sheet !== id;
-		if (!sheet.open) sheet.showModal();
-		if (id === "edit-content") openEditor();
+		for (const rail of root.querySelectorAll(".destinations, .guide"))
+			tabs.select(rail, rail.querySelector(`[data-route="${id}"]`));
+		sheet.dataset.route = id;
+		if (!sheet.open) {
+			sheet.showModal();
+			sheet.animate(
+				[
+					{ transform: "translateY(24px) scale(0.98)", opacity: 0.6 },
+					{ transform: "none", opacity: 1 },
+				],
+				{ duration: 260, easing: "cubic-bezier(0.18, 0.75, 0.28, 1)" },
+			);
+		}
 		if (id === "products" && !productsStarted) {
 			productsStarted = true;
 			initProducts();
@@ -320,7 +239,7 @@ export function mountWorkingFolder(root, templates) {
 				`#${legacy ? id : raw}`,
 			);
 		}
-		if (Object.hasOwn(titles, id) && (!adminRoutes.has(id) || isAdminUser())) {
+		if (Object.hasOwn(titles, id)) {
 			if (categoryIds.has(history.state?.folderCategory))
 				selectCategory(history.state.folderCategory);
 			opener = routeOpeners.get(history.state?.folderOpener) || opener;
@@ -339,10 +258,12 @@ export function mountWorkingFolder(root, templates) {
 		}
 		selectLinkedPortfolioPost("");
 		workResultsReturn = undefined;
-		const boardOnly = raw === "loginModal" || raw === "whiteboard";
+		const boardOnly = raw === "whiteboard" || retiredRoutes.has(raw);
+		if (retiredRoutes.has(raw))
+			history.replaceState(null, "", `#${activeCategory}`);
 		const closedRoute = activeRoute;
-		if (closedRoute === "edit-content") openEditor.close();
-		if (closedRoute === "edit-services") clearServiceEditor();
+		for (const rail of root.querySelectorAll(".destinations, .guide"))
+			tabs.select(rail);
 		activeRoute = undefined;
 		closingSheet = false;
 		selectCategory(
@@ -358,10 +279,15 @@ export function mountWorkingFolder(root, templates) {
 			const returnTarget =
 				[
 					opener,
-					...routeControls,
+					...routeControls.flatMap((control) => {
+						const tab = control.closest(".folder-tab");
+						return tab ? [control, tabs.visibleControl(tab)] : [control];
+					}),
 					phone.matches
 						? picker
-						: nav.querySelector('[aria-current="location"]'),
+						: tabs.visibleControl(
+								nav.querySelector(".folder-tab[data-current]"),
+							),
 				].find(
 					(control) =>
 						control?.isConnected &&
@@ -419,8 +345,18 @@ export function mountWorkingFolder(root, templates) {
 		else navigate(activeCategory, true);
 	}
 
+	function isBackdrop(event) {
+		if (event.target !== sheet) return false;
+		const { left, right, top, bottom } = sheet.getBoundingClientRect();
+		return (
+			event.clientX < left ||
+			event.clientX >= right ||
+			event.clientY < top ||
+			event.clientY >= bottom
+		);
+	}
+
 	for (const { id, name } of startingCatalog) {
-		nav.append(element("a", { href: `#${id}` }, name));
 		picker.append(element("option", { value: id }, name));
 	}
 	root.addEventListener("click", (event) => {
@@ -459,16 +395,11 @@ export function mountWorkingFolder(root, templates) {
 			return;
 		}
 
-		if (
-			(!categoryIds.has(id) && !Object.hasOwn(titles, id)) ||
-			(adminRoutes.has(id) && !isAdminUser())
-		)
-			return;
+		if (!categoryIds.has(id) && !Object.hasOwn(titles, id)) return;
 		event.preventDefault();
-		if (link.closest("#loginModal") && adminRoutes.has(id)) {
-			root.querySelector("#loginCancel").click();
-			opener = root.querySelector("#loginButton");
-		} else if (!activeRoute && Object.hasOwn(titles, id)) opener = link;
+		if (!activeRoute && Object.hasOwn(titles, id)) opener = link;
+		if (categoryIds.has(id) || link.closest(".destinations"))
+			tabs.collapseFrom(link);
 		if (
 			link.hasAttribute("data-feedback-entry") &&
 			root.querySelector("#quoteConfirmation:not([hidden])")
@@ -479,6 +410,17 @@ export function mountWorkingFolder(root, templates) {
 	});
 	picker.addEventListener("change", () => navigate(picker.value));
 	close.addEventListener("click", closeSheet);
+	let startedOnBackdrop = false;
+	sheet.addEventListener("pointerdown", (event) => {
+		startedOnBackdrop = isBackdrop(event);
+	});
+	sheet.addEventListener("pointercancel", () => {
+		startedOnBackdrop = false;
+	});
+	sheet.addEventListener("click", (event) => {
+		if (startedOnBackdrop && isBackdrop(event)) closeSheet();
+		startedOnBackdrop = false;
+	});
 	sheet.addEventListener("keydown", (event) => {
 		const modal = getCurrentModal();
 		if (modal && event.key === "Escape") {
@@ -494,29 +436,16 @@ export function mountWorkingFolder(root, templates) {
 	});
 	window.addEventListener("popstate", syncLocation);
 	window.addEventListener("hashchange", syncLocation);
-	motion.addEventListener("change", () => {
-		if (!motion.matches) return;
-		for (const tab of [...nav.children, ...panels])
-			for (const animation of tab.getAnimations()) animation.cancel();
-	});
-
-	renderCatalog(emptyFolderCatalog);
 	initModals();
-	initAuth();
 	resetPublishedServiceVisibility();
-	initHire();
+	void loadServices().catch(() => {
+		// The service catalog retains its unavailable state when a read fails.
+	});
 	initContact();
 	window.addEventListener("open-related-post", () => {
 		if (activeRoute !== "work") navigate("work");
 	});
 	initPortfolio();
-	updateAdminUi();
-	onAuthStateChange(() => {
-		refreshFolder();
-		if (adminRoutes.has(activeRoute) && !isAdminUser()) closeSheet();
-		else if (isAdminUser() && adminRoutes.has(location.hash.slice(1)))
-			syncLocation();
-	});
 	syncLocation();
 	document.body.classList.add("loaded");
 }
