@@ -143,7 +143,7 @@ function rail(classes, label, entries, { sheets = false } = {}) {
 	</nav>`;
 }
 
-export function setupTabs(root, phone) {
+export function setupTabs(root) {
 	const rails = [...root.querySelectorAll(".tab-rail")];
 	const sides = rails.filter((rail) => rail.classList.contains("rail"));
 	let expanded;
@@ -198,20 +198,22 @@ export function setupTabs(root, phone) {
 
 	function fitTabs() {
 		for (const rail of rails) {
-			if (!sides.includes(rail)) {
-				setCompact(rail, phone.matches);
-				continue;
-			}
-			// Measure the labels at their natural size, even while the real rail is compact.
+			const vertical = sides.includes(rail);
+			// Measure the full labels even when the visible rail is compact.
 			const measure = rail.cloneNode(true);
 			measure.classList.add("tab-measure");
 			measure.removeAttribute("data-compact");
 			measure.inert = true;
-			measure.style.inlineSize = `${rail.clientWidth}px`;
+			measure.style.inlineSize = vertical
+				? `${rail.clientWidth}px`
+				: "max-content";
 			rail.after(measure);
-			const required = measure.getBoundingClientRect().height;
+			const { height, width } = measure.getBoundingClientRect();
 			measure.remove();
-			setCompact(rail, required > rail.clientHeight);
+			setCompact(
+				rail,
+				vertical ? height > rail.clientHeight : width > rail.clientWidth,
+			);
 		}
 		placeDisclosure();
 	}
@@ -247,8 +249,7 @@ export function setupTabs(root, phone) {
 		closeExpanded(true);
 	});
 	const resize = new ResizeObserver(fitTabs);
-	for (const rail of sides) resize.observe(rail);
-	phone.addEventListener("change", fitTabs);
+	for (const rail of rails) resize.observe(rail);
 	document.fonts?.ready.then(fitTabs);
 	fitTabs();
 

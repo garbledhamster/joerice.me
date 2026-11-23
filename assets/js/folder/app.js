@@ -129,7 +129,7 @@ export function mountWorkingFolder(root) {
 	}
 
 	const panels = renderCatalog();
-	const tabs = setupTabs(root, phone);
+	const tabs = setupTabs(root);
 
 	function inquire(control, note) {
 		const service = getServices().find(

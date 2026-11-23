@@ -277,8 +277,8 @@ p {
 }
 
 .categories .tab-link {
-	gap: 1px;
-	padding-block: 2px;
+	gap: 4px;
+	padding-block: 1px;
 }
 
 .categories .tab-link .tab-title {
