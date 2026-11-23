@@ -247,6 +247,16 @@ p {
 .rail .tab-link .tab-title {
 	writing-mode: vertical-rl;
 }
+
+.categories .tab-link {
+	gap: 3px;
+	padding-block: 2px;
+}
+
+:where(.categories) .tab-symbol svg {
+	width: 16px;
+	height: 16px;
+}
 .categories .tab-link .tab-title {
 	transform: rotate(180deg);
 }

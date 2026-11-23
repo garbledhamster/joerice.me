@@ -25,11 +25,90 @@ const iconPaths = {
 	external: "M6 18 18 6M8 6h10v10",
 };
 
+/*
+ * Category icons from Lucide 1.17.0, https://lucide.dev/license
+ *
+ * ISC License
+ * Copyright (c) 2026 Lucide Icons and Contributors
+ *
+ * Permission to use, copy, modify, and/or distribute this software for any
+ * purpose with or without fee is hereby granted, provided that the above
+ * copyright notice and this permission notice appear in all copies.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+ * WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+ * MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ * ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+ * WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ * ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF
+ * OR IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+ *
+ * The Info icon is derived from Feather under the MIT License.
+ * Copyright (c) 2013-present Cole Bemis
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ */
+const categoryIcons = {
+	about: [
+		"info",
+		'<circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/>',
+	],
+	build: [
+		"blocks",
+		'<path d="M10 22V7a1 1 0 0 0-1-1H4a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-5a1 1 0 0 0-1-1H2"/><rect x="14" y="2" width="8" height="8" rx="1"/>',
+	],
+	security: [
+		"shield-check",
+		'<path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1zM9 12l2 2 4-4"/>',
+	],
+	systems: [
+		"network",
+		'<rect x="16" y="16" width="6" height="6" rx="1"/><rect x="2" y="16" width="6" height="6" rx="1"/><rect x="9" y="2" width="6" height="6" rx="1"/><path d="M5 16v-3a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v3M12 12V8"/>',
+	],
+	automation: [
+		"zap",
+		'<path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/>',
+	],
+	ai: [
+		"bot",
+		'<rect width="16" height="12" x="4" y="8" rx="2"/><path d="M12 8V4H8M2 14h2m16 0h2m-7-1v2m-6-2v2"/>',
+	],
+	games: [
+		"gamepad-2",
+		'<path d="M6 11h4m-2-2v4m7-1h.01M18 10h.01M17.32 5H6.68a4 4 0 0 0-3.978 3.59c-.006.052-.01.101-.017.152C2.604 9.416 2 14.456 2 16a3 3 0 0 0 3 3c1 0 1.5-.5 2-1l1.414-1.414A2 2 0 0 1 9.828 16h4.344a2 2 0 0 1 1.414.586L17 18c.5.5 1 1 2 1a3 3 0 0 0 3-3c0-1.545-.604-6.584-.685-7.258-.007-.05-.011-.1-.017-.151A4 4 0 0 0 17.32 5z"/>',
+	],
+	writing: [
+		"pencil-ruler",
+		'<path d="M13 7 8.7 2.7a2.41 2.41 0 0 0-3.4 0L2.7 5.3a2.41 2.41 0 0 0 0 3.4L7 13M8 6l2-2m8 12 2-2m-3-3 4.3 4.3c.94.94.94 2.46 0 3.4l-2.6 2.6c-.94.94-2.46.94-3.4 0L11 17M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497zM15 5l4 4"/>',
+	],
+};
+
 function icon(name) {
+	const categoryIcon = categoryIcons[name];
+	if (categoryIcon) {
+		const [symbol, shapes] = categoryIcon;
+		return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false" data-category-icon="${symbol}">${shapes}</svg>`;
+	}
 	return `<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="${iconPaths[name]}"/></svg>`;
 }
 
-function rail(classes, label, entries) {
+function rail(classes, label, entries, { sheets = false } = {}) {
 	return `<nav class="tab-rail ${classes}" aria-label="${label}">
 		${entries
 			.map(([name, href, symbol], index) => {
@@ -38,7 +117,7 @@ function rail(classes, label, entries) {
 				const newTab = external
 					? ' target="_blank" rel="noopener noreferrer" aria-description="Opens in a new tab"'
 					: "";
-				const route = symbol ? ` data-route="${href.slice(1)}"` : "";
+				const route = sheets ? ` data-route="${href.slice(1)}"` : "";
 				const linkId = `${classes.split(" ").at(-1)}-tab-${index + 1}`;
 				return `<div class="folder-tab">
 				<div class="tab-controls">
@@ -209,7 +288,7 @@ export function folderTemplate({
 				${rail(
 					"rail categories",
 					"Service categories",
-					categories.map(({ id, name }) => [name, `#${id}`]),
+					categories.map(({ id, name }) => [name, `#${id}`, id]),
 				)}
 				<main id="whiteboard" class="whiteboard" tabindex="-1">
 					<div class="phone-picker">
@@ -217,9 +296,9 @@ export function folderTemplate({
 					</div>
 					<div class="track"></div>
 				</main>
-				${rail("rail destinations", "More from Joe", destinations)}
+				${rail("rail destinations", "More from Joe", destinations, { sheets: true })}
 			</div>
-			${rail("guide", "Guides", [["How to build an idea", "#guide", "guide"]])}
+			${rail("guide", "Guides", [["How to build an idea", "#guide", "guide"]], { sheets: true })}
 		</div>
 		<dialog class="route-sheet" aria-labelledby="folder-sheet-title">
 			<header class="sheet-heading">
