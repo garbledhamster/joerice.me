@@ -117,7 +117,7 @@ function rail(classes, label, entries, { sheets = false } = {}) {
 					symbol &&
 					(external
 						? `<img class="site-favicon" src="/assets/images/site-favicons/${symbol}.png" width="16" height="16" alt="">`
-						: icon(symbol));
+						: `<span class="tab-orb" aria-hidden="true">${icon(symbol)}</span>`);
 				const newTab = external
 					? ' target="_blank" rel="noopener noreferrer" aria-description="Opens in a new tab"'
 					: "";
