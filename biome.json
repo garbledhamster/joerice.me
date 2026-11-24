@@ -1,0 +1,42 @@
+{
+	"$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+	"vcs": {
+		"enabled": true,
+		"clientKind": "git",
+		"useIgnoreFile": true
+	},
+	"files": {
+		"includes": ["**", "!!**/node_modules", "!!_layouts", "!!read"]
+	},
+	"formatter": {
+		"includes": ["**/*.js", "**/*.mjs", "**/*.cjs", "**/*.json", "**/*.css"]
+	},
+	"css": {
+		"formatter": {
+			"enabled": true
+		}
+	},
+	"overrides": [
+		{
+			"includes": ["contribute.html"],
+			"linter": {
+				"rules": {
+					"a11y": {
+						"useAnchorContent": "warn",
+						"useValidAnchor": "warn"
+					}
+				}
+			}
+		},
+		{
+			"includes": ["tests/single-page-browser-test.html"],
+			"linter": {
+				"rules": {
+					"suspicious": {
+						"useIterableCallbackReturn": "warn"
+					}
+				}
+			}
+		}
+	]
+}

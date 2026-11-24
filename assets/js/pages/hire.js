@@ -191,9 +191,15 @@ export function renderHire() {
 	initHire();
 }
 
+export function clearServiceEditor() {
+	$("#serviceEditorHost")?.replaceChildren();
+}
+
 export function initHire() {
 	const section = $("#servicesSection");
 	if (!section) return;
+	let editorAdminId;
+	let catalogRequest = 0;
 	cleanupFns.push(
 		addListener(section, "change", (event) => {
 			if (event.target.matches(".serviceToggle"))
@@ -238,8 +244,7 @@ export function initHire() {
 			const edit = event.target.closest(".serviceEditButton");
 			if (edit) editService(edit.dataset.serviceId);
 			if (event.target.closest("#addServiceButton")) editService(null);
-			if (event.target.closest(".serviceCancelButton"))
-				$("#serviceEditorHost").replaceChildren();
+			if (event.target.closest(".serviceCancelButton")) clearServiceEditor();
 		}),
 	);
 	cleanupFns.push(
@@ -264,6 +269,7 @@ export function initHire() {
 				});
 				if (form.isConnected) form.remove();
 			} catch (error) {
+				if (!form.isConnected) return;
 				status.textContent = `Unable to save service. ${error.message} Your changes are still here; try again.`;
 				save.disabled = false;
 			}
@@ -281,15 +287,20 @@ export function initHire() {
 		}),
 	);
 	cleanupFns.push(
-		onAuthStateChange(async () => {
+		onAuthStateChange(async (user) => {
+			const nextAdminId = isAdminUser() ? user?.uid : undefined;
+			if (!nextAdminId || editorAdminId !== nextAdminId) clearServiceEditor();
+			editorAdminId = nextAdminId;
+			const request = ++catalogRequest;
 			renderCards();
 			try {
 				await loadServices();
-				$("#servicesStatus").hidden = true;
+				if (request === catalogRequest) $("#servicesStatus").hidden = true;
 			} catch (error) {
+				if (request !== catalogRequest) return;
 				const status = $("#servicesStatus");
 				status.hidden = !isAdminUser();
-				status.textContent = `Using default services. Firebase services could not load: ${error.message}`;
+				status.textContent = `Service choices are unavailable until the catalog loads. ${error.message}`;
 			}
 		}),
 	);

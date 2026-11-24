@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover"/>
     <!-- Content Security Policy for XSS protection -->
     <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://www.gstatic.com https://www.google.com https://formspree.io https://www.instagram.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https: data: blob:; connect-src 'self' https://formspree.io https://www.google.com https://firebasestorage.googleapis.com https://firestore.googleapis.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; frame-src https://www.google.com https://www.instagram.com; frame-ancestors 'none'; base-uri 'self'; form-action 'self' https://formspree.io;"/>
     <title>Joe Rice · Websites, IT Help &amp; Practical Services</title>
@@ -14,14 +14,15 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css"/>
+    <link rel="stylesheet" href="working-folder.css"/>
     <!-- Preload external dependencies -->
     <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/marked/marked.min.js"/>
     <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"/>
     <link rel="preload" as="script" href="https://cdn.jsdelivr.net/npm/dompurify@3.0.6/dist/purify.min.js"/>
   </head>
-  <body>
+  <body class="working-folder">
     <!-- App Container - All content rendered by JavaScript -->
-    <div id="app"></div>
+    <div id="app" data-working-folder></div>
 
     <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>

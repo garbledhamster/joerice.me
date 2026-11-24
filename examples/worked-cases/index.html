@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Worked examples · Joe Rice</title>
+    <meta name="description" content="Practice a troubleshooting, reporting or AI review task using fictional data.">
+    <style>
+      html { color: #19231c; background: #efebe0; font: 1rem/1.55 system-ui, sans-serif; }
+      body { margin: 0; }
+      header { background: #ffcf00; padding: 0.55rem max(1rem, calc((100% - 47rem) / 2)); }
+      a { color: #214936; text-underline-offset: 0.22em; }
+      header a { display: inline-flex; align-items: center; min-height: 44px; font-weight: 700; }
+      main { max-width: 47rem; margin: 1.5rem auto; padding: 0 1rem; }
+      h1, h2 { line-height: 1.15; }
+      nav { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; }
+      nav a, summary { min-height: 44px; align-content: center; }
+      section { margin-block: 1rem; padding: clamp(0.85rem, 4vw, 1.5rem); border: 3px solid #cab794; border-radius: 8px; background: #fffdf7; scroll-margin-top: 1rem; }
+      section:target { border-color: #59705a; }
+      details { background: #deebdf; padding: 0.1rem 0.75rem; border-radius: 4px; }
+      summary { cursor: pointer; font-weight: 700; }
+      :focus-visible { outline: 3px solid #005c90; outline-offset: 3px; }
+      table { border-collapse: collapse; width: 100%; margin-block: 0.6rem; }
+      th, td { border-bottom: 1px solid #cab794; padding: 0.3rem; text-align: left; }
+    </style>
+  </head>
+  <body>
+    <header><a href="/">← Joe Rice portfolio</a></header>
+    <main>
+      <h1>Worked examples</h1>
+      <p>I prepared these exercises with fictional data. Try the task, then compare your result.</p>
+      <nav aria-label="Exercises">
+        <a href="#printer">Troubleshoot a printer</a>
+        <a href="#report">Check a weekly report</a>
+        <a href="#meeting">Review an AI summary</a>
+      </nav>
+
+      <section id="printer" aria-labelledby="printer-title">
+        <h2 id="printer-title">One laptop can’t use the office printer</h2>
+        <p>Kim’s laptop reports that its selected printer is offline. A second laptop prints to the office printer from the same room. Kim’s laptop lists both <strong>Office Printer</strong> and <strong>Office Printer (old)</strong>. The old queue is selected.</p>
+        <p><strong>Try it.</strong> Choose a first check and two ways to confirm the laptop is working again.</p>
+        <details>
+          <summary>Compare the troubleshooting steps</summary>
+          <p>Check the selected queue against the one that works on the second laptop. Select Office Printer, print a test page, then print Kim’s original document. If the queue still fails, record the exact error and compare the laptop’s connection before changing the shared printer.</p>
+        </details>
+      </section>
+
+      <section id="report" aria-labelledby="report-title">
+        <h2 id="report-title">Three rows for a weekly report</h2>
+        <p>The report accepts each row with a date and sends undated rows for review. Each row ID identifies one entry, even if it is retried.</p>
+        <table>
+          <caption>Sample input</caption>
+          <thead><tr><th scope="col">Row</th><th scope="col">Date</th><th scope="col">Units</th></tr></thead>
+          <tbody>
+            <tr><td>A</td><td>May 4</td><td>3</td></tr>
+            <tr><td>B</td><td>Missing</td><td>2</td></tr>
+            <tr><td>C</td><td>May 6</td><td>4</td></tr>
+          </tbody>
+        </table>
+        <p><strong>Try it.</strong> Find the initial total and decide what happens when B gets a date.</p>
+        <details>
+          <summary>Compare the report results</summary>
+          <p>A and C give seven units. B goes to review. After checking B’s date, retry that row. The report then shows nine units across the three IDs. Retrying A or C leaves the total at nine.</p>
+        </details>
+      </section>
+
+      <section id="meeting" aria-labelledby="meeting-title">
+        <h2 id="meeting-title">Turn sample meeting notes into next steps</h2>
+        <p><strong>Notes.</strong> Lee offered to check the sample page. The team also discussed a short welcome email. Nobody took that task or gave a deadline.</p>
+        <p><strong>Sample AI output.</strong> “Lee checks the sample page on Friday. Morgan writes the welcome email by Tuesday.”</p>
+        <p><strong>Try it.</strong> Mark which owners and deadlines the notes actually support.</p>
+        <details>
+          <summary>Compare the corrected action list</summary>
+          <p>Lee checks the sample page. The deadline is open. The welcome email still needs an owner and a date. Ask the team to confirm both before assigning the work.</p>
+        </details>
+      </section>
+    </main>
+  </body>
+</html>

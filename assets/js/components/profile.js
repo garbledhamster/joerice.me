@@ -49,8 +49,9 @@ const professionalIntroduction =
  * Get social links for the page footer.
  * @returns {string} Social links HTML
  */
-export function getSocialLinksTemplate() {
+export function getSocialLinksTemplate({ labels } = {}) {
 	const socialLinksHtml = socialLinks
+		.filter((link) => !labels || labels.includes(link.label))
 		.map(
 			(link) =>
 				`<a href="${link.href}" target="_blank" rel="noopener noreferrer"><i class="${link.icon}" aria-hidden="true"></i><span>${link.label}</span></a>`,

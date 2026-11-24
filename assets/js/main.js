@@ -12,6 +12,7 @@ import {
 	getSocialLinksTemplate,
 } from "./components/profile.js";
 import { ready } from "./core/dom.js";
+import { mountWorkingFolder } from "./folder/app.js";
 import { getContactTemplate, initContact } from "./pages/contact.js";
 import { getGalleryTemplate, initGallery } from "./pages/gallery.js";
 import { getHireTemplate, initHire } from "./pages/hire.js";
@@ -44,7 +45,7 @@ function getLoginModalTemplate() {
           <input id="showGithubContent" type="checkbox" checked/>
           <span>Show GitHub Content</span>
         </label>
-        <button class="loginLogoutButton" id="loginLogoutButton" type="button" data-admin-only hidden>Logout</button>
+      <button class="loginLogoutButton" id="loginLogoutButton" type="button" data-admin-only hidden>Logout</button>
         <p class="loginStatus" id="loginStatus" role="status" aria-live="polite"></p>
       </div>
     </div>
@@ -102,7 +103,12 @@ async function initApp() {
 		return;
 	}
 
-	// Render every public section once so navigation can use page anchors.
+	if (app.hasAttribute("data-working-folder")) {
+		mountWorkingFolder(app);
+		return;
+	}
+
+	// Keep the long-standing module fixture and legacy entry usable.
 	app.innerHTML = `
     ${getHeaderTemplate()}
     ${getProfileTemplate()}

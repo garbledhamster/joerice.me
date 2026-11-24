@@ -1,0 +1,23 @@
+id: "0018"
+title: "The Classics: A reading plan you can look through"
+date: 2026-11-23
+pinned: false
+postType: project
+productName: "The Classics"
+websiteUrl: "https://classics.ourstuff.space/"
+tags: ["reading", "knowledge-management"]
+serviceIds: ["web-app", "knowledge-mgmt"]
+content: |
+  A ten-year reading list gives you an order, but it can be hard to find your way back to something you read or see how it connects to another book. I built The Classics as a companion to the Great Books plan associated with Mortimer Adler and Robert Hutchins. I wanted to be able to find a work, see where it belongs in the plan, and keep my notes close to it.
+
+  ### Give readers two ways in
+
+  I organized the same collection around two starting points. Library is for when you have a title, an author, or an idea in mind. Bookclub is for when you want to see what comes next in the plan or pick up where you left off. A book entry connects those views and keeps the reading and research links together.
+
+  ![The first year of the reading plan with works by Plato and Aristophanes, idea filters, and progress controls.](assets/images/projects/classics-plan-2026-10-12.jpg)
+
+  *The reading plan as it appeared in October 2026.*
+
+  ### Try it with a book you know
+
+  [Open The Classics](https://classics.ourstuff.space/), choose Library, and search for Plato’s *Republic*. Follow the result into the plan, or look at the ideas attached to the work. You can browse the collection signed out. The app keeps reading progress and notes in your browser and offers sign-in for sync.

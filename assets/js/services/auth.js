@@ -314,12 +314,19 @@ export function initAuth() {
 	// Auth state listener
 	if (auth?.onAuthStateChanged) {
 		auth.onAuthStateChanged(async (user) => {
+			const isAdmin = user?.email === adminEmail;
+			setState("isAdmin", isAdmin);
+			setState("userId", user?.uid ?? null);
+			setState("user", user);
+
+			updateAdminUi();
+			notifyAuthListeners(user);
+
 			// Sign in anonymously if no user
 			if (!user && auth?.signInAnonymously && !isSigningInAnonymously) {
 				isSigningInAnonymously = true;
 				try {
 					await auth.signInAnonymously();
-					return;
 				} catch (error) {
 					console.warn(
 						"Anonymous sign-in failed:",
@@ -329,14 +336,6 @@ export function initAuth() {
 					isSigningInAnonymously = false;
 				}
 			}
-
-			const isAdmin = user?.email === adminEmail;
-			setState("isAdmin", isAdmin);
-			setState("userId", user?.uid ?? null);
-			setState("user", user);
-
-			updateAdminUi();
-			notifyAuthListeners(user);
 		});
 	} else {
 		updateAdminUi();
