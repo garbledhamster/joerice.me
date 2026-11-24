@@ -1,0 +1,23 @@
+id: "0019"
+title: "Ourstuff: Where do I start?"
+date: 2026-11-23
+pinned: false
+postType: project
+productName: "Ourstuff"
+websiteUrl: "https://ourstuff.space/"
+tags: ["dashboard", "local-first"]
+serviceIds: ["web-app", "knowledge-mgmt"]
+content: |
+  I built Ourstuff to keep everyday notes, goals, and trackers in one place. There’s a second problem once you put all those tools on one screen. When you open it, how do you know what to do first?
+
+  ### Start with a check-in
+
+  The dashboard gives you four places to start: Mind, Body, Spirit, and Life. Daily Return offers a short prompt for each. The idea is to start with whatever you already have on your mind, then give it somewhere to go. Teaching mode puts explanations by unfamiliar controls so you can get help while you use the dashboard.
+
+  ![Ourstuff’s Daily Return screen with guidance for choosing Mind, Body, Spirit, or Life.](assets/images/projects/ourstuff-daily-return-guidance-2026-10-12.jpg)
+
+  *Daily Return in October 2026. The four prompts help you pick a place to begin.*
+
+  ### Try a note and come back to it
+
+  [Open Ourstuff](https://ourstuff.space/) and choose Life from Daily Return. Save a small test note and reload. You can find the note again from the Life area in that browser. Saving locally gives you a way to try the workflow before setting up an account.

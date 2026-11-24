@@ -1,0 +1,21 @@
+id: "0020"
+title: "Kal Résumé Editor: Feedback inside the draft"
+date: 2026-11-23
+pinned: false
+postType: project
+productName: "Kal Résumé Editor"
+websiteUrl: "https://joerice.me/kal-resume-editor/"
+tags: ["AI", "editing", "Google Docs"]
+serviceIds: ["ai-coaching", "resume-writing"]
+content: |
+  A résumé comment like “Can we make this more specific?” makes the most sense beside the sentence it refers to. I focused Kal Résumé Editor on keeping the question and the suggested change together so the writer can decide what belongs in the draft.
+
+  ### Put the suggestion where the question is
+
+  I set up the workflow around one Google Doc chosen by the operator. A collaborator can select a passage and leave a comment asking for feedback. Kal can reply in that thread or leave suggested wording on the passage. The writer reviews the suggestion and decides what to change.
+
+  For example, you could highlight “Helped with reporting” and ask what detail would make it clearer. A useful reply might ask what report you owned or what step you made easier. You can answer that from your actual work before deciding how to revise the bullet. This example is fictional.
+
+  ### See how the collaboration works
+
+  The [public project overview](https://joerice.me/kal-resume-editor/) explains how the operator selects a document and when the editor checks for comments. The collaboration happens in a private draft. The overview is available to read without access to that draft.
