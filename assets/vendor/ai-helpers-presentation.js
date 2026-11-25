@@ -174,7 +174,7 @@ T ${l} ${u+1}`}function We(t,n){if(!t||!n.anchor.excerpt)return null;let{range:o
 }
 .kal-avatar:focus-visible .kal-launcher-prompt { outline: 2px solid var(--kal-focus); outline-offset: 2px; }
 @media (max-width: 450px) {
-  .kal-launcher-prompt { top: 19%; }
+  .kal-launcher-prompt { top: 10%; }
 }
 
 .kal-avatar:active,
