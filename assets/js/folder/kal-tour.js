@@ -137,7 +137,7 @@ export function mountPortfolioTour(app) {
 	});
 
 	const script = document.createElement("script");
-	script.src = "/assets/vendor/ai-helpers-presentation.js";
+	script.src = "/assets/vendor/ai-helpers-presentation.js?v=e4f777f3";
 	script.async = true;
 	script.addEventListener("load", sync, { once: true });
 	document.head.append(script);
