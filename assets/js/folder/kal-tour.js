@@ -108,6 +108,7 @@ export function mountPortfolioTour(app) {
 				title: "Joe Rice’s portfolio",
 				stops,
 				tour: {
+					launcherPrompt: "Click me!",
 					journeys,
 					reveal,
 					reset,
@@ -137,7 +138,7 @@ export function mountPortfolioTour(app) {
 	});
 
 	const script = document.createElement("script");
-	script.src = "/assets/vendor/ai-helpers-presentation.js?v=e4f777f3";
+	script.src = "/assets/vendor/ai-helpers-presentation.js?v=50bf8594";
 	script.async = true;
 	script.addEventListener("load", sync, { once: true });
 	document.head.append(script);
