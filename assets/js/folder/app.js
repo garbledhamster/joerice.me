@@ -23,6 +23,7 @@ import {
 	selectService,
 } from "../services/catalog.js";
 import { employers, guide } from "./contents.js";
+import { mountPortfolioTour } from "./kal-tour.js";
 import { createNote } from "./notes.js";
 import { startingCatalog } from "./starting-catalog.js";
 import { folderTemplate, setupTabs } from "./template.js";
@@ -448,4 +449,5 @@ export function mountWorkingFolder(root) {
 	initPortfolio();
 	syncLocation();
 	document.body.classList.add("loaded");
+	mountPortfolioTour(root);
 }
