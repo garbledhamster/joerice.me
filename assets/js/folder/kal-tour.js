@@ -54,8 +54,6 @@ const journeys = [
 export function mountPortfolioTour(app) {
 	const root = app.querySelector(".folder");
 	if (!root) return;
-	const fullMotion =
-		new URLSearchParams(location.search).get("kal-motion") === "full";
 	const wordmark = root.querySelector(".masthead .wordmark");
 	const stops = Object.entries(captions)
 		.map(([id, entry]) => {
@@ -113,7 +111,8 @@ export function mountPortfolioTour(app) {
 					reveal,
 					reset,
 					frame,
-					fullMotion,
+					fullMotion: true,
+					motionControl: true,
 					avoid: () => [wordmark.getBoundingClientRect()],
 				},
 			});
@@ -138,7 +137,7 @@ export function mountPortfolioTour(app) {
 	});
 
 	const script = document.createElement("script");
-	script.src = "/assets/vendor/ai-helpers-presentation.js?v=97ef07c8";
+	script.src = "/assets/vendor/ai-helpers-presentation.js?v=187b5dd5";
 	script.async = true;
 	script.addEventListener("load", sync, { once: true });
 	document.head.append(script);
