@@ -6,7 +6,13 @@
 		"useIgnoreFile": true
 	},
 	"files": {
-		"includes": ["**", "!!**/node_modules", "!!_layouts", "!!read"]
+		"includes": [
+			"**",
+			"!!**/node_modules",
+			"!!_layouts",
+			"!!read",
+			"!!assets/vendor/ai-helpers-presentation.js"
+		]
 	},
 	"formatter": {
 		"includes": ["**/*.js", "**/*.mjs", "**/*.cjs", "**/*.json", "**/*.css"]
