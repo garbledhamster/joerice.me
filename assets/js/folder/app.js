@@ -106,7 +106,11 @@ export function mountWorkingFolder(root) {
 			const intro = element("header", { className: "intro" });
 			const lead = element("div", {});
 			lead.append(
-				element("h1", { id: `folder-heading-${category.id}` }, category.name),
+				element(
+					"h1",
+					{ id: `folder-heading-${category.id}`, tabIndex: -1 },
+					category.name,
+				),
 				element("p", {}, category.intro),
 			);
 			intro.append(lead);
@@ -118,9 +122,42 @@ export function mountWorkingFolder(root) {
 				);
 				intro.append(aside);
 			}
-			const notes = element("div", { className: "notes" });
-			for (const note of category.notes) {
-				notes.append(createNote(note, layers, inquire));
+			const isAbout = category.id === "about";
+			const notes = element("div", {
+				className: isAbout ? "notes about-notes" : "notes",
+			});
+			if (isAbout) {
+				for (const destination of startingCatalog.filter(
+					({ about }) => about,
+				)) {
+					const titleId = `about-card-title-${destination.id}`;
+					const summaryId = `about-card-summary-${destination.id}`;
+					const card = element("a", {
+						className: "note about-card",
+						href: `#${destination.id}`,
+						"aria-labelledby": titleId,
+						"aria-describedby": summaryId,
+					});
+					const face = element("div", { className: "face", "data-layer": "0" });
+					const copy = element("div", { className: "note-copy" });
+					copy.append(
+						element("h2", { id: titleId }, destination.name),
+						element("p", { id: summaryId }, destination.about),
+					);
+					face.append(
+						copy,
+						element(
+							"span",
+							{ className: "about-arrow", "aria-hidden": "true" },
+							"→",
+						),
+					);
+					card.append(face);
+					notes.append(card);
+				}
+			} else {
+				for (const note of category.notes)
+					notes.append(createNote(note, layers, inquire));
 			}
 			panel.append(intro, notes);
 			return panel;
@@ -408,6 +445,13 @@ export function mountWorkingFolder(root) {
 			root.querySelector("#restartQuote").click();
 		}
 		navigate(id);
+		if (link.classList.contains("about-card")) {
+			const destination = panels.find((panel) => panel.dataset.category === id);
+			if (destination) {
+				destination.scrollTop = 0;
+				destination.querySelector("h1").focus({ preventScroll: true });
+			}
+		}
 	});
 	picker.addEventListener("change", () => navigate(picker.value));
 	close.addEventListener("click", closeSheet);

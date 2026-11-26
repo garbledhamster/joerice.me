@@ -233,7 +233,7 @@ async function checkMotion(page, index, viewport) {
 	await settlePaper(book);
 	assert.deepEqual(await measure(), dimensions);
 
-	const square = panel.locator(".note").nth(1);
+	const square = panel.locator("#note-channel");
 	await square.locator("button.action").click();
 	await square.locator(".turning-out").waitFor({ state: "detached" });
 	const copy = square.locator(".note-copy");
@@ -558,8 +558,8 @@ async function smoke(browser, fixture, viewport) {
 			.waitFor({ state: "attached" });
 		await page.evaluate(() => document.fonts.ready);
 		await checkHorizontalTabSeams(page);
+		await exerciseAboutCards(page, mobile);
 		if (proofSizes) {
-			await page.locator("#note-look-around").waitFor();
 			await snap("about");
 		}
 		await openFolderTab(page, "build");
@@ -572,7 +572,9 @@ async function smoke(browser, fixture, viewport) {
 			await page.locator(".masthead [data-route='hire']").count(),
 			0,
 		);
-		const noteAction = await book.locator(".action").boundingBox();
+		const noteAction = await page
+			.locator("#note-builder .action")
+			.boundingBox();
 		assert(
 			noteAction &&
 				noteAction.y >= 0 &&
@@ -820,11 +822,11 @@ async function smoke(browser, fixture, viewport) {
 async function checkMobileGestures(context, page, index) {
 	await page.goto(`${index}#build`);
 	await page.reload({ waitUntil: "domcontentloaded" });
-	const book = page.locator("#note-book");
-	await book.waitFor();
+	const firstNote = page.locator("#note-builder");
+	await firstNote.waitFor();
 	const cdp = await context.newCDPSession(page);
 	try {
-		const action = await book.locator("button.action").boundingBox();
+		const action = await firstNote.locator("button.action").boundingBox();
 		const send = (type, touchPoints) =>
 			cdp.send("Input.dispatchTouchEvent", { type, touchPoints });
 		const drag = async (x, y, dx, dy) => {
@@ -842,7 +844,7 @@ async function checkMobileGestures(context, page, index) {
 			() =>
 				document.querySelector('.panel[data-category="build"]').scrollTop > 20,
 		);
-		assert.equal(await book.getAttribute("data-layer"), "0");
+		assert.equal(await firstNote.getAttribute("data-layer"), "0");
 		assert.equal(await page.locator("#folder-category").inputValue(), "build");
 		const channel = page.locator("#note-channel");
 		await channel.locator("button.action").tap();
@@ -941,10 +943,67 @@ async function exerciseArchive(page, index, snap) {
 	await result.waitFor();
 }
 
+async function exerciseAboutCards(page, mobile) {
+	const about = page.locator('.panel[data-category="about"]:not([inert])');
+	const cards = about.locator(".notes a.note");
+	const categories = [
+		["build", "Build"],
+		["security", "Security"],
+		["systems", "IT & Systems"],
+		["automation", "Automation"],
+		["ai", "AI"],
+		["games", "Games"],
+		["writing", "Writing & Design"],
+	];
+	assert.deepEqual(
+		await cards.locator("h2").allTextContents(),
+		categories.map(([, title]) => title),
+	);
+	const sizes = await cards.evaluateAll((links) =>
+		links.map((link) => [link.offsetWidth, link.offsetHeight]),
+	);
+	assert(
+		sizes.every(([width, height]) => width === height && width === sizes[0][0]),
+	);
+	assert.equal(
+		await about.evaluate((panel) => panel.scrollWidth - panel.clientWidth),
+		0,
+	);
+	assert.deepEqual(
+		await cards
+			.locator(".note-copy")
+			.evaluateAll((copies) =>
+				copies
+					.filter((copy) => copy.scrollHeight - copy.clientHeight > 1)
+					.map((copy) => copy.querySelector("h2").textContent),
+			),
+		[],
+	);
+	for (const [id, title] of categories) {
+		const card = about.getByRole("link", { name: title, exact: true });
+		assert.equal(await card.getAttribute("href"), `#${id}`);
+		assert.equal(await card.getAttribute("target"), null);
+		assert.equal(await card.locator("p").count(), 1);
+		assert((await card.locator("p").textContent()).trim().length > 80);
+		if (mobile) await card.tap();
+		else await card.press("Enter");
+		assert.equal(new URL(page.url()).hash, `#${id}`);
+		await page.locator(`.panel[data-category="${id}"]:not([inert])`).waitFor();
+		assert.equal(
+			await page.locator(":focus").getAttribute("id"),
+			`folder-heading-${id}`,
+		);
+		await page.goBack();
+		await about.waitFor();
+	}
+	await about.evaluate((panel) => {
+		panel.scrollTop = 0;
+	});
+}
+
 async function exerciseEvidence(page, index) {
 	let count = 0;
 	for (const category of [
-		"about",
 		"build",
 		"security",
 		"systems",
@@ -992,7 +1051,7 @@ async function exerciseEvidence(page, index) {
 			assert.equal(await note.getAttribute("data-layer"), "0");
 		}
 	}
-	assert.equal(count, 19);
+	assert.equal(count, 21);
 	await page.goto(`${index}#employers`);
 	for (const [key, title] of [
 		["0008", "Helping People Get Back to Work"],
