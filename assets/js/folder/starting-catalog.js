@@ -3,43 +3,14 @@ export const startingCatalog = [
 		id: "about",
 		name: "About",
 		intro:
-			"I build websites and apps, connect tools, and make repeated work easier.",
-		notes: [
-			{
-				id: "look-around",
-				title: "Try a book sample",
-				included: [
-					"A site that introduces my manual and helps readers find a place to start.",
-					"A free sample readers can open before choosing the book.",
-					"Separate paths to the paperback and PDF editions.",
-				],
-				example: {
-					title: "Read a page from Feelings & Needs",
-					text: "I set up the site so you can try a few pages from The Manual for Feelings and Needs before choosing the book. Open the sample and read a page.",
-					kind: "Sample PDF",
-					href: "https://feelings.ourstuff.space/preview/htHOW",
-				},
-			},
-			{
-				id: "process",
-				title: "How I work with you",
-				included: [
-					"We agree on one thing you want someone to be able to do.",
-					"I build that path and we try it together, including what happens when something goes wrong.",
-					"When it’s ready, I show you how to use it and make everyday updates.",
-				],
-				example: {
-					title: "Check a weekly report",
-					text: "Try a check I’d build into a weekly report. One of three rows has no date. Decide what should go into the report, then open the result to see how the missing row can be retried.",
-					kind: "Practice case",
-					href: "/examples/worked-cases/#report",
-				},
-			},
-		],
+			"I build software, work on the systems people rely on, and teach the AI process I use in my own work. Pick a note to see what I’ve done and how I can help.",
+		notes: [],
 	},
 	{
 		id: "build",
 		name: "Build",
+		about:
+			"I’m a builder. I take ideas through design, development, and handoff. I made Builder to put that process into a workspace. This portfolio is one idea I designed and used AI to turn into a working site.",
 		intro:
 			"I build websites and apps, connect tools, and make repeated work easier.",
 		handoff: {
@@ -47,6 +18,21 @@ export const startingCatalog = [
 			text: "You get the live site or app, the setup we agreed on, and instructions for updating it. We check what someone came there to do.",
 		},
 		notes: [
+			{
+				id: "builder",
+				title: "Take an idea into a working build",
+				included: [
+					"Agree on what someone needs to be able to do with the finished system.",
+					"Work through the design, project plan, build, and checks.",
+					"Hand over the working result and show you how to keep using it.",
+				],
+				example: {
+					title: "Builder",
+					text: "I made Builder to put my project process in one place. See how it brings plans, tasks, and built-in skills together for new work or a project you already have.",
+					kind: "Project workspace and preview",
+					href: "https://builder.ourstuff.space/",
+				},
+			},
 			{
 				id: "book",
 				serviceId: "web-site",
@@ -163,14 +149,17 @@ export const startingCatalog = [
 	{
 		id: "security",
 		name: "Security",
+		about:
+			"I’ve traced server intrusions through logs and traffic in Wireshark. I run vulnerability scans and security audits, and I’ll explain what I find and which fixes I’d start with.",
 		intro:
-			"I can help you check the accounts, devices and backups you rely on and decide what to fix first.",
+			"I can scan for vulnerabilities, audit the systems you rely on, and inspect logs and traffic to investigate suspicious activity.",
 		notes: [
 			{
 				id: "review",
 				title: "Find the first security fixes to make",
 				included: [
 					"Agree on the accounts and devices you want checked.",
+					"Scope a vulnerability scan and review findings, logs, or traffic where relevant.",
 					"Review sign-in protections, who has access and whether you can recover important files.",
 					"Leave with a list of fixes in order and a way to check each one.",
 				],
@@ -186,9 +175,27 @@ export const startingCatalog = [
 	{
 		id: "systems",
 		name: "IT & Systems",
+		about:
+			"I traced outages at several sites to equipment handing out the wrong network settings. I’ve built and managed over 60 small and midsize business networks, and I can audit your network and servers.",
 		intro:
-			"I help people get their tools working again and make it easier to find what they’ll need next time.",
+			"I’ve spent more than 15 years in IT, from end-user support to servers, networking and virtualization. I can audit the systems you already have and recommend what to improve.",
 		notes: [
+			{
+				id: "infrastructure-audit",
+				serviceId: "it-services",
+				title: "Audit the network and servers you have",
+				included: [
+					"Review the equipment, servers, and connections your work depends on.",
+					"Look for recurring problems, aging equipment, and gaps in the setup.",
+					"Recommend what to fix first and what equipment you can keep using.",
+				],
+				example: {
+					title: "Helping People Get Back to Work",
+					text: "Read how I approach IT work across the user’s device, servers, and network, including how I narrow down a fault and communicate the next check.",
+					kind: "Portfolio article",
+					href: "https://joerice.me/#work/0008",
+				},
+			},
 			{
 				id: "troubleshoot",
 				serviceId: "it-services",
@@ -226,8 +233,10 @@ export const startingCatalog = [
 	{
 		id: "automation",
 		name: "Automation",
+		about:
+			"I built a dashboard that put reporting, flagging, and review in one place. An admin could open a flagged Claude conversation, inspect prompts and tool calls, and ask Claude about the session.",
 		intro:
-			"If you keep copying the same information or running the same steps, we can see which parts a tool could handle.",
+			"I connect tools so you can run recurring reports, review what needs attention, or stop copying the same information by hand.",
 		notes: [
 			{
 				id: "reports",
@@ -264,9 +273,27 @@ export const startingCatalog = [
 	{
 		id: "ai",
 		name: "AI",
+		about:
+			"I set up AI agents with tools, rules, and project context. In my spec reader, Kal points to a passage in the plan and explains the decision so I can review it. I can set up and teach that process.",
 		intro:
-			"I help you try AI on a task you already do and figure out how you’ll check the result.",
+			"I can set up an AI workflow on your computer and teach you how to give it work, provide the context it needs, and review what it did.",
 		notes: [
+			{
+				id: "ai-workflow",
+				serviceId: "ai-coaching",
+				title: "Set up AI around your work",
+				included: [
+					"Pick a project and agree on the part you want the agent to handle.",
+					"Set up access to the right tools and project notes.",
+					"Show you how to hand off work and check what comes back.",
+				],
+				example: {
+					title: "Reviewing a draft with Kal",
+					text: "In Kal Résumé Editor, the writer asks a question beside the passage it concerns. Kal can reply there, and the writer decides what to change. See how I set up the interaction and what stays under the writer’s control.",
+					kind: "Project overview",
+					href: "https://joerice.me/kal-resume-editor/",
+				},
+			},
 			{
 				id: "coach",
 				serviceId: "ai-coaching",
@@ -303,6 +330,8 @@ export const startingCatalog = [
 	{
 		id: "games",
 		name: "Games",
+		about:
+			"I’m building browser games, including Bryan’s fishing game and a hockey game. You can try the first fishing interaction. If you have an idea for a small arcade game, I can help make it playable.",
 		intro:
 			"I make browser games and test what it feels like to pick them up and play.",
 		notes: [
@@ -326,9 +355,26 @@ export const startingCatalog = [
 	{
 		id: "writing",
 		name: "Writing & Design",
+		about:
+			"I can typeset a manuscript, use AI to help proofread, and review changes with you. For Feelings & Needs, I worked on the book and designed the site so readers could try a few pages before buying.",
 		intro:
-			"I help people explain what they do and give their work a look that fits.",
+			"I help turn manuscripts into books and give people’s work a layout and visual style that fits.",
 		notes: [
+			{
+				id: "manuscript",
+				title: "Take a manuscript through typesetting and proof",
+				included: [
+					"Set the page size, typography, and layout for your book.",
+					"Review proofreading suggestions together, with AI assistance if you want it.",
+					"Check a proof you can read page by page.",
+				],
+				example: {
+					title: "The Manual for Feelings and Needs",
+					text: "Open the sample to see how the book introduces the topic and lays out entries someone can refer back to.",
+					kind: "Sample PDF",
+					href: "https://feelings.ourstuff.space/preview/htHOW",
+				},
+			},
 			{
 				id: "logo",
 				serviceId: "logo-design",
