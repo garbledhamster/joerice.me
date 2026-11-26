@@ -28,9 +28,9 @@ export const startingCatalog = [
 				],
 				example: {
 					title: "Builder",
-					text: "I made Builder to put my project process in one place. See how it brings plans, tasks, and built-in skills together for new work or a project you already have.",
-					kind: "Project workspace and preview",
-					href: "https://builder.ourstuff.space/",
+					text: "I made Builder to put my project process in one place. Open the public guide to see how a project goes from its first decisions to a build you can check and share.",
+					kind: "Public guide",
+					href: "https://bible.ourstuff.space/guide.html",
 				},
 			},
 			{
