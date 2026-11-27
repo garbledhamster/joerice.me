@@ -1,3 +1,5 @@
+import { createPortfolioVoice } from "./kal-voice.js";
+
 // The tour uses stable public navigation tabs; account and route sheets are outside its root.
 const captions = {
 	build: {
@@ -68,6 +70,8 @@ export function mountPortfolioTour(app) {
 	if (stops.length !== Object.keys(captions).length) return;
 
 	let guide;
+	const welcome = "What would you like to do?";
+	const voice = createPortfolioVoice((active) => guide?.setVoicing(active));
 	let disclosed;
 	function reset() {
 		if (disclosed?.getAttribute("aria-expanded") === "true") disclosed.click();
@@ -76,6 +80,7 @@ export function mountPortfolioTour(app) {
 	function reveal(id) {
 		const tab = stops.find((stop) => stop.id === id)?.target;
 		if (!tab) return;
+		voice.show(captions[id].text);
 		const button = tab.querySelector(".tab-toggle");
 		const compact = tab.parentElement.hasAttribute("data-compact");
 		if (!compact || disclosed !== button) reset();
@@ -98,6 +103,7 @@ export function mountPortfolioTour(app) {
 	}
 	function sync() {
 		if (blocked()) {
+			voice.stop();
 			guide?.destroy();
 			guide = undefined;
 		} else if (!guide && window.AIHelpers) {
@@ -106,6 +112,19 @@ export function mountPortfolioTour(app) {
 				title: "Joe Rice’s portfolio",
 				stops,
 				tour: {
+					menu: "guides",
+					pronouns: "he/him",
+					welcome,
+					voiceControl: voice.button,
+					onMenu: () => voice.show(welcome),
+					onOpenChange: (open) => {
+						if (open) {
+							const current = root.querySelector(
+								"[data-kal-target][data-tour-stop]",
+							);
+							voice.show(captions[current?.dataset.tourStop]?.text ?? welcome);
+						} else voice.stop();
+					},
 					launcherPrompt: "Click me!",
 					journeys,
 					reveal,
@@ -137,7 +156,7 @@ export function mountPortfolioTour(app) {
 	});
 
 	const script = document.createElement("script");
-	script.src = "/assets/vendor/ai-helpers-presentation.js?v=187b5dd5";
+	script.src = "/assets/vendor/ai-helpers-presentation.js?v=c8783699";
 	script.async = true;
 	script.addEventListener("load", sync, { once: true });
 	document.head.append(script);

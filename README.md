@@ -47,6 +47,8 @@ With Playwright and its Chromium browser available, run `node tests/working-fold
 
 See [Editing site content](docs/content-editing.md#working-folder) to update the Working Folder in the repository, review it on the private Mac preview, and undo a trial edit.
 
+Kal’s tour uses the compact Builder guide panel: a portrait and motion, voice, and lock controls above a monospace message, with Back, Main menu, and Next below it. Update the portfolio’s stops and mounting options in `assets/js/folder/kal-tour.js`. The bundled presentation runtime in `assets/vendor/ai-helpers-presentation.js` includes the Builder panel and its icon licenses; update the script’s version query when replacing it. `assets/js/folder/kal-voice.js` connects the voice button to the browser’s available speech engine. Narration starts when the visitor presses Play, follows the current guide, and stops when Kal closes or a site dialog opens. Voice availability and sound depend on the visitor’s browser and installed voices.
+
 ## 📝 Code Style Guidelines
 
 ### JavaScript
