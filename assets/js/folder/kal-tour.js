@@ -8,48 +8,57 @@ const captions = {
 		edge: "top",
 		link: ".masthead .wordmark",
 		title: "How the tour works",
+		expression: "curious",
+		clickCue: { phrase: "Press Next", audioAt: 3.82 },
 		text: "Let’s practice. I’m pointing to the site title. Press Next and I’ll point to the portfolio tabs. Back revisits a stop. Main menu takes you out of the tour.",
 	},
 	build: {
 		edge: "left",
 		link: '.categories [href="#build"]',
 		title: "Portfolio tabs",
+		expression: "thoughtful",
 		text: "The tabs on the left organize Joe’s work by subject. Pick a category, open a note, and you can see what went into the work and go straight to a live example.",
 	},
 	guide: {
 		edge: "bottom",
 		link: '.guide [href="#guide"]',
 		title: "How-to guides",
+		expression: "thoughtful",
 		text: "The guides at the bottom show how Joe works through a project. Start with one thing you want someone to do, then plan how to build it and check that it works.",
 	},
 	work: {
 		edge: "right",
 		link: '.destinations [href="#work"]',
 		title: "Work showcased here",
+		expression: "smile",
 		text: "The tabs on the right open pages here on the portfolio. Work & Notes has case studies you can read here. There’s also a section for employers and a more personal side of Joe.",
 	},
 	ourstuff: {
 		edge: "top",
 		link: '.site-links [href="https://ourstuff.space/"]',
 		title: "Ourstuff",
+		expression: "excited",
 		text: "Ourstuff is Joe’s personal dashboard. Try checking in or keeping a note, then see how Mind, Body, Spirit, and Life organize what you want to work on.",
 	},
 	classics: {
 		edge: "top",
 		link: '.site-links [href="https://classics.ourstuff.space/"]',
 		title: "The Classics",
+		expression: "curious",
 		text: "The Classics is Joe’s reading companion. You can explore classic books, try a ten-year reading plan, and keep notes as you read.",
 	},
 	feelings: {
 		edge: "top",
 		link: '.site-links [href="https://feelings.ourstuff.space/"]',
 		title: "Feelings & Needs",
+		expression: "thoughtful",
 		text: "Feelings & Needs helps you find words for what you’re feeling and what matters to you. Joe built it around his book. You can read a sample and try a guide.",
 	},
 	meet: {
 		edge: "right",
 		link: '.destinations [href="#personal"]',
 		title: "Meet Joe",
+		expression: "smile",
 		text: "Open Personal on the right for Joe’s photos, favorite quotes, and links.",
 	},
 };
@@ -96,7 +105,9 @@ export function mountPortfolioTour(app) {
 	if (stops.length !== Object.keys(captions).length) return;
 
 	let guide;
-	const voice = createPortfolioVoice((active) => guide?.setVoicing(active));
+	const voice = createPortfolioVoice((active, speechFrame) =>
+		guide?.setVoicing(active, speechFrame),
+	);
 	let disclosed;
 	function reset() {
 		if (disclosed?.getAttribute("aria-expanded") === "true") disclosed.click();
@@ -141,6 +152,10 @@ export function mountPortfolioTour(app) {
 					pronouns: "he/him",
 					welcome,
 					voiceControl: voice.button,
+					audioDrivenFace: true,
+					expression: (id) => captions[id]?.expression,
+					clickCue: (id) => captions[id]?.clickCue,
+					hidePanelWhileDragging: true,
 					onMenu: () => voice.show(welcome),
 					onOpenChange: (open) => {
 						if (open) {
@@ -181,7 +196,7 @@ export function mountPortfolioTour(app) {
 	});
 
 	const script = document.createElement("script");
-	script.src = "/assets/vendor/ai-helpers-presentation.js?v=c8783699";
+	script.src = "/assets/vendor/ai-helpers-presentation.js?v=kal-speech-drag";
 	script.async = true;
 	script.addEventListener("load", sync, { once: true });
 	document.head.append(script);

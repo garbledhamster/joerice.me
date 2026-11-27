@@ -26,6 +26,23 @@ export function createPortfolioVoice(onVoicing) {
 	let autoplay = false;
 	let pending;
 
+	function speechFrame() {
+		if (!playback) return;
+		const audio = playback.source.buffer;
+		const samples = audio.getChannelData(0);
+		const time = offset + Math.max(0, context.currentTime - playback.startedAt);
+		const start = Math.floor(time * audio.sampleRate);
+		const end = Math.min(samples.length, start + audio.sampleRate * 0.035);
+		let energy = 0;
+		let count = 0;
+		for (let i = start; i < end; i += 3) {
+			energy += samples[i] ** 2;
+			count++;
+		}
+		const level = count ? Math.sqrt(energy / count) : 0;
+		return { time, mouth: level < 0.015 ? 0 : level < 0.065 ? 1 : 2 };
+	}
+
 	function sync() {
 		const active = Boolean(pending || playback);
 		const label = active
@@ -39,7 +56,7 @@ export function createPortfolioVoice(onVoicing) {
 			: "Voice playback is unavailable in this browser";
 		button.disabled = !AudioContext || !track;
 		path.setAttribute("d", active ? "M8 5v14M16 5v14" : "M6 4l14 8-14 8z");
-		onVoicing(Boolean(playback));
+		onVoicing(Boolean(playback), speechFrame);
 	}
 
 	function cancel() {
