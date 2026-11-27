@@ -1,5 +1,7 @@
 import { createPortfolioVoice } from "./kal-voice.js";
 
+const welcome = "What would you like to do?";
+
 // The tour uses stable public navigation tabs; account and route sheets are outside its root.
 const captions = {
 	build: {
@@ -53,6 +55,15 @@ const journeys = [
 	{ label: "Meet Joe", stops: ["meet"], facing: "target" },
 ];
 
+export function portfolioNarrationLines() {
+	return {
+		welcome,
+		...Object.fromEntries(
+			Object.entries(captions).map(([id, caption]) => [id, caption.text]),
+		),
+	};
+}
+
 export function mountPortfolioTour(app) {
 	const root = app.querySelector(".folder");
 	if (!root) return;
@@ -70,7 +81,6 @@ export function mountPortfolioTour(app) {
 	if (stops.length !== Object.keys(captions).length) return;
 
 	let guide;
-	const welcome = "What would you like to do?";
 	const voice = createPortfolioVoice((active) => guide?.setVoicing(active));
 	let disclosed;
 	function reset() {
