@@ -2,8 +2,14 @@ import { createPortfolioVoice } from "./kal-voice.js";
 
 const welcome = "What would you like to do?";
 
-// The tour uses stable public navigation tabs; account and route sheets are outside its root.
+// The tour points to the site title and public tabs within the folder.
 const captions = {
+	practice: {
+		edge: "top",
+		link: ".masthead .wordmark",
+		title: "How the tour works",
+		text: "Let’s practice. I’m pointing to the site title. Press Next and I’ll point to the portfolio tabs. Back revisits a stop. Main menu takes you out of the tour.",
+	},
 	build: {
 		edge: "left",
 		link: '.categories [href="#build"]',
@@ -50,7 +56,15 @@ const captions = {
 const journeys = [
 	{
 		label: "Tour Joe’s portfolio",
-		stops: ["build", "guide", "work", "ourstuff", "classics", "feelings"],
+		stops: [
+			"practice",
+			"build",
+			"guide",
+			"work",
+			"ourstuff",
+			"classics",
+			"feelings",
+		],
 	},
 	{ label: "Meet Joe", stops: ["meet"], facing: "target" },
 ];
@@ -70,7 +84,8 @@ export function mountPortfolioTour(app) {
 	const wordmark = root.querySelector(".masthead .wordmark");
 	const stops = Object.entries(captions)
 		.map(([id, entry]) => {
-			const target = root.querySelector(entry.link)?.closest(".folder-tab");
+			const link = root.querySelector(entry.link);
+			const target = link?.closest(".folder-tab") ?? link;
 			if (!target) return null;
 			target.dataset.kalExcerpt = entry.text;
 			target.dataset.tourStop = id;
@@ -88,11 +103,11 @@ export function mountPortfolioTour(app) {
 		disclosed = undefined;
 	}
 	function reveal(id) {
-		const tab = stops.find((stop) => stop.id === id)?.target;
-		if (!tab) return;
+		const target = stops.find((stop) => stop.id === id)?.target;
+		if (!target) return;
 		voice.show(captions[id].text);
-		const button = tab.querySelector(".tab-toggle");
-		const compact = tab.parentElement.hasAttribute("data-compact");
+		const button = target.querySelector(".tab-toggle");
+		const compact = button && target.parentElement.hasAttribute("data-compact");
 		if (!compact || disclosed !== button) reset();
 		if (compact && button.getAttribute("aria-expanded") === "false") {
 			button.click();
