@@ -156,6 +156,7 @@ export function mountPortfolioTour(app) {
 					expression: (id) => captions[id]?.expression,
 					clickCue: (id) => captions[id]?.clickCue,
 					hidePanelWhileDragging: true,
+					hidePanelWhileTravelling: true,
 					onMenu: () => voice.show(welcome),
 					onOpenChange: (open) => {
 						if (open) {
@@ -196,7 +197,7 @@ export function mountPortfolioTour(app) {
 	});
 
 	const script = document.createElement("script");
-	script.src = "/assets/vendor/ai-helpers-presentation.js?v=kal-speech-drag";
+	script.src = "/assets/vendor/ai-helpers-presentation.js?v=kal-travel";
 	script.async = true;
 	script.addEventListener("load", sync, { once: true });
 	document.head.append(script);
