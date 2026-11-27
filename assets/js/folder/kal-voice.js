@@ -1,105 +1,133 @@
-// Narration starts only after the visitor presses Play.
+import { kalNarrationTracks } from "./kal-narration-tracks.js";
+
+// Match Builder's prerecorded narration and opt-in playback.
 export function createPortfolioVoice(onVoicing) {
-	const speech = window.speechSynthesis;
+	const AudioContext = window.AudioContext || window.webkitAudioContext;
 	const button = document.createElement("button");
 	button.type = "button";
 	button.className = "kal-guide-icon kal-guide-voice";
-	let line = "";
-	let utterance;
+
+	const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+	icon.setAttribute("viewBox", "0 0 24 24");
+	icon.setAttribute("aria-hidden", "true");
+	icon.setAttribute("fill", "none");
+	icon.setAttribute("stroke", "currentColor");
+	icon.setAttribute("stroke-width", "2");
+	icon.setAttribute("stroke-linejoin", "round");
+	const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+	icon.append(path);
+	button.append(icon);
+
+	let track;
+	let context;
+	let buffer;
+	let playback;
+	let offset = 0;
 	let autoplay = false;
-	let paused = false;
-	let active = false;
+	let pending;
 
 	function sync() {
+		const active = Boolean(pending || playback);
 		const label = active
 			? "Pause Kal’s voice"
-			: paused
+			: offset
 				? "Resume Kal’s voice"
 				: "Play Kal’s voice";
 		button.setAttribute("aria-label", label);
-		button.title = speech
+		button.title = AudioContext
 			? label
 			: "Voice playback is unavailable in this browser";
-		button.disabled = !speech || !line;
-		const icon = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-		icon.setAttribute("viewBox", "0 0 24 24");
-		icon.setAttribute("aria-hidden", "true");
-		icon.setAttribute("fill", "none");
-		icon.setAttribute("stroke", "currentColor");
-		icon.setAttribute("stroke-width", "2");
-		icon.setAttribute("stroke-linejoin", "round");
-		const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+		button.disabled = !AudioContext || !track;
 		path.setAttribute("d", active ? "M8 5v14M16 5v14" : "M6 4l14 8-14 8z");
-		icon.append(path);
-		button.replaceChildren(icon);
-		onVoicing(active);
+		onVoicing(Boolean(playback));
 	}
 
 	function cancel() {
-		const previous = utterance;
-		utterance = undefined;
-		if (previous) speech.cancel();
-		active = paused = false;
+		pending?.abort();
+		pending = undefined;
+		const previous = playback;
+		playback = undefined;
+		previous?.source.stop();
 	}
 
-	function speak() {
-		if (!speech || !line) return;
-		cancel();
-		const next = new SpeechSynthesisUtterance(line);
-		next.lang = "en-US";
-		next.rate = 0.94;
-		const voices = speech.getVoices();
-		const localVoice = voices.find(
-			(voice) => voice.localService && /^en\b/i.test(voice.lang),
-		);
-		if (localVoice) next.voice = localVoice;
-		utterance = next;
-		function finish() {
-			if (utterance !== next) return;
-			utterance = undefined;
-			active = paused = false;
-			sync();
-		}
-		next.onend = finish;
-		next.onerror = finish;
-		active = true;
-		if (speech.paused) speech.resume();
-		speech.speak(next);
+	async function play() {
+		if (!AudioContext || !track) return;
+		const request = new AbortController();
+		pending = request;
 		sync();
+		try {
+			context ??= new AudioContext();
+			if (context.state !== "running") await context.resume();
+			if (pending !== request) return;
+			let audio = buffer;
+			if (!audio) {
+				const response = await fetch(
+					new URL(`../../audio/kal/${track}`, import.meta.url),
+					{ signal: request.signal },
+				);
+				if (!response.ok) throw new Error("Narration clip unavailable");
+				audio = await context.decodeAudioData(await response.arrayBuffer());
+			}
+			// A close, pause, or new caption can supersede an in-flight decode.
+			if (pending !== request) return;
+			buffer = audio;
+			const source = context.createBufferSource();
+			source.buffer = audio;
+			source.connect(context.destination);
+			source.onended = () => {
+				source.disconnect();
+				if (playback?.source !== source) return;
+				playback = undefined;
+				offset = 0;
+				sync();
+			};
+			const startedAt = context.currentTime;
+			source.start(startedAt, offset);
+			playback = { source, startedAt };
+			pending = undefined;
+			sync();
+		} catch {
+			if (pending !== request) return;
+			pending = undefined;
+			autoplay = false;
+			sync();
+			button.title = "Kal’s voice could not play. Try again.";
+		}
 	}
 
 	button.addEventListener("click", () => {
-		if (!speech) return;
-		if (active) {
-			speech.pause();
-			active = autoplay = false;
-			paused = true;
-			sync();
-		} else if (paused && utterance) {
-			speech.resume();
-			paused = false;
-			active = autoplay = true;
+		if (pending || playback) {
+			if (playback) {
+				offset += context.currentTime - playback.startedAt;
+				if (offset >= buffer.duration) offset = 0;
+			}
+			autoplay = false;
+			cancel();
 			sync();
 		} else {
 			autoplay = true;
-			speak();
+			void play();
 		}
 	});
 
-	function show(text = "") {
-		if (text === line) return;
+	function show(line = "") {
+		const nextTrack = Object.hasOwn(kalNarrationTracks, line)
+			? kalNarrationTracks[line]
+			: undefined;
+		if (nextTrack === track) return;
 		cancel();
-		line = text;
-		if (autoplay && line) speak();
+		track = nextTrack;
+		buffer = undefined;
+		offset = 0;
+		if (autoplay && track) void play();
 		else sync();
 	}
 
 	function stop() {
 		autoplay = false;
-		cancel();
-		line = "";
-		sync();
+		show();
 	}
+	sync();
 	window.addEventListener("pagehide", stop);
 	return { button, show, stop };
 }

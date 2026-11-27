@@ -47,7 +47,11 @@ With Playwright and its Chromium browser available, run `node tests/working-fold
 
 See [Editing site content](docs/content-editing.md#working-folder) to update the Working Folder in the repository, review it on the private Mac preview, and undo a trial edit.
 
-Kal’s tour uses the compact Builder guide panel: a portrait and motion, voice, and lock controls above a monospace message, with Back, Main menu, and Next below it. Update the portfolio’s stops and mounting options in `assets/js/folder/kal-tour.js`. The bundled presentation runtime in `assets/vendor/ai-helpers-presentation.js` includes the Builder panel and its icon licenses; update the script’s version query when replacing it. `assets/js/folder/kal-voice.js` connects the voice button to the browser’s available speech engine. Narration starts when the visitor presses Play, follows the current guide, and stops when Kal closes or a site dialog opens. Voice availability and sound depend on the visitor’s browser and installed voices.
+Kal’s tour uses the compact Builder guide panel. Update the portfolio’s stops and mounting options in `assets/js/folder/kal-tour.js`. The bundled presentation runtime in `assets/vendor/ai-helpers-presentation.js` includes the Builder panel and its icon licenses. Update the script’s version query when replacing it.
+
+Kal uses Builder’s prerecorded welcome and the same [Kokoro voice model](https://huggingface.co/onnx-community/Kokoro-82M-v1.0-ONNX), `am_michael` at speed `0.94`, for the portfolio’s other lines. Narration starts after Play, follows the current guide, and stops when Kal closes or a site dialog opens. The browser fetches each clip from the site and plays it through Web Audio.
+
+When changing Kal’s copy, install `kokoro-js@1.2.1` in a separate npm prefix and have FFmpeg available. Run `node scripts/generate-kal-narration.mjs <npm-prefix> [ffmpeg executable] [Builder welcome m4a]`. Supply the original welcome clip to preserve its exact recording while retaining the same welcome text. Commit the generated track list and its referenced audio clips. Remove superseded clips from the checkout when reviewing the diff.
 
 ## 📝 Code Style Guidelines
 
